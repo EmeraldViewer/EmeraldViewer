@@ -231,6 +231,7 @@ public:
 	static void		onTabClick( void* userdata );
 
 	static void		onClickProfile( void* userdata );
+	static void		onClickTeleport( void* userdata );
 	static void		onClickGroupInfo( void* userdata );
 	static void		onClickClose( void* userdata );
 	static void		onClickStartCall( void* userdata );
@@ -259,6 +260,7 @@ public:
 	// Handle other participant in the session typing.
 	void processIMTyping(const LLIMInfo* im_info, BOOL typing);
 	static void chatFromLogFile(LLLogChat::ELogLineType type, std::string line, void* userdata);
+	void setOffline();
 
 	//show error statuses to the user
 	void showSessionStartError(const std::string& error_string);
@@ -268,6 +270,9 @@ public:
 	void showSessionForceClose(const std::string& reason);
 
 	static bool onConfirmForceCloseError(const LLSD& notification, const LLSD& response);
+
+	bool decryptMsg(const std::string& msg, std::string& decrypted_msg);
+	bool isEncrypted();
 
 private:
 	// called by constructors
@@ -294,6 +299,8 @@ private:
 	void removeTypingIndicator(const LLIMInfo* im_info);
 
 	void sendTypingState(BOOL typing);
+
+	std::string encrypt(const std::string &msg);
 	
 private:
 	LLLineEditor* mInputEditor;

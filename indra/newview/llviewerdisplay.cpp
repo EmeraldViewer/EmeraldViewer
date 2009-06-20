@@ -347,7 +347,7 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			// Transition to REQUESTED.  Viewer has sent some kind
 			// of TeleportRequest to the source simulator
 			gTeleportDisplayTimer.reset();
-			gViewerWindow->setShowProgress(TRUE);
+			if(!gSavedSettings.getBOOL("EmeraldDisableTeleportScreens"))gViewerWindow->setShowProgress(TRUE);
 			gViewerWindow->setProgressPercent(0);
 			gAgent.setTeleportState( LLAgent::TELEPORT_REQUESTED );
 			gAgent.setTeleportMessage(
@@ -375,14 +375,14 @@ void display(BOOL rebuild, F32 zoom_factor, int subfield, BOOL for_snapshot)
 			gAgent.setTeleportMessage(
 				LLAgent::sTeleportProgressMessages["arriving"]);
 			gImageList.mForceResetTextureStats = TRUE;
-			gAgent.resetView(TRUE, TRUE);
+			if(!gSavedSettings.getBOOL("EmeraldDisableTeleportScreens"))gAgent.resetView(TRUE, TRUE);
 			break;
 
 		case LLAgent::TELEPORT_ARRIVING:
 			// Make the user wait while content "pre-caches"
 			{
 				F32 arrival_fraction = (gTeleportArrivalTimer.getElapsedTimeF32() / TELEPORT_ARRIVAL_DELAY);
-				if( arrival_fraction > 1.f )
+				if( arrival_fraction > 1.f || gSavedSettings.getBOOL("EmeraldDisableTeleportScreens"))
 				{
 					arrival_fraction = 1.f;
 					LLFirstUse::useTeleport();

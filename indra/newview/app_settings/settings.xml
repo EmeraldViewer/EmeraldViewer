@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <llsd>
-<map>
+  <map>
     <key>AFKTimeout</key>
     <map>
       <key>Comment</key>
@@ -3723,7 +3723,7 @@
       <key>Type</key>
       <string>Rect</string>
       <key>Value</key>
-<!-- NOTE: Height and width must match values in settings.xml for 
+      <!-- NOTE: Height and width must match values in settings.xml for 
      FloaterHUDRect because this floater is resized to those values
      in LLViewerWindow initialization. JC -->
       <array>
@@ -3925,7 +3925,6 @@
         <integer>0</integer>
       </array>
     </map>
-  
   <key>FloaterObjectIMInfo</key>
   <map>
     <key>Comment</key>
@@ -4052,6 +4051,22 @@
         <integer>400</integer>
         <integer>250</integer>
         <integer>0</integer>
+      </array>
+    </map>
+    <key>FloaterTeleportHistoryRect</key>
+    <map>
+      <key>Comment</key>
+      <string>Rectangle for teleport history window</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Rect</string>
+      <key>Value</key>
+      <array>
+        <integer>20</integer>
+        <integer>20</integer>
+        <integer>470</integer>
+        <integer>200</integer>
       </array>
     </map>
     <key>FloaterViewBottom</key>
@@ -4801,6 +4816,22 @@
         <real>1.0</real>
       </array>
     </map>
+    <key>IMEncryptedChatColor</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of encrypted instant messages from other residents</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>0.8</real>
+        <real>1.0</real>
+      </array>
+    </map>
     <key>IMInChatConsole</key>
     <map>
       <key>Comment</key>
@@ -5172,7 +5203,7 @@
     <key>LastFindPanel</key>
     <map>
       <key>Comment</key>
-      <string>Controls which find operation appears by default when clicking "Find" button </string>
+      <string>Controls which find operation appears by default when clicking "Find" button</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -5213,7 +5244,6 @@
       <key>Value</key>
       <string>0.0.0</string>
     </map>
-  
     <key>LastSnapshotToEmailHeight</key>
     <map>
       <key>Comment</key>
@@ -6399,6 +6429,17 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>PlayTypingSound</key>
+    <map>
+      <key>Comment</key>
+      <string>Your avatar plays the typing sound whenever people chat (local)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>PrecachingDelay</key>
     <map>
       <key>Comment</key>
@@ -6805,7 +6846,7 @@
             <string>Boolean</string>
         <key>Value</key>
             <integer>1</integer>
-        </map> 
+    </map>
     <key>RenderAvatarCloth</key>
     <map>
       <key>Comment</key>
@@ -8175,6 +8216,17 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>ShowAvatarList</key>
+    <map>
+      <key>Comment</key>
+      <string>Show Avatar List Floater</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>ShowBanLines</key>
     <map>
       <key>Comment</key>
@@ -8976,7 +9028,7 @@
       <string>S32</string>
       <key>Value</key>
       <integer>0</integer>
-    </map>  
+    </map>
     <key>SnapshotLocalLastResolution</key>
     <map>
       <key>Comment</key>
@@ -11001,9 +11053,8 @@
       <key>Type</key>
       <string>LLSD</string>
       <key>Value</key>
-      <map>
+      <map></map>
       </map>
-    </map>
     <key>VFSOldSize</key>
     <map>
       <key>Comment</key>
@@ -11097,11 +11148,11 @@
       <key>Comment</key>
       <string>Versioning Channel Name.</string>
       <key>Persist</key>
-      <integer>1</integer>
+      <integer>0</integer>
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>Second Life Release</string>
+      <string>GreenLife Emerald Viewer</string>
     </map>
     <key>VertexShaderEnable</key>
     <map>
@@ -11910,6 +11961,477 @@
       <string>Boolean</string>
       <key>Value</key>
       <integer>0</integer>
+    </map>
+    <key>LuaConsoleRect</key>
+    <map>
+      <key>Comment</key>
+      <string>Rectangle for lua console</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Rect</string>
+      <key>Value</key>
+      <array>
+        <integer>0</integer>
+        <integer>203</integer>
+        <integer>425</integer>
+        <integer>53</integer>
+      </array>
+  </map>
+    <key>FloaterAnimationListRect</key>
+    <map>
+      <key>Comment</key>
+      <string>Rectangle for Animation List</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Rect</string>
+      <key>Value</key>
+      <array>
+        <integer>0</integer>
+        <integer>275</integer>
+        <integer>1000</integer>
+        <integer>0</integer>
+      </array>
+    </map>
+    <key>FloaterAvatarListRect</key>
+    <map>
+      <key>Comment</key>
+      <string>Rectangle for Radar</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Rect</string>
+      <key>Value</key>
+      <array>
+        <integer>0</integer>
+        <integer>400</integer>
+        <integer>200</integer>
+        <integer>0</integer>
+      </array>
+    </map>
+    <key>EmeraldDoubleClickTeleport</key>
+    <map>
+      <key>Comment</key>
+      <string>Enable double click teleportation</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldVelocityDoubleClickTeleport</key>
+    <map>
+      <key>Comment</key>
+      <string>Interpolate double click teleportation</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldDisableTeleportScreens</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable teleport screens</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldDisableLoginScreens</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable login screen progress bar</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldDisableLogoutScreens</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable logout screen progress bar</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldRadarChatKeys</key>
+    <map>
+      <key>Comment</key>
+      <string>Enable silent chat of avatar keys when they enter the region to boost lsl radars speed and range</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldRadarChatKeysChannel</key>
+    <map>
+      <key>Comment</key>
+      <string>What channel you want the avatar key chat to go on, -777777777 is default</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>S32</string>
+      <key>Value</key>
+      <integer>-777777777</integer>
+    </map>
+    <key>vivoxProductionServerName</key>
+    <map>
+      <key>Comment</key>
+      <string>vivoxProductionServerName</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>bhr.vivox.com</string>
+    </map>
+    <key>vivoxDebugServerName</key>
+    <map>
+      <key>Comment</key>
+      <string>vivoxDebugServerName</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>bhd.vivox.com</string>
+    </map>
+    <key>EmeraldClothingLayerProtection</key>
+    <map>
+      <key>Comment</key>
+      <string>Overwrites clothing layers to sim in order to protect your worn items from being as easily stolen</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldRadarChatAlerts</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether the radar emits chat alerts regarding the status of avatars it displays</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldRadarAlertSim</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether the radar emits chat alerts for entering / exiting sim</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldRadarAlertDraw</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether the radar emits chat alerts for entering / exiting draw distance</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldRadarAlertChatRange</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether the radar emits chat alerts for entering / exiting chat range</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldAlwaysFly</key>
+    <map>
+      <key>Comment</key>
+      <string>Do you want to always be able to fly, even in fly restricted zones?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldAllowPhantomToggle</key>
+    <map>
+      <key>Comment</key>
+      <string>Do you want to be able to hit ctrl alt p to become visably phantom?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldAllowSitToggle</key>
+    <map>
+      <key>Comment</key>
+      <string>Do you want to be able to hit ctrl-alt-s to ground sit anywhere?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldCmdLine</key>
+    <map>
+      <key>Comment</key>
+      <string>Would you like the chatbar to be able to be used for command line functions?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldCmdLineHeight</key>
+    <map>
+      <key>Comment</key>
+      <string>Teleport to height function command</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>gth</string>
+    </map>
+    <key>EmeraldCmdLinePos</key>
+    <map>
+      <key>Comment</key>
+      <string>Teleport to position function command</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>gtp</string>
+    </map>
+    <key>EmeraldCmdLineGround</key>
+    <map>
+      <key>Comment</key>
+      <string>Teleport to ground function command</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>flr</string>
+    </map>
+    <key>EmeraldCmdLineTeleportHome</key>
+    <map>
+      <key>Comment</key>
+      <string>Teleport to home function command</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>tph</string>
+    </map>
+    <key>EmeraldCmdLineRezPlatform</key>
+    <map>
+      <key>Comment</key>
+      <string>Rez a platform underneath you</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>rezplat</string>
+    </map>
+    <key>EmeraldCmdLineMapTo</key>
+    <map>
+      <key>Comment</key>
+      <string>Teleport to a region by name rapidly</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>mapto</string>
+    </map>
+    <key>EmeraldMapToKeepPos</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether to use current local pos on tp to the new sim</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldDoubleClickWearInventoryObjects</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to automatically wear objects in your inventory you wear</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldBlockClickSit</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to block left-click sitting on things</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldTemporaryUpload</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not a upload is temp</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldParticleChat</key>
+    <map>
+      <key>Comment</key>
+      <string>Speak Particle Info on channel 9000</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldRainbowBeam</key>
+    <map>
+      <key>Comment</key>
+      <string>Use color cycling selection beam.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldClickSendTouchPos</key>
+    <map>
+      <key>Comment</key>
+      <string>Enable sending clicked points</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldAvatarListKeepOpen</key>
+    <map>
+      <key>Comment</key>
+      <string>Keeps Avatar List updates running in background</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldLargeFriendslistNoSLim</key>
+    <map>
+      <key>Comment</key>
+      <string>Wipes SLim FriendsList [TESTING ONLY!]</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>FloaterAreaSearchRect</key>
+    <map>
+      <key>Comment</key>
+      <string>Rectangle</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Rect</string>
+      <key>Value</key>
+      <array>
+        <integer>0</integer>
+        <integer>400</integer>
+        <integer>200</integer>
+        <integer>0</integer>
+      </array>
+    </map>
+    <key>AppName</key>
+    <map>
+      <key>Comment</key>
+      <string>AppData Directory Name</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>SecondLife</string>
+    </map>
+    <key>PortableMode</key>
+    <map>
+      <key>Comment</key>
+      <string>Client is running in portable mode</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldVerticalIMTabs</key>
+    <map>
+      <key>Comment</key>
+      <string>Enable vertical layout for IM tabs</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldDownloadClientTags</key>
+    <map>
+      <key>Comment</key>
+      <string>download tags</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <string>1</string>
     </map>
   </map>
 </llsd>

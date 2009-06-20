@@ -38,7 +38,14 @@
 #include "listener_fmod.h"
 #include "windgen.h"
 
-#include "fmod.h"
+//from "fmod.h"
+#if LL_WINDOWS
+#define F_CALLBACKAPI __stdcall
+#else
+#define F_CALLBACKAPI
+#endif
+typedef struct FSOUND_SAMPLE    FSOUND_SAMPLE;
+typedef struct FSOUND_STREAM    FSOUND_STREAM;
 
 class LLAudioStreamFMOD;
 

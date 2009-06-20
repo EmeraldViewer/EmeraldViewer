@@ -153,10 +153,23 @@ LLDir_Win32::~LLDir_Win32()
 
 void LLDir_Win32::initAppDirs(const std::string &app_name)
 {
-	mAppName = app_name;
-	mOSUserAppDir = mOSUserDir;
-	mOSUserAppDir += "\\";
-	mOSUserAppDir += app_name;
+	if(app_name == "*Portable*")
+	{
+		mAppName = "SecondLife";
+		mOSUserAppDir = mExecutableDir;
+		mOSUserAppDir += "\\";
+		mOSUserAppDir += "UserData";
+		mPortable = true;
+		mCacheDir = mTempDir + "\\SecondLife.cache";
+	}
+	else
+	{
+		mAppName = app_name;
+		mOSUserAppDir = mOSUserDir;
+		mOSUserAppDir += "\\";
+		mOSUserAppDir += app_name;
+		mPortable = false;
+	}
 
 	int res = LLFile::mkdir(mOSUserAppDir);
 	if (res == -1)

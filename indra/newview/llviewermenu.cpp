@@ -87,6 +87,7 @@
 #include "llfloateranimpreview.h"
 #include "llfloateravatarinfo.h"
 #include "llfloateravatartextures.h"
+#include "llfloaterbulkpermission.h"
 #include "llfloaterbeacons.h"
 #include "llfloaterbuildoptions.h"
 #include "llfloaterbump.h"
@@ -130,6 +131,7 @@
 #include "llfloatersettingsdebug.h"
 #include "llfloaterenvsettings.h"
 #include "llfloaterstats.h"
+#include "llfloaterteleporthistory.h"
 #include "llfloatertest.h"
 #include "llfloatertools.h"
 #include "llfloaterwater.h"
@@ -215,6 +217,12 @@
 #include "llfloaternotificationsconsole.h"
 
 #include "lltexlayer.h"
+#include "llfloateravatarlist.h"
+#include "jcfloater_animation_list.h"
+
+#include "jcfloater_areasearch.h"
+
+#include "tsstuff.h"
 
 using namespace LLVOAvatarDefines;
 void init_client_menu(LLMenuGL* menu);
@@ -2112,10 +2120,12 @@ class LLObjectMute : public view_listener_t
 
 bool handle_go_to()
 {
+	LLVector3d pos = LLToolPie::getInstance()->getPick().mPosGlobal;
+	if(!gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"))
+	{
 	// JAMESDEBUG try simulator autopilot
 	std::vector<std::string> strings;
 	std::string val;
-	LLVector3d pos = LLToolPie::getInstance()->getPick().mPosGlobal;
 	val = llformat("%g", pos.mdV[VX]);
 	strings.push_back(val);
 	val = llformat("%g", pos.mdV[VY]);
@@ -2138,6 +2148,13 @@ bool handle_go_to()
 
 	// Could be first use
 	LLFirstUse::useGoTo();
+	}else
+	{
+		LLVector3d got( 0.0f, 0.0f, 1.2f);
+		got += pos;
+		if(gSavedSettings.getBOOL("EmeraldVelocityDoubleClickTeleport"))got += ((LLVector3d)gAgent.getVelocity() * 0.25);
+		gAgent.teleportViaLocation(got);
+	}
 	return true;
 }
 
@@ -5089,6 +5106,10 @@ class LLShowFloater : public view_listener_t
 		{
 			LLFloaterChat::toggleInstance(LLSD());
 		}
+		else if (floater_name == "teleport history")
+		{
+			gFloaterTeleportHistory->setVisible(!gFloaterTeleportHistory->getVisible());
+		}
 		else if (floater_name == "im")
 		{
 			LLFloaterChatterBox::toggleInstance(LLSD());
@@ -5206,6 +5227,18 @@ class LLShowFloater : public view_listener_t
 		{
 			LLFloaterPerms::toggleInstance(LLSD());
 		}
+		else if (floater_name == "animation list")
+		{
+			JCFloaterAnimList::toggleInstance(LLSD());
+		}
+		else if (floater_name == "areasearch")
+		{
+			JCFloaterAreaSearch::toggle();
+		}
+		else if (floater_name == "lua console")
+		{
+			LLFloaterLuaConsole::toggle(NULL);
+		}
 		return true;
 	}
 };
@@ -5232,6 +5265,10 @@ class LLFloaterVisible : public view_listener_t
 		else if (floater_name == "chat history")
 		{
 			new_value = LLFloaterChat::instanceVisible();
+		}
+		else if (floater_name == "teleport history")
+		{
+			new_value = gFloaterTeleportHistory->getVisible();
 		}
 		else if (floater_name == "im")
 		{
@@ -5265,6 +5302,20 @@ class LLFloaterVisible : public view_listener_t
 		{
 			LLInventoryView* iv = LLInventoryView::getActiveInventory(); 
 			new_value = (NULL != iv && TRUE == iv->getVisible());
+		}
+		else if (floater_name == "animation list")
+		{
+			new_value = JCFloaterAnimList::instanceVisible(LLSD());
+		}
+		else if (floater_name == "areasearch")
+		{
+			JCFloaterAreaSearch* instn = JCFloaterAreaSearch::getInstance();
+			if(!instn)new_value = false;
+			else new_value = instn->getVisible();
+		}
+		else if (floater_name == "lua console")
+		{
+			new_value = LLFloaterLuaConsole::isVisible();
 		}
 		gMenuHolder->findControl(control_name)->setValue(new_value);
 		return true;
@@ -6985,8 +7036,9 @@ void handle_load_from_xml(void*)
 	if (picker.getOpenFile(LLFilePicker::FFLOAD_XML))
 	{
 		std::string filename = picker.getFirstFile();
+		std::string x = filename.substr(filename.find_last_of("\\")+1);
 		LLFloater* floater = new LLFloater("sample_floater");
-		LLUICtrlFactory::getInstance()->buildFloater(floater, filename);
+		LLUICtrlFactory::getInstance()->buildFloater(floater, x);
 	}
 }
 
@@ -7252,6 +7304,104 @@ class LLWorldChat : public view_listener_t
 		return true;
 	}
 };
+//handlers lgg new menu
+class LLEmeraldTogglePhantom: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		if(gSavedSettings.getBOOL("EmeraldAllowPhantomToggle"))
+		{
+			LLAgent::togglePhantom();
+			BOOL ph = LLAgent::getPhantom();
+			LLChat chat;
+			chat.mSourceType = CHAT_SOURCE_SYSTEM;
+			chat.mText = llformat("%s%s","Phantom ",(ph ? "On" : "Off"));
+			LLFloaterChat::addChat(chat);
+			//gMenuHolder->findControl(userdata["control"].asString())->setValue(ph);
+		}
+		return true;
+	}
+
+};
+
+class LLEmeraldCheckPhantom: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(LLAgent::getPhantom());
+		return true;
+	}
+};
+
+class LLEmeraldToggleSit: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		if(gSavedSettings.getBOOL("EmeraldAllowSitToggle"))
+		{
+			gAgent.setControlFlags(AGENT_CONTROL_SIT_ON_GROUND);
+			LLChat chat;
+			chat.mSourceType = CHAT_SOURCE_SYSTEM;
+			chat.mText = "Forcing Ground Sit";
+			LLFloaterChat::addChat(chat);
+		}
+		return true;
+	}
+
+};
+class LLEmeraldToggleRadar: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		//open the radar panel
+		LLFloaterAvatarList::toggle(0);
+		bool vis = false;
+		if(LLFloaterAvatarList::getInstance())
+		{
+			vis = (bool)LLFloaterAvatarList::getInstance()->getVisible();
+		}
+		//gMenuHolder->findControl(userdata["control"].asString())->setValue(vis);
+		return true;
+	}
+};
+
+class LLEmeraldDisable: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		std::string control_name = userdata["control"].asString();
+
+		gMenuHolder->findControl(control_name)->setValue(false);
+		return true;
+	}
+};
+
+/*
+class LLEmeraldCheckRadar: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		bool vis = false;
+		if(LLFloaterAvatarList::getInstance())
+		{
+			vis = (bool)LLFloaterAvatarList::getInstance()->getVisible();
+		}
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(vis);
+		return true;
+	}
+};
+
+class LLEmeraldCheckSit: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		return true;
+	}
+	//i dont know how to handle all this check bul crap... someone else please
+	//ur a catface, you could at least follow syntax convention with the newlines and tabbing *fixes*
+};*/
+//wtf this is entirely unreferenced, burning
+
 
 class LLToolsSelectTool : public view_listener_t
 {
@@ -7399,7 +7549,14 @@ class LLWorldDayCycle : public view_listener_t
 	}
 };
 
-
+class LLToggleDebugMenus : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		toggle_debug_menus(NULL);
+		return true;
+	}
+};
 
 static void addMenu(view_listener_t *menu, const std::string& name)
 {
@@ -7495,6 +7652,15 @@ void initialize_menus()
 	addMenu(new LLViewCheckHighlightTransparent(), "View.CheckHighlightTransparent");
 	addMenu(new LLViewCheckRenderType(), "View.CheckRenderType");
 	addMenu(new LLViewCheckHUDAttachments(), "View.CheckHUDAttachments");
+
+	//Emerlad menu, another shakey lgg mod
+	addMenu(new LLEmeraldTogglePhantom(), "Emerald.TogglePhantom");
+	addMenu(new LLEmeraldCheckPhantom(), "Emerald.CheckPhantom");
+	addMenu(new LLEmeraldToggleSit(), "Emerald.ToggleSit");
+	addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
+	//addMenu(new LLEmeraldCheckRadar(), "Emerald.CheckAvatarList");
+	addMenu(new LLEmeraldDisable(), "Emerald.Disable");
+	addMenu(new LLToggleDebugMenus(), "ToggleDebugMenus");
 
 	// World menu
 	addMenu(new LLWorldChat(), "World.Chat");

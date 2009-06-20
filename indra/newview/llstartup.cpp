@@ -185,6 +185,10 @@
 #include "llwaterparammanager.h"
 #include "llagentlanguage.h"
 
+#include "llfloateravatarlist.h"
+#include "jcfloater_animation_list.h"
+#include "jcfloater_areasearch.h"
+
 #if LL_LIBXUL_ENABLED
 #include "llmozlib.h"
 #endif // LL_LIBXUL_ENABLED
@@ -306,7 +310,11 @@ void update_texture_fetch()
 	LLAppViewer::getTextureFetch()->update(1); // unpauses the texture fetch thread
 	gImageList.updateImages(0.10f);
 }
-
+void pass_process_sound_trigger(LLMessageSystem* msg,void**)
+{
+	process_sound_trigger(msg,0);
+	LLFloaterAvatarList::processSoundTrigger(msg,0);
+}
 static std::vector<std::string> sAuthUris;
 static S32 sAuthUriNum = -1;
 
@@ -600,17 +608,6 @@ bool idle_startup()
 		{
 			gAudiop = NULL;
 
-#ifdef LL_OPENAL
-			if (!gAudiop
-#if !LL_WINDOWS
-			    && NULL == getenv("LL_BAD_OPENAL_DRIVER")
-#endif // !LL_WINDOWS
-			    )
-			{
-				gAudiop = (LLAudioEngine *) new LLAudioEngine_OpenAL();
-			}
-#endif
-
 #ifdef LL_FMOD			
 			if (!gAudiop
 #if !LL_WINDOWS
@@ -619,8 +616,6 @@ bool idle_startup()
 			    )
 			{
 				gAudiop = (LLAudioEngine *) new LLAudioEngine_FMOD();
-			}
-#endif
 
 			if (gAudiop)
 			{
@@ -643,6 +638,41 @@ bool idle_startup()
 					gAudiop = NULL;
 				}
 			}
+			}
+#endif
+
+#ifdef LL_OPENAL
+			if (!gAudiop
+#if !LL_WINDOWS
+			    && NULL == getenv("LL_BAD_OPENAL_DRIVER")
+#endif // !LL_WINDOWS
+			    )
+			{
+				gAudiop = (LLAudioEngine *) new LLAudioEngine_OpenAL();
+
+			if (gAudiop)
+			{
+#if LL_WINDOWS
+				// FMOD on Windows needs the window handle to stop playing audio
+				// when window is minimized. JC
+				void* window_handle = (HWND)gViewerWindow->getPlatformWindow();
+#else
+				void* window_handle = NULL;
+#endif
+				bool init = gAudiop->init(kAUDIO_NUM_SOURCES, window_handle);
+				if(init)
+				{
+					gAudiop->setMuted(TRUE);
+				}
+				else
+				{
+					LL_WARNS("AppInit") << "Unable to initialize audio engine" << LL_ENDL;
+					delete gAudiop;
+					gAudiop = NULL;
+				}
+			}
+			}
+#endif
 		}
 		
 		LL_INFOS("AppInit") << "Audio Engine Initialized." << LL_ENDL;
@@ -870,8 +900,14 @@ bool idle_startup()
 			gSavedPerAccountSettings.setU32("LastLogoff", time_corrected());
 		}
 
+		//Always use default in portable mode
+		if (gSavedSettings.getBOOL("PortableMode"))
+		{
+			gDirUtilp->setChatLogsDir(gDirUtilp->getOSUserAppDir());
+			gSavedPerAccountSettings.setString("InstantMessageLogPath",gDirUtilp->getChatLogsDir());
+		}
 		//Default the path if one isn't set.
-		if (gSavedPerAccountSettings.getString("InstantMessageLogPath").empty())
+		else if (gSavedPerAccountSettings.getString("InstantMessageLogPath").empty())
 		{
 			gDirUtilp->setChatLogsDir(gDirUtilp->getOSUserAppDir());
 			gSavedPerAccountSettings.setString("InstantMessageLogPath",gDirUtilp->getChatLogsDir());
@@ -961,7 +997,7 @@ bool idle_startup()
 		}
 
 		// Display the startup progress bar.
-		gViewerWindow->setShowProgress(TRUE);
+		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("EmeraldDisableLoginScreens"));
 		gViewerWindow->setProgressCancelButtonVisible(TRUE, std::string("Quit")); // *TODO: Translate
 
 		// Poke the VFS, which could potentially block for a while if
@@ -1723,6 +1759,16 @@ bool idle_startup()
 			LLFloaterBeacons::showInstance();
 		}
 
+		if (gSavedSettings.getBOOL("ShowAvatarList"))
+		{
+			LLFloaterAvatarList::showInstance();
+		}
+		else if (gSavedSettings.getBOOL("EmeraldAvatarListKeepOpen"))
+		{
+			LLFloaterAvatarList::showInstance();
+			LLFloaterAvatarList::toggle(NULL);
+		}
+
 		if (!gNoRender)
 		{
 			// Move the progress view in front of the UI
@@ -2276,7 +2322,7 @@ bool idle_startup()
 		gDisplaySwapBuffers = TRUE;
 
 		LLMessageSystem* msg = gMessageSystem;
-		msg->setHandlerFuncFast(_PREHASH_SoundTrigger,				process_sound_trigger);
+		msg->setHandlerFuncFast(_PREHASH_SoundTrigger,				pass_process_sound_trigger);
 		msg->setHandlerFuncFast(_PREHASH_PreloadSound,				process_preload_sound);
 		msg->setHandlerFuncFast(_PREHASH_AttachedSound,				process_attached_sound);
 		msg->setHandlerFuncFast(_PREHASH_AttachedSoundGainChange,	process_attached_sound_gain_change);
@@ -2503,6 +2549,7 @@ bool idle_startup()
 		{
 			gAgent.requestEnterGodMode();
 		}
+		gInventory.startBackgroundFetch();
 		
 		// Start automatic replay if the flag is set.
 		if (gSavedSettings.getBOOL("StatsAutoRun"))
@@ -2772,13 +2819,27 @@ bool first_run_dialog_callback(const LLSD& notification, const LLSD& response)
 }
 
 
-
+std::string last_d;
 void set_startup_status(const F32 frac, const std::string& string, const std::string& msg)
 {
-	gViewerWindow->setProgressPercent(frac*100);
-	gViewerWindow->setProgressString(string);
+	if(gSavedSettings.getBOOL("EmeraldDisableLoginScreens"))
+	{
+		std::string new_d = string;
+		if(new_d != last_d)
+		{
+			last_d = new_d;
+			LLChat chat;
+			chat.mText = new_d;
+			chat.mSourceType = (EChatSourceType)(CHAT_SOURCE_OBJECT+1);
+			LLFloaterChat::addChat(chat);
+		}
+	}else
+	{
+		gViewerWindow->setProgressPercent(frac*100);
+		gViewerWindow->setProgressString(string);
 
-	gViewerWindow->setProgressMessage(msg);
+		gViewerWindow->setProgressMessage(msg);
+	}
 }
 
 bool login_alert_status(const LLSD& notification, const LLSD& response)
@@ -2908,7 +2969,7 @@ bool update_dialog_callback(const LLSD& notification, const LLSD& response)
 	// *TODO change userserver to be grid on both viewer and sim, since
 	// userserver no longer exists.
 	query_map["userserver"] = LLViewerLogin::getInstance()->getGridLabel();
-	query_map["channel"] = gSavedSettings.getString("VersionChannelName");
+	query_map["channel"] = LL_CHANNEL;
 	// *TODO constantize this guy
 	// *NOTE: This URL is also used in win_setup/lldownloader.cpp
 	LLURI update_url = LLURI::buildHTTP("secondlife.com", 80, "update.php", query_map);
@@ -3018,6 +3079,21 @@ void use_circuit_callback(void**, S32 result)
 	}
 }
 
+void pass_processAvatarPropertiesReply(LLMessageSystem *msg, void**)
+{
+	// send it to 'observers'
+	LLPanelAvatar::processAvatarPropertiesReply(msg,0);
+	LLFloaterAvatarList::processAvatarPropertiesReply(msg,0);
+}
+
+void pass_processObjectPropertiesFamily(LLMessageSystem *msg, void**)
+{
+	// send it to 'observers'
+	LLSelectMgr::processObjectPropertiesFamily(msg,0);
+	JCFloaterAnimList::processObjectPropertiesFamily(msg,0);
+	JCFloaterAreaSearch::processObjectPropertiesFamily(msg,0);
+}
+
 void register_viewer_callbacks(LLMessageSystem* msg)
 {
 	msg->setHandlerFuncFast(_PREHASH_LayerData,				process_layer_data );
@@ -3061,7 +3137,7 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 	msg->setHandlerFuncFast(_PREHASH_ImprovedInstantMessage,	process_improved_im);
 	msg->setHandlerFuncFast(_PREHASH_ScriptQuestion,			process_script_question);
 	msg->setHandlerFuncFast(_PREHASH_ObjectProperties,			LLSelectMgr::processObjectProperties, NULL);
-	msg->setHandlerFuncFast(_PREHASH_ObjectPropertiesFamily,	LLSelectMgr::processObjectPropertiesFamily, NULL);
+	msg->setHandlerFuncFast(_PREHASH_ObjectPropertiesFamily,	pass_processObjectPropertiesFamily, NULL);
 	msg->setHandlerFunc("ForceObjectSelect", LLSelectMgr::processForceObjectSelect);
 
 	msg->setHandlerFuncFast(_PREHASH_MoneyBalanceReply,		process_money_balance_reply,	NULL);
@@ -3096,7 +3172,7 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 		LLViewerParcelMgr::processParcelDwellReply);
 
 	msg->setHandlerFunc("AvatarPropertiesReply",
-						LLPanelAvatar::processAvatarPropertiesReply);
+						pass_processAvatarPropertiesReply);
 	msg->setHandlerFunc("AvatarInterestsReply",
 						LLPanelAvatar::processAvatarInterestsReply);
 	msg->setHandlerFunc("AvatarGroupsReply",
@@ -3204,7 +3280,6 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 
 	msg->setHandlerFuncFast(_PREHASH_FeatureDisabled, process_feature_disabled_message);
 }
-
 
 void init_stat_view()
 {

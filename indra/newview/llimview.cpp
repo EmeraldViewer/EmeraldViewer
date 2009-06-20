@@ -542,6 +542,20 @@ LLIMMgr::~LLIMMgr()
 	// Children all cleaned up by default view destructor.
 }
 
+// try to decrypt message, true if successful
+bool LLIMMgr::decryptMessage(
+	const LLUUID& session_id,
+	const LLUUID& target_id,
+	const std::string& msg,
+	std::string& decrypted_msg)
+{
+	LLFloaterIMPanel* floater = findFloaterBySession(session_id);
+	if(!floater)
+		return false;
+
+	return floater->decryptMsg(msg, decrypted_msg);
+}
+
 // Add a message to a session. 
 void LLIMMgr::addMessage(
 	const LLUUID& session_id,
@@ -633,9 +647,11 @@ void LLIMMgr::addMessage(
 
 	// now add message to floater
 	bool is_from_system = target_id.isNull() || (from == SYSTEM_FROM);
+	bool is_encrypted = (msg.substr(0, 3) == "\xe2\x80\xa7");
 	const LLColor4& color = ( is_from_system ? 
 							  gSavedSettings.getColor4("SystemChatColor") : 
-							  gSavedSettings.getColor("IMChatColor"));
+							  ( is_encrypted ? gSavedSettings.getColor("IMEncryptedChatColor") :
+		                        gSavedSettings.getColor("IMChatColor") ) );
 	if ( !link_name )
 	{
 		floater->addHistoryLine(msg,color); // No name to prepend, so just add the message normally
@@ -1206,6 +1222,7 @@ void LLIMMgr::noteOfflineUsers(
 				offline.setArg("[FIRST]", first);
 				offline.setArg("[LAST]", last);
 				floater->addHistoryLine(offline, gSavedSettings.getColor4("SystemChatColor"));
+				floater->setOffline();
 			}
 		}
 	}

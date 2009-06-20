@@ -42,6 +42,7 @@ if (WINDOWS)
       /DLL_WINDOWS=1
       /DUNICODE
       /D_UNICODE 
+      /D_WIN32_WINNT=0x0500
       /GS
       /TP
       /W3

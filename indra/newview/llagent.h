@@ -82,6 +82,13 @@ typedef enum e_camera_modes
 	CAMERA_MODE_FOLLOW
 } ECameraMode;
 
+typedef enum e_camera_position
+{
+	CAMERA_POSITION_SELF, /** Camera positioned at our position */
+	CAMERA_POSITION_OBJECT /** Camera positioned at observed object's position */
+} ECameraPosition;
+
+
 typedef enum e_anim_request
 {
 	ANIM_REQUEST_START,
@@ -208,6 +215,7 @@ public:
 
 	void			heardChat(const LLUUID& id);
 	void			lookAtLastChat();
+	void			lookAtObject(LLUUID avatar_id, ECameraPosition camera_pos);
 	F32				getTypingTime() { return mTypingTimer.getElapsedTimeF32(); }
 
 	void			setAFK();
@@ -392,6 +400,11 @@ public:
 	BOOL			getFlying() const				{ return mControlFlags & AGENT_CONTROL_FLY; }
 	void			setFlying(BOOL fly);
 	void			toggleFlying();
+
+	//lgg crap
+	static BOOL			getPhantom();// const				{ return emeraldPhantom; }
+	static void			setPhantom(BOOL phantom);
+	static void			togglePhantom();
 
 	// Does this parcel allow you to fly?
 	BOOL canFly();
@@ -716,7 +729,7 @@ protected:
 						LLWearable* wearable, const LLUUID& category_id = LLUUID::null,
 						BOOL notify = TRUE);
 public:
-	// TODO: Make these private!
+	// TODO: Make these private! 
 	LLUUID			mSecureSessionID;			// secure token for this login session
 
 	F32				mDrawDistance;
@@ -761,6 +774,7 @@ public:
 	EDoubleTapRunMode mDoubleTapRunMode;
 
 private:
+	static BOOL emeraldPhantom;
 	bool mbAlwaysRun; // should the avatar run by default rather than walk
 	bool mbRunning;	// is the avatar trying to run right now
 

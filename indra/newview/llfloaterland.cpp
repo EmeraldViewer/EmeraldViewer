@@ -335,6 +335,8 @@ BOOL LLPanelLandGeneral::postBuild()
 	mBtnSetGroup = getChild<LLButton>("Set...");
 	mBtnSetGroup->setClickedCallback(onClickSetGroup, this);
 
+	getChild<LLButton>("group_profile")->setClickedCallback(onClickInfoGroup, this);
+
 	
 	mCheckDeedToGroup = getChild<LLCheckBoxCtrl>( "check deed");
 	childSetCommitCallback("check deed", onCommitAny, this);
@@ -771,6 +773,16 @@ void LLPanelLandGeneral::onClickSetGroup(void* userdata)
 		fg->setOrigin(new_rect.mLeft, new_rect.mBottom);
 		parent_floater->addDependentFloater(fg);
 	}
+}
+
+// static
+void LLPanelLandGeneral::onClickInfoGroup(void* userdata)
+{
+	LLPanelLandGeneral* panelp = (LLPanelLandGeneral*)userdata;
+	LLParcel* parcel = panelp->mParcel->getParcel();
+	if (!parcel) return;
+	LLUUID id = parcel->getGroupID();
+	if(id.notNull())LLFloaterGroupInfo::showFromUUID(parcel->getGroupID());
 }
 
 // static

@@ -117,27 +117,47 @@ bool LLMediaImplQuickTime::load( const std::string url )
 	if ( url.empty() )
 		return false;
 
-	//In case std::string::c_str() makes a copy of the url data,
-	//make sure there is memory to hold it before allocating memory for handle.
-	//if fails, NewHandleClear(...) should return NULL.
-	const char* url_string = url.c_str() ;
-	Handle handle = NewHandleClear( ( Size )( url.length() + 1 ) );
-    if ( NULL == handle )
-		return false;
-	if(noErr != MemError() || NULL == *handle)
-	{
-		return false ;
+	if( url.find("://") != std::string::npos ) {
+		//In case std::string::c_str() makes a copy of the url data,
+		//make sure there is memory to hold it before allocating memory for handle.
+		//if fails, NewHandleClear(...) should return NULL.
+		const char* url_string = url.c_str() ;
+		Handle handle = NewHandleClear( ( Size )( url.length() + 1 ) );
+		if ( NULL == handle )
+			return false;
+		if(noErr != MemError() || NULL == *handle)
+		{
+			return false ;
+		}
+
+		BlockMove( url_string, *handle, ( Size )( url.length() + 1 ) );
+
+		//std::cout << "LLMediaImplQuickTime::load( " << url << " )" << std::endl;
+
+		// TODO: supposed to use NewMovieFromDataParams now
+		OSErr err = NewMovieFromDataRef( &mMovieHandle, newMovieActive | newMovieDontInteractWithUser | newMovieAsyncOK | newMovieIdleImportOK, nil, handle, URLDataHandlerSubType );
+		DisposeHandle( handle );
+		if ( noErr != err )
+			return false;
+	} else {
+		Handle handle = nil;
+		OSType ostype;
+		OSErr err;
+		const char *url_string = url.c_str();
+		CFStringRef url_cfstr = nil;
+
+		url_cfstr = CFStringCreateWithCString(kCFAllocatorDefault, url_string, CFStringGetSystemEncoding() );
+		
+		err = QTNewDataReferenceFromFullPathCFString(url_cfstr, (QTPathStyle)kQTNativeDefaultPathStyle, 0, &handle, &ostype);
+		CFRelease( url_cfstr );
+		url_cfstr = nil;
+		if ( noErr != err )
+			return false;
+		err = NewMovieFromDataRef( &mMovieHandle, newMovieActive | newMovieDontInteractWithUser | newMovieAsyncOK | newMovieIdleImportOK, nil, handle, ostype );
+		DisposeHandle( handle );
+		if ( noErr != err )
+			return false;
 	}
-
-	BlockMove( url_string, *handle, ( Size )( url.length() + 1 ) );
-
-	//std::cout << "LLMediaImplQuickTime::load( " << url << " )" << std::endl;
-
-	// TODO: supposed to use NewMovieFromDataParams now
-	OSErr err = NewMovieFromDataRef( &mMovieHandle, newMovieActive | newMovieDontInteractWithUser | newMovieAsyncOK | newMovieIdleImportOK, nil, handle, URLDataHandlerSubType );
-	DisposeHandle( handle );
-	if ( noErr != err )
-		return false;
 
 	// do pre-roll actions (typically fired for streaming movies but not always)
 	PrePrerollMovie( mMovieHandle, 0, GetMoviePreferredRate( mMovieHandle ), moviePrePrerollCompleteCallback, ( void * )this );

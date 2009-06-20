@@ -333,5 +333,22 @@
       <string>CrashOnStartup</string>
     </map>
 
+    <key>appname</key>
+    <map>
+      <key>desc</key>
+      <string>Set another name for AppData directory</string>
+      <key>count</key>
+      <integer>1</integer>
+      <key>map-to</key>
+      <string>AppName</string>
+    </map>
+
+    <key>portable</key>
+    <map>
+      <key>desc</key>
+      <string>Start emerald in portable mode</string>
+      <key>map-to</key>
+      <string>PortableMode</string>
+    </map>
   </map>
 </llsd>

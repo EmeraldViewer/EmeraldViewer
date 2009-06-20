@@ -68,6 +68,8 @@
 
 #include "llglheaders.h"
 
+#include "llmutelist.h"
+
 const F32 MAP_SCALE_MIN = 64;
 const F32 MAP_SCALE_MID = 172;
 const F32 MAP_SCALE_MAX = 512;
@@ -333,9 +335,33 @@ void LLNetMap::draw()
 			// just be careful to sort the avatar IDs along with the positions. -MG
 			pos_map = globalPosToView(positions[i], rotate_map);
 
+				//Jcool410 -- show lindens on minimap with blue dots
+				LLColor4 mapcolor = gAvatarMapColor;
+				if( i < regionp->mMapAvatarIDs.count())
+				{
+					bool _friend = false;
+					bool _linden = false;
+					bool _muted = false;
+					if(is_agent_friend(regionp->mMapAvatarIDs.get(i)))
+					{
+						_friend = true;//mapcolor = gFriendMapColor;
+					}
+					std::string first, last;
+					gCacheName->getName(regionp->mMapAvatarIDs.get(i), first, last);
+					if(last == "Linden")_linden = true;//mapcolor = LLColor4::blue;
+					if(LLMuteList::getInstance()->isMuted(regionp->mMapAvatarIDs.get(i)))_muted = true;
+
+					//case not included for linden & muted because you cannot normally mute lindens
+					//and even if you could it would be pretty stupid of you.
+					if(_friend && _linden)mapcolor = LLColor4::purple;
+					else if(_friend && _muted)mapcolor = (gFriendMapColor + LLColor4::grey) * 0.5;
+					else if(_friend)mapcolor = gFriendMapColor;
+					else if(_linden)mapcolor = LLColor4::blue;
+					else if(_muted)mapcolor = LLColor4::grey;
+				}
 			LLWorldMapView::drawAvatar(
 				pos_map.mV[VX], pos_map.mV[VY], 
-				is_agent_friend(avatar_ids[i]) ? friend_color : avatar_color, 
+					mapcolor, 
 				pos_map.mV[VZ]);
 
 			F32	dist_to_cursor = dist_vec(LLVector2(pos_map.mV[VX], pos_map.mV[VY]), LLVector2(local_mouse_x,local_mouse_y));

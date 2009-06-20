@@ -66,6 +66,7 @@
 #include "llfloatermute.h"
 #include "llimpanel.h"
 #include "llscrolllistctrl.h"
+#include "llfloateravatarlist.h"
 
 #if LL_DARWIN
 
@@ -151,6 +152,9 @@ BOOL LLToolBar::postBuild()
 
 	childSetAction("inventory_btn", onClickInventory, this);
 	childSetControlName("inventory_btn", "ShowInventory");
+
+	childSetAction("avatar_list_btn", onClickAvatarList, this);
+	childSetControlName("avatar_list_btn", "ShowAvatarList");
 
 	for (child_list_const_iter_t child_iter = getChildList()->begin();
 		 child_iter != getChildList()->end(); ++child_iter)
@@ -519,3 +523,8 @@ void LLToolBar::onClickInventory(void*)
 	handle_inventory(NULL);
 }
 
+// static
+void LLToolBar::onClickAvatarList(void*)
+{
+	LLFloaterAvatarList::toggle(NULL);
+}

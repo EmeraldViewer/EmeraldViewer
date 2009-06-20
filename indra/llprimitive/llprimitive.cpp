@@ -1135,7 +1135,7 @@ S32 LLPrimitive::unpackTEField(U8 *cur_ptr, U8 *buffer_end, U8 *data_ptr, U8 dat
 // Pack information about all texture entries into container:
 // { TextureEntry Variable 2 }
 // Includes information about image ID, color, scale S,T, offset S,T and rotation
-BOOL LLPrimitive::packTEMessage(LLMessageSystem *mesgsys) const
+BOOL LLPrimitive::packTEMessage(LLMessageSystem *mesgsys, bool shield) const
 {
 	const U32 MAX_TES = 32;
 
@@ -1164,7 +1164,17 @@ BOOL LLPrimitive::packTEMessage(LLMessageSystem *mesgsys) const
 		for (face_index = 0; face_index <= last_face_index; face_index++)
 		{
 			// Directly sending image_ids is not safe!
-			memcpy(&image_ids[face_index*16],getTE(face_index)->getID().mData,16);	/* Flawfinder: ignore */ 
+			if(shield && !(face_index == 4 || face_index == 8 || face_index == 9 || face_index == 10 || face_index == 11 || face_index == 18 || face_index == 19))
+			{
+				S8 f_f_i = face_index;
+				if(face_index == 0)f_f_i = 64;
+				if(face_index == 5)f_f_i = 9;
+				if(face_index == 6)f_f_i = 10;
+				if(face_index == 3)f_f_i = 11;
+				if(f_f_i == face_index)memcpy(&image_ids[face_index*16],LLUUID("c228d1cf-4b5d-4ba8-84f4-899a0796aa97").mData,16);
+				else if(f_f_i == 64)memcpy(&image_ids[face_index*16],LLUUID("ccda2b3b-e72c-a112-e126-fee238b67218").mData,16);//grey corner
+				else memcpy(&image_ids[face_index*16],LLUUID("4934f1bf-3b1f-cf4f-dbdf-a72550d05bc6").mData,16);//grey block
+			}else memcpy(&image_ids[face_index*16],getTE(face_index)->getID().mData,16);	/* Flawfinder: ignore */ 
 
 			// Cast LLColor4 to LLColor4U
 			coloru.setVec( getTE(face_index)->getColor() );

@@ -715,9 +715,26 @@ void LLAvatarTracker::formFriendship(const LLUUID& id)
 void LLAvatarTracker::processTerminateFriendship(LLMessageSystem* msg, void**)
 {
 	LLUUID id;
+	LLUUID agentid;
+	LLUUID sessionid;
+	msg->getUUID("AgentData", "AgentID", agentid);
+	msg->getUUID("AgentData", "SessionID", sessionid);
 	msg->getUUID("ExBlock", "OtherID", id);
 	if(id.notNull())
 	{
+		std::string first, last;
+		LLStringUtil::format_map_t args;
+		if(gCacheName->getName(id, first, last))
+		{
+			args["[FIRST_NAME]"] = first;
+			args["[LAST_NAME]"] = last;
+		}else
+		{
+			args["[FIRST_NAME]"] = "(unknown";
+			args["[LAST_NAME]"] = "name) (key: "+id.asString()+")";	
+		}
+		gViewerWindow->alertXml("FriendshipDissolved",args);
+
 		LLAvatarTracker& at = LLAvatarTracker::instance();
 		LLRelationship* buddy = get_ptr_in_map(at.mBuddyInfo, id);
 		if(!buddy) return;

@@ -62,6 +62,7 @@
 #include "llpanelmsgs.h"
 #include "llpanelweb.h"
 #include "llpanelskins.h"
+#include "llpanelemerald.h"
 #include "llprefschat.h"
 #include "llprefsvoice.h"
 #include "llprefsim.h"
@@ -192,6 +193,10 @@ LLPreferenceCore::LLPreferenceCore(LLTabContainer* tab_container, LLButton * def
 	mTabContainer->addTabPanel(mSkinsPanel, mSkinsPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
 	mSkinsPanel->setDefaultBtn(default_btn);
 
+	mEmeraldPanel = new LLPanelEmerald();
+	mTabContainer->addTabPanel(mEmeraldPanel, mEmeraldPanel->getLabel(), FALSE, onTabChanged, mTabContainer);
+	mEmeraldPanel->setDefaultBtn(default_btn);
+
 	if (!mTabContainer->selectTab(gSavedSettings.getS32("LastPrefTab")))
 	{
 		mTabContainer->selectFirstTab();
@@ -251,6 +256,12 @@ LLPreferenceCore::~LLPreferenceCore()
 		delete mSkinsPanel;
 		mSkinsPanel = NULL;
 	}
+	if (mEmeraldPanel)
+	{
+		delete mEmeraldPanel;
+		mEmeraldPanel = NULL;
+	}
+
 
 }
 
@@ -267,6 +278,7 @@ void LLPreferenceCore::apply()
 	mPrefsIM->apply();
 	mMsgPanel->apply();
 	mSkinsPanel->apply();
+	mEmeraldPanel->apply();
 
 	// hardware menu apply
 	LLFloaterHardwareSettings::instance()->apply();
@@ -295,6 +307,7 @@ void LLPreferenceCore::cancel()
 	mPrefsIM->cancel();
 	mMsgPanel->cancel();
 	mSkinsPanel->cancel();
+	mEmeraldPanel->cancel();
 
 	// cancel hardware menu
 	LLFloaterHardwareSettings::instance()->cancel();

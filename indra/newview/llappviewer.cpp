@@ -165,6 +165,7 @@
 
 #include "llcommandlineparser.h"
 
+#include "tsstuff.h"
 // *FIX: These extern globals should be cleaned up.
 // The globals either represent state/config/resource-storage of either 
 // this app, or another 'component' of the viewer. App globals should be 
@@ -534,7 +535,7 @@ LLAppViewer::~LLAppViewer()
 	// If we got to this destructor somehow, the app didn't hang.
 	removeMarkerFile();
 }
-
+LLSD LLVOAvatar::ClientResolutionList;
 bool LLAppViewer::init()
 {
 	//
@@ -547,7 +548,19 @@ bool LLAppViewer::init()
 	
 	// Need to do this initialization before we do anything else, since anything
 	// that touches files should really go through the lldir API
+	if(gDebugInfo.has("PortableMode"))
+	{
+		gDirUtilp->initAppDirs("*Portable*"); // *HACK: Special magic string for portable mode
+		mPurgeOnExit = true;
+	}
+	else if(gDebugInfo.has("AppName"))
+	{
+		gDirUtilp->initAppDirs(gDebugInfo["AppName"].asString());
+	}
+	else
+	{
 	gDirUtilp->initAppDirs("SecondLife");
+	}
 	// set skin search path to default, will be overridden later
 	// this allows simple skinned file lookups to work
 	gDirUtilp->setSkinFolder("default");
@@ -570,7 +583,7 @@ bool LLAppViewer::init()
 
 	// Build a string representing the current version number.
     gCurrentVersion = llformat("%s %d.%d.%d.%d", 
-        gSavedSettings.getString("VersionChannelName").c_str(), 
+        LL_CHANNEL, 
         LL_VERSION_MAJOR, 
         LL_VERSION_MINOR, 
         LL_VERSION_PATCH, 
@@ -813,6 +826,8 @@ bool LLAppViewer::init()
 	gSimFrames = (F32)gFrameCount;
 
 	LLViewerJoystick::getInstance()->init(false);
+
+	TSStuff::init();
 
 	return true;
 }
@@ -1091,6 +1106,8 @@ bool LLAppViewer::mainLoop()
 
 bool LLAppViewer::cleanup()
 {
+	TSStuff::cleanupClass();
+	
 	//----------------------------------------------
 	//this test code will be removed after the test
 	//test manual call stack tracer
@@ -1888,7 +1905,7 @@ bool LLAppViewer::initConfiguration()
     mYieldTime = gSavedSettings.getS32("YieldTime");
              
 	// XUI:translate
-	gSecondLife = "Second Life";
+	gSecondLife = "GreenLife Emerald Viewer";
 
 	// Read skin/branding settings if specified.
 	//if (! gDirUtilp->getSkinDir().empty() )
@@ -2240,7 +2257,7 @@ void LLAppViewer::writeSystemInfo()
 {
 	gDebugInfo["SLLog"] = LLError::logFileName();
 
-	gDebugInfo["ClientInfo"]["Name"] = gSavedSettings.getString("VersionChannelName");
+	gDebugInfo["ClientInfo"]["Name"] = LL_CHANNEL;
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
 	gDebugInfo["ClientInfo"]["PatchVersion"] = LL_VERSION_PATCH;
@@ -2331,7 +2348,7 @@ void LLAppViewer::handleViewerCrash()
 	
 	//We already do this in writeSystemInfo(), but we do it again here to make /sure/ we have a version
 	//to check against no matter what
-	gDebugInfo["ClientInfo"]["Name"] = gSavedSettings.getString("VersionChannelName");
+	gDebugInfo["ClientInfo"]["Name"] = LL_CHANNEL;
 
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
@@ -2758,6 +2775,8 @@ bool LLAppViewer::initCache()
 	// We have moved the location of the cache directory over time.
 	migrateCacheDirectory();
 
+	if(!gSavedSettings.getBOOL("PortableMode"))
+	{
 	// Setup and verify the cache location
 	std::string cache_location = gSavedSettings.getString("CacheLocation");
 	std::string new_cache_location = gSavedSettings.getString("NewCacheLocation");
@@ -2772,6 +2791,7 @@ bool LLAppViewer::initCache()
 	{
 		LL_WARNS("AppCache") << "Unable to set cache location" << LL_ENDL;
 		gSavedSettings.setString("CacheLocation", "");
+	}
 	}
 	
 	if (mPurgeCache)
@@ -2947,7 +2967,13 @@ void LLAppViewer::purgeCache()
 {
 	LL_INFOS("AppCache") << "Purging Cache and Texture Cache..." << llendl;
 	LLAppViewer::getTextureCache()->purgeCache(LL_PATH_CACHE);
-	std::string mask = gDirUtilp->getDirDelimiter() + "*.*";
+	std::string mask = gDirUtilp->getDirDelimiter() + "*.db2.x.*";
+	gDirUtilp->deleteFilesInDir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,""),mask);
+	mask = gDirUtilp->getDirDelimiter() + "*.cache*";
+	gDirUtilp->deleteFilesInDir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,""),mask);
+	mask = gDirUtilp->getDirDelimiter() + "*.slc";
+	gDirUtilp->deleteFilesInDir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,""),mask);
+	mask = gDirUtilp->getDirDelimiter() + "*.dsf";
 	gDirUtilp->deleteFilesInDir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,""),mask);
 }
 
@@ -3157,6 +3183,7 @@ void LLAppViewer::idle()
 	{
 		if (gRenderStartTime.getElapsedTimeF32() > qas)
 		{
+			//TODO add a "never idle log out" setting for noobs
 			LLAppViewer::instance()->forceQuit();
 		}
 	}
@@ -3214,7 +3241,13 @@ void LLAppViewer::idle()
 	    {
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();
+		    //TODO lgg - ok, this is it!  check setting on this thing and only do it if allowd
+			
+			//if(!gSavedSettings.getBOOL("phantomRightNow"))
+			if(!gAgent.getPhantom())
+			{
 		    send_agent_update(TRUE);
+			}
 		    agent_update_timer.reset();
 	    }
 	}
@@ -3305,13 +3338,13 @@ void LLAppViewer::idle()
 		
 		gIdleCallbacks.callFunctions();
 	}
-	
+
+	gViewerWindow->handlePerFrameHover();
+
 	if (gDisconnected)
     {
 		return;
     }
-
-	gViewerWindow->handlePerFrameHover();
 
 	///////////////////////////////////////
 	// Agent and camera movement
@@ -3537,7 +3570,7 @@ void LLAppViewer::idleShutdown()
 		static S32 total_uploads = 0;
 		// Sometimes total upload count can change during logout.
 		total_uploads = llmax(total_uploads, pending_uploads);
-		gViewerWindow->setShowProgress(TRUE);
+		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("EmeraldDisableLogoutScreens"));
 		S32 finished_uploads = total_uploads - pending_uploads;
 		F32 percent = 100.f * finished_uploads / total_uploads;
 		gViewerWindow->setProgressPercent(percent);
@@ -3551,7 +3584,7 @@ void LLAppViewer::idleShutdown()
 		sendLogoutRequest();
 
 		// Wait for a LogoutReply message
-		gViewerWindow->setShowProgress(TRUE);
+		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("EmeraldDisableLogoutScreens"));
 		gViewerWindow->setProgressPercent(100.f);
 		gViewerWindow->setProgressString("Logging out...");
 		return;
@@ -3923,7 +3956,7 @@ void LLAppViewer::handleLoginComplete()
 	initMainloopTimeout("Mainloop Init");
 
 	// Store some data to DebugInfo in case of a freeze.
-	gDebugInfo["ClientInfo"]["Name"] = gSavedSettings.getString("VersionChannelName");
+	gDebugInfo["ClientInfo"]["Name"] = LL_CHANNEL;
 
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;

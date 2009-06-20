@@ -53,6 +53,7 @@
 #include "llkeyboard.h"
 #include "lllineeditor.h"
 #include "llstatusbar.h"
+#include "llspinctrl.h"
 #include "lltextbox.h"
 #include "lluiconstants.h"
 #include "llviewergesture.h"			// for triggering gestures
@@ -67,6 +68,7 @@
 #include "llui.h"
 #include "llviewermenu.h"
 #include "lluictrlfactory.h"
+#include "chatbar_as_cmdline.h"
 
 
 //
@@ -148,7 +150,7 @@ BOOL LLChatBar::postBuild()
 		mInputEditor->setPassDelete(TRUE);
 		mInputEditor->setReplaceNewlinesWithSpaces(FALSE);
 
-		mInputEditor->setMaxTextLength(1023);
+		mInputEditor->setMaxTextLength(S32_MAX);
 		mInputEditor->setEnableLineHistory(TRUE);
 	}
 
@@ -210,7 +212,8 @@ void LLChatBar::refresh()
 	}
 
 	childSetValue("History", LLFloaterChat::instanceVisible(LLSD()));
-
+	
+	childSetValue("ChatChannel",( 1.f * ((S32)(getChild<LLSpinCtrl>("ChatChannel")->get()))) );
 	childSetEnabled("Say", mInputEditor->getText().size() > 0);
 	childSetEnabled("Shout", mInputEditor->getText().size() > 0);
 
@@ -372,7 +375,7 @@ LLWString LLChatBar::stripChannelNumber(const LLWString &mesg, S32* channel)
 	else
 	{
 		// This is normal chat.
-		*channel = 0;
+		//NO WHAT ARE YOU DOING!!! :(*channel = 0;
 		return mesg;
 	}
 }
@@ -388,10 +391,14 @@ void LLChatBar::sendChat( EChatType type )
 			// store sent line in history, duplicates will get filtered
 			if (mInputEditor) mInputEditor->updateHistory();
 			// Check if this is destined for another channel
-			S32 channel = 0;
+			//greg changed channel here
+			//F32 readChan= getChild<LLSpinCtrl>("ChatChannel")->get();
+			//S32 undoneChan = (S32)readChan;
+			//S32 channel = undoneChan;
+			S32 channel = (S32)(getChild<LLSpinCtrl>("ChatChannel")->get());
 			stripChannelNumber(text, &channel);
 			
-			std::string utf8text = wstring_to_utf8str(text);
+			std::string utf8text = wstring_to_utf8str(text);//+" and read is "+llformat("%f",readChan)+" and undone is "+llformat("%d",undoneChan)+" but actualy channel is "+llformat("%d",channel);
 			// Try to trigger a gesture, if not chat to a script.
 			std::string utf8_revised_text;
 			if (0 == channel)
@@ -406,7 +413,7 @@ void LLChatBar::sendChat( EChatType type )
 
 			utf8_revised_text = utf8str_trim(utf8_revised_text);
 
-			if (!utf8_revised_text.empty())
+			if (!utf8_revised_text.empty() && cmd_line_chat(utf8_revised_text, type))
 			{
 				// Chat with animation
 				sendChatFromViewer(utf8_revised_text, type, TRUE);
@@ -577,10 +584,12 @@ void LLChatBar::sendChatFromViewer(const std::string &utf8text, EChatType type, 
 void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL animate)
 {
 	// Look for "/20 foo" channel chats.
-	S32 channel = 0;
+	S32 channel = (S32)(getChild<LLSpinCtrl>("ChatChannel")->get());
+			
+	//todo 
 	LLWString out_text = stripChannelNumber(wtext, &channel);
 	std::string utf8_out_text = wstring_to_utf8str(out_text);
-	std::string utf8_text = wstring_to_utf8str(wtext);
+	std::string utf8_text = wstring_to_utf8str(wtext)+" and chan is "+llformat("%d",channel);
 
 	utf8_text = utf8str_trim(utf8_text);
 	if (!utf8_text.empty())
@@ -625,19 +634,47 @@ void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL 
 
 void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel)
 {
-	LLMessageSystem* msg = gMessageSystem;
-	msg->newMessageFast(_PREHASH_ChatFromViewer);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	msg->nextBlockFast(_PREHASH_ChatData);
-	msg->addStringFast(_PREHASH_Message, utf8_out_text);
-	msg->addU8Fast(_PREHASH_Type, type);
-	msg->addS32("Channel", channel);
+	// same code like in llimpanel.cpp
+	U32 split = MAX_MSG_BUF_SIZE - 1;
+	U32 pos = 0;
+	U32 total = utf8_out_text.length();
+	while(pos < total)
+	{
+		U32 next_split = split;
 
-	gAgent.sendReliableMessage();
+		if(pos + next_split > total) next_split = total - pos;
 
-	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+		// don't split utf-8 bytes
+		while(U8(utf8_out_text[pos + next_split]) >= 0x80 && U8(utf8_out_text[pos + next_split]) < 0xC0
+			&& next_split > 0)
+		{
+			--next_split;
+		}
+
+		if(next_split == 0)
+		{
+			next_split = split;
+			LL_WARNS("Splitting") << "utf-8 couldn't be split correctly" << LL_ENDL;
+		}
+
+		std::string send = utf8_out_text.substr(pos, pos + next_split);
+		pos += next_split;
+
+		// *FIXME: Queue messages and wait for server
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ChatFromViewer);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		msg->nextBlockFast(_PREHASH_ChatData);
+		msg->addStringFast(_PREHASH_Message, send);
+		msg->addU8Fast(_PREHASH_Type, type);
+		msg->addS32("Channel", channel);
+
+		gAgent.sendReliableMessage();
+
+		LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+	}
 }
 
 

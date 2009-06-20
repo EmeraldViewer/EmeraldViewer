@@ -67,6 +67,7 @@
 #include "llworld.h"
 #include "llui.h"
 #include "llweb.h"
+#include "llfloaterchat.h"
 
 extern void handle_buy(void*);
 
@@ -88,6 +89,9 @@ LLToolPie::LLToolPie()
 
 BOOL LLToolPie::handleMouseDown(S32 x, S32 y, MASK mask)
 {
+	//{LLChat chat;
+	//chat.mText = "LLToolPie::handleMouseDown(S32 x, S32 y, MASK mask)";
+	//LLFloaterChat::addChat(chat);}
 	//left mouse down always picks transparent
 	gViewerWindow->pickAsync(x, y, mask, leftMouseCallback, TRUE, TRUE);
 	mGrabMouseButtonDown = TRUE;
@@ -99,6 +103,26 @@ void LLToolPie::leftMouseCallback(const LLPickInfo& pick_info)
 {
 	LLToolPie::getInstance()->mPick = pick_info;
 	LLToolPie::getInstance()->pickAndShowMenu(FALSE);
+	if(gSavedSettings.getBOOL("EmeraldClickSendTouchPos"))
+	{
+		//if(gKeyboard->getKeyDown(KEY_CONTROL))
+		{
+			LLVector3d pos = LLToolPie::getInstance()->getPick().mPosGlobal;
+			std::string message = llformat("<%.6f, %.6f, %.6f>",(F32)(pos.mdV[VX]),(F32)(pos.mdV[VY]),(F32)(pos.mdV[VZ]));
+			LLMessageSystem* msg = gMessageSystem;
+			msg->newMessage(_PREHASH_ScriptDialogReply);
+			msg->nextBlock(_PREHASH_AgentData);
+			msg->addUUID(_PREHASH_AgentID, gAgent.getID());
+			msg->addUUID(_PREHASH_SessionID, gAgent.getSessionID());
+			msg->nextBlock(_PREHASH_Data);
+			msg->addUUID(_PREHASH_ObjectID, gAgent.getID());
+			msg->addS32(_PREHASH_ChatChannel, -65536);
+			msg->addS32(_PREHASH_ButtonIndex, 0);
+			msg->addString(_PREHASH_ButtonLabel, message);
+			gAgent.sendReliableMessage();
+
+		}
+	}
 }
 
 BOOL LLToolPie::handleRightMouseDown(S32 x, S32 y, MASK mask)
@@ -182,7 +206,7 @@ BOOL LLToolPie::pickAndShowMenu(BOOL always_show)
 			// touch behavior down below...
 			break;
 		case CLICK_ACTION_SIT:
-			if ((gAgent.getAvatarObject() != NULL) && (!gAgent.getAvatarObject()->mIsSitting)) // agent not already sitting
+			if ((gAgent.getAvatarObject() != NULL) && (!gAgent.getAvatarObject()->mIsSitting) && !gSavedSettings.getBOOL("EmeraldBlockClickSit")) // agent not already sitting
 			{
 				handle_sit_or_stand();
 				return TRUE;
@@ -639,7 +663,7 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 		llinfos << "LLToolPie handleDoubleClick (becoming mouseDown)" << llendl;
 	}
 
-	if (gSavedSettings.getBOOL("DoubleClickAutoPilot"))
+	if (gSavedSettings.getBOOL("DoubleClickAutoPilot") || gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"))
 	{
 		if (mPick.mPickType == LLPickInfo::PICK_LAND
 			&& !mPick.mPosGlobal.isExactlyZero())

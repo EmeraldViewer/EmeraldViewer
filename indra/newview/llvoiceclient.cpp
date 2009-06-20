@@ -1407,12 +1407,12 @@ void LLVoiceClient::login(
 		if(sConnectingToAgni)
 		{
 			// Use the release account server
-			mVoiceSIPURIHostName = "bhr.vivox.com";
+			mVoiceSIPURIHostName = gSavedSettings.getString("vivoxProductionServerName"); //"bhr.vivox.com";
 		}
 		else
 		{
 			// Use the development account server
-			mVoiceSIPURIHostName = "bhd.vivox.com";
+			mVoiceSIPURIHostName = gSavedSettings.getString("vivoxDebugServerName"); //"bhd.vivox.com";
 		}
 	}
 	
@@ -3554,7 +3554,7 @@ void LLVoiceClient::sendFriendsListUpdates()
 	{
 		mFriendsListDirty = false;
 		
-		if(0)
+		if(gSavedSettings.getBOOL("EmeraldLargeFriendslistNoSLim"))
 		{
 			// FOR TESTING ONLY -- clear all buddy list, block list, and auto-accept list entries.
 			clearAllLists();

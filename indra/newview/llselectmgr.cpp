@@ -605,10 +605,14 @@ void LLSelectMgr::deselectObjectAndFamily(LLViewerObject* object, BOOL send_to_s
 			select_count++;
 			start_new_message = FALSE;
 		}
-
-		msg->nextBlockFast(_PREHASH_ObjectData);
-		msg->addU32Fast(_PREHASH_ObjectLocalID, (objects[i])->getLocalID());
-		select_count++;
+		// *TODO: this prevents deselecting, disconnecting from region
+		// deselects objects anyways, so instead prevent selecting
+		if((objects[i])->getPositionRegion().mV[VZ] < 4096.0)
+		{
+			msg->nextBlockFast(_PREHASH_ObjectData);
+			msg->addU32Fast(_PREHASH_ObjectLocalID, (objects[i])->getLocalID());
+			select_count++;
+		}
 
 		// Zap the angular velocity, as the sim will set it to zero
 		objects[i]->setAngularVelocity( 0,0,0 );
@@ -641,7 +645,10 @@ void LLSelectMgr::deselectObjectOnly(LLViewerObject* object, BOOL send_to_sim)
 	object->setAngularVelocity( 0,0,0 );
 	object->setVelocity( 0,0,0 );
 
-	if (send_to_sim)
+	//LLChat chat;
+	//chat.mText = llformat("%f%d",object->getPositionRegion().mV[VZ],(object->getPositionRegion().mV[VZ] < 4096.0));
+
+	if (send_to_sim && object->getPositionRegion().mV[VZ] < 4096.0)
 	{
 		LLViewerRegion* region = object->getRegion();
 		gMessageSystem->newMessageFast(_PREHASH_ObjectDeselect);

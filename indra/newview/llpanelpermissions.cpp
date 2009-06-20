@@ -85,6 +85,7 @@ BOOL LLPanelPermissions::postBuild()
 
 	
 	this->childSetAction("button owner profile",LLPanelPermissions::onClickOwner,this);
+	this->childSetAction("button last owner profile",LLPanelPermissions::onClickLastOwner,this);
 	this->childSetAction("button creator profile",LLPanelPermissions::onClickCreator,this);
 
 	this->childSetAction("button set group",LLPanelPermissions::onClickGroup,this);
@@ -177,6 +178,11 @@ void LLPanelPermissions::refresh()
 		childSetText("Owner Name",LLStringUtil::null);
 		childSetEnabled("Owner Name",false);
 		childSetEnabled("button owner profile",false);
+
+		childSetEnabled("Last Owner:",false);
+		childSetText("Last Owner Name",LLStringUtil::null);
+		childSetEnabled("Last Owner Name",false);
+		childSetEnabled("button last owner profile",false);
 
 		childSetEnabled("Group:",false);
 		childSetText("Group Name",LLStringUtil::null);
@@ -297,6 +303,8 @@ void LLPanelPermissions::refresh()
 	owners_identical = LLSelectMgr::getInstance()->selectGetOwner(mOwnerID, owner_name);
 
 //	llinfos << "owners_identical " << (owners_identical ? "TRUE": "FALSE") << llendl;
+	std::string last_owner_name;
+	LLSelectMgr::getInstance()->selectGetLastOwner(mLastOwnerID, last_owner_name);
 
 	if (mOwnerID.isNull())
 	{
@@ -307,8 +315,8 @@ void LLPanelPermissions::refresh()
 		else
 		{
 			// Display last owner if public
-			std::string last_owner_name;
-			LLSelectMgr::getInstance()->selectGetLastOwner(mLastOwnerID, last_owner_name);
+			//std::string last_owner_name;
+			//LLSelectMgr::getInstance()->selectGetLastOwner(mLastOwnerID, last_owner_name);
 
 			// It should never happen that the last owner is null and the owner
 			// is null, but it seems to be a bug in the simulator right now. JC
@@ -323,6 +331,10 @@ void LLPanelPermissions::refresh()
 	childSetText("Owner Name",owner_name);
 	childSetEnabled("Owner Name",TRUE);
 	childSetEnabled("button owner profile",owners_identical && (mOwnerID.notNull() || LLSelectMgr::getInstance()->selectIsGroupOwned()));
+
+	childSetText("Last Owner Name",last_owner_name);
+	childSetEnabled("Last Owner Name",TRUE);
+	childSetEnabled("button last owner profile",owners_identical && mLastOwnerID.notNull());
 
 	// update group text field
 	childSetEnabled("Group:",true);
@@ -841,6 +853,13 @@ void LLPanelPermissions::onClickOwner(void *data)
 	{
 		LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
 	}
+}
+
+void LLPanelPermissions::onClickLastOwner(void *data)
+{
+	LLPanelPermissions *self = (LLPanelPermissions *)data;
+
+	if(self->mLastOwnerID.notNull())LLFloaterAvatarInfo::showFromObject(self->mLastOwnerID);
 }
 
 void LLPanelPermissions::onClickGroup(void* data)

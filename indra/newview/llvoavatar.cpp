@@ -85,7 +85,6 @@
 #include "boost/lexical_cast.hpp"
 
 using namespace LLVOAvatarDefines;
-
 //-----------------------------------------------------------------------------
 // Global constants
 //-----------------------------------------------------------------------------
@@ -2930,6 +2929,146 @@ void LLVOAvatar::idleUpdateWindEffect()
 	}
 }
 
+void resolve_client(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
+{
+	LLUUID idx = avatar->getTE(0)->getID();
+	if(LLVOAvatar::ClientResolutionList.has("isComplete") && LLVOAvatar::ClientResolutionList.has(idx.asString()))
+	{
+		LLSD cllsd = LLVOAvatar::ClientResolutionList[idx.asString()];
+		client = cllsd["name"];
+		LLColor4 colour;
+		colour.setValue(cllsd["color"]);
+		avatar_name_color += colour;
+		avatar_name_color.normalize();
+	}else
+	{
+		//legacy code
+		if(idx == LLUUID("ccda2b3b-e72c-a112-e126-fee238b67218"))
+		{
+			avatar_name_color += LLColor4::green;//emerald
+			avatar_name_color += LLColor4::green;
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "Emerald";
+		}else if(idx == LLUUID("c252d89d-6f7c-7d90-f430-d140d2e3fbbe"))
+		{
+			avatar_name_color += LLColor4::red;//vlife jcool410
+			avatar_name_color = avatar_name_color * 0.5;
+			client = "VLife";
+		}else if(idx == LLUUID("adcbe893-7643-fd12-f61c-0b39717e2e32"))
+		{
+			avatar_name_color += LLColor4::pink;//tyk3n
+			avatar_name_color = avatar_name_color * 0.5;
+			client = "tyk3n";
+		}else if(idx == LLUUID("f3fd74a6-fee7-4b2f-93ae-ddcb5991da04") || idx == LLUUID("77662f23-c77a-9b4d-5558-26b757b2144c"))
+		{
+			avatar_name_color += (LLColor4::purple);//psl
+			avatar_name_color = avatar_name_color * 0.5;
+			client = "PSL";
+		}else if(idx == LLUUID("5aa5c70d-d787-571b-0495-4fc1bdef1500"))
+		{
+			avatar_name_color += LLColor4::red;//lordgreg
+			avatar_name_color += LLColor4::red;
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "LGG proxy";
+		}else if(idx == LLUUID("8183e823-c443-2142-6eb6-2ab763d4f81c"))
+		{
+			avatar_name_color += LLColor4::blue;//day oh
+			avatar_name_color = avatar_name_color * 0.5;
+			client = "Day Oh proxy";
+		}else if(idx == LLUUID("e52d21f7-3c8b-819f-a3db-65c432295dac") || idx == LLUUID("0f6723d2-5b23-6b58-08ab-308112b33786"))
+		{
+			avatar_name_color += LLColor4::cyan;//cryolife
+			avatar_name_color += LLColor4::cyan;
+			avatar_name_color = avatar_name_color * 0.5;
+			client = "CryoLife";
+		}else if(idx == LLUUID("0bcd5f5d-a4ce-9ea4-f9e8-15132653b3d8"))
+		{
+			avatar_name_color += LLColor4::pink;//moy
+			avatar_name_color += LLColor4::pink;//moy
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "MoyMix";
+		}else if(idx == LLUUID("f5a48821-9a98-d09e-8d6a-50cc08ba9a47"))
+		{
+			avatar_name_color += LLColor4::yellow;//neil
+			avatar_name_color += LLColor4::yellow;//neil
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "NeilLife";
+		}else if(idx == LLUUID("2c9c1e0b-e5d1-263e-16b1-7fc6d169f3d6"))
+		{
+			avatar_name_color += LLColor4(0.0f,1.0f,1.0f);
+			avatar_name_color = avatar_name_color * 0.5;//phox
+			client = "PhoxSL";
+		}else if(idx == LLUUID("c5b570ca-bb7e-3c81-afd1-f62646b20014") || idx == LLUUID("7c4d47a3-0c51-04d1-fa47-e4f3ac12f59b"))
+		{
+			avatar_name_color += LLColor4::white;
+			avatar_name_color += LLColor4::white;
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "Kung Fu";
+		}else if(idx == LLUUID("9422e9d7-7b11-83e4-6262-4a8db4716a3b"))
+		{
+			avatar_name_color += LLColor4::magenta;
+			avatar_name_color += LLColor4::magenta;
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "BetaLife";
+		}else if(idx == LLUUID("872c0005-3095-0967-866d-11cd71115c22"))
+		{
+			avatar_name_color += LLColor4::green;//SimFed Poland
+			avatar_name_color += LLColor4::blue;//SimFed Poland
+			avatar_name_color += LLColor4::blue;//SimFed Poland
+			avatar_name_color = avatar_name_color * 0.5;
+			client = "<-- Fag";
+		}else if(idx == LLUUID("3ab7e2fa-9572-ef36-1a30-d855dbea4f92") || 
+				 idx == LLUUID("11ad2452-ce54-8d65-7c23-05589b59f516") ||
+				 idx == LLUUID("e734563e-1c31-2a35-3ed5-8552c807439f") ||
+				 idx == LLUUID("58a8b7ec-1455-7162-5d96-d3c3ead2ed71") ||
+				 idx == LLUUID("841ef25b-3b90-caf9-ea3d-5649e755db65")
+				 )
+		{
+			avatar_name_color += LLColor4(0.0f,0.5f,1.0f); //Nexii is fucking dumb
+			avatar_name_color = avatar_name_color * 0.5;
+			client = "VerticalLife";
+
+		}else if(idx == LLUUID("4e8dcf80-336b-b1d8-ef3e-08dacf015a0f"))
+		{
+			avatar_name_color += LLColor4::blue; //Sapphire
+			avatar_name_color += LLColor4::blue; //Sapphire
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "Sapphire";
+		}else if(idx == LLUUID("ffce04ff-5303-4909-a044-d37af7ab0b0e"))
+		{
+			avatar_name_color += LLColor4::orange; //corgiVision
+			avatar_name_color = avatar_name_color * (F32)0.75;
+			client = "Corgi";
+		}else if(idx == LLUUID("ccb509cf-cc69-e569-38f1-5086c687afd1"))
+		{
+			avatar_name_color += LLColor4::red; //Ruby
+			avatar_name_color += LLColor4::purple; //Ruby
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "Ruby";
+		}else if(idx == LLUUID("1c29480c-c608-df87-28bb-964fb64c5366"))
+		{
+			avatar_name_color += LLColor4::yellow9;
+			avatar_name_color += LLColor4::yellow9;
+			avatar_name_color *= (F32)0.333333333333;
+			client = "Gemini";
+		}
+	}
+	{
+		LLPointer<LLViewerImage> image_point = gImageList.getImage(idx, MIPMAP_YES, IMMEDIATE_NO);
+		if(image_point.notNull() && image_point->isMissingAsset())
+		{
+			avatar_name_color += LLColor4::grey;//anomalous
+			avatar_name_color = avatar_name_color * 0.5;
+			client = "Invalid";
+		}
+	}
+	if(avatar->getTE(5)->getID() != avatar->getTE(6)->getID() && client != "")
+	{
+		client = "Failure";
+		avatar_name_color = LLColor4::grey;
+	}
+}
+
 void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 {
 	// update chat bubble
@@ -2973,7 +3112,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 			mRenderGroupTitles = sRenderGroupTitles;
 			new_name = TRUE;
 		}
-
+		std::string client;
 		// First Calculate Alpha
 		// If alpha > 0, create mNameText if necessary, otherwise delete it
 		{
@@ -3012,8 +3151,11 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 					sNumVisibleChatBubbles++;
 					new_name = TRUE;
 				}
-				
 				LLColor4 avatar_name_color = gColors.getColor( "AvatarNameColor" );
+				if(!mIsSelf)
+					resolve_client(avatar_name_color,client, this);
+				//else avatar_name_color = gColors.getColor( "AvatarNameColor" );
+				//avatar_name_color.clamp();
 				avatar_name_color.setAlpha(alpha);
 				mNameText->setColor(avatar_name_color);
 				
@@ -3023,10 +3165,10 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				LLVector3 pixel_up_vec;
 				LLViewerCamera::getInstance()->getPixelVectors(root_pos_last, pixel_up_vec, pixel_right_vec);
 				LLVector3 camera_to_av = root_pos_last - LLViewerCamera::getInstance()->getOrigin();
-				camera_to_av.normalize();
+				camera_to_av.normVec();
 				LLVector3 local_camera_at = camera_to_av * ~root_rot;
 				LLVector3 local_camera_up = camera_to_av % LLViewerCamera::getInstance()->getLeftAxis();
-				local_camera_up.normalize();
+				local_camera_up.normVec();
 				local_camera_up = local_camera_up * ~root_rot;
 			
 				local_camera_up.scaleVec(mBodySize * 0.5f);
@@ -3070,7 +3212,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				(!title && !mTitle.empty()) ||
 				(title && mTitle != title->getString()) ||
 				(is_away != mNameAway || is_busy != mNameBusy || is_muted != mNameMute)
-				|| is_appearance != mNameAppearance)
+				|| is_appearance != mNameAppearance || client.length() != 0)
 			{
 				std::string line;
 				if (!sRenderGroupTitles)
@@ -3096,7 +3238,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				line += lastname->getString();
 				BOOL need_comma = FALSE;
 
-				if (is_away || is_muted || is_busy)
+				if (is_away || is_muted || is_busy || client.length() != 0)
 				{
 					line += " (";
 					if (is_away)
@@ -3120,6 +3262,15 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 							line += ", ";
 						}
 						line += "Muted";
+						need_comma = TRUE;
+					}
+					if (client.length() != 0)
+					{
+						if (need_comma)
+						{
+							strcat(line, ", ");		/* Flawfinder: ignore */
+						}
+						strcat(line, client.c_str());		/* Flawfinder: ignore */
 						need_comma = TRUE;
 					}
 					line += ")";
@@ -3244,6 +3395,42 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	}
 }
 
+F32 hueToRgb ( F32 val1In, F32 val2In, F32 valHUeIn )
+{
+	if ( valHUeIn < 0.0f ) valHUeIn += 1.0f;
+	if ( valHUeIn > 1.0f ) valHUeIn -= 1.0f;
+	if ( ( 6.0f * valHUeIn ) < 1.0f ) return ( val1In + ( val2In - val1In ) * 6.0f * valHUeIn );
+	if ( ( 2.0f * valHUeIn ) < 1.0f ) return ( val2In );
+	if ( ( 3.0f * valHUeIn ) < 2.0f ) return ( val1In + ( val2In - val1In ) * ( ( 2.0f / 3.0f ) - valHUeIn ) * 6.0f );
+	return ( val1In );
+}
+
+void hslToRgb ( F32 hValIn, F32 sValIn, F32 lValIn, F32& rValOut, F32& gValOut, F32& bValOut )
+{
+	if ( sValIn < 0.00001f )
+	{
+		rValOut = lValIn;
+		gValOut = lValIn;
+		bValOut = lValIn;
+	}
+	else
+	{
+		F32 interVal1;
+		F32 interVal2;
+
+		if ( lValIn < 0.5f )
+			interVal2 = lValIn * ( 1.0f + sValIn );
+		else
+			interVal2 = ( lValIn + sValIn ) - ( sValIn * lValIn );
+
+		interVal1 = 2.0f * lValIn - interVal2;
+
+		rValOut = hueToRgb ( interVal1, interVal2, hValIn + ( 1.f / 3.f ) );
+		gValOut = hueToRgb ( interVal1, interVal2, hValIn );
+		bValOut = hueToRgb ( interVal1, interVal2, hValIn - ( 1.f / 3.f ) );
+	}
+}
+
 void LLVOAvatar::idleUpdateTractorBeam()
 {
 	//--------------------------------------------------------------------
@@ -3254,18 +3441,46 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		return;
 	}
 
+
+	F32 r, g, b;
+	LLColor4 output;
+	hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.1f), 1.0f, 0.5f, r, g, b);
+	output.set(r, g, b);
+	LLColor4U rgb;
+	rgb.setVecScaleClamp(output);
 	// This is only done for yourself (maybe it should be in the agent?)
 	if (!needsRenderBeam() || !mIsBuilt)
 	{
 		mBeam = NULL;
+		if(gSavedSettings.getBOOL("EmeraldParticleChat"))
+			{
+				if(lgPartsNow != FALSE)
+				{
+					lgPartsNow = FALSE;
+					LLMessageSystem* msg = gMessageSystem;
+					msg->newMessageFast(_PREHASH_ChatFromViewer);
+					msg->nextBlockFast(_PREHASH_AgentData);
+					msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+					msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+					msg->nextBlockFast(_PREHASH_ChatData);
+					msg->addStringFast(_PREHASH_Message, "stop");
+					msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
+					msg->addS32("Channel", 9000);
+					
+					gAgent.sendReliableMessage();
+					lgBeamLastAt  =  LLVector3d::zero;
+					LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+	}
+			}
 	}
 	else if (!mBeam || mBeam->isDead())
 	{
 		// VEFFECT: Tractor Beam
 		mBeam = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM);
-		mBeam->setColor(LLColor4U(gAgent.getEffectColor()));
+		mBeam->setColor(gSavedSettings.getBOOL("EmeraldRainbowBeam")? rgb : LLColor4U(gAgent.getEffectColor()));
 		mBeam->setSourceObject(this);
 		mBeamTimer.reset();
+		//lgg particle beam speaking
 	}
 
 	if (!mBeam.isNull())
@@ -3276,6 +3491,47 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		{
 			// get point from pointat effect
 			mBeam->setPositionGlobal(gAgent.mPointAt->getPointAtPosGlobal());
+			//lgg crap
+			if(gSavedSettings.getBOOL("EmeraldParticleChat"))
+			{
+				if(lgPartsNow != TRUE)
+				{
+					lgPartsNow = TRUE;
+					LLMessageSystem* msg = gMessageSystem;
+					msg->newMessageFast(_PREHASH_ChatFromViewer);
+					msg->nextBlockFast(_PREHASH_AgentData);
+					msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+					msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+					msg->nextBlockFast(_PREHASH_ChatData);
+					msg->addStringFast(_PREHASH_Message, "start");
+					msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
+					msg->addS32("Channel", 9000);
+					
+					gAgent.sendReliableMessage();
+
+					LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+				}
+				//LLVector3d a = lgBeamLastAt-gAgent.mPointAt->getPointAtPosGlobal();
+				//if(a.length > 2)
+				if( (lgBeamLastAt-gAgent.mPointAt->getPointAtPosGlobal()).length() > .2)
+				//if(lgBeamLastAt!=gAgent.mPointAt->getPointAtPosGlobal())
+				{
+					lgBeamLastAt = gAgent.mPointAt->getPointAtPosGlobal(); 
+
+					LLMessageSystem* msg = gMessageSystem;
+					msg->newMessageFast(_PREHASH_ChatFromViewer);
+					msg->nextBlockFast(_PREHASH_AgentData);
+					msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+					msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+					msg->nextBlockFast(_PREHASH_ChatData);
+					msg->addStringFast(_PREHASH_Message, llformat("<%.6f, %.6f, %.6f>",(F32)(lgBeamLastAt.mdV[VX]),(F32)(lgBeamLastAt.mdV[VY]),(F32)(lgBeamLastAt.mdV[VZ])));
+					msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
+					msg->addS32("Channel", 9000); // *TODO: make configurable
+					
+					gAgent.sendReliableMessage();
+				}
+
+			}
 			mBeam->triggerLocal();
 		}
 		else if (selection->getFirstRootObject() && 
@@ -3286,6 +3542,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		}
 		else
 		{
+			
 			mBeam->setTargetObject(NULL);
 			LLTool *tool = LLToolMgr::getInstance()->getCurrentTool();
 			if (tool->isEditing())
@@ -3308,7 +3565,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		}
 		if (mBeamTimer.getElapsedTimeF32() > 0.25f)
 		{
-			mBeam->setColor(LLColor4U(gAgent.getEffectColor()));
+			mBeam->setColor(gSavedSettings.getBOOL("EmeraldRainbowBeam")? rgb : LLColor4U(gAgent.getEffectColor()));
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
 		}
@@ -4738,11 +4995,14 @@ BOOL LLVOAvatar::processSingleAnimationStateChange( const LLUUID& anim_id, BOOL 
 					//}
 					//else
 					{
+						if(gSavedSettings.getBOOL("PlayTypingSound"))
+						{
 						LLUUID sound_id = LLUUID(gSavedSettings.getString("UISndTyping"));
 						gAudiop->triggerSound(sound_id, getID(), 1.0f, LLAudioEngine::AUDIO_TYPE_SFX, char_pos_global);
 					}
 				}
 			}
+		}
 		}
 		else if (anim_id == ANIM_AGENT_SIT_GROUND_CONSTRAINED)
 		{

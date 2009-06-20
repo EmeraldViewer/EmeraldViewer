@@ -42,6 +42,7 @@
 
 #include "llvfs.h"
 #include "lldir.h"
+#include "llapr.h"
 #include "llaudiodecodemgr.h"
 #include "llassetstorage.h"
 
@@ -168,6 +169,23 @@ void LLAudioEngine::shutdown()
 	mInternetStreamURL.clear();
 }
 
+#if LL_QUICKTIME_ENABLED
+static std::string createListenPls( const std::string &url )
+{
+	LLDir *d = gDirUtilp;
+	std::string filename = d->getCacheDir() + d->getDirDelimiter() + "listen.pls";
+	apr_file_t *file = ll_apr_file_open(filename, APR_WRITE | APR_CREATE | APR_TRUNCATE);
+
+	if(file) {
+		std::string playlist = llformat("[playlist]\nNumberOfEntries=1\nFile1=%s\n", url.c_str());
+		ll_apr_file_write(file, playlist.c_str(), playlist.length());
+		apr_file_close(file);
+		return filename;
+	}
+
+	return "";
+}
+#endif
 
 // virtual
 void LLAudioEngine::startInternetStream(const std::string& url)
@@ -190,7 +208,11 @@ void LLAudioEngine::startInternetStream(const std::string& url)
 	if (!url.empty()) {
 		llinfos << "Starting internet stream: " << url << llendl;
 		mInternetStreamURL = url;
+#if LL_QUICKTIME_ENABLED
+		mInternetStreamMedia->navigateTo ( createListenPls(url) );
+#else
 		mInternetStreamMedia->navigateTo ( url );
+#endif
 		llinfos << "Playing....." << llendl;		
 		mInternetStreamMedia->addCommand(LLMediaBase::COMMAND_START);
 		mInternetStreamMedia->updateMedia();

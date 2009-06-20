@@ -94,7 +94,13 @@ LLFloaterChatterBox::LLFloaterChatterBox(const LLSD& seed) :
 {
 	mAutoResize = FALSE;
 
-	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_chatterbox.xml", NULL, FALSE);
+// check if vertical tabs is selected (WoLf)
+	std::string chatterbox_layout;
+	if(gSavedSettings.getBOOL("EmeraldVerticalIMTabs"))
+	{ chatterbox_layout = "floater_chatterbox_emerald.xml"; }
+	else chatterbox_layout = "floater_chatterbox.xml";
+
+	LLUICtrlFactory::getInstance()->buildFloater(this, chatterbox_layout, NULL, FALSE);
 	if (gSavedSettings.getBOOL("ContactsTornOff"))
 	{
 		LLFloaterMyFriends* floater_contacts = LLFloaterMyFriends::getInstance(0);

@@ -106,7 +106,6 @@ LLPreviewTexture::LLPreviewTexture(const std::string& name,
 	}
 }
 
-
 // Note: uses asset_id as a dummy item id.
 LLPreviewTexture::LLPreviewTexture(
 	const std::string& name,
@@ -128,7 +127,7 @@ LLPreviewTexture::LLPreviewTexture(
 	mLoadingFullImage( FALSE ),
 	mShowKeepDiscard(FALSE),
 	mCopyToInv(copy_to_inv),
-	mIsCopyable(TRUE),
+	mIsCopyable(copy_to_inv),
 	mLastHeight(0),
 	mLastWidth(0)
 {
@@ -136,7 +135,7 @@ LLPreviewTexture::LLPreviewTexture(
 	init();
 
 	setTitle(title);
-
+	
 	LLRect curRect = getRect();
 	translate(curRect.mLeft - rect.mLeft, curRect.mTop - rect.mTop);
 	

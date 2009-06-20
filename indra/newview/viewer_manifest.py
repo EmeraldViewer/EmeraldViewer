@@ -395,7 +395,7 @@ class WindowsManifest(ViewerManifest):
 class DarwinManifest(ViewerManifest):
     def construct(self):
         # copy over the build result (this is a no-op if run within the xcode script)
-        self.path(self.args['configuration'] + "/Second Life.app", dst="")
+        self.path(self.args['configuration'] + "/GreenLife Emerald Viewer.app", dst="")
 
         if self.prefix(src="", dst="Contents"):  # everything goes in Contents
             # Expand the tar file containing the assorted mozilla bits into
@@ -406,6 +406,10 @@ class DarwinManifest(ViewerManifest):
 
             # copy additional libs in <bundle>/Contents/MacOS/
             self.path("../../libraries/universal-darwin/lib_release/libndofdev.dylib", dst="MacOS/libndofdev.dylib")
+            # OpenAL libraries
+            self.path("../../libraries/universal-darwin/lib_release/libopenal.dylib", "MacOS/libopenal.dylib");
+            self.path("../../libraries/universal-darwin/lib_release/libalut.dylib", "MacOS/libalut.dylib");
+
 
             # replace the default theme with our custom theme (so scrollbars work).
             if self.prefix(src="mozilla-theme", dst="MacOS/chrome"):
@@ -452,21 +456,21 @@ class DarwinManifest(ViewerManifest):
                 self.path("zh-Hans.lproj")
 
                 # SLVoice and vivox lols
-                self.path("vivox-runtime/universal-darwin/libalut.dylib", "libalut.dylib")
-                self.path("vivox-runtime/universal-darwin/libopenal.dylib", "libopenal.dylib")
-                self.path("vivox-runtime/universal-darwin/libortp.dylib", "libortp.dylib")
-                self.path("vivox-runtime/universal-darwin/libvivoxsdk.dylib", "libvivoxsdk.dylib")
-                self.path("vivox-runtime/universal-darwin/SLVoice", "SLVoice")
+#                self.path("vivox-runtime/universal-darwin/libalut.dylib", "libalut.dylib")
+#                self.path("vivox-runtime/universal-darwin/libopenal.dylib", "libopenal.dylib")
+#                self.path("vivox-runtime/universal-darwin/libortp.dylib", "libortp.dylib")
+#                self.path("vivox-runtime/universal-darwin/libvivoxsdk.dylib", "libvivoxsdk.dylib")
+#                self.path("vivox-runtime/universal-darwin/SLVoice", "SLVoice")
 
                 # llkdu dynamic library
 #                self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
                 
                 #libfmodwrapper.dylib
-                self.path(self.args['configuration'] + "/libfmodwrapper.dylib", "libfmodwrapper.dylib")
+#                self.path(self.args['configuration'] + "/libfmodwrapper.dylib", "libfmodwrapper.dylib")
                 
                 # our apps
 #                self.path("../mac_crash_logger/" + self.args['configuration'] + "/mac-crash-logger.app", "mac-crash-logger.app")
-                self.path("../mac_updater/" + self.args['configuration'] + "/mac-updater.app", "mac-updater.app")
+#                self.path("../mac_updater/" + self.args['configuration'] + "/mac-updater.app", "mac-updater.app")
 
                 # command line arguments for connecting to the proper grid
                 self.put_in_file(self.flags_list(), 'arguments.txt')
@@ -482,7 +486,7 @@ class DarwinManifest(ViewerManifest):
         if ("package" in self.args['actions'] or 
             "unpacked" in self.args['actions']):
             self.run_command('strip -S "%(viewer_binary)s"' %
-                             { 'viewer_binary' : self.dst_path_of('Contents/MacOS/Second Life')})
+                             { 'viewer_binary' : self.dst_path_of('Contents/MacOS/GreenLife Emerald Viewer')})
 
 
     def package_finish(self):
@@ -593,7 +597,7 @@ class LinuxManifest(ViewerManifest):
         if 'installer_name' in self.args:
             installer_name = self.args['installer_name']
         else:
-            installer_name_components = ['SecondLife_', self.args.get('arch')]
+            installer_name_components = ['GreenLife_', self.args.get('arch')]
             installer_name_components.extend(self.args['version'])
             installer_name = "_".join(installer_name_components)
             if self.default_channel():
@@ -661,7 +665,7 @@ class Linux_i686Manifest(LinuxManifest):
 
         if self.prefix("../../libraries/i686-linux/lib_release_client", dst="lib"):
 #            self.path("libkdu_v42R.so", "libkdu.so")
-            self.path("libfmod-3.75.so")
+#            self.path("libfmod-3.75.so")
             self.path("libapr-1.so.0")
             self.path("libaprutil-1.so.0")
             self.path("libdb-4.2.so")
@@ -674,16 +678,17 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libopenjpeg.so.1.3.0", "libopenjpeg.so.1.3")
             self.path("libalut.so")
             self.path("libopenal.so", "libopenal.so.1")
+            self.path("liblua5.1.so")
             self.end_prefix("lib")
 
             # Vivox runtimes
-            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
-                    self.path("SLVoice")
-                    self.end_prefix()
-            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
-                    self.path("libortp.so")
-                    self.path("libvivoxsdk.so")
-                    self.end_prefix("lib")
+#            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
+#                    self.path("SLVoice")
+#                    self.end_prefix()
+#            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
+#                    self.path("libortp.so")
+#                    self.path("libvivoxsdk.so")
+#                    self.end_prefix("lib")
 
 class Linux_x86_64Manifest(LinuxManifest):
     def construct(self):

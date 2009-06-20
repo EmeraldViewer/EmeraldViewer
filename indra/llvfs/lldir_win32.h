@@ -54,6 +54,8 @@ private:
 	
 	void* mDirSearch_h;
 	llutf16string mCurrentDir;
+
+	bool mPortable;
 };
 
 #endif // LL_LLDIR_WIN32_H

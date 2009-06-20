@@ -588,10 +588,16 @@ private:
 	LLVoiceVisualizer*  mVoiceVisualizer;
 	int					mCurrentGesticulationLevel;
 	
+	//lgg i dont know what im doign here
+	static BOOL		lgPartsNow;
+	static LLVector3d lgBeamLastAt;
+	
 	// Animation timer
 	LLTimer		mAnimTimer;
 	F32			mTimeLast;	
 
+	static LLSD ClientResolutionList;
+protected:
 	LLPointer<LLHUDEffectSpiral> mBeam;
 	LLFrameTimer mBeamTimer;
 

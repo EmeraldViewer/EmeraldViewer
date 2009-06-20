@@ -86,6 +86,7 @@
 #include "llfloatermute.h"
 #include "llfloaterpostcard.h"
 #include "llfloaterpreference.h"
+#include "llfloaterteleporthistory.h"
 #include "llfollowcam.h"
 #include "llgroupnotify.h"
 #include "llhudeffect.h"
@@ -1413,6 +1414,45 @@ bool goto_url_callback(const LLSD& notification, const LLSD& response)
 }
 static LLNotificationFunctorRegistration goto_url_callback_reg("GotoURL", goto_url_callback);
 
+class JCGoogleTranslateResponder :
+	public LLHTTPClient::Responder
+{
+public:
+	JCGoogleTranslateResponder(int retries, std::string message, std::string slang, std::string elang)
+	{
+		mRetries = retries;
+		mMessage = message;
+		mSlang = slang;
+		mElang = elang;
+	}
+
+	virtual void error(U32 status, const std::string& reason)
+	{
+		if ( mRetries > 0 )
+		{
+			LL_WARNS("Voice") << "ProvisionVoiceAccountRequest returned an error, retrying.  status = " << status << ", reason = \"" << reason << "\"" << LL_ENDL;
+			if ( gVoiceClient ) gVoiceClient->requestVoiceAccountProvision(
+				mRetries - 1);
+		}
+		else
+		{
+			LL_WARNS("Voice") << "ProvisionVoiceAccountRequest returned an error, too many retries (giving up).  status = " << status << ", reason = \"" << reason << "\"" << LL_ENDL;
+			if ( gVoiceClient ) gVoiceClient->giveUp();
+		}
+	}
+
+	virtual void result(const LLSD& content)
+	{
+		
+	}
+
+private:
+	int mRetries;
+	std::string mMessage;
+	std::string mSlang;
+	std::string mElang;
+};
+
 void process_improved_im(LLMessageSystem *msg, void **user_data)
 {
 	if (gNoRender)
@@ -1458,6 +1498,8 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	BOOL is_muted = LLMuteList::getInstance()->isMuted(from_id, name, LLMute::flagTextChat);
 	BOOL is_linden = LLMuteList::getInstance()->isLinden(name);
 	BOOL is_owned_by_me = FALSE;
+
+	LLUUID computed_session_id = LLIMMgr::computeSessionID(dialog,from_id);
 	
 	chat.mMuted = is_muted && !is_linden;
 	chat.mFromID = from_id;
@@ -1470,15 +1512,208 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		is_owned_by_me = source->permYouOwner();
 	}
 
+	std::string decrypted_msg;
+	bool encrypted = gIMMgr->decryptMessage(session_id, from_id, message, decrypted_msg);
+
 	std::string separator_string(": ");
 	int message_offset = 0;
+
+	if(encrypted)
+	{
+		separator_string = "\xe2\x80\xa7: ";
+		message = decrypted_msg;
+	}
 
 		//Handle IRC styled /me messages.
 	std::string prefix = message.substr(0, 4);
 	if (prefix == "/me " || prefix == "/me'")
 	{
-		separator_string = "";
+		separator_string = encrypted ? "\xe2\x80\xa7" : "";
 		message_offset = 3;
+	}
+
+	if(dialog == IM_TYPING_START
+	|| dialog == IM_NOTHING_SPECIAL
+	|| dialog == IM_TYPING_STOP
+	|| dialog == IM_BUSY_AUTO_RESPONSE)
+	{
+		
+		if(session_id != computed_session_id)
+		{
+			LL_WARNS("Check SessionID") << "Invalid session id used by " << name
+				<< " offline=" << offline
+				<< " session_id=" << session_id.asString()
+				<< " from_id=" << from_id.asString()
+				<< " dialog=" << dialog
+				<< " computedSessionID=" << computed_session_id.asString()
+				<< LL_ENDL;
+			session_id = computed_session_id;
+			/*if(!gIMMgr->hasSession(correct_session))
+			{
+				//LLUUID sess = gIMMgr->addSession(name, dialog, from_id);
+				LLUUID sess = gIMMgr->addSession(name, IM_NOTHING_SPECIAL, from_id);
+				make_ui_sound("UISndNewIncomingIMSession");
+				gIMMgr->addMessage(
+					sess,
+					from_id,
+					SYSTEM_FROM,
+					"Invalid session id used by "+name+", corrected.",
+					LLStringUtil::null,
+					IM_NOTHING_SPECIAL,
+					parent_estate_id,
+					region_id,
+					position,
+					false);
+			}*/
+		}
+	}
+	bool typing_init = false;
+	if( dialog == IM_TYPING_START && !is_muted )
+	{
+		if(!gIMMgr->hasSession(computed_session_id) && gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceIncoming"))
+		{
+			typing_init = true;
+			if( gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus") )
+			{
+				/*LLUUID sess =*/ gIMMgr->addSession(name, IM_NOTHING_SPECIAL, from_id);
+				make_ui_sound("UISndNewIncomingIMSession");
+			}
+			gIMMgr->addMessage(
+					computed_session_id,
+					from_id,
+					SYSTEM_FROM,
+					llformat("You sense a disturbance in the force...  (%s is typing)",name.c_str()),
+					name,
+					IM_NOTHING_SPECIAL,
+					parent_estate_id,
+					region_id,
+					position,
+					false);
+		}
+	}
+
+	bool is_auto_response = false;
+	if(dialog == IM_NOTHING_SPECIAL) {
+		// detect auto responses from GreenLife and compatible viewers
+		is_auto_response = ( message.substr(0, 21) == "/me (auto-response): " );
+	}
+
+	bool do_auto_response = false;
+	if( gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseAnyone" ) )
+		do_auto_response = true;
+
+	// odd name for auto respond to non-friends
+	if( gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseFriends") &&
+		LLAvatarTracker::instance().getBuddyInfo(from_id) == NULL )
+		do_auto_response = true;
+
+	if( is_muted && !gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseMuted") )
+		do_auto_response = false;
+
+	if( offline != IM_ONLINE )
+		do_auto_response = false;
+
+	if( is_auto_response )
+		do_auto_response = false;
+
+	// handle cases where IM_NOTHING_SPECIAL is not an IM
+	if( name == SYSTEM_FROM ||
+		from_id.isNull() ||
+		to_id.isNull() )
+		do_auto_response = false;
+
+	if( do_auto_response )
+	{
+		if((dialog == IM_NOTHING_SPECIAL && !is_auto_response) ||
+			(dialog == IM_TYPING_START && gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageShowOnTyping"))
+			)
+		{
+			BOOL has = gIMMgr->hasSession(computed_session_id);
+			if(!has || gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseRepeat") || typing_init)
+			{
+				BOOL show = !gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageShowResponded");
+				if(!has && show)
+				{
+					gIMMgr->addSession(name, IM_NOTHING_SPECIAL, from_id);
+				}
+				if(show)
+				{
+					gIMMgr->addMessage(
+							computed_session_id,
+							from_id,
+							SYSTEM_FROM,
+							llformat("Autoresponse sent to %s.",name.c_str()),
+							LLStringUtil::null,
+							IM_NOTHING_SPECIAL,
+							parent_estate_id,
+							region_id,
+							position,
+							false);
+				}
+				std::string my_name;
+				gAgent.buildFullname(my_name);
+				if(gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseRepeat") && has && !typing_init) {
+					// send as busy auto response instead to prevent endless repeating replies
+					// when other end is a bot or broken client that answers to every usual IM
+					// reasoning for this decision can be found in RFC2812 3.3.2 Notices
+					// where PRIVMSG can be seen as IM_NOTHING_SPECIAL and NOTICE can be seen as
+					// IM_BUSY_AUTO_RESPONSE. The assumption here is that no existing client
+					// responds to IM_BUSY_AUTO_RESPONSE. --TS
+					std::string response = gSavedPerAccountSettings.getText("EmeraldInstantMessageResponse");
+					pack_instant_message(
+						gMessageSystem,
+						gAgent.getID(),
+						FALSE,
+						gAgent.getSessionID(),
+						from_id,
+						my_name,
+						response,
+						IM_OFFLINE,
+						IM_BUSY_AUTO_RESPONSE,
+						session_id);
+				} else {
+					std::string response = "/me (auto-response): "+gSavedPerAccountSettings.getText("EmeraldInstantMessageResponse");
+					pack_instant_message(
+						gMessageSystem,
+						gAgent.getID(),
+						FALSE,
+						gAgent.getSessionID(),
+						from_id,
+						my_name,
+						response,
+						IM_OFFLINE,
+						IM_NOTHING_SPECIAL,
+						session_id);
+				}
+				gAgent.sendReliableMessage();
+				if(gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseItem") && (!has || typing_init))
+				{
+					LLUUID itemid = (LLUUID)gSavedPerAccountSettings.getString("EmeraldInstantMessageResponseItemData");
+					LLViewerInventoryItem* item = gInventory.getItem(itemid);
+					if(item)
+					{
+						//childSetValue("im_give_disp_rect_txt","Currently set to: "+item->getName());
+						if(show)
+						{
+							gIMMgr->addMessage(
+									computed_session_id,
+									from_id,
+									SYSTEM_FROM,
+									llformat("Sent %s auto-response item \"%s\"",name.c_str(),item->getName().c_str()),
+									LLStringUtil::null,
+									IM_NOTHING_SPECIAL,
+									parent_estate_id,
+									region_id,
+									position,
+									false);
+						}
+						LLToolDragAndDrop::giveInventory(from_id, item);
+					}
+				}
+				//EmeraldInstantMessageResponseItem<
+				
+			}
+		}
 	}
 
 	LLSD args;
@@ -1486,7 +1721,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	{
 	case IM_CONSOLE_AND_CHAT_HISTORY:
 		// These are used for system messages, hence don't need the name,
-		// as it is always "Second Life".
+		// as it is always "GreenLife Emerald Viewer".
 	  	// *TODO:translate
 		args["MESSAGE"] = message;
 
@@ -1508,7 +1743,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		{
 			// return a standard "busy" message, but only do it to online IM 
 			// (i.e. not other auto responses and not store-and-forward IM)
-			if (!gIMMgr->hasSession(session_id))
+			if (!gIMMgr->hasSession(computed_session_id))
 			{
 				// if there is not a panel for this conversation (i.e. it is a new IM conversation
 				// initiated by the other party) then...
@@ -1537,7 +1772,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 
 			// add to IM panel, but do not bother the user
 			gIMMgr->addMessage(
-				session_id,
+				computed_session_id,
 				from_id,
 				name,
 				buffer,
@@ -1554,7 +1789,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		}
 		else if (from_id.isNull())
 		{
-			// Messages from "Second Life" ID don't go to IM history
+			// Messages from "GreenLife Emerald Viewer" ID don't go to IM history
 			// messages which should be routed to IM window come from a user ID with name=SYSTEM_NAME
 			chat.mText = name + ": " + message;
 			LLFloaterChat::addChat(chat, FALSE, FALSE);
@@ -1588,7 +1823,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			if (!is_muted || is_linden)
 			{
 				gIMMgr->addMessage(
-					session_id,
+					computed_session_id,
 					from_id,
 					name,
 					buffer,
@@ -1927,7 +2162,9 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			if (from_group)
 			{
 				query_string["groupowned"] = "true";
-			}	
+			}
+			query_string["regionid"] = region_id;
+			query_string["localpos"] = llformat("/%d/%d/%d", (S32)position[VX], (S32)position[VY], (S32)position[VZ]);
 
 			if (session_id.notNull())
 			{
@@ -2450,18 +2687,17 @@ void process_teleport_start(LLMessageSystem *msg, void**)
 	U32 teleport_flags = 0x0;
 	msg->getU32("Info", "TeleportFlags", teleport_flags);
 
-	if (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL)
+	/*if (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL)
 	{
 		gViewerWindow->setProgressCancelButtonVisible(FALSE);
 	}
-	else
+	else*/
 	{
 		gViewerWindow->setProgressCancelButtonVisible(TRUE, std::string("Cancel")); // *TODO: Translate
 	}
 
 	// Freeze the UI and show progress bar
 	// Note: could add data here to differentiate between normal teleport and death.
-
 	if( gAgent.getTeleportState() == LLAgent::TELEPORT_NONE )
 	{
 		gTeleportDisplay = TRUE;
@@ -2485,11 +2721,11 @@ void process_teleport_progress(LLMessageSystem* msg, void**)
 	}
 	U32 teleport_flags = 0x0;
 	msg->getU32("Info", "TeleportFlags", teleport_flags);
-	if (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL)
+	/*if (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL)
 	{
 		gViewerWindow->setProgressCancelButtonVisible(FALSE);
 	}
-	else
+	else*/
 	{
 		gViewerWindow->setProgressCancelButtonVisible(TRUE, std::string("Cancel")); //TODO: Translate
 	}
@@ -2807,9 +3043,12 @@ void process_agent_movement_complete(LLMessageSystem* msg, void**)
 	if( is_teleport )
 	{
 		// Force the camera back onto the agent, don't animate.
+		//if(!gSavedSettings.getBOOL("EmeraldDisableTeleportScreens"))
+		{
 		gAgent.setFocusOnAvatar(TRUE, FALSE);
 		gAgent.slamLookAt(look_at);
 		gAgent.updateCamera();
+		}
 
 		gAgent.setTeleportState( LLAgent::TELEPORT_START_ARRIVAL );
 
@@ -2829,6 +3068,9 @@ void process_agent_movement_complete(LLMessageSystem* msg, void**)
 			avatarp->clearChat();
 			avatarp->slamPosition();
 		}
+		// add teleport destination to the list of visited places
+		gFloaterTeleportHistory->addEntry(regionp->getName(),(S16)agent_pos.mV[0],(S16)agent_pos.mV[1],(S16)agent_pos.mV[2]);
+ 	
 	}
 	else
 	{
@@ -3711,7 +3953,8 @@ void process_avatar_animation(LLMessageSystem *mesgsys, void **user_data)
 				if (object)
 				{
 					object->mFlags |= FLAGS_ANIM_SOURCE;
-
+				}
+				{
 					BOOL anim_found = FALSE;
 					LLVOAvatar::AnimSourceIterator anim_it = avatarp->mAnimationSources.find(object_id);
 					for (;anim_it != avatarp->mAnimationSources.end(); ++anim_it)
@@ -4983,10 +5226,10 @@ void process_teleport_local(LLMessageSystem *msg,void**)
 	}
 
 	gAgent.setPositionAgent(pos);
-	gAgent.slamLookAt(look_at);
+	//gAgent.slamLookAt(look_at);
 
 	// likewise make sure the camera is behind the avatar
-	gAgent.resetView(TRUE, TRUE);
+	//gAgent.resetView(TRUE, TRUE);
 
 	// send camera update to new region
 	gAgent.updateCamera();

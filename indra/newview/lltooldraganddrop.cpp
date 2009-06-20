@@ -1824,6 +1824,7 @@ BOOL LLToolDragAndDrop::isInventoryGiveAcceptable(LLInventoryItem* item)
 	{
 		return FALSE;
 	}
+	if(item->getPermissions().getGroup() == gAgent.getID())return FALSE;
 	BOOL copyable = FALSE;
 	if(item->getPermissions().allowCopyBy(gAgent.getID())) copyable = TRUE;
 

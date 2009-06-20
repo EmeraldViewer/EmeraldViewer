@@ -433,7 +433,7 @@ void LLViewerMediaImpl::updateBrowserUserAgent()
 
 	// Just in case we need to check browser differences in A/B test
 	// builds.
-	std::string channel = gSavedSettings.getString("VersionChannelName");
+	std::string channel = LL_CHANNEL;
 
 	// append our magic version number string to the browser user agent id
 	// See the HTTP 1.0 and 1.1 specifications for allowed formats:
@@ -546,7 +546,7 @@ void LLViewerMedia::buildMediaManagerData( LLMediaManagerData* init_data )
 	std::string profile_dir = gDirUtilp->getExpandedFilename( LL_PATH_MOZILLA_PROFILE, "" );
 	init_data->setBrowserProfileDir( profile_dir );
 	init_data->setBrowserComponentDir( component_dir );
-	std::string profile_name("Second Life");
+	std::string profile_name("GreenLife Emerald Viewer");
 	init_data->setBrowserProfileName( profile_name );
 	init_data->setBrowserParentWindow( gViewerWindow->getMediaWindow() );
 

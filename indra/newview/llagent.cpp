@@ -217,6 +217,8 @@ LLAgent gAgent;
 // Statics
 //
 
+BOOL LLAgent::emeraldPhantom = 0;
+
 const F32 LLAgent::TYPING_TIMEOUT_SECS = 5.f;
 
 std::map<std::string, std::string> LLAgent::sTeleportErrorMessages;
@@ -752,7 +754,8 @@ void LLAgent::movePitch(S32 direction)
 BOOL LLAgent::canFly()
 {
 	if (isGodlike()) return TRUE;
-
+	//LGG always fly code
+	if(gSavedSettings.getBOOL("EmeraldAlwaysFly")) return TRUE;
 	LLViewerRegion* regionp = getRegion();
 	if (regionp && regionp->getBlockFly()) return FALSE;
 	
@@ -767,11 +770,26 @@ BOOL LLAgent::canFly()
 
 	return parcel->getAllowFly();
 }
+//-----------------------------------------------------------------------------
+// setPhantom()  lgg
+//-----------------------------------------------------------------------------
+void LLAgent::setPhantom(BOOL phantom)
+{
+	emeraldPhantom = phantom;
+}
+//-----------------------------------------------------------------------------
+// getPhantom()  lgg
+//-----------------------------------------------------------------------------
+BOOL LLAgent::getPhantom()
+{
+	return emeraldPhantom;
+}
 
 
 //-----------------------------------------------------------------------------
 // setFlying()
-//-----------------------------------------------------------------------------
+//-
+//----------------------------------------------------------------------------
 void LLAgent::setFlying(BOOL fly)
 {
 	if (mAvatarObject.notNull())
@@ -825,6 +843,17 @@ void LLAgent::toggleFlying()
 
 	setFlying( fly );
 	resetView();
+}
+
+
+//-----------------------------------------------------------------------------
+// togglePhantom()
+//-----------------------------------------------------------------------------
+void LLAgent::togglePhantom()
+{
+	BOOL phan = !(emeraldPhantom);
+
+	setPhantom( phan );
 }
 
 
@@ -1252,11 +1281,11 @@ F32 LLAgent::clampPitchToLimits(F32 angle)
 
 	LLVector3 skyward = getReferenceUpVector();
 
-	F32			look_down_limit;
-	F32			look_up_limit = 10.f * DEG_TO_RAD;
+	F32			look_down_limit = 179.f;
+	F32			look_up_limit = 1.f * DEG_TO_RAD;
 
 	F32 angle_from_skyward = acos( mFrameAgent.getAtAxis() * skyward );
-
+	/*
 	if (mAvatarObject.notNull() && mAvatarObject->mIsSitting)
 	{
 		look_down_limit = 130.f * DEG_TO_RAD;
@@ -1265,7 +1294,7 @@ F32 LLAgent::clampPitchToLimits(F32 angle)
 	{
 		look_down_limit = 170.f * DEG_TO_RAD;
 	}
-
+	*/
 	// clamp pitch to limits
 	if ((angle >= 0.f) && (angle_from_skyward + angle > look_down_limit))
 	{
@@ -4671,6 +4700,116 @@ void LLAgent::lookAtLastChat()
 
 			setFocusGlobal(chatter->getPositionGlobal(), mLastChatterID);
 			mCameraFocusOffsetTarget = getPosGlobalFromAgent(new_camera_pos) - chatter->getPositionGlobal();
+			setFocusOnAvatar(FALSE, TRUE);
+		}
+	}
+}
+
+void LLAgent::lookAtObject(LLUUID object_id, ECameraPosition camera_pos)
+{
+	// Block if camera is animating or not in normal third person camera mode
+	if (mCameraAnimating || !cameraThirdPerson())
+	{
+		return;
+	}
+
+	LLViewerObject *chatter = gObjectList.findObject(object_id);
+	if (chatter)
+	{
+		LLVector3 delta_pos;
+		if (chatter->isAvatar())
+		{
+			LLVOAvatar *chatter_av = (LLVOAvatar*)chatter;
+			if (!mAvatarObject.isNull() && chatter_av->mHeadp)
+			{
+				delta_pos = chatter_av->mHeadp->getWorldPosition() - mAvatarObject->mHeadp->getWorldPosition();
+			}
+			else
+			{
+				delta_pos = chatter->getPositionAgent() - getPositionAgent();
+			}
+			delta_pos.normVec();
+
+			setControlFlags(AGENT_CONTROL_STOP);
+
+			changeCameraToThirdPerson();
+
+			LLVector3 new_camera_pos = mAvatarObject->mHeadp->getWorldPosition();
+			LLVector3 left = delta_pos % LLVector3::z_axis;
+			left.normVec();
+			LLVector3 up = left % delta_pos;
+			up.normVec();
+			new_camera_pos -= delta_pos * 0.4f;
+			new_camera_pos += left * 0.3f;
+			new_camera_pos += up * 0.2f;
+
+			F32 radius = chatter_av->getVObjRadius();
+			LLVector3d view_dist(radius, radius, 0.0f);
+
+			if (chatter_av->mHeadp)
+			{
+				setFocusGlobal(getPosGlobalFromAgent(chatter_av->mHeadp->getWorldPosition()), object_id);
+				mCameraFocusOffsetTarget = getPosGlobalFromAgent(new_camera_pos) - gAgent.getPosGlobalFromAgent(chatter_av->mHeadp->getWorldPosition());
+
+				switch(camera_pos)
+				{
+					case CAMERA_POSITION_SELF:
+						mCameraFocusOffsetTarget = getPosGlobalFromAgent(new_camera_pos) - gAgent.getPosGlobalFromAgent(chatter_av->mHeadp->getWorldPosition());
+						break;
+					case CAMERA_POSITION_OBJECT:
+						mCameraFocusOffsetTarget =  view_dist;
+						break;
+				}
+			}
+			else
+			{
+				setFocusGlobal(chatter->getPositionGlobal(), object_id);
+				mCameraFocusOffsetTarget = getPosGlobalFromAgent(new_camera_pos) - chatter->getPositionGlobal();
+
+				switch(camera_pos)
+				{
+					case CAMERA_POSITION_SELF:
+						mCameraFocusOffsetTarget = getPosGlobalFromAgent(new_camera_pos) - chatter->getPositionGlobal();
+						break;
+					case CAMERA_POSITION_OBJECT:
+						mCameraFocusOffsetTarget = view_dist;
+						break;
+				}
+			}
+			setFocusOnAvatar(FALSE, TRUE);
+		}
+		else
+		{
+			delta_pos = chatter->getRenderPosition() - getPositionAgent();
+			delta_pos.normVec();
+
+			setControlFlags(AGENT_CONTROL_STOP);
+
+			changeCameraToThirdPerson();
+
+			LLVector3 new_camera_pos = mAvatarObject->mHeadp->getWorldPosition();
+			LLVector3 left = delta_pos % LLVector3::z_axis;
+			left.normVec();
+			LLVector3 up = left % delta_pos;
+			up.normVec();
+			new_camera_pos -= delta_pos * 0.4f;
+			new_camera_pos += left * 0.3f;
+			new_camera_pos += up * 0.2f;
+
+			setFocusGlobal(chatter->getPositionGlobal(), object_id);
+
+			switch(camera_pos)
+			{
+				case CAMERA_POSITION_SELF:
+					mCameraFocusOffsetTarget = getPosGlobalFromAgent(new_camera_pos) - chatter->getPositionGlobal();
+					break;
+				case CAMERA_POSITION_OBJECT:
+					F32 radius = chatter->getVObjRadius();
+					LLVector3d view_dist(radius, radius, 0.0f);
+					mCameraFocusOffsetTarget = view_dist;
+					break;
+			}
+
 			setFocusOnAvatar(FALSE, TRUE);
 		}
 	}

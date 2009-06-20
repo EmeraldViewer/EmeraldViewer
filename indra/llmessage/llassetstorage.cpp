@@ -523,16 +523,19 @@ void LLAssetStorage::downloadCompleteCallback(
 	S32 result,
 	const LLUUID& file_id,
 	LLAssetType::EType file_type,
-	void* user_data, LLExtStat ext_status)
+	void* callback_parm_req, LLExtStat ext_status)
 {
 	lldebugs << "LLAssetStorage::downloadCompleteCallback() for " << file_id
 		 << "," << LLAssetType::lookup(file_type) << llendl;
-	LLAssetRequest* req = (LLAssetRequest*)user_data;
+
+	// be careful! req may be a ptr to memory already freed (a timeout does this)
+	LLAssetRequest* req = (LLAssetRequest*)callback_parm_req;	
 	if(!req)
 	{
 		llwarns << "LLAssetStorage::downloadCompleteCallback called without"
 			"a valid request." << llendl;
-		return;
+		// we can live with a null pointer, we're not allowed to deref the ptr anyway (see above)
+		// return;  
 	}
 	if (!gAssetStorage)
 	{
@@ -556,7 +559,7 @@ void LLAssetStorage::downloadCompleteCallback(
 	if (LL_ERR_NOERR == result)
 	{
 		// we might have gotten a zero-size file
-		LLVFile vfile(gAssetStorage->mVFS, req->getUUID(), req->getType());
+		LLVFile vfile(gAssetStorage->mVFS, file_id, file_type);
 		if (vfile.getSize() <= 0)
 		{
 			llwarns << "downloadCompleteCallback has non-existent or zero-size asset " << req->getUUID() << llendl;
@@ -575,7 +578,7 @@ void LLAssetStorage::downloadCompleteCallback(
 	{
 		request_list_t::iterator curiter = iter++;
 		LLAssetRequest* tmp = *curiter;
-		if ((tmp->getUUID() == file_id) && (tmp->getType()== file_type))
+		if ((tmp->getUUID() == file_id) && (tmp->getType() == file_type))
 		{
 			requests.push_front(tmp);
 			iter = gAssetStorage->mPendingDownloads.erase(curiter);
@@ -588,7 +591,7 @@ void LLAssetStorage::downloadCompleteCallback(
 		LLAssetRequest* tmp = *curiter;
 		if (tmp->mDownCallback)
 		{
-			tmp->mDownCallback(gAssetStorage->mVFS, req->getUUID(), req->getType(), tmp->mUserData, result, ext_status);
+			tmp->mDownCallback(gAssetStorage->mVFS, tmp->getUUID(), tmp->getType(), tmp->mUserData, result, ext_status);
 		}
 		delete tmp;
 	}
@@ -684,10 +687,10 @@ void LLAssetStorage::downloadEstateAssetCompleteCallback(
 	S32 result,
 	const LLUUID& file_id,
 	LLAssetType::EType file_type,
-	void* user_data,
+	void* callback_parm_req,
 	LLExtStat ext_status)
 {
-	LLEstateAssetRequest *req = (LLEstateAssetRequest*)user_data;
+	LLEstateAssetRequest *req = (LLEstateAssetRequest*)callback_parm_req;
 	if(!req)
 	{
 		llwarns << "LLAssetStorage::downloadEstateAssetCompleteCallback called"
@@ -701,12 +704,10 @@ void LLAssetStorage::downloadEstateAssetCompleteCallback(
 		return;
 	}
 
-	req->setUUID(file_id);
-	req->setType(file_type);
 	if (LL_ERR_NOERR == result)
 	{
 		// we might have gotten a zero-size file
-		LLVFile vfile(gAssetStorage->mVFS, req->getUUID(), req->getAType());
+		LLVFile vfile(gAssetStorage->mVFS, file_id, file_type);
 		if (vfile.getSize() <= 0)
 		{
 			llwarns << "downloadCompleteCallback has non-existent or zero-size asset!" << llendl;
@@ -716,7 +717,9 @@ void LLAssetStorage::downloadEstateAssetCompleteCallback(
 		}
 	}
 
-	req->mDownCallback(gAssetStorage->mVFS, req->getUUID(), req->getAType(), req->mUserData, result, ext_status);
+	req->mDownCallback(gAssetStorage->mVFS, file_id, file_type, req->mUserData, result, ext_status);
+
+	delete req;
 }
 
 void LLAssetStorage::getInvItemAsset(const LLHost &object_sim, const LLUUID &agent_id, const LLUUID &session_id,
@@ -821,10 +824,10 @@ void LLAssetStorage::downloadInvItemCompleteCallback(
 	S32 result,
 	const LLUUID& file_id,
 	LLAssetType::EType file_type,
-	void* user_data,
+	void* callback_parm_req,
 	LLExtStat ext_status)
 {
-	LLInvItemRequest *req = (LLInvItemRequest*)user_data;
+	LLInvItemRequest *req = (LLInvItemRequest*)callback_parm_req;
 	if(!req)
 	{
 		llwarns << "LLAssetStorage::downloadEstateAssetCompleteCallback called"
@@ -837,12 +840,10 @@ void LLAssetStorage::downloadInvItemCompleteCallback(
 		return;
 	}
 
-	req->setUUID(file_id);
-	req->setType(file_type);
 	if (LL_ERR_NOERR == result)
 	{
 		// we might have gotten a zero-size file
-		LLVFile vfile(gAssetStorage->mVFS, req->getUUID(), req->getType());
+		LLVFile vfile(gAssetStorage->mVFS, file_id, file_type);
 		if (vfile.getSize() <= 0)
 		{
 			llwarns << "downloadCompleteCallback has non-existent or zero-size asset!" << llendl;
@@ -852,7 +853,9 @@ void LLAssetStorage::downloadInvItemCompleteCallback(
 		}
 	}
 
-	req->mDownCallback(gAssetStorage->mVFS, req->getUUID(), req->getType(), req->mUserData, result, ext_status);
+	req->mDownCallback(gAssetStorage->mVFS, file_id, file_type, req->mUserData, result, ext_status);
+
+	delete req;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

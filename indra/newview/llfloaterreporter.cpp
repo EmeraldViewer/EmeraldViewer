@@ -540,7 +540,7 @@ void LLFloaterReporter::showFromMenu(EReportType report_type)
 
 
 // static
-void LLFloaterReporter::showFromObject(const LLUUID& object_id)
+LLFloaterReporter* LLFloaterReporter::showFromObject(const LLUUID& object_id)
 {
 	LLFloaterReporter* f = createNewAbuseReporter();
 	f->center();
@@ -558,6 +558,8 @@ void LLFloaterReporter::showFromObject(const LLUUID& object_id)
 	f->mDeselectOnClose = TRUE;
 
 	f->open();		/* Flawfinder: ignore */
+
+	return f;
 }
 
 

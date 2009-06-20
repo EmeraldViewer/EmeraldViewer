@@ -63,6 +63,7 @@
 #include "llresmgr.h"
 #include "lltabcontainer.h"
 #include "llviewertexteditor.h"
+#include "llviewermenu.h"		// *FIX: for is_agent_friend()
 #include "llviewermessage.h"
 #include "llviewerstats.h"
 #include "llviewercontrol.h"
@@ -74,6 +75,8 @@
 #include "llhttpclient.h"
 #include "llmutelist.h"
 #include "llstylemap.h"
+
+#include "emerald.h"
 
 //
 // Constants
@@ -1195,7 +1198,7 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 								FALSE);
 
 	setTitle(mSessionLabel);
-	mInputEditor->setMaxTextLength(1023);
+	mInputEditor->setMaxTextLength(S32_MAX);
 	// enable line history support for instant message bar
 	mInputEditor->setEnableLineHistory(TRUE);
 
@@ -1273,6 +1276,16 @@ LLFloaterIMPanel::~LLFloaterIMPanel()
 	}
 }
 
+static void passwordFocusChanged(LLFocusableElement *element, void *userdata)
+{
+	LLLineEditor *password = dynamic_cast<LLLineEditor*>(element);
+
+	if(password)
+	{
+		password->setDrawAsterixes(!password->hasFocus());
+	}
+}
+
 BOOL LLFloaterIMPanel::postBuild() 
 {
 	requires<LLLineEditor>("chat_editor");
@@ -1291,6 +1304,7 @@ BOOL LLFloaterIMPanel::postBuild()
 		mInputEditor->setReplaceNewlinesWithSpaces( FALSE );
 
 		childSetAction("profile_callee_btn", onClickProfile, this);
+		childSetAction("profile_tele_btn", onClickTeleport, this);
 		childSetAction("group_info_btn", onClickGroupInfo, this);
 
 		childSetAction("start_call_btn", onClickStartCall, this);
@@ -1329,6 +1343,22 @@ BOOL LLFloaterIMPanel::postBuild()
 		{
 			childSetAction("mute_btn", onClickMuteVoice, this);
 			childSetCommitCallback("speaker_volume", onVolumeChange, this);
+		}
+
+		LLLineEditor *password_editor = getChild<LLLineEditor>("password");
+
+		if(password_editor)
+		{
+			password_editor->setDrawAsterixes(TRUE);
+			password_editor->setFocusChangedCallback(passwordFocusChanged);
+		}
+
+		if(mDialog == IM_NOTHING_SPECIAL && is_agent_friend(mOtherParticipantUUID))
+		{
+			if(!LLAvatarTracker::instance().isBuddyOnline(mOtherParticipantUUID))
+			{
+				setOffline();
+			}
 		}
 
 		setDefaultBtn("send_btn");
@@ -1777,6 +1807,20 @@ void LLFloaterIMPanel::onClickProfile( void* userdata )
 	}
 }
 
+//static
+void LLFloaterIMPanel::onClickTeleport( void* userdata )
+{
+	//  Bring up the Profile window
+	LLFloaterIMPanel* self = (LLFloaterIMPanel*) userdata;
+	
+	if (self->mOtherParticipantUUID.notNull())
+	{
+		handle_lure(self->getOtherParticipantID());
+		//do a teleport to other part id
+		//LLFloaterAvatarInfo::showFromDirectory(self->getOtherParticipantID());
+	}
+}
+
 // static
 void LLFloaterIMPanel::onClickGroupInfo( void* userdata )
 {
@@ -1985,15 +2029,45 @@ void LLFloaterIMPanel::sendMsg()
 		{
 			// Truncate and convert to UTF8 for transport
 			std::string utf8_text = wstring_to_utf8str(text);
-			utf8_text = utf8str_truncate(utf8_text, MAX_MSG_BUF_SIZE - 1);
+			//utf8_text = utf8str_truncate(utf8_text, MAX_MSG_BUF_SIZE - 1);
 			
 			if ( mSessionInitialized )
 			{
-				deliver_message(utf8_text,
-								mSessionUUID,
-								mOtherParticipantUUID,
-								mDialog);
+				// same code like in llchatbar.cpp
+				U32 split = MAX_MSG_BUF_SIZE - 1;
 
+				if ( isEncrypted() ) split = 799; // Length left for message if encrypted
+				U32 pos = 0;
+				U32 total = utf8_text.length();
+				
+				while(pos < total)
+				{
+					U32 next_split = split;
+
+					if(pos + next_split > total) next_split = total - pos;
+
+					// don't split utf-8 bytes
+					while(U8(utf8_text[pos + next_split]) >= 0x80 && U8(utf8_text[pos + next_split]) < 0xC0
+						&& next_split > 0)
+					{
+						--next_split;
+					}
+
+					if(next_split == 0)
+					{
+						next_split = split;
+						LL_WARNS("Splitting") << "utf-8 couldn't be split correctly" << LL_ENDL;
+					}
+
+					std::string send = utf8_text.substr(pos, pos + next_split);
+					pos += next_split;
+					
+					// *FIXME: Queue messages if IM is not IM_NOTHING_SPECIAL
+					deliver_message(encrypt(send),
+									mSessionUUID,
+									mOtherParticipantUUID,
+									mDialog);
+				}
 				// local echo
 				if((mDialog == IM_NOTHING_SPECIAL) && 
 				   (mOtherParticipantUUID.notNull()))
@@ -2005,17 +2079,37 @@ void LLFloaterIMPanel::sendMsg()
 					std::string prefix = utf8_text.substr(0, 4);
 					if (prefix == "/me " || prefix == "/me'")
 					{
-						utf8_text.replace(0,3,"");
+						if(isEncrypted())
+						{
+							utf8_text.replace(0,3,"\xe2\x80\xa7");
+						}
+						else
+						{
+							utf8_text.replace(0,3,"");
+						}
 					}
 					else
 					{
-						history_echo += ": ";
+						if(isEncrypted())
+						{
+							history_echo += "\xe2\x80\xa7: ";
+						}
+						else
+						{
+							history_echo += ": ";
+						}
 					}
 					history_echo += utf8_text;
 
 					BOOL other_was_typing = mOtherTyping;
-
-					addHistoryLine(history_echo, gSavedSettings.getColor("IMChatColor"), true, gAgent.getID());
+					if(isEncrypted())
+					{
+						addHistoryLine(history_echo, gSavedSettings.getColor("IMEncryptedChatColor"), true, gAgent.getID());
+					}
+					else
+					{
+						addHistoryLine(history_echo, gSavedSettings.getColor("IMChatColor"), true, gAgent.getID());
+					}
 
 					if (other_was_typing) 
 					{
@@ -2175,6 +2269,12 @@ void LLFloaterIMPanel::processIMTyping(const LLIMInfo* im_info, BOOL typing)
 		// other user stopped typing
 		removeTypingIndicator(im_info);
 	}
+
+	// user is online, enable teleport button
+	if(mDialog == IM_NOTHING_SPECIAL)
+	{
+		childSetEnabled("profile_tele_btn", true);
+	}
 }
 
 
@@ -2244,6 +2344,15 @@ void LLFloaterIMPanel::chatFromLogFile(LLLogChat::ELogLineType type, std::string
 
 	//self->addHistoryLine(line, LLColor4::grey, FALSE);
 	self->mHistoryEditor->appendColoredText(message, false, true, LLColor4::grey);
+}
+
+// user is known to be offline when we receive this
+void LLFloaterIMPanel::setOffline()
+{
+	if(!gAgent.isGodlike())
+	{
+		childSetEnabled("profile_tele_btn", false);
+	}
 }
 
 void LLFloaterIMPanel::showSessionStartError(
@@ -2330,4 +2439,75 @@ bool LLFloaterIMPanel::onConfirmForceCloseError(const LLSD& notification, const 
 	return false;
 }
 
+bool LLFloaterIMPanel::isEncrypted()
+{
+	LLLineEditor *password_editor = getChild<LLLineEditor>("password");
 
+	if(password_editor)
+	{
+		std::string password = password_editor->getText();
+		if(!password.empty())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+std::string LLFloaterIMPanel::encrypt(const std::string &msg)
+{
+	LLLineEditor *password_editor = getChild<LLLineEditor>("password");
+
+	if(password_editor)
+	{
+		std::string password = password_editor->getText();
+		if(!password.empty())
+		{
+			std::string salt("01234567");
+
+			for(int i = 0; i < 4; i++)
+			{
+				U16 x = U16(ll_rand(RAND_MAX));
+				salt[i*2] = x % 94 + 33;
+				x /= 94;
+				salt[i*2+1] = x % 94 + 33;
+			}
+
+			EGenKey key(password, reinterpret_cast<const U8*>(salt.c_str()));
+			EAESEncrypt enc(key.key(), key.iv());
+			std::vector<U8> crypted = enc.encrypt(msg);
+			return std::string("\xdf\xbf") + salt + EAscii85::encode(crypted);
+		}
+	}
+	return msg;
+}
+
+bool LLFloaterIMPanel::decryptMsg(const std::string& msg, std::string& decrypted_msg)
+{
+	LLLineEditor *password_editor = getChild<LLLineEditor>("password");
+
+	if(password_editor)
+	{
+		if(msg.length() < 13)
+			return false;
+		if(msg[0] != '\xdf' || msg[1] != '\xbf' || msg[10] != '<' || msg[11] != '~')
+			return false;
+
+		const unsigned char *salt = reinterpret_cast<const U8*>(msg.c_str()) + 2;
+		std::string password = password_editor->getText();
+		
+		if(!password.empty())
+		{
+			EGenKey key(password, salt);
+			EAESDecrypt dec(key.key(), key.iv());
+			std::vector<U8> crypted = EAscii85::decode(msg.substr(10));
+			if(crypted.size() < 16)
+				return false;
+			decrypted_msg = dec.decrypt(crypted);
+			return true;
+		}
+	}
+
+	return false;
+}

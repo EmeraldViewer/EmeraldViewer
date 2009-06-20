@@ -31,7 +31,15 @@ set(debug_files
     xul.dll
     openjpegd.dll
     windbgdlg.exe
+    lua5.1.dll
     )
+
+if(OPENAL)
+    list(APPEND debug_files
+        soft-oal.dll
+        softalut.dll
+    )
+endif(OPENAL)
 
 copy_if_different(
     ${debug_src_dir} 
@@ -64,8 +72,16 @@ set(release_files
     xpcom.dll
     xul.dll
     openjpeg.dll
+    lua5.1.dll
     )
-    
+
+if(OPENAL)
+    list(APPEND release_files
+        soft-oal.dll
+        softalut.dll
+    )
+endif(OPENAL)
+
 copy_if_different(
     ${release_src_dir} 
     "${CMAKE_CURRENT_BINARY_DIR}/Release"

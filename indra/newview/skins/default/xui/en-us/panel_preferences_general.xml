@@ -71,7 +71,7 @@
 	     name="ui_auto_scale" radio_style="false" width="256" />
 	<spinner bottom="-260" decimal_digits="0" enabled="true"
 	     follows="left|top" height="16" increment="1" initial_val="300"
-	     label="Away Timeout:" label_width="141" left="10" max_val="600"
+	     label="Away Timeout:" label_width="141" left="10" max_val="8388607"
 	     min_val="30" mouse_opaque="true" name="afk_timeout_spinner" width="202" />
 	<check_box bottom="-286" enabled="true"
 	     follows="left|top" font="SansSerifSmall" height="16" initial_value="false"

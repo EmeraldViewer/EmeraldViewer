@@ -1449,6 +1449,10 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 
 				LLQuaternion::Order ro = StringToOrder("ZYX");
 				rot_key.mRotation = mayaQ(rot_angles.mV[VX], rot_angles.mV[VY], rot_angles.mV[VZ], ro);
+				if(!(rot_key.mRotation.isFinite()))
+				{
+					return FALSE;
+			}
 			}
 			else
 			{
@@ -1527,6 +1531,10 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 			if (old_version)
 			{
 				success = dp.unpackVector3(pos_key.mPosition, "pos");
+				if(!(pos_key.mPosition.isFinite()))
+				{
+					return FALSE;
+			}
 			}
 			else
 			{

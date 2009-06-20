@@ -50,7 +50,7 @@
 #include "llfocusmgr.h"
 #include "llresmgr.h"
 
-const U32 MAX_STRING_LENGTH = 32;
+const U32 MAX_STRING_LENGTH = 255;
 
 static LLRegisterWidget<LLSpinCtrl> r2("spinner");
  
@@ -124,7 +124,7 @@ LLSpinCtrl::LLSpinCtrl(	const std::string& name, const LLRect& rect, const std::
 	mEditor = new LLLineEditor( std::string("SpinCtrl Editor"), editor_rect, LLStringUtil::null, font,
 								MAX_STRING_LENGTH,
 								&LLSpinCtrl::onEditorCommit, NULL, NULL, this,
-								&LLLineEditor::prevalidateFloat );
+								&LLLineEditor::prevalidateASCII );
 	mEditor->setFollowsLeft();
 	mEditor->setFollowsBottom();
 	mEditor->setFocusReceivedCallback( &LLSpinCtrl::onEditorGainFocus, this );
@@ -133,6 +133,7 @@ LLSpinCtrl::LLSpinCtrl(	const std::string& name, const LLRect& rect, const std::
 	// it's easier to understand
 	//mEditor->setSelectAllonFocusReceived(TRUE);
 	mEditor->setIgnoreTab(TRUE);
+	mEditor->setSelectAllonCommit(FALSE);
 	addChild(mEditor);
 
 	updateEditor();
@@ -293,9 +294,10 @@ void LLSpinCtrl::onEditorCommit( LLUICtrl* caller, void *userdata )
 	LLSpinCtrl* self = (LLSpinCtrl*) userdata;
 	llassert( caller == self->mEditor );
 
-	std::string text = self->mEditor->getText();
-	if( LLLineEditor::postvalidateFloat( text ) )
+	if( self->mEditor->evaluateFloat() )
 	{
+		std::string text = self->mEditor->getText();
+		
 		LLLocale locale(LLLocale::USER_LOCALE);
 		F32 val = (F32) atof(text.c_str());
 
@@ -323,9 +325,12 @@ void LLSpinCtrl::onEditorCommit( LLUICtrl* caller, void *userdata )
 			success = TRUE;
 		}
 	}
-	self->updateEditor();
 
-	if( !success )
+	if( success )
+	{
+		self->updateEditor();
+	}
+	else
 	{
 		self->reportInvalidData();		
 	}

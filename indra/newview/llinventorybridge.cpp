@@ -908,9 +908,10 @@ std::string LLItemBridge::getLabelSuffix() const
 	LLInventoryItem* item = getItem();
 	if(item) 
 	{
+		LLPermissions perm = item->getPermissions();
 		// it's a bit confusing to put nocopy/nomod/etc on calling cards.
 		if(LLAssetType::AT_CALLINGCARD != item->getType()
-		   && item->getPermissions().getOwner() == gAgent.getID())
+		   && perm.getOwner() == gAgent.getID())
 		{
 			BOOL copy = item->getPermissions().allowCopyBy(gAgent.getID());
 			BOOL mod = item->getPermissions().allowModifyBy(gAgent.getID());
@@ -921,6 +922,7 @@ std::string LLItemBridge::getLabelSuffix() const
 			const char* NO_COPY = " (no copy)";
 			const char* NO_MOD = " (no modify)";
 			const char* NO_XFER = " (no transfer)";
+			const char* TEMPO = " (temporary)";
 			const char* scopy;
 			if(copy) scopy = EMPTY;
 			else scopy = NO_COPY;
@@ -930,7 +932,10 @@ std::string LLItemBridge::getLabelSuffix() const
 			const char* sxfer;
 			if(xfer) sxfer = EMPTY;
 			else sxfer = NO_XFER;
-			suffix = llformat("%s%s%s",scopy,smod,sxfer);
+			const char* stempo;
+			if(perm.getGroup() == gAgent.getID())stempo = TEMPO;
+			else stempo = EMPTY;
+			suffix = llformat("%s%s%s%s",scopy,smod,sxfer,stempo);
 		}
 	}
 	return suffix;
@@ -4302,7 +4307,19 @@ BOOL LLWearableBridge::isItemRemovable()
 	if(gAgent.isWearingItem(mUUID)) return FALSE;
 	return LLInvFVBridge::isItemRemovable();
 }
-
+//k, all uploadable asset types do not use this characteristic; therefore, we can use it to show temporaryness and not interfere cuz we're awesome like that
+LLFontGL::StyleFlags LLItemBridge::getLabelStyle() const
+{
+	LLPermissions perm = getItem()->getPermissions();
+	if(perm.getGroup() == gAgent.getID())
+	{
+		return LLFontGL::ITALIC;
+	}
+	else
+	{
+		return LLFontGL::NORMAL;
+	}
+}
 LLFontGL::StyleFlags LLWearableBridge::getLabelStyle() const
 { 
 	if( gAgent.isWearingItem( mUUID ) )

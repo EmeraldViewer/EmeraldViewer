@@ -34,6 +34,7 @@
 #include "llaudiodecodemgr.h"
 
 #include "vorbisdecode.h"
+#include "vorbisencode.h"
 #include "audioengine.h"
 #include "lllfsthread.h"
 #include "llvfile.h"
@@ -223,6 +224,33 @@ BOOL LLVorbisDecodeState::initDecode()
 	size_guess *= vi->channels;
 	size_guess *= 2;
 	size_guess += 2048;
+
+	// This magic value is equivilent to 150MiB of data.
+	// Prevents griffers from utilizin a huge xbox sound the size of god to instafry the viewer
+	if(size_guess >= 157286400)
+	{
+		llwarns << "Bad sound caught by zmagic" << llendl;
+		delete mInFilep;
+		mInFilep = NULL;
+		return FALSE;
+	}
+	bool abort_decode = false;
+	
+	if( vi->channels < 1 || vi->channels > LLVORBIS_CLIP_MAX_CHANNELS )
+	{
+		abort_decode = true;
+		llwarns << "Bad channel count: " << vi->channels << llendl;
+	}
+	
+	if( abort_decode )
+	{
+		llwarns << "Canceling initDecode." << llendl;
+		llwarns << "Bad asset encoded by: " << ov_comment(&mVF,-1)->vendor << llendl;
+		delete mInFilep;
+		mInFilep = NULL;
+		return FALSE;
+	}
+	
 	mWAVBuffer.reserve(size_guess);
 	mWAVBuffer.resize(WAV_HEADER_SIZE);
 

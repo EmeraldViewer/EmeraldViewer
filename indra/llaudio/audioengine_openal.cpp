@@ -55,15 +55,41 @@ LLAudioEngine_OpenAL::~LLAudioEngine_OpenAL()
 {
 }
 
+static ALboolean alutInitHelp(const char **errorstring)
+{
+	ALboolean result = AL_FALSE;
+	ALenum err = AL_NO_ERROR;
+#if LL_WINDOWS
+	__try {
+		result = alutInit(NULL, NULL);
+		err = alutGetError();
+		alGetError(); // hit loading of wrap_oal.dll
+		if(!result) *errorstring = alutGetErrorString(err);
+	} __except( EXCEPTION_EXECUTE_HANDLER ) {
+		*errorstring = "[Exception]";
+		result = AL_FALSE;
+	}
+	return result;
+#else
+	result = alutInit(NULL, NULL);
+	if(!result) {
+		err = alutGetError();
+		*errorstring = alutGetErrorString(err);
+	}
+	return result;
+#endif
+}
+
 // virtual
 bool LLAudioEngine_OpenAL::init(const S32 num_channels, void* userdata)
 {
+	const char *errorstring = "(null)";
 	mWindGen = NULL;
 	LLAudioEngine::init(num_channels, userdata);
 
-	if(!alutInit(NULL, NULL))
+	if(!alutInitHelp(&errorstring))
 	{
-		llwarns << "LLAudioEngine_OpenAL::init() ALUT initialization failed: " << alutGetErrorString (alutGetError ()) << llendl;
+		llwarns << "LLAudioEngine_OpenAL::init() ALUT initialization failed: " << errorstring << llendl;
 		return false;
 	}
 

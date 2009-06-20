@@ -147,10 +147,12 @@ void LLFloaterSettingsDebug::onCommitSettings(LLUICtrl* ctrl, void* user_data)
 	switch(controlp->type())
 	{		
 	  case TYPE_U32:
-		controlp->set(floaterp->childGetValue("val_spinner_1"));
+		//controlp->set(floaterp->childGetValue("val_spinner_1"));
+		controlp->set(LLSD(floaterp->childGetValue("val_text").asInteger()));
 		break;
 	  case TYPE_S32:
-		controlp->set(floaterp->childGetValue("val_spinner_1"));
+		//controlp->set(floaterp->childGetValue("val_spinner_1"));
+		controlp->set(LLSD(floaterp->childGetValue("val_text").asInteger()));
 		break;
 	  case TYPE_F32:
 		controlp->set(LLSD(floaterp->childGetValue("val_spinner_1").asReal()));
@@ -278,6 +280,7 @@ void LLFloaterSettingsDebug::updateControl(LLControlVariable* controlp)
 		LLSD sd = controlp->get();
 		switch(type)
 		{
+			/*
 		  case TYPE_U32:
 			spinner1->setVisible(TRUE);
 			spinner1->setLabel(std::string("value")); // Debug, don't translate
@@ -302,6 +305,7 @@ void LLFloaterSettingsDebug::updateControl(LLControlVariable* controlp)
 				spinner1->setPrecision(0);
 			}
 			break;
+			*/
 		  case TYPE_F32:
 			spinner1->setVisible(TRUE);
 			spinner1->setLabel(std::string("value")); // Debug, don't translate
@@ -324,6 +328,14 @@ void LLFloaterSettingsDebug::updateControl(LLControlVariable* controlp)
 				}
 			}
 			break;
+		  case TYPE_U32:
+		    childSetVisible("val_text", TRUE);
+			if (!childHasFocus("val_text"))
+			{
+				childSetText("val_text", llformat("%u", sd.asInteger()));
+			}
+			break;
+		  case TYPE_S32:
 		  case TYPE_STRING:
 			childSetVisible("val_text", TRUE);
 			if (!childHasFocus("val_text"))
