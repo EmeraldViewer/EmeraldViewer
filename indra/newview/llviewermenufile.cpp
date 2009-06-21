@@ -869,10 +869,10 @@ void temp_upload_done_callback(const LLUUID& uuid, void* user_data, S32 result, 
 		gInventory.notifyObservers();
 	}else // 	if(result >= 0)
 	{
-		LLStringUtil::format_map_t args;
-		args["[FILE]"] = LLInventoryType::lookupHumanReadable(data->mInventoryType);
-		args["[REASON]"] = std::string(LLAssetStorage::getErrorString(result));
-		gViewerWindow->alertXml("CannotUploadReason", args);
+		LLSD args;
+		args["FILE"] = LLInventoryType::lookupHumanReadable(data->mInventoryType);
+		args["REASON"] = std::string(LLAssetStorage::getErrorString(result));
+		LLNotifications::instance().add("CannotUploadReason", args);
 	}
 
 	LLUploadDialog::modalUploadFinished();

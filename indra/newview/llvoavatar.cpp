@@ -34,9 +34,6 @@
 
 #include "llvoavatar.h"
 
-#include <stdio.h>
-#include <ctype.h>
-
 #include "audioengine.h"
 #include "noise.h"
 
@@ -662,6 +659,9 @@ S32 LLVOAvatar::sScratchTexBytes = 0;
 F32 LLVOAvatar::sRenderDistance = 256.f;
 S32	LLVOAvatar::sNumVisibleAvatars = 0;
 S32	LLVOAvatar::sNumLODChangesThisFrame = 0;
+LLSD LLVOAvatar::sClientResolutionList;
+LLVector3d LLVOAvatar::sBeamLastAt;
+int LLVOAvatar::sPartsNow;
 
 const LLUUID LLVOAvatar::sStepSoundOnLand = LLUUID("e8af4a28-aa83-4310-a7c4-c047e15ea0df");
 const LLUUID LLVOAvatar::sStepSounds[LL_MCODE_END] =
@@ -2929,12 +2929,12 @@ void LLVOAvatar::idleUpdateWindEffect()
 	}
 }
 
-void resolve_client(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
+void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
 {
 	LLUUID idx = avatar->getTE(0)->getID();
-	if(LLVOAvatar::ClientResolutionList.has("isComplete") && LLVOAvatar::ClientResolutionList.has(idx.asString()))
+	if(sClientResolutionList.has("isComplete") && sClientResolutionList.has(idx.asString()))
 	{
-		LLSD cllsd = LLVOAvatar::ClientResolutionList[idx.asString()];
+		LLSD cllsd = sClientResolutionList[idx.asString()];
 		client = cllsd["name"];
 		LLColor4 colour;
 		colour.setValue(cllsd["color"]);
@@ -3153,7 +3153,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				}
 				LLColor4 avatar_name_color = gColors.getColor( "AvatarNameColor" );
 				if(!mIsSelf)
-					resolve_client(avatar_name_color,client, this);
+					resolveClient(avatar_name_color,client, this);
 				//else avatar_name_color = gColors.getColor( "AvatarNameColor" );
 				//avatar_name_color.clamp();
 				avatar_name_color.setAlpha(alpha);
@@ -3268,9 +3268,9 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 					{
 						if (need_comma)
 						{
-							strcat(line, ", ");		/* Flawfinder: ignore */
+							line += ", ";
 						}
-						strcat(line, client.c_str());		/* Flawfinder: ignore */
+						line += client;
 						need_comma = TRUE;
 					}
 					line += ")";
@@ -3454,9 +3454,9 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		mBeam = NULL;
 		if(gSavedSettings.getBOOL("EmeraldParticleChat"))
 			{
-				if(lgPartsNow != FALSE)
+				if(sPartsNow != FALSE)
 				{
-					lgPartsNow = FALSE;
+					sPartsNow = FALSE;
 					LLMessageSystem* msg = gMessageSystem;
 					msg->newMessageFast(_PREHASH_ChatFromViewer);
 					msg->nextBlockFast(_PREHASH_AgentData);
@@ -3468,7 +3468,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 					msg->addS32("Channel", 9000);
 					
 					gAgent.sendReliableMessage();
-					lgBeamLastAt  =  LLVector3d::zero;
+					sBeamLastAt  =  LLVector3d::zero;
 					LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
 	}
 			}
@@ -3494,9 +3494,9 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			//lgg crap
 			if(gSavedSettings.getBOOL("EmeraldParticleChat"))
 			{
-				if(lgPartsNow != TRUE)
+				if(sPartsNow != TRUE)
 				{
-					lgPartsNow = TRUE;
+					sPartsNow = TRUE;
 					LLMessageSystem* msg = gMessageSystem;
 					msg->newMessageFast(_PREHASH_ChatFromViewer);
 					msg->nextBlockFast(_PREHASH_AgentData);
@@ -3511,12 +3511,12 @@ void LLVOAvatar::idleUpdateTractorBeam()
 
 					LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
 				}
-				//LLVector3d a = lgBeamLastAt-gAgent.mPointAt->getPointAtPosGlobal();
+				//LLVector3d a = sBeamLastAt-gAgent.mPointAt->getPointAtPosGlobal();
 				//if(a.length > 2)
-				if( (lgBeamLastAt-gAgent.mPointAt->getPointAtPosGlobal()).length() > .2)
-				//if(lgBeamLastAt!=gAgent.mPointAt->getPointAtPosGlobal())
+				if( (sBeamLastAt-gAgent.mPointAt->getPointAtPosGlobal()).length() > .2)
+				//if(sBeamLastAt!=gAgent.mPointAt->getPointAtPosGlobal())
 				{
-					lgBeamLastAt = gAgent.mPointAt->getPointAtPosGlobal(); 
+					sBeamLastAt = gAgent.mPointAt->getPointAtPosGlobal(); 
 
 					LLMessageSystem* msg = gMessageSystem;
 					msg->newMessageFast(_PREHASH_ChatFromViewer);
@@ -3524,7 +3524,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 					msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
 					msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 					msg->nextBlockFast(_PREHASH_ChatData);
-					msg->addStringFast(_PREHASH_Message, llformat("<%.6f, %.6f, %.6f>",(F32)(lgBeamLastAt.mdV[VX]),(F32)(lgBeamLastAt.mdV[VY]),(F32)(lgBeamLastAt.mdV[VZ])));
+					msg->addStringFast(_PREHASH_Message, llformat("<%.6f, %.6f, %.6f>",(F32)(sBeamLastAt.mdV[VX]),(F32)(sBeamLastAt.mdV[VY]),(F32)(sBeamLastAt.mdV[VZ])));
 					msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
 					msg->addS32("Channel", 9000); // *TODO: make configurable
 					
@@ -7543,6 +7543,8 @@ void LLVOAvatar::releaseUnnecessaryTextures()
 	{
 		const LLVOAvatarDictionary::BakedDictionaryEntry * bakedDicEntry = LLVOAvatarDictionary::getInstance()->getBakedTexture((EBakedTextureIndex)baked_index);
 		// skip if this is a skirt and av is not wearing one, or if we don't have a baked texture UUID
+        if(baked_index == BAKED_HEAD)
+                continue;
 		if (!isTextureDefined(bakedDicEntry->mTextureIndex)
 			&& ( (baked_index != BAKED_SKIRT) || isWearingWearableType(WT_SKIRT) ))
 		{

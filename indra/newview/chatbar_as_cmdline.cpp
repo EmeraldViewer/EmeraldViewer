@@ -51,8 +51,6 @@
 
 #include <float.h>
 
-#include "jc_ascii_encode_decode.h"
-
 #include "llchat.h"
 
 #include "llfloaterchat.h"
@@ -162,16 +160,8 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					agent_z = 0;
 				}
 				url = llformat("secondlife:///app/teleport/%s/%d/%d/%d",region_name.c_str(),agent_x,agent_y,agent_z);
-				LLURLDispatcher::dispatch(url, false);
+				LLURLDispatcher::dispatch(url, NULL, false);
 				return false;
-			}else if(command == "ascii85")
-			{
-				LLChat chat;
-				//char* text = new char[revised_text.length()+1];
-				//strcpy(text, revised_text.c_str());
-				chat.mText = JCStringUnsignedChar::encode(revised_text.c_str(), revised_text.length()+1);
-				chat.mSourceType = CHAT_SOURCE_SYSTEM;
-				LLFloaterChat::addChat(chat);
 			}
 		}
 	}

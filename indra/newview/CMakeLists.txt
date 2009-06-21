@@ -1176,17 +1176,17 @@ set(PACKAGE OFF CACHE BOOL
     "Add a package target that builds an installer package.")
 
 if (WINDOWS)
-#    if(MSVC71)
-#        set(release_flags "/MAP:Release/${VIEWER_BINARY_NAME}.map /MAPINFO:LINES")
-#    else(MSVC71)
-#        set(release_flags "/MAP:Release/${VIEWER_BINARY_NAME}.map")
-#    endif(MSVC71)
+    if(MSVC71)
+        set(release_flags "/MAP:Release/${VIEWER_BINARY_NAME}.map /MAPINFO:LINES")
+    else(MSVC71)
+        set(release_flags "/MAP:Release/${VIEWER_BINARY_NAME}.map")
+    endif(MSVC71)
     
     set_target_properties(${VIEWER_BINARY_NAME}
         PROPERTIES
-        LINK_FLAGS "/NODEFAULTLIB:MSVCRT /SUBSYSTEM:WINDOWS,5.00"
-        LINK_FLAGS_DEBUG "/DEBUG /NODEFAULTLIB:LIBCMT /NODEFAULTLIB:MSVCRTD"
-        LINK_FLAGS_RELEASE "/NODEBUG"
+        LINK_FLAGS "/debug /NODEFAULTLIB:LIBCMT /SUBSYSTEM:WINDOWS"
+        LINK_FLAGS_DEBUG "/NODEFAULTLIB:\"LIBCMT;LIBCMTD;MSVCRT\""
+        LINK_FLAGS_RELEASE ${release_flags}
         )
 
     # sets the 'working directory' for debugging from visual studio.

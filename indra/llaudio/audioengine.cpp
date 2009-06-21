@@ -174,12 +174,11 @@ static std::string createListenPls( const std::string &url )
 {
 	LLDir *d = gDirUtilp;
 	std::string filename = d->getCacheDir() + d->getDirDelimiter() + "listen.pls";
-	apr_file_t *file = ll_apr_file_open(filename, APR_WRITE | APR_CREATE | APR_TRUNCATE);
+	LLAPRFile file;
 
-	if(file) {
+	if(file.open(filename, APR_WRITE | APR_CREATE | APR_TRUNCATE) == APR_SUCCESS) {
 		std::string playlist = llformat("[playlist]\nNumberOfEntries=1\nFile1=%s\n", url.c_str());
-		ll_apr_file_write(file, playlist.c_str(), playlist.length());
-		apr_file_close(file);
+		file.write(playlist.c_str(), playlist.length());
 		return filename;
 	}
 

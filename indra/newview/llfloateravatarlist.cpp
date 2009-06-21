@@ -500,6 +500,9 @@ void LLFloaterAvatarList::updateAvatarList()
 
 	LLVector3d mypos = gAgent.getPositionGlobal();
 
+	// *FIXME: use the new convenient functon to get all Avatars from map
+	// don't change the classification of the mActiveRegionList
+#if 0
 	{//iterate minimap so if they are within draw the more precise value ends up used
 		// Draw avatars
 		//const LLVector3d& my_origin_global = gAgent.getRegion()->getOriginGlobal();
@@ -594,6 +597,7 @@ void LLFloaterAvatarList::updateAvatarList()
 			}
 		}
 	}
+#endif
 	/*
 	 * Iterate over all the avatars known at the time
 	 * NOTE: Is this the right way to do that? It does appear that LLVOAvatar::isInstances contains
@@ -703,7 +707,6 @@ void LLFloaterAvatarList::expireAvatarList()
  * Only does anything if the avatar list is visible.
  * @author Dale Glass
  */
-void resolve_client(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar);
 void LLFloaterAvatarList::refreshAvatarList() 
 {
 
@@ -976,14 +979,23 @@ void LLFloaterAvatarList::refreshAvatarList()
 		LLVOAvatar *av = (LLVOAvatar*)gObjectList.findObject(av_id);
 		if(av)
 		{
-			resolve_client(avatar_name_color, client, av);
-			if(client == "")client = "?";
+			LLVOAvatar::resolveClient(avatar_name_color, client, av);
+			if(client == "")
+			{
+				avatar_name_color = gColors.getColor( "ScrollUnselectedColor" );
+				client = "?";
+			}
 			element["columns"][LIST_CLIENT]["value"] = client.c_str();
 			//element["columns"][LIST_CLIENT]["color"] = avatar_name_color.getValue();
-		}else
+		}
+		else
 		{
 			element["columns"][LIST_CLIENT]["value"] = "Out Of Range";
+			avatar_name_color = gColors.getColor( "ScrollUnselectedColor" );
 		}
+
+		avatar_name_color = avatar_name_color * 0.25 + gColors.getColor( "ScrollUnselectedColor" ) * 0.75;
+
 		element["columns"][LIST_CLIENT]["color"] = avatar_name_color.getValue();
 		
 
@@ -1687,9 +1699,30 @@ std::string LLFloaterAvatarList::getSelectedNames(const std::string& separator)
 	return ret;
 }
 
+std::string LLFloaterAvatarList::getSelectedName()
+{
+	LLUUID id = getSelectedID();
+	LLAvatarListEntry *ent = getAvatarEntry(id);
+	if(ent)
+	{
+		return ent->getName();
+	}
+	return "";
+}
+
+LLUUID LLFloaterAvatarList::getSelectedID()
+{
+	LLScrollListItem *item = mAvatarList->getFirstSelected();
+	if(item) return item->getUUID();
+	return LLUUID::null;
+}
+
 //static 
-void LLFloaterAvatarList::callbackFreeze(S32 option, void *userdata) { 
-	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+void LLFloaterAvatarList::callbackFreeze(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
+
+	LLFloaterAvatarList *avlist = LLFloaterAvatarList::sInstance;
 
 	if ( option == 0 )
 	{
@@ -1702,8 +1735,11 @@ void LLFloaterAvatarList::callbackFreeze(S32 option, void *userdata) {
 }
 
 //static 
-void LLFloaterAvatarList::callbackEject(S32 option, void *userdata) {
-	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+void LLFloaterAvatarList::callbackEject(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
+
+	LLFloaterAvatarList *avlist = LLFloaterAvatarList::sInstance;
  
 	if ( option == 0 )
 	{
@@ -1715,32 +1751,16 @@ void LLFloaterAvatarList::callbackEject(S32 option, void *userdata) {
 	}
 }
 
-/*
 //static 
-void LLFloaterAvatarList::callbackMute(S32 option, void *userdata) {
-	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+void LLFloaterAvatarList::callbackEjectFromEstate(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
 
-	if ( option == 0 )
-	{
-		avlist->doCommand(cmd_mute);
-	} 
-	else if ( option == 1 )
-	{
-		avlist->doCommand(cmd_unmute);
-	}
-}*/
-
-//static 
-void LLFloaterAvatarList::callbackEjectFromEstate(S32 option, void *userdata) {
-	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+	LLFloaterAvatarList *avlist = LLFloaterAvatarList::sInstance;
 
 	if ( option == 0 )
 	{
 		avlist->doCommand(cmd_estate_eject);
-	} 
-	else if ( option == 1 )
-	{
-		avlist->doCommand(cmd_estate_ban);
 	}
 }
 
@@ -1753,17 +1773,20 @@ void LLFloaterAvatarList::callbackIdle(void *userdata) {
 
 void LLFloaterAvatarList::onClickFreeze(void *userdata)
 {
-	LLStringUtilBase<char>::format_map_t args;
-	args["[NAMES]"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
-	gViewerWindow->alertXml("FreezeAvatar", args, callbackFreeze, userdata);
+	LLSD args;
+	LLSD payload;
+	args["AVATAR_NAME"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
+
+	LLNotifications::instance().add("FreezeAvatarFullname", args, payload, callbackFreeze);
 }
 
 //static
 void LLFloaterAvatarList::onClickEject(void *userdata)
 {
-	LLStringUtilBase<char>::format_map_t args;
-	args["[NAMES]"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
-	gViewerWindow->alertXml("EjectAvatar", args, callbackEject, userdata);
+	LLSD args;
+	LLSD payload;
+	args["AVATAR_NAME"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
+	LLNotifications::instance().add("EjectAvatarFullname", args, payload, callbackEject);
 }
 
 //static
@@ -1837,12 +1860,11 @@ void LLFloaterAvatarList::onClickUnmute(void *userdata)
 //static
 void LLFloaterAvatarList::onClickEjectFromEstate(void *userdata)
 {
-	LLStringUtilBase<char>::format_map_t args;
-	args["[NAMES]"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
-	gViewerWindow->alertXml("EjectAvatarEstate", args, callbackEjectFromEstate, userdata);
+	LLSD args;
+	LLSD payload;
+	args["EVIL_USER"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
+	LLNotifications::instance().add("EstateKickUser", args, payload, callbackEjectFromEstate);
 }
-
-
 
 //static
 void LLFloaterAvatarList::onClickAR(void *userdata)

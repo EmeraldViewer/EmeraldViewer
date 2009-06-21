@@ -70,6 +70,8 @@ class LLVOAvatarBoneInfo;
 class LLVOAvatarSkeletonInfo;
 class LLVOAvatarXmlInfo;
 
+//class LLFloaterAvatarList;
+
 //------------------------------------------------------------------------
 // LLVOAvatar
 //------------------------------------------------------------------------
@@ -589,14 +591,17 @@ private:
 	int					mCurrentGesticulationLevel;
 	
 	//lgg i dont know what im doign here
-	static BOOL		lgPartsNow;
-	static LLVector3d lgBeamLastAt;
+	static BOOL		sPartsNow;
+	static LLVector3d sBeamLastAt;
 	
 	// Animation timer
 	LLTimer		mAnimTimer;
 	F32			mTimeLast;	
 
-	static LLSD ClientResolutionList;
+	static LLSD sClientResolutionList;
+	static void resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar);
+	friend class LLFloaterAvatarList;
+
 protected:
 	LLPointer<LLHUDEffectSpiral> mBeam;
 	LLFrameTimer mBeamTimer;

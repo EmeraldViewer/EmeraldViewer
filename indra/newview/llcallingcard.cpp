@@ -723,17 +723,15 @@ void LLAvatarTracker::processTerminateFriendship(LLMessageSystem* msg, void**)
 	if(id.notNull())
 	{
 		std::string first, last;
-		LLStringUtil::format_map_t args;
+		LLSD args;
 		if(gCacheName->getName(id, first, last))
 		{
-			args["[FIRST_NAME]"] = first;
-			args["[LAST_NAME]"] = last;
+			args["NAME"] = first + " " + last;
 		}else
 		{
-			args["[FIRST_NAME]"] = "(unknown";
-			args["[LAST_NAME]"] = "name) (key: "+id.asString()+")";	
+			args["NAME"] = "(unknown name) (key: "+id.asString()+")";	
 		}
-		gViewerWindow->alertXml("FriendshipDissolved",args);
+		LLNotifications::instance().add("FriendshipDissolved", args);
 
 		LLAvatarTracker& at = LLAvatarTracker::instance();
 		LLRelationship* buddy = get_ptr_in_map(at.mBuddyInfo, id);

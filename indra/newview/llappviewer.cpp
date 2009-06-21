@@ -535,7 +535,7 @@ LLAppViewer::~LLAppViewer()
 	// If we got to this destructor somehow, the app didn't hang.
 	removeMarkerFile();
 }
-LLSD LLVOAvatar::ClientResolutionList;
+
 bool LLAppViewer::init()
 {
 	//

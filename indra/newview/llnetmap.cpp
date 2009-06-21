@@ -336,26 +336,26 @@ void LLNetMap::draw()
 			pos_map = globalPosToView(positions[i], rotate_map);
 
 				//Jcool410 -- show lindens on minimap with blue dots
-				LLColor4 mapcolor = gAvatarMapColor;
-				if( i < regionp->mMapAvatarIDs.count())
+				LLColor4 mapcolor = avatar_color;
+				
 				{
 					bool _friend = false;
 					bool _linden = false;
 					bool _muted = false;
-					if(is_agent_friend(regionp->mMapAvatarIDs.get(i)))
+					if(is_agent_friend(avatar_ids[i]))
 					{
 						_friend = true;//mapcolor = gFriendMapColor;
 					}
 					std::string first, last;
-					gCacheName->getName(regionp->mMapAvatarIDs.get(i), first, last);
+					gCacheName->getName(avatar_ids[i], first, last);
 					if(last == "Linden")_linden = true;//mapcolor = LLColor4::blue;
-					if(LLMuteList::getInstance()->isMuted(regionp->mMapAvatarIDs.get(i)))_muted = true;
+					if(LLMuteList::getInstance()->isMuted(avatar_ids[i]))_muted = true;
 
 					//case not included for linden & muted because you cannot normally mute lindens
 					//and even if you could it would be pretty stupid of you.
 					if(_friend && _linden)mapcolor = LLColor4::purple;
-					else if(_friend && _muted)mapcolor = (gFriendMapColor + LLColor4::grey) * 0.5;
-					else if(_friend)mapcolor = gFriendMapColor;
+					else if(_friend && _muted)mapcolor = (friend_color + LLColor4::grey) * 0.5;
+					else if(_friend)mapcolor = friend_color;
 					else if(_linden)mapcolor = LLColor4::blue;
 					else if(_muted)mapcolor = LLColor4::grey;
 				}

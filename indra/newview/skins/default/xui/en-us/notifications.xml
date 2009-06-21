@@ -5826,6 +5826,13 @@ An object named [OBJECTFROMNAME] owned by (an unknown user) has given you a [OBJ
 
   <notification
    icon="notify.tga"
+   name="FriendshipDissolved"
+   type="notify">
+[NAME] dissolved friendship.
+  </notification>
+
+  <notification
+   icon="notify.tga"
    name="OfferCallingCard"
    type="notify">
 [FIRST] [LAST] is offering their calling card.

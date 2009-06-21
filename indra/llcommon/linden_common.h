@@ -67,7 +67,6 @@
 #include <string>
 
 #ifdef LL_WINDOWS
-#pragma warning (3 : 4702) // we like level 3, not 4
 // level 4 warnings that we need to disable:
 #pragma warning (disable : 4100) // unreferenced formal parameter
 #pragma warning (disable : 4127) // conditional expression is constant (e.g. while(1) )
