@@ -195,9 +195,9 @@
           <key>windows</key>
           <map>
             <key>md5sum</key>
-            <string>2f7b400a1b0e67302278c0cd55c17263</string>
+            <string>91ee964fef6fcbef70d697a05d47765d</string>
             <key>url</key>
-            <uri>http://thomas.shikami.mooo.com/install_pkgs/boost-1.36.0-windows-20090622.tar.bz2</uri>
+            <uri>http://thomas.shikami.mooo.com/install_pkgs/boost-1.36.0-windows-20090623.tar.bz2</uri>
           </map>
         </map>
       </map>
