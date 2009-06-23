@@ -5825,9 +5825,9 @@ An object named [OBJECTFROMNAME] owned by (an unknown user) has given you a [OBJ
   </notification>
 
   <notification
-   icon="notify.tga"
+   icon="alertmodal.tga"
    name="FriendshipDissolved"
-   type="notify">
+   type="alertmodal">
 [NAME] dissolved friendship.
   </notification>
 

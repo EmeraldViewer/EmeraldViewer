@@ -15,7 +15,7 @@ else (STANDALONE)
   set(Boost_INCLUDE_DIRS ${LIBS_PREBUILT_DIR}/include)
 
   if (WINDOWS)
-    set(BOOST_VERSION 1_34_1)
+    set(BOOST_VERSION 1_36_0)
     if (MSVC71)
       set(BOOST_PROGRAM_OPTIONS_LIBRARY 
           optimized libboost_program_options-vc71-mt-${BOOST_VERSION}

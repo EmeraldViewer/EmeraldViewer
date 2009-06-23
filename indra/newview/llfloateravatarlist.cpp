@@ -500,104 +500,50 @@ void LLFloaterAvatarList::updateAvatarList()
 
 	LLVector3d mypos = gAgent.getPositionGlobal();
 
-	// *FIXME: use the new convenient functon to get all Avatars from map
-	// don't change the classification of the mActiveRegionList
-#if 0
-	{//iterate minimap so if they are within draw the more precise value ends up used
-		// Draw avatars
-		//const LLVector3d& my_origin_global = gAgent.getRegion()->getOriginGlobal();
-		LLVector3d pos_global;
-		for (LLWorld::region_list_t::iterator iter = LLWorld::getInstance()->mActiveRegionList.begin();
-			 iter != LLWorld::getInstance()->mActiveRegionList.end(); ++iter)
+	{
+		std::vector<LLUUID> avatar_ids;
+		std::vector<LLVector3d> positions;
+
+		LLWorld::instance().getAvatars(&avatar_ids, &positions, mypos, F32_MAX);
+
+		size_t i;
+		size_t count = avatar_ids.size();
+
+		for(i = 0; i < count; ++i)
 		{
-			LLViewerRegion* regionp = *iter;
-			const LLVector3d& origin_global = regionp->getOriginGlobal();
+			std::string name;
+			std::string first;
+			std::string last;
+			const LLUUID &avid = avatar_ids[i];
+			const LLVector3d &position = positions[i];
 
-			S32 count = regionp->mMapAvatars.count();
-			S32 i;
-			LLVector3 pos_local;
-			U32 compact_local;
-			U8 bits;
-			for (i = 0; i < count; i++)
+			if(gCacheName->getName(avid, first, last))
 			{
-				compact_local = regionp->mMapAvatars.get(i);
+				name = first + " " + last;
+			}
+			else
+			{
+				//name = gCacheName->getDefaultName();
+				continue; //prevent (Loading...)
+			}
 
-				bits = compact_local & 0xFF;
-				pos_local.mV[VZ] = F32(bits) * 4.f;
-				compact_local >>= 8;
+			if ( mAvatars.count( avid ) > 0 )
+			{
+				// Avatar already in list, update position
+				mAvatars[avid].setPosition(position, gAgent.getRegion()->pointInRegionGlobal(position), false, (position - mypos).magVec() < 20.0);
+			}
+			else
+			{
+				// Avatar not there yet, add it
+				BOOL isLinden = last == "Linden";
 
-				bits = compact_local & 0xFF;
-				pos_local.mV[VY] = (F32)bits;
-				compact_local >>= 8;
-
-				bits = compact_local & 0xFF;
-				pos_local.mV[VX] = (F32)bits;
-
-				pos_global.setVec( pos_local );
-				pos_global += origin_global;
-
-				if( i < regionp->mMapAvatarIDs.count())
-				{
-					std::string name;
-					std::string first;
-					std::string last;
-					LLUUID avid = regionp->mMapAvatarIDs.get(i);
-					gCacheName->getName(avid, first, last);
-					name=  first+" "+last;
-					LLVector3d position = pos_global;
-					if (name.empty() || (name.compare(" ") == 0) || first == gCacheName->getDefaultName())
-					{
-						//llinfos << "Name empty for avatar " << avid << llendl;
-						continue;
-					}
-					if( pos_global.mdV[VZ] == 0.0)
-					{
-						//bad hax :<
-						//uhh... >.>  i am going to play with this at the display part... yeah
-					}
-
-					if (avid.isNull())
-					{
-						//llinfos << "Key empty for avatar " << name << llendl;
-						continue;
-					}
-
-					if ( mAvatars.count( avid ) > 0 )
-					{
-						// Avatar already in list, update position
-						mAvatars[avid].setPosition(position, (regionp == gAgent.getRegion()), false, (position - mypos).magVec() < 20.0);
-					}
-					else
-					{
-						// Avatar not there yet, add it
-						BOOL isLinden = last == "Linden";
-
-						LLAvatarListEntry entry(avid, name, position, isLinden);
-						mAvatars[avid] = entry;
-
-						//sendAvatarPropertiesRequest(avid);
-						//llinfos << "avatar list refresh: adding " << name << llendl;
-
-					}
-
-					//if(mAreaAlertList.count( avid ) > 0 )
-					//{
-						
-						//if(mAreaAlertList[avid].area < 1)
-						//{
-						//	mAreaAlertList[avid].area = 1;
-					//		LLChat chat;
-					//		chat.mSourceType = CHAT_SOURCE_SYSTEM;
-					//		chat.mText = 
-						//}
-						//
-					//}
-					
-				}
+				LLAvatarListEntry entry(avid, name, position, isLinden);
+				mAvatars[avid] = entry;
 			}
 		}
 	}
-#endif
+	
+
 	/*
 	 * Iterate over all the avatars known at the time
 	 * NOTE: Is this the right way to do that? It does appear that LLVOAvatar::isInstances contains
@@ -994,7 +940,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 			avatar_name_color = gColors.getColor( "ScrollUnselectedColor" );
 		}
 
-		avatar_name_color = avatar_name_color * 0.25 + gColors.getColor( "ScrollUnselectedColor" ) * 0.75;
+		avatar_name_color = avatar_name_color * 0.5 + gColors.getColor( "ScrollUnselectedColor" ) * 0.5;
 
 		element["columns"][LIST_CLIENT]["color"] = avatar_name_color.getValue();
 		
