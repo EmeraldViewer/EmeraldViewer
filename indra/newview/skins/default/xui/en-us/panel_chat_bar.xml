@@ -19,7 +19,7 @@
 	     tool_tip="Show Channel Selector" width="20" />
   <spinner bottom="-23" decimal_digits="0" follows="right|bottom" height="20"
 			     increment="1.00" initial_val="0" label="Chan" label_width="29" left_delta="-50"
-			     max_val="2147483647" min_val="0" mouse_opaque="true" name="ChatChannel"
+			     max_val="2147483647" min_val="0" mouse_opaque="true" name="ChatChannel" visable="false"
 			     text_enabled_color="110, 15, 15, 255" width="80" tool_tip="Change the channel you speak on by default (0 is public chat)"/>
   <flyout_button bottom="-23" follows="right|bottom" height="20" label="Say" left_delta="85"
 	     list_position="above" mouse_opaque="true" name="Say" tool_tip="(Enter)"

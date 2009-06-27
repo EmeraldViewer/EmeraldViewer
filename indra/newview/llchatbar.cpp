@@ -216,15 +216,7 @@ void LLChatBar::refresh()
 	}
 
 	childSetValue("History", LLFloaterChat::instanceVisible(LLSD()));
-	//TODO adjust width based on setting here//lgg
-	if(mChanSelectorExpanded)
-	{
-		this->childSetVisible("ChatChannel",true);
-		//this->set
-	}else
-	{
-		this->childSetVisible("ChatChannel",false);
-	}
+	
 	childSetValue("ChatChannel",( 1.f * ((S32)(getChild<LLSpinCtrl>("ChatChannel")->get()))) );
 	childSetEnabled("Say", mInputEditor->getText().size() > 0);
 	childSetEnabled("Shout", mInputEditor->getText().size() > 0);
@@ -742,13 +734,22 @@ void LLChatBar::toggleChanSelect(void* user_data)//lgg
 	S32 chatdelta;
 	if(self->childGetRect("ChatChannel",chanselect) && self->childGetRect("Expand",expander))
 	{
+
 		if(self->mChanSelectorExpanded)
 		{
 			self->mChanSelectorExpanded=false;
 			chatdelta = chanselect.getWidth();
+			
+			self->childSetLabelArg("Expand","[NOTHING]",std::string("<"));
+			self->childSetToolTip("Expand",std::string("Show Channel Selector"));
 		}else
 		{
 			self->mChanSelectorExpanded=true;
+			
+			self->childSetText("Expand",std::string(">"));
+			
+			self->childSetLabelArg("Expand","[NOTHING]",std::string(">"));
+			self->childSetToolTip("Expand",std::string("Hide Channel Selector"));
 			chatdelta = -chanselect.getWidth();
 		}
 		expander.setCenterAndSize(expander.getCenterX() + chatdelta,expander.getCenterY(),expander.getWidth(),expander.getHeight());
