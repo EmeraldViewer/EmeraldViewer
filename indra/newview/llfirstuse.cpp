@@ -44,7 +44,7 @@
 #include "llui.h"
 #include "llappviewer.h"
 #include "lltracker.h"
-
+#include "llvoavatar.h"
 // static
 std::set<std::string> LLFirstUse::sConfigVariables;
 
@@ -277,3 +277,36 @@ void LLFirstUse::useMedia()
 		LLNotifications::instance().add("FirstMedia");
 	}
 }
+
+void LLFirstUse::callbackClientTags(const LLSD& notification, const LLSD& response)
+{
+	gSavedSettings.setWarning("ClientTags", FALSE);
+
+	S32 option = LLNotification::getSelectedOption(notification, response);
+
+	//LLFloaterAvatarList *avlist = LLFloaterAvatarList::sInstance;
+
+	if ( option == 0 )
+	{
+		gSavedSettings.setBOOL("EmeraldDownloadClientTags",TRUE);
+		//printchat("The tags will not be updated until you restart.");
+		//fuck that shit
+		LLVOAvatar::updateClientTags();
+		LLVOAvatar::loadClientTags();
+		//boom
+		//toasty
+	}
+	else if ( option == 1 )
+	{
+		gSavedSettings.setBOOL("EmeraldDownloadClientTags",FALSE);
+	}
+}
+// static
+void LLFirstUse::ClientTags()
+{
+	if (gSavedSettings.getWarning("ClientTags"))
+	{
+		LLNotifications::instance().add("QueryClientTags", LLSD(), LLSD(), callbackClientTags);
+	}
+}
+

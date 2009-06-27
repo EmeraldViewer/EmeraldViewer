@@ -536,6 +536,8 @@ public:
 	LLViewerJoint mRoot; // avatar skeleton
 	BOOL mIsSitting; // sitting state
 
+	static bool updateClientTags();
+	static bool loadClientTags();
 	//--------------------------------------------------------------------
 	// Private member variables.
 	//--------------------------------------------------------------------
@@ -599,6 +601,7 @@ private:
 	F32			mTimeLast;	
 
 	static LLSD sClientResolutionList;
+
 	static void resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar);
 	friend class LLFloaterAvatarList;
 

@@ -726,23 +726,10 @@ bool LLAppViewer::init()
 
 	{
 		BOOL download = gSavedSettings.getBOOL("EmeraldDownloadClientTags");
-		std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
 
 		if(download)
 		{
-			LLSD response = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/client_tags/client_list.xml");
-			if(response.has("body"))
-			{
-				const LLSD &client_list = response["body"];
-
-				if(client_list.has("isComplete"))
-				{
-					llofstream export_file;
-					export_file.open(client_list_filename);
-					LLSDSerialize::toPrettyXML(client_list, export_file);
-					export_file.close();
-				}
-			}
+			LLVOAvatar::updateClientTags();
 		}
 	}
 
