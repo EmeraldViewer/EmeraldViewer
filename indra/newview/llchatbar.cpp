@@ -80,6 +80,7 @@ LLChatBar *gChatBar = NULL;
 
 // legacy calllback glue
 void toggleChatHistory(void* user_data);
+void toggleChanSelect(void* user_data);
 void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
 
 
@@ -104,6 +105,7 @@ LLChatBar::LLChatBar()
 	mGestureLabelTimer(),
 	mLastSpecialChatChannel(0),
 	mIsBuilt(FALSE),
+	mChanSelectorExpanded(FALSE),
 	mGestureCombo(NULL),
 	mObserver(NULL)
 {
@@ -126,6 +128,8 @@ LLChatBar::~LLChatBar()
 BOOL LLChatBar::postBuild()
 {
 	childSetAction("History", toggleChatHistory, this);
+	//lgg
+	childSetAction("Expand",toggleChanSelect,this);
 	childSetCommitCallback("Say", onClickSay, this);
 
 	// attempt to bind to an existing combo box named gesture
@@ -212,7 +216,15 @@ void LLChatBar::refresh()
 	}
 
 	childSetValue("History", LLFloaterChat::instanceVisible(LLSD()));
-	
+	//TODO adjust width based on setting here//lgg
+	if(mChanSelectorExpanded)
+	{
+		this->childSetVisible("ChatChannel",true);
+		//this->set
+	}else
+	{
+		this->childSetVisible("ChatChannel",false);
+	}
 	childSetValue("ChatChannel",( 1.f * ((S32)(getChild<LLSpinCtrl>("ChatChannel")->get()))) );
 	childSetEnabled("Say", mInputEditor->getText().size() > 0);
 	childSetEnabled("Shout", mInputEditor->getText().size() > 0);
@@ -718,6 +730,19 @@ void toggleChatHistory(void* user_data)
 	LLFloaterChat::toggleInstance(LLSD());
 }
 
+//lgg
+void toggleChanSelect(void* user_data)
+{
+	
+	if(mChanSelectorExpanded)
+	{
+		mChanSelectorExpanded=false;
+	}else
+	{
+		mChanSelectorExpanded=true;
+	}
+	//TODO change setting
+}
 
 class LLChatHandler : public LLCommandHandler
 {
