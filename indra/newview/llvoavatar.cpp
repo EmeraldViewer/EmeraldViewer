@@ -79,6 +79,8 @@
 #include "llvoiceclient.h"
 #include "llvoicevisualizer.h" // Ventrella
 
+#include "llsdserialize.h" // client resolver
+
 #include "boost/lexical_cast.hpp"
 
 using namespace LLVOAvatarDefines;
@@ -1382,6 +1384,26 @@ void LLVOAvatar::initClass()
 		llerrs << "Error parsing skeleton node in avatar XML file: " << skeleton_path << llendl;
 	}
 
+	{
+		std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
+
+		if(!LLFile::isfile(client_list_filename))
+		{
+			client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "client_list.xml");
+		}
+
+		if(LLFile::isfile(client_list_filename))
+		{
+			LLSD client_list;
+
+			llifstream importer(client_list_filename);
+			LLSDSerialize::fromXMLDocument(client_list, importer);
+			if(client_list.has("isComplete"))
+			{
+				sClientResolutionList = client_list;
+			}
+		}
+	}
 }
 
 
@@ -2929,13 +2951,12 @@ void LLVOAvatar::idleUpdateWindEffect()
 	}
 }
 
-LLSD LLVOAvatar::ClientResolutionList;
 void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
 {
 	LLUUID idx = avatar->getTE(0)->getID();
-	if(LLVOAvatar::ClientResolutionList.has("isComplete") && LLVOAvatar::ClientResolutionList.has(idx.asString()))
+	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()))
 	{
-		LLSD cllsd = LLVOAvatar::ClientResolutionList[idx.asString()];
+		LLSD cllsd = LLVOAvatar::sClientResolutionList[idx.asString()];
 		client = cllsd["name"].asString();
 		LLColor4 colour;
 		colour.setValue(cllsd["color"]);
@@ -3069,9 +3090,9 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 		client = "Failure";
 		avatar_name_color = LLColor4::grey;
 	}
-	if(client == "" && LLVOAvatar::ClientResolutionList.has("default"))
+	if(client == "" && LLVOAvatar::sClientResolutionList.has("default"))
 	{
-		LLSD cllsd = LLVOAvatar::ClientResolutionList["default"];
+		LLSD cllsd = LLVOAvatar::sClientResolutionList["default"];
 		client = cllsd["name"].asString();
 		LLColor4 colour;
 		colour.setValue(cllsd["color"]);

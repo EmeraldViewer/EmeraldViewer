@@ -724,30 +724,24 @@ bool LLAppViewer::init()
 	//
 	initWindow();
 
-	LLSD client_list;
-	BOOL download = gSavedSettings.getBOOL("EmeraldDownloadClientTags");
-	std::string directory = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS,"client_list.xml");
-	if(download)
 	{
-		client_list = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/client_tags/client_list.xml");
-		if(client_list.has("body"))client_list = client_list["body"];
-	}
-	if(client_list.has("isComplete"))
-	{
-		llofstream export_file;
-		export_file.open(directory);
-		LLSDSerialize::toPrettyXML(client_list, export_file);
-		export_file.close();
-		LLVOAvatar::ClientResolutionList = client_list;
-	}else
-	{
-		if(LLFile::isfile(directory.c_str()))
+		BOOL download = gSavedSettings.getBOOL("EmeraldDownloadClientTags");
+		std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
+
+		if(download)
 		{
-			llifstream importer(directory);
-			LLSDSerialize::fromXMLDocument(client_list, importer);
-			if(client_list.has("isComplete"))
+			LLSD response = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/client_tags/client_list.xml");
+			if(response.has("body"))
 			{
-				LLVOAvatar::ClientResolutionList = client_list;
+				const LLSD &client_list = response["body"];
+
+				if(client_list.has("isComplete"))
+				{
+					llofstream export_file;
+					export_file.open(client_list_filename);
+					LLSDSerialize::toPrettyXML(client_list, export_file);
+					export_file.close();
+				}
 			}
 		}
 	}

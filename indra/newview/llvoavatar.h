@@ -536,8 +536,6 @@ public:
 	LLViewerJoint mRoot; // avatar skeleton
 	BOOL mIsSitting; // sitting state
 
-	static LLSD ClientResolutionList;
-
 	//--------------------------------------------------------------------
 	// Private member variables.
 	//--------------------------------------------------------------------

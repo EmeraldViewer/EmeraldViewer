@@ -157,13 +157,18 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 }
 
 LLAvatarListEntry::LLAvatarListEntry(const LLUUID& id, const std::string &name, const LLVector3d &position, BOOL isLinden) :
-		mID(id), mName(name), mPosition(position), mDrawPosition(position), mMarked(FALSE), mFocused(FALSE), mIsLinden(isLinden), mActivityType(ACTIVITY_NEW), mAccountTitle(""),
+		mID(id), mName(name), mPosition(position), mDrawPosition(), mMarked(FALSE), mFocused(FALSE), mIsLinden(isLinden), mActivityType(ACTIVITY_NEW), mAccountTitle(""),
 			mUpdateTimer(), mActivityTimer(), mFrame(gFrameCount), mInSimFrame(U32_MAX), mInDrawFrame(U32_MAX), mInChatFrame(U32_MAX)
 {
 }
 
 void LLAvatarListEntry::setPosition(LLVector3d position, bool this_sim, bool drawn, bool chatrange)
 {
+	if ( mActivityType == ACTIVITY_DEAD )
+	{
+		setActivity(ACTIVITY_NEW);
+	}
+
 	if ( drawn )
 	{
 		if ( mDrawPosition != position && !mDrawPosition.isExactlyZero() )
@@ -502,9 +507,23 @@ void LLFloaterAvatarList::updateAvatarList()
 
 	{
 		std::vector<LLUUID> avatar_ids;
+		std::vector<LLUUID> sorted_avatar_ids;
 		std::vector<LLVector3d> positions;
 
 		LLWorld::instance().getAvatars(&avatar_ids, &positions, mypos, F32_MAX);
+
+		sorted_avatar_ids = avatar_ids;
+		std::sort(sorted_avatar_ids.begin(), sorted_avatar_ids.end());
+
+		for(std::vector<LLCharacter*>::const_iterator iter = LLCharacter::sInstances.begin(); iter != LLCharacter::sInstances.end(); ++iter)
+		{
+			LLUUID avid = (*iter)->getID();
+
+			if(!std::binary_search(sorted_avatar_ids.begin(), sorted_avatar_ids.end(), avid))
+			{
+				avatar_ids.push_back(avid);
+			}
+		}
 
 		size_t i;
 		size_t count = avatar_ids.size();
@@ -515,99 +534,100 @@ void LLFloaterAvatarList::updateAvatarList()
 			std::string first;
 			std::string last;
 			const LLUUID &avid = avatar_ids[i];
-			const LLVector3d &position = positions[i];
 
-			if(gCacheName->getName(avid, first, last))
+			LLVector3d position = positions[i];
+			LLViewerObject *obj = gObjectList.findObject(avid);
+
+			if(obj)
 			{
-				name = first + " " + last;
+				LLVOAvatar* avatarp = dynamic_cast<LLVOAvatar*>(obj);
+
+				if (avatarp == NULL)
+				{
+					continue;
+				}
+
+				// Skip if avatar is dead(what's that?)
+				// or if the avatar is ourselves.
+				if (avatarp->isDead() || avatarp->isSelf())
+				{
+					continue;
+				}
+
+				// Get avatar data
+				position = gAgent.getPosGlobalFromAgent(avatarp->getCharacterPosition());
+				name = avatarp->getFullname();
+
+				// Apparently, sometimes the name comes out empty, with a " " name. This is because
+				// getFullname concatenates first and last name with a " " in the middle.
+				// This code will avoid adding a nameless entry to the list until it acquires a name.
+
+				//duped for lower section
+				if (name.empty() || (name.compare(" ") == 0))// || (name.compare(gCacheName->getDefaultName()) == 0))
+				{
+					if(gCacheName->getName(avid, first, last))
+					{
+						name = first + " " + last;
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				if (avid.isNull())
+				{
+					//llinfos << "Key empty for avatar " << name << llendl;
+					continue;
+				}
+
+				if ( mAvatars.count( avid ) > 0 )
+				{
+					// Avatar already in list, update position
+					mAvatars[avid].setPosition(position, (avatarp->getRegion() == gAgent.getRegion()), true, (position - mypos).magVec() < 20.0);
+				}
+				else
+				{
+					// Avatar not there yet, add it
+					BOOL isLinden = ( strcmp(avatarp->getNVPair("LastName")->getString(), "Linden") == 0 || last == "Linden" );
+
+					LLAvatarListEntry entry(avid, name, position, isLinden);
+					mAvatars[avid] = entry;
+
+					//sendAvatarPropertiesRequest(avid);
+					//llinfos << "avatar list refresh: adding " << name << llendl;
+
+				}
 			}
 			else
 			{
-				//name = gCacheName->getDefaultName();
-				continue; //prevent (Loading...)
-			}
+				if(gCacheName->getName(avid, first, last))
+				{
+					name = first + " " + last;
+				}
+				else
+				{
+					//name = gCacheName->getDefaultName();
+					continue; //prevent (Loading...)
+				}
 
-			if ( mAvatars.count( avid ) > 0 )
-			{
-				// Avatar already in list, update position
-				mAvatars[avid].setPosition(position, gAgent.getRegion()->pointInRegionGlobal(position), false, (position - mypos).magVec() < 20.0);
-			}
-			else
-			{
-				// Avatar not there yet, add it
-				BOOL isLinden = last == "Linden";
+				if ( mAvatars.count( avid ) > 0 )
+				{
+					// Avatar already in list, update position
+					mAvatars[avid].setPosition(position, gAgent.getRegion()->pointInRegionGlobal(position), false, (position - mypos).magVec() < 20.0);
+				}
+				else
+				{
+					// Avatar not there yet, add it
+					BOOL isLinden = last == "Linden";
 
-				LLAvatarListEntry entry(avid, name, position, isLinden);
-				mAvatars[avid] = entry;
+					LLAvatarListEntry entry(avid, name, position, isLinden);
+					mAvatars[avid] = entry;
+				}
 			}
 		}
 	}
 	
-
-	/*
-	 * Iterate over all the avatars known at the time
-	 * NOTE: Is this the right way to do that? It does appear that LLVOAvatar::isInstances contains
-	 * the list of avatars known to the client. This seems to do the task of tracking avatars without
-	 * any additional requests.
-	 *
-	 * BUG: It looks like avatars sometimes get stuck in this list, and keep perpetually
-	 * moving in the same direction. My current guess is that somewhere else the client
-	 * doesn't notice an avatar disappeared, and keeps updating its position. This should
-	 * be solved at the source of the problem.
-	 */
-	for (std::vector<LLCharacter*>::iterator iter = LLCharacter::sInstances.begin();
-		iter != LLCharacter::sInstances.end(); ++iter)
-	{
-		LLVOAvatar* avatarp = (LLVOAvatar*) *iter;
-
-		// Skip if avatar is dead(what's that?)
-		// or if the avatar is ourselves.
-		if (avatarp->isDead() || avatarp->isSelf())
-		{
-			continue;
-		}
-
-		// Get avatar data
-		LLVector3d position = gAgent.getPosGlobalFromAgent(avatarp->getCharacterPosition());
-		LLUUID avid = avatarp->getID();
-		std::string name = avatarp->getFullname();
-
-		// Apparently, sometimes the name comes out empty, with a " " name. This is because
-		// getFullname concatenates first and last name with a " " in the middle.
-		// This code will avoid adding a nameless entry to the list until it acquires a name.
-
-		//duped for lower section
-		if (name.empty() || (name.compare(" ") == 0))// || (name.compare(gCacheName->getDefaultName()) == 0))
-		{
-			//llinfos << "Name empty for avatar " << avid << llendl;
-			continue;
-		}
-
-		if (avid.isNull())
-		{
-			//llinfos << "Key empty for avatar " << name << llendl;
-			continue;
-		}
-
-		if ( mAvatars.count( avid ) > 0 )
-		{
-			// Avatar already in list, update position
-			mAvatars[avid].setPosition(position, (avatarp->getRegion() == gAgent.getRegion()), true, (position - mypos).magVec() < 20.0);
-		}
-		else
-		{
-			// Avatar not there yet, add it
-			BOOL isLinden = ( strcmp(avatarp->getNVPair("LastName")->getString(), "Linden") == 0 );
-
-			LLAvatarListEntry entry(avid, name, position, isLinden);
-			mAvatars[avid] = entry;
-
-			//sendAvatarPropertiesRequest(avid);
-			//llinfos << "avatar list refresh: adding " << name << llendl;
-
-		}
-	}
-
 //	llinfos << "avatar list refresh: done" << llendl;
 
 	expireAvatarList();
