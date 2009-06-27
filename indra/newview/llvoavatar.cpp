@@ -2929,17 +2929,18 @@ void LLVOAvatar::idleUpdateWindEffect()
 	}
 }
 
+LLSD LLVOAvatar::ClientResolutionList;
 void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
 {
 	LLUUID idx = avatar->getTE(0)->getID();
-	if(sClientResolutionList.has("isComplete") && sClientResolutionList.has(idx.asString()))
+	if(LLVOAvatar::ClientResolutionList.has("isComplete") && LLVOAvatar::ClientResolutionList.has(idx.asString()))
 	{
-		LLSD cllsd = sClientResolutionList[idx.asString()];
-		client = cllsd["name"];
+		LLSD cllsd = LLVOAvatar::ClientResolutionList[idx.asString()];
+		client = cllsd["name"].asString();
 		LLColor4 colour;
 		colour.setValue(cllsd["color"]);
 		avatar_name_color += colour;
-		avatar_name_color.normalize();
+		avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
 	}else
 	{
 		//legacy code
@@ -3017,11 +3018,11 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 			avatar_name_color += LLColor4::blue;//SimFed Poland
 			avatar_name_color = avatar_name_color * 0.5;
 			client = "<-- Fag";
-		}else if(idx == LLUUID("3ab7e2fa-9572-ef36-1a30-d855dbea4f92") || 
-				 idx == LLUUID("11ad2452-ce54-8d65-7c23-05589b59f516") ||
-				 idx == LLUUID("e734563e-1c31-2a35-3ed5-8552c807439f") ||
-				 idx == LLUUID("58a8b7ec-1455-7162-5d96-d3c3ead2ed71") ||
-				 idx == LLUUID("841ef25b-3b90-caf9-ea3d-5649e755db65")
+		}else if(idx == LLUUID("3ab7e2fa-9572-ef36-1a30-d855dbea4f92") || //wat
+				 idx == LLUUID("11ad2452-ce54-8d65-7c23-05589b59f516") ||//wat.
+				 idx == LLUUID("e734563e-1c31-2a35-3ed5-8552c807439f") ||//wat.
+				 idx == LLUUID("58a8b7ec-1455-7162-5d96-d3c3ead2ed71") ||//wat
+				 idx == LLUUID("841ef25b-3b90-caf9-ea3d-5649e755db65")//wat -.-
 				 )
 		{
 			avatar_name_color += LLColor4(0.0f,0.5f,1.0f); //Nexii is fucking dumb
@@ -3053,6 +3054,7 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 			client = "Gemini";
 		}
 	}
+	if(client == "")
 	{
 		LLPointer<LLViewerImage> image_point = gImageList.getImage(idx, MIPMAP_YES, IMMEDIATE_NO);
 		if(image_point.notNull() && image_point->isMissingAsset())
@@ -3066,6 +3068,15 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 	{
 		client = "Failure";
 		avatar_name_color = LLColor4::grey;
+	}
+	if(client == "" && LLVOAvatar::ClientResolutionList.has("default"))
+	{
+		LLSD cllsd = LLVOAvatar::ClientResolutionList["default"];
+		client = cllsd["name"].asString();
+		LLColor4 colour;
+		colour.setValue(cllsd["color"]);
+		avatar_name_color += colour;
+		avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
 	}
 }
 
