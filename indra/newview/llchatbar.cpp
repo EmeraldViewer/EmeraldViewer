@@ -129,7 +129,7 @@ BOOL LLChatBar::postBuild()
 {
 	childSetAction("History", toggleChatHistory, this);
 	//lgg
-	childSetAction("Expand",toggleChanSelect,this);
+	childSetAction("Expand",this->toggleChanSelect,this);
 	childSetCommitCallback("Say", onClickSay, this);
 
 	// attempt to bind to an existing combo box named gesture
@@ -730,18 +730,37 @@ void toggleChatHistory(void* user_data)
 	LLFloaterChat::toggleInstance(LLSD());
 }
 
-//lgg
-void toggleChanSelect(void* user_data)
+//static
+void LLChatBar::toggleChanSelect(void* user_data)//lgg
 {
-	
-	if(mChanSelectorExpanded)
+	LLChatBar* self = (LLChatBar*) user_data;
+
+	//Rect code by Cryogenic
+	LLRect chatbar = self->mInputEditor->getRect();
+	LLRect chanselect;
+	LLRect expander;
+	S32 chatdelta;
+	if(self->childGetRect("ChatChannel",chanselect) && self->childGetRect("Expand",expander))
 	{
-		mChanSelectorExpanded=false;
-	}else
-	{
-		mChanSelectorExpanded=true;
+		if(self->mChanSelectorExpanded)
+		{
+			self->mChanSelectorExpanded=false;
+			chatdelta = chanselect.getWidth();
+		}else
+		{
+			self->mChanSelectorExpanded=true;
+			chatdelta = -chanselect.getWidth();
+		}
+		expander.setCenterAndSize(expander.getCenterX() + chatdelta,expander.getCenterY(),expander.getWidth(),expander.getHeight());
+		chatbar.setCenterAndSize(chatbar.getCenterX() + chatdelta/2,chatbar.getCenterY(),chatbar.getWidth() + chatdelta,chatbar.getHeight());
+		self->childSetVisible("ChatChannel",self->mChanSelectorExpanded);
+		self->mInputEditor->setRect(chatbar);
+		self->childSetRect("Expand",expander);
 	}
-	//TODO change setting
+	else
+	{
+		llwarns << "ChatChannel or Expand could not be found in panel_chat_bar.xml" << llendl;
+	}
 }
 
 class LLChatHandler : public LLCommandHandler

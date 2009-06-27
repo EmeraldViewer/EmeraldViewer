@@ -94,6 +94,8 @@ public:
 	static void startChat(const char* line);
 	static void stopChat();
 
+	static void toggleChanSelect(void* user_data);//lgg
+
 protected:
 	void sendChat(EChatType type);
 	void updateChat();
