@@ -32,6 +32,9 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "chatbar_as_cmdline.h"
+
+#include "llcalc.h"
+
 #include "llchatbar.h"
 #include "llagent.h"
 #include "stdtypes.h"
@@ -161,6 +164,32 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				}
 				url = llformat("secondlife:///app/teleport/%s/%d/%d/%d",region_name.c_str(),agent_x,agent_y,agent_z);
 				LLURLDispatcher::dispatch(url, NULL, false);
+				return false;
+			}else if(command == gSavedSettings.getString("EmeraldCmdLineCalc"))//Cryogenic Blitz
+			{
+				bool success;
+				F32 result = 0.f;
+				std::string expr = revised_text.substr(command.length()+1);
+				LLStringUtil::toUpper(expr);
+				success = LLCalc::getInstance()->evalString(expr, result);
+
+				LLChat chat;
+
+				if (!success)
+				{
+					chat.mText =  "Calculation Failed";
+				}
+				else
+				{
+					// Replace the expression with the result
+					std::ostringstream result_str;
+					result_str << expr;
+					result_str << " = ";
+					result_str << result;
+					chat.mText = result_str.str();
+				}
+				chat.mSourceType = CHAT_SOURCE_SYSTEM;
+				LLFloaterChat::addChat(chat);
 				return false;
 			}
 		}

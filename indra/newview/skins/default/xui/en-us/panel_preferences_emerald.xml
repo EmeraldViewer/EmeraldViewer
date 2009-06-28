@@ -311,6 +311,13 @@ Leave any command blank to deactivate it.
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Use position in this sim as position in new sim" left_delta="200" mouse_opaque="true"
            name="toggle" radio_style="false" width="270" control_name="EmeraldMapToKeepPos" />
+	  <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="-200" name="loltxt" width="512">
+        Command to calculate expressions (usage: cmd expressions) (ex:cmd SIN(2+2))
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-18"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+           tool_tip="" name="EmeraldCmdLineCalc" control_name="EmeraldCmdLineCalc" width="200" />
     </panel>
   </tab_container>
 </panel>

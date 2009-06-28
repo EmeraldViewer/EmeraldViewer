@@ -2092,6 +2092,7 @@ BOOL LLLineEditor::evaluateFloat()
 	bool success;
 	F32 result = 0.f;
 	std::string expr = getText();
+	LLStringUtil::toUpper(expr);
 
 	success = LLCalc::getInstance()->evalString(expr, result);
 

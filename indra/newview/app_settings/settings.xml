@@ -12285,6 +12285,17 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+	<key>EmeraldCmdLineCalc</key>
+    <map>
+      <key>Comment</key>
+      <string>Calculates an expression</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>calc</string>
+    </map>
     <key>EmeraldDoubleClickWearInventoryObjects</key>
     <map>
       <key>Comment</key>
