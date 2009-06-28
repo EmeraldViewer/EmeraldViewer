@@ -197,7 +197,7 @@
             <key>md5sum</key>
             <string>286cca0d0fc3fb301b158672fb6465f6</string>
             <key>url</key>
-            <uri>http://thomas.shikami.mooo.com/install_pkgs/boost-1.36.0-windows-20090626.tar.bz2</uri>
+            <uri>http://www.lawlinter.net/data/boost-1.36.0-windows-20090626.tar.bz2</uri>
           </map>
         </map>
       </map>
@@ -1048,7 +1048,7 @@ anguage Infrstructure (CLI) international standard</string>
             <key>md5sum</key>
             <string>862c0ac57efd92c285e35f96f1c80875</string>
             <key>url</key>
-            <uri>http://thomas.shikami.mooo.com/install_pkgs/openal-windows-20090423.tar.bz2</uri>
+            <uri>http://www.lawlinter.net/data/openal-windows-20090423.tar.bz2</uri>
           </map>
         </map>
       </map>
