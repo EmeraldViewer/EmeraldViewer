@@ -535,7 +535,7 @@ void LLFloaterAvatarList::updateAvatarList()
 			std::string last;
 			const LLUUID &avid = avatar_ids[i];
 
-			LLVector3d position = positions[i];
+			LLVector3d position;
 			LLViewerObject *obj = gObjectList.findObject(avid);
 
 			if(obj)
@@ -601,6 +601,15 @@ void LLFloaterAvatarList::updateAvatarList()
 			}
 			else
 			{
+				if( i < positions.size())
+				{
+					position = positions[i];
+				}
+				else
+				{
+					continue;
+				}
+
 				if(gCacheName->getName(avid, first, last))
 				{
 					name = first + " " + last;
