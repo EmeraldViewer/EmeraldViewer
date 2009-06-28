@@ -12455,5 +12455,38 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>EmeraldAvatarXModifier</key>
+    <map>
+      <key>Comment</key>
+      <string>wat</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>0.0</real>
+    </map>
+    <key>EmeraldAvatarYModifier</key>
+    <map>
+      <key>Comment</key>
+      <string>wat</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>0.0</real>
+    </map>
+    <key>EmeraldAvatarZModifier</key>
+    <map>
+      <key>Comment</key>
+      <string>wat</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>0.0</real>
+    </map>
   </map>
 </llsd>
