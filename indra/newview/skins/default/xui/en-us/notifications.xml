@@ -6393,18 +6393,18 @@ The URL you clicked cannot be opened from this web browser.
   <notification
    icon="notify.tga"
    name="QueryClientTags"
-   type="alertmodal">
+   type="notify">
     Would you like to have the client tag database automatically updated from the web?
     This ensures that you have the latest information available regarding other clients.
     <form name="form">
       <button
        index="0"
-       name="Accept"
-       text="Accept"/>
+       name="Yes"
+       text="Yes"/>
       <button
        index="1"
-       name="Decline"
-       text="Decline"/>
+       name="No"
+       text="No"/>
     </form>
   </notification>
 
