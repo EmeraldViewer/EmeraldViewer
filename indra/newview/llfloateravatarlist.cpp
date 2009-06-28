@@ -1203,6 +1203,10 @@ void LLFloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 	msg->getUUIDFast(_PREHASH_SoundData, _PREHASH_OwnerID, owner_id);
 	if(owner_id == gAgent.getID() && sound_id == LLUUID("76c78607-93f9-f55a-5238-e19b1a181389"))
 	{
+		//lgg we need to auto turn on settings for ppl now that we know they has the thingy
+		gSavedSettings.setBOOL("EmeraldRadarChatKeys",true);
+		gSavedSettings.setBOOL("EmeraldRadarChatAlerts",true);
+		gSavedSettings.setBOOL("EmeraldAvatarListKeepOpen",true);
 		LLFloaterAvatarList* self = getInstance();
 		if(self) self->clearAnnouncements();
 	}

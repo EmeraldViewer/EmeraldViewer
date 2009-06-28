@@ -740,15 +740,15 @@ void LLChatBar::toggleChanSelect(void* user_data)//lgg
 			self->mChanSelectorExpanded=false;
 			chatdelta = chanselect.getWidth();
 			
-			self->childSetLabelArg("Expand","[NOTHING]",std::string("<"));
+			//self->childSetLabelArg("Expand","[NOTHING]",std::string("<"));
 			self->childSetToolTip("Expand",std::string("Show Channel Selector"));
 		}else
 		{
 			self->mChanSelectorExpanded=true;
 			
-			self->childSetText("Expand",std::string(">"));
+			//self->childSetText("Expand",std::string(">"));
 			
-			self->childSetLabelArg("Expand","[NOTHING]",std::string(">"));
+			//self->childSetLabelArg("Expand","[NOTHING]",std::string(">"));
 			self->childSetToolTip("Expand",std::string("Hide Channel Selector"));
 			chatdelta = -chanselect.getWidth();
 		}
