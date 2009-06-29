@@ -138,6 +138,12 @@
 <MapAvatar value="0, 255, 0, 255" />
 <MapFriend value="255, 255, 0, 255" />
 
+<!-- MAP -->
+<MapAvatar value="0, 255, 0, 255" />
+<MapFriend value="255, 255, 0, 255" />
+<MapLinden value="0, 0, 255, 255" />
+<MapMuted value="110, 110, 110, 255" />
+
 <!-- MINI-MAP -->
 <NetMapBackgroundColor value="0, 0, 0, 77" />
 <NetMapYouOwnAboveWater value="0, 255, 255, 255" />
