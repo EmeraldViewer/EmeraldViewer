@@ -12512,8 +12512,8 @@
     </map>
 	<key>EmeraldDialogSpamTime</key>
     <map>
-      <string>ADVANCED SETTINGS: Time of Evalulating Dialogs. RECOMMENDED NUMBER IS 1.000</string>
       <key>Comment</key>
+	  <string>ADVANCED SETTINGS: Time of Evalulating Dialogs. RECOMMENDED NUMBER IS 1.000</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
