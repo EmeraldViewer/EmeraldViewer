@@ -2406,6 +2406,11 @@ bool callingcard_offer_callback(const LLSD& notification, const LLSD& response)
 }
 static LLNotificationFunctorRegistration callingcard_offer_cb_reg("OfferCallingCard", callingcard_offer_callback);
 
+//CallingCard Spam Defines
+static LLFrameTimer c_spam;
+std::map< LLUUID , S32 > lastc_agents;
+LLDynamicArray<LLUUID> blacklisted_agents;
+
 void process_offer_callingcard(LLMessageSystem* msg, void**)
 {
 	// someone has offered to form a friendship
@@ -2420,7 +2425,7 @@ void process_offer_callingcard(LLMessageSystem* msg, void**)
 	payload["transaction_id"] = tid;
 	payload["source_id"] = source_id;
 	payload["sender"] = msg->getSender().getIPandPort();
-
+	
 	LLViewerObject* source = gObjectList.findObject(source_id);
 	LLSD args;
 	std::string source_name;
@@ -2438,6 +2443,57 @@ void process_offer_callingcard(LLMessageSystem* msg, void**)
 
 	if(!source_name.empty())
 	{
+		// Spam Prevention by Cryogenic
+		if(gSavedSettings.getBOOL("EmeraldCardSpamEnabled"))
+		{
+			if(!c_spam.getStarted())
+			{
+				c_spam.reset();
+			}
+			if(blacklisted_agents.find(source_id) == 0)
+			{
+				return;
+			}
+			std::map< LLUUID , S32 >::iterator itr = lastc_agents.find(source_id);
+			if(itr != lastc_agents.end())
+			{
+				if(c_spam.getElapsedTimeF32() < gSavedSettings.getF32("EmeraldSpamTime"))
+				{
+					if((*itr).second > gSavedSettings.getF32("EmeraldSpamCount"))
+					{
+						blacklisted_agents.put(source_id);
+						LL_INFOS("process_offer_callingcard") << "blocked callingcards from " << source_name << LL_ENDL;
+						args["KEY"] = source_id;
+						LLNotifications::getInstance()->add("BlockedCards",args);
+						return;
+					}
+					else
+					{
+						(*itr).second++;
+					}
+				}
+				else
+				{
+					c_spam.reset();
+				}
+			}
+			else
+			{
+				//llinfos << "Added " << fullname << " to list" << llendl;
+				lastc_agents[source_id] = 0;
+			}
+		}
+		else //just a bit of memory cleanup :D
+		{
+			if(c_spam.getStarted())
+			{
+				c_spam.stop();
+			}
+			if(!lastc_agents.empty())
+			{
+				lastc_agents.erase(lastc_agents.begin(),lastc_agents.end());
+			}
+		}
 		if (gAgent.getBusy() 
 			|| LLMuteList::getInstance()->isMuted(source_id, source_name, LLMute::flagTextChat))
 		{

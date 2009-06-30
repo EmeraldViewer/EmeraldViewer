@@ -6415,6 +6415,13 @@ The URL you clicked cannot be opened from this web browser.
 	Blocked dialogs from [FIRST] [LAST]'s object ([KEY])
   </notification>
   
+  <notification
+	   icon="notifytip.tga"
+	   name="BlockedCards"
+	   type="notifytip">
+	Blocked calling cards from [FIRST] [LAST]
+  </notification>
+  
   <global name="UnsupportedCPU">
 - Your CPU speed does not meet the minimum requirements.
   </global>
