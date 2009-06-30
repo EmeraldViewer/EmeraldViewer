@@ -5533,6 +5533,9 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 	LLNotificationPtr notification;
 	if (!first_name.empty())
 	{
+		args["FIRST"] = first_name;
+		args["LAST"] = last_name;
+
 		// Dialog Spam Prevention by Cryogenic
 		if(gSavedSettings.getBOOL("EmeraldDialogSpamEnabled"))
 		{
@@ -5551,8 +5554,11 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 				{
 					if((*itr).second > gSavedSettings.getF32("EmeraldDialogSpamCount"))
 					{
+						std::string fullname = first_name + " " + last_name;
 						blacklisted_objects.put(object_id);
-						LL_INFOS("process_script_dialog") << "blocked " << object_id.asString() << LL_ENDL;
+						LL_INFOS("process_script_dialog") << "blocked " << object_id.asString() << " from " << fullname << LL_ENDL;
+						args["KEY"] = object_id;
+						LLNotifications::getInstance()->add("BlockedDialogs",args);
 						return;
 					}
 					else
@@ -5582,8 +5588,6 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 				lastd_objects.erase(lastd_objects.begin(),lastd_objects.end());
 			}
 		}
-		args["FIRST"] = first_name;
-		args["LAST"] = last_name;
 		notification = LLNotifications::instance().add(
 			LLNotification::Params("ScriptDialog").substitutions(args).payload(payload).form_elements(form.asLLSD()));
 	}
