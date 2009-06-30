@@ -1,4 +1,3 @@
-
 /** 
  * @file llviewermenu.cpp
  * @brief Builds menus out of items.
@@ -59,6 +58,7 @@
 #include "message.h"
 #include "raytrace.h"
 #include "llsdserialize.h"
+#include "llsdutil.h"
 #include "lltimer.h"
 #include "llvfile.h"
 #include "llvolumemgr.h"
@@ -2117,6 +2117,217 @@ class LLObjectMute : public view_listener_t
 		return true;
 	}
 };
+
+class LLObjectVisibleExport : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		bool new_value = (object != NULL);
+		
+		if (new_value)
+		{
+			new_value = !object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer();
+			// Disable for avatars, we can only export prims
+			//LLVOAvatar* avatar = find_avatar_from_object(object); 
+			//new_value = (avatar == NULL);
+		}
+		
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		
+		return true;
+	}
+};
+
+class LLObjectEnableExport : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		bool new_value = (object != NULL);
+		
+		if (new_value)
+		{
+			new_value = !object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer();
+			// Disable for avatars, we can only export prims
+			//LLVOAvatar* avatar = find_avatar_from_object(object); 
+			//new_value = (avatar == NULL);
+		}
+		
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		
+		return true;
+	}
+};
+
+void export_object()
+{
+	LLObjectSelectionHandle selection = LLSelectMgr::getInstance()->getSelection();
+	LLViewerObject* root_object = NULL;
+	LLViewerObject* object = NULL;
+	LLSelectNode* node = selection->getFirstRootNode();
+	
+	if (!node)
+		return;
+	
+	object = root_object = node->getObject();
+	
+	if (!object)
+		return;
+	
+	// Build a list of everything that we'll actually be exporting
+	LLDynamicArray<LLViewerObject*> export_objects;
+	
+	// Add the root object to the export list
+	export_objects.put(object);
+	
+	// Iterate over all of this objects children
+	LLViewerObject::child_list_t child_list = object->getChildren();
+	
+	for (LLViewerObject::child_list_t::iterator i = child_list.begin(); i != child_list.end(); ++i)
+	{
+		LLViewerObject* child = *i;
+		// Put the child objects on the export list
+		export_objects.put(child);
+	}
+	
+	// Open the file save dialog
+	LLFilePicker& file_picker = LLFilePicker::instance();
+	
+	if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
+		return; // User canceled save.
+	
+	std::string file_name = file_picker.getFirstFile();
+	
+	// Create an LLSD object that will hold the entire tree structure that can be serialized to a file
+	LLSD llsd;
+	
+	S32 object_index = 0;
+	
+	while ((object_index < export_objects.count()))
+	{
+		object = export_objects.get(object_index++);
+		LLUUID id = object->getID();
+	
+		llinfos << "Exporting prim " << object->getID().asString() << llendl;
+	
+		// Create an LLSD object that represents this prim. It will be injected in to the overall LLSD
+		// tree structure
+		LLSD prim_llsd;
+	
+		if (object_index == 1)
+		{
+			LLVOAvatar* avatar = find_avatar_from_object(object);
+			if (avatar)
+			{
+				LLViewerJointAttachment* attachment = avatar->getTargetAttachmentPoint(object);
+				U8 attachment_id = 0;
+				
+				if (attachment)
+				{
+					for (LLVOAvatar::attachment_map_t::iterator iter = avatar->mAttachmentPoints.begin();
+										iter != avatar->mAttachmentPoints.end(); ++iter)
+					{
+						if (iter->second == attachment)
+						{
+							attachment_id = iter->first;
+							break;
+						}
+					}
+				}
+				else
+				{
+					// interpret 0 as "default location"
+					attachment_id = 0;
+				}
+				
+				prim_llsd["Attachment"] = attachment_id;
+				prim_llsd["attachpos"] = object->getPosition().getValue();
+				prim_llsd["attachrot"] = ll_sd_from_quaternion(object->getRotation());
+			}
+			
+			prim_llsd["position"] = LLVector3(0, 0, 0).getValue();
+			prim_llsd["rotation"] = ll_sd_from_quaternion(LLQuaternion(0.0f, 0.0f, 0.0f, 1.0f));
+		}
+		else
+		{
+			prim_llsd["position"] = object->getPosition().getValue();
+			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
+		}
+	
+		// Transforms
+		prim_llsd["scale"] = object->getScale().getValue();
+		// Flags
+		prim_llsd["shadows"] = object->flagCastShadows();
+		prim_llsd["phantom"] = object->flagPhantom();
+		prim_llsd["physical"] = (BOOL)(object->mFlags & FLAGS_USE_PHYSICS);
+
+		// Volume params
+		LLVolumeParams params = object->getVolume()->getParams();
+		prim_llsd["volume"] = params.asLLSD();
+
+		// Extra params
+		if (object->isFlexible())
+		{
+			// Flexible
+			LLFlexibleObjectData* flex = (LLFlexibleObjectData*)object->getParameterEntry(LLNetworkData::PARAMS_FLEXIBLE);
+			prim_llsd["flexible"] = flex->asLLSD();
+		}
+		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_LIGHT))
+		{
+			// Light
+			LLLightParams* light = (LLLightParams*)object->getParameterEntry(LLNetworkData::PARAMS_LIGHT);
+			prim_llsd["light"] = light->asLLSD();
+		}
+		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_SCULPT))
+		{
+			// Sculpt
+			LLSculptParams* sculpt = (LLSculptParams*)object->getParameterEntry(LLNetworkData::PARAMS_SCULPT);
+			prim_llsd["sculpt"] = sculpt->asLLSD();
+		}
+
+		// Textures
+		LLSD te_llsd;
+		U8 te_count = object->getNumTEs();
+		
+		for (U8 i = 0; i < te_count; i++)
+		{
+			te_llsd.append(object->getTE(i)->asLLSD());
+		}
+		
+		prim_llsd["textures"] = te_llsd;
+
+		// Changed to use link numbers zero-indexed.
+		llsd[object_index - 1] = prim_llsd;
+	}
+
+	// Create a file stream and write to it
+	llofstream export_file(file_name);
+	LLSDSerialize::toPrettyXML(llsd, export_file);
+	export_file.close();
+}
+
+class LLObjectExport : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		
+		if (!object)
+			return true;
+		
+		//LLVOAvatar* avatar = find_avatar_from_object(object); 
+		if (object->isAvatar())
+			return true;
+		// Can't export avatars (at least not yet...)
+		
+		//if (!avatar)
+		export_object();
+		
+		return true;
+	}
+};
+
 
 bool handle_go_to()
 {
@@ -7751,7 +7962,9 @@ void initialize_menus()
 	addMenu(new LLSelfEnableStandUp(), "Self.EnableStandUp");
 	addMenu(new LLSelfEnableRemoveAllAttachments(), "Self.EnableRemoveAllAttachments");
 
-	 // Avatar pie menu
+	 // Avatar pie menu	
+	addMenu(new LLObjectVisibleExport(), "Object.VisibleExport");
+	addMenu(new LLObjectEnableExport(), "Object.EnableExport");
 	addMenu(new LLObjectMute(), "Avatar.Mute");
 	addMenu(new LLAvatarAddFriend(), "Avatar.AddFriend");
 	addMenu(new LLAvatarFreeze(), "Avatar.Freeze");
@@ -7777,6 +7990,7 @@ void initialize_menus()
 	addMenu(new LLObjectAttachToAvatar(), "Object.AttachToAvatar");
 	addMenu(new LLObjectReturn(), "Object.Return");
 	addMenu(new LLObjectReportAbuse(), "Object.ReportAbuse");
+	addMenu(new LLObjectExport(), "Object.Export");
 	addMenu(new LLObjectMute(), "Object.Mute");
 	addMenu(new LLObjectBuy(), "Object.Buy");
 	addMenu(new LLObjectEdit(), "Object.Edit");

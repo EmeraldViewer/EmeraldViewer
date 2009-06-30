@@ -78,6 +78,8 @@
 extern F32 gMinObjectDistance;
 extern BOOL gAnimateTextures;
 
+extern ImportTracker gImportTracker;
+
 void dialog_refresh_all();
 
 #define CULL_VIS
@@ -515,6 +517,9 @@ void LLViewerObjectList::processObjectUpdate(LLMessageSystem *mesgsys,
 			}
 			processUpdateCore(objectp, user_data, i, update_type, NULL, justCreated);
 		}
+		if (gImportTracker.getState() != ImportTracker::IDLE && objectp && objectp->permYouOwner())
+			gImportTracker.get_update(local_id, justCreated);
+ 	
 	}
 
 	LLVOAvatar::cullAvatarsByPixelArea();

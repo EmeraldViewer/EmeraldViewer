@@ -67,6 +67,7 @@ include_directories(
     )
 
 set(viewer_SOURCE_FILES
+	importtracker.cpp
 	chatbar_as_cmdline.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
@@ -483,6 +484,7 @@ set(viewer_HEADER_FILES
 	jcfloater_animation_list.h
 	jcfloater_areasearch.h
 	jcobjectpropertylist.h
+	importtracker.h
     llagent.h
     llagentaccess.h
     llagentdata.h
