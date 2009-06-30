@@ -5478,6 +5478,11 @@ bool callback_script_dialog(const LLSD& notification, const LLSD& response)
 static LLNotificationFunctorRegistration callback_script_dialog_reg_1("ScriptDialog", callback_script_dialog);
 static LLNotificationFunctorRegistration callback_script_dialog_reg_2("ScriptDialogGroup", callback_script_dialog);
 
+//Dialog Spam Defines
+static LLFrameTimer d_spam;
+std::map< LLUUID , S32 > lastd_objects;
+LLDynamicArray<LLUUID> blacklisted_objects;
+
 void process_script_dialog(LLMessageSystem* msg, void**)
 {
 	S32 i;
@@ -5528,6 +5533,55 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 	LLNotificationPtr notification;
 	if (!first_name.empty())
 	{
+		// Dialog Spam Prevention by Cryogenic
+		if(gSavedSettings.getBOOL("EmeraldDialogSpamEnabled"))
+		{
+			if(!d_spam.getStarted())
+			{
+				d_spam.reset();
+			}
+			if(blacklisted_objects.find(object_id) == 0)
+			{
+				return;
+			}
+			std::map< LLUUID , S32 >::iterator itr = lastd_objects.find(object_id);
+			if(itr != lastd_objects.end())
+			{
+				if(d_spam.getElapsedTimeF32() < gSavedSettings.getF32("EmeraldDialogSpamTime"))
+				{
+					if((*itr).second > gSavedSettings.getF32("EmeraldDialogSpamCount"))
+					{
+						blacklisted_objects.put(object_id);
+						LL_INFOS("process_script_dialog") << "blocked " << object_id.asString() << LL_ENDL;
+						return;
+					}
+					else
+					{
+						(*itr).second++;
+					}
+				}
+				else
+				{
+					d_spam.reset();
+				}
+			}
+			else
+			{
+				//llinfos << "Added " << fullname << " to list" << llendl;
+				lastd_objects[object_id] = 0;
+			}
+		}
+		else //just a bit of memory cleanup :D
+		{
+			if(d_spam.getStarted())
+			{
+				d_spam.stop();
+			}
+			if(!lastd_objects.empty())
+			{
+				lastd_objects.erase(lastd_objects.begin(),lastd_objects.end());
+			}
+		}
 		args["FIRST"] = first_name;
 		args["LAST"] = last_name;
 		notification = LLNotifications::instance().add(

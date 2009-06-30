@@ -12499,5 +12499,38 @@
       <key>Value</key>
       <real>0.0</real>
     </map>
+	<key>EmeraldDialogSpamEnabled</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables Dialog Spam Prevention</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+	<key>EmeraldDialogSpamTime</key>
+    <map>
+      <string>ADVANCED SETTINGS: Time of Evalulating Dialogs. RECOMMENDED NUMBER IS 1.000</string>
+      <key>Comment</key>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>1.0</real>
+    </map>
+	<key>EmeraldDialogSpamCount</key>
+    <map>
+      <key>Comment</key>
+      <string>ADVANCED SETTINGS: Number of Dialogs per time set in EmeraldDialogSpamTime. RECOMMENDED IS 4.000</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>4.0</real>
+    </map>
   </map>
 </llsd>
