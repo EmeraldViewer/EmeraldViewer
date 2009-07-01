@@ -118,6 +118,7 @@
 			   tool_tip="Controls the amount of time you want between count refreshing."
 			   width="110" control_name="EmeraldSpamTime" />
 			<text bottom_delta="50" follows="left|top" font="SansSerifSmall" height="16" left_delta="175" name="loltxt" width="512">
+			To clear the blacklist just turn the protection off then back on.
 			Count and Time are ADVANCED settings.
 			Please use them ONLY if you know what you are doing.
 			Recommended Settings are:

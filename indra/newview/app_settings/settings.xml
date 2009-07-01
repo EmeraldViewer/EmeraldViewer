@@ -12305,7 +12305,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>calc</string>
+      <string>calcexpr</string>
     </map>
     <key>EmeraldDoubleClickWearInventoryObjects</key>
     <map>

@@ -5536,8 +5536,7 @@ static LLNotificationFunctorRegistration callback_script_dialog_reg_2("ScriptDia
 
 //Dialog Spam Defines
 static LLFrameTimer d_spam;
-std::map< LLUUID , S32 > lastd_objects;
-LLDynamicArray<LLUUID> blacklisted_objects;
+std::map< std::string , S32 > lastd_names;
 
 void process_script_dialog(LLMessageSystem* msg, void**)
 {
@@ -5591,28 +5590,37 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 	{
 		args["FIRST"] = first_name;
 		args["LAST"] = last_name;
-
+		std::string fullname = first_name + " " + last_name;
+		if(LLMuteList::getInstance()->isMuted(LLUUID::null,fullname))
+		{
+			return;
+		}
 		// Dialog Spam Prevention by Cryogenic
 		if(gSavedSettings.getBOOL("EmeraldDialogSpamEnabled"))
 		{
 			if(!d_spam.getStarted())
 			{
-				d_spam.reset();
+				d_spam.start();
 			}
-			if(blacklisted_objects.find(object_id) == 0)
+			std::map< std::string , S32 >::iterator itr = lastd_names.find(fullname);
+			if(itr != lastd_names.end())
 			{
-				return;
-			}
-			std::map< LLUUID , S32 >::iterator itr = lastd_objects.find(object_id);
-			if(itr != lastd_objects.end())
-			{
-				if(d_spam.getElapsedTimeF32() < gSavedSettings.getF32("EmeraldDialogSpamTime"))
+				if(d_spam.getElapsedTimeF32() <= gSavedSettings.getF32("EmeraldSpamTime"))
 				{
-					if((*itr).second > gSavedSettings.getF32("EmeraldDialogSpamCount"))
+					if((*itr).second > gSavedSettings.getF32("EmeraldSpamCount"))
 					{
-						std::string fullname = first_name + " " + last_name;
-						blacklisted_objects.put(object_id);
-						LL_INFOS("process_script_dialog") << "blocked " << object_id.asString() << " from " << fullname << LL_ENDL;
+						/*LLSD lol = LLHTTPClient::blockingGet("http://www.lawlinter.net/secondlifeutility/name2key.php?name="+LLWeb::escapeURL(fullname)+"&llsd=true");
+						LLUUID key = lol["body"];*/
+						/*LLUUID key = LLUUID::null;
+						std::string myname;
+						gAgent.getName(myname)
+						if(myname != fullname)
+						{
+							gCacheName->getKey(first_name,last_name,key);//H4CK* need to fix this s***
+						}*/
+						LLMute mute(LLUUID::null, fullname, LLMute::BY_NAME);
+						LLMuteList::getInstance()->add(mute);
+						LL_INFOS("process_script_dialog") << "blocked " << object_id.asString() << " and muted " << fullname << " (" << key.asString() << ")" <<LL_ENDL;
 						args["KEY"] = object_id;
 						LLNotifications::getInstance()->add("BlockedDialogs",args);
 						return;
@@ -5624,13 +5632,14 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 				}
 				else
 				{
+					lastd_names.erase(lastd_names.begin(),lastd_names.end());
 					d_spam.reset();
 				}
 			}
 			else
 			{
 				//llinfos << "Added " << fullname << " to list" << llendl;
-				lastd_objects[object_id] = 0;
+				lastd_names[fullname] = 0;
 			}
 		}
 		else //just a bit of memory cleanup :D
@@ -5639,9 +5648,9 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 			{
 				d_spam.stop();
 			}
-			if(!lastd_objects.empty())
+			if(!lastd_names.empty())
 			{
-				lastd_objects.erase(lastd_objects.begin(),lastd_objects.end());
+				lastd_names.erase(lastd_names.begin(),lastd_names.end());
 			}
 		}
 		notification = LLNotifications::instance().add(
