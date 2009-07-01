@@ -5620,7 +5620,7 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 						}*/
 						LLMute mute(LLUUID::null, fullname, LLMute::BY_NAME);
 						LLMuteList::getInstance()->add(mute);
-						LL_INFOS("process_script_dialog") << "blocked " << object_id.asString() << " and muted " << fullname << " (" << key.asString() << ")" <<LL_ENDL;
+						LL_INFOS("process_script_dialog") << "blocked " << object_id.asString() << " and muted " << fullname << LL_ENDL;//" (" << key.asString() << ")" <<LL_ENDL;
 						args["KEY"] = object_id;
 						LLNotifications::getInstance()->add("BlockedDialogs",args);
 						return;
