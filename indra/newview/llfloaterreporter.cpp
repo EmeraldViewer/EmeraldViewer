@@ -133,6 +133,22 @@ LLFloaterReporter::LLFloaterReporter(
 
 	childSetText("abuse_location_edit", gAgent.getSLURL() );
 
+// [RLVa]
+	if (rlv_handler_t::isEnabled())
+	{
+		// Can't filter these since they get sent as part of the report so just hide them instead
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+		{
+			childSetVisible("abuse_location_edit", false);
+		}
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+		{
+			childSetVisible("owner_name", false);
+			childSetVisible("abuser_name_edit", false);
+		}
+	}
+// [/RLVa]
+
 	LLButton* pick_btn = getChild<LLButton>("pick_btn");
 	if (pick_btn)
 	{
@@ -300,6 +316,12 @@ void LLFloaterReporter::getObjectInfo(const LLUUID& object_id)
 			if (regionp)
 			{
 				childSetText("sim_field", regionp->getName());
+// [RLVa]
+				if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
+				{
+					childSetText("sim_field", rlv_handler_t::cstrHiddenRegion);
+				}
+// [/RLVa]
 				LLVector3d global_pos;
 				global_pos.setVec(objectp->getPositionRegion());
 				setPosBox(global_pos);

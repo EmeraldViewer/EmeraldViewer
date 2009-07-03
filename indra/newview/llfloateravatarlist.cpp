@@ -124,7 +124,10 @@ typedef enum e_radar_alert_type
 } ERadarAlertType;
 void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool entering)
 {
-	if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts"))
+	//if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts"))
+// [RLVa:KB]
+	if ( (gSavedSettings.getBOOL("EmeraldRadarChatAlerts")) && (!gRlvHandler.hasBehaviour(RLV_BHVR_SENDIM)) )
+// [/RLVa:KB]
 	{
 		LLChat chat;
 		switch(type)
@@ -348,6 +351,13 @@ LLFloaterAvatarList::~LLFloaterAvatarList()
 //static
 void LLFloaterAvatarList::toggle(void*)
 {
+// [RLVa:KB] - Alternate: Emerald-206
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+	{
+		return;
+	}
+// [/RLVa:KB]
+
 	if (sInstance)
 	{
 		if(sInstance->getVisible())

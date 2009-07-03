@@ -458,6 +458,11 @@ set(viewer_SOURCE_FILES
     pipeline.cpp
     tsstuff.cpp
     tslua.cpp
+    rlvhandler.cpp
+    rlvhelper.cpp
+    rlvmultistringsearch.cpp
+    rlvextensions.cpp
+    rlvfloaterbehaviour.cpp
     )
 
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
@@ -881,6 +886,12 @@ set(viewer_HEADER_FILES
     tslua.h
     VertexCache.h
     VorbisFramework.h
+    rlvevent.h
+    rlvhandler.h
+    rlvhelper.h
+    rlvmultistringsearch.h
+    rlvextensions.h
+    rlvfloaterbehaviour.h
     )
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)
@@ -991,7 +1002,7 @@ if (WINDOWS)
         res/lltooltranslate.cur
         res/lltoolzoomin.cur
         res/lltoolzoomout.cur
-        res/emerald_icon.BMP
+        res/emerald_icon.png
         res/emerald_icon.ico
         res/resource.h
         res/toolbuy.cur

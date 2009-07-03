@@ -125,6 +125,14 @@ BOOL LLToolPlacer::raycastForNewObjPos( S32 x, S32 y, LLViewerObject** hit_obj, 
 		return FALSE;
 	}
 
+// [RLVa:KB] - Checked: 2009-06-01 (RLVa-0.2.0f) | Modified: RLVa-0.2.0f
+	// NOTE: don't use surface_pos_global since for prims it will be the center of the prim while we need center + offset
+	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH)) && (dist_vec_squared(gAgent.getPositionGlobal(), pick.mPosGlobal) > 1.5f * 1.5f) )
+	{
+		return FALSE;
+	}
+// [/RLVa:KB]
+
 	// Find the sim where the surface lives.
 	LLViewerRegion *regionp = LLWorld::getInstance()->getRegionFromPosGlobal(surface_pos_global);
 	if (!regionp)
@@ -500,6 +508,13 @@ BOOL LLToolPlacer::placeObject(S32 x, S32 y, MASK mask)
 {
 	BOOL added = TRUE;
 	
+// [RLVa]
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_REZ)) )
+	{
+		return TRUE; // Callers seem to expect a "did you handle it?" so we return TRUE rather than FALSE
+	}
+// [/RLVa]
+
 	if (gSavedSettings.getBOOL("CreateToolCopySelection"))
 	{
 		added = addDuplicate(x, y);

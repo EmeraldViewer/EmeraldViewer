@@ -3998,4 +3998,17 @@ void LLAppViewer::handleLoginComplete()
 		gDebugInfo["MainloopTimeoutState"] = LLAppViewer::instance()->mMainloopTimeout->getState();
 	}
 	writeDebugInfo();
+
+// [RLVa:KB] - Alternate: Snowglobe-1.0 | Checked: 2009-06-16 (RLVa-0.2.1d) | Modified: RLVa-0.2.1d
+	// TODO-RLVa: find some way to initialize the lookup table when we need them *and* support toggling RLV at runtime
+	gRlvHandler.initLookupTables();
+
+	if (rlv_handler_t::isEnabled())
+	{
+		rlv_handler_t::fetchSharedInventory();
+		#ifdef RLV_EXTENSION_STARTLOCATION
+			rlvUpdateLoginLocationSetting();
+		#endif // RLV_EXTENSION_STARTLOCATION
+	}
+// [/RLVa:KB]
 }
