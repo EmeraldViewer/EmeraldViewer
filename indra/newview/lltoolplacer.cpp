@@ -64,6 +64,7 @@
 #include "llviewerobjectlist.h"
 #include "llviewercamera.h"
 #include "llviewerstats.h"
+#include "importtracker.h"
 
 const LLVector3 DEFAULT_OBJECT_SCALE(0.5f, 0.5f, 0.5f);
 
@@ -198,6 +199,7 @@ BOOL LLToolPlacer::addObject( LLPCode pcode, S32 x, S32 y, U8 use_physics )
 	}
 
 	// Set params for new object based on its PCode.
+	//lgg todo add pprefs to let them set default size and meterial
 	LLQuaternion	rotation;
 	LLVector3		scale = DEFAULT_OBJECT_SCALE;
 	U8				material = LL_MCODE_WOOD;
@@ -428,7 +430,8 @@ BOOL LLToolPlacer::addObject( LLPCode pcode, S32 x, S32 y, U8 use_physics )
 	
 	// Pack in name value pairs
 	gMessageSystem->sendReliable(regionp->getHost());
-
+	//lgg set flag to set texture here
+	gImportTracker.expectRez();
 	// Spawns a message, so must be after above send
 	if (create_selected)
 	{
@@ -499,7 +502,7 @@ BOOL LLToolPlacer::addDuplicate(S32 x, S32 y)
 	{
 		LLFirstUse::useSandbox();
 	}
-
+	gImportTracker.expectRez();
 	return TRUE;
 }
 

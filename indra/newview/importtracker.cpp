@@ -25,6 +25,12 @@ void ImportTracker::import(LLSD& file_data)
 	plywood_above_head();
 }
 
+void ImportTracker::expectRez()
+{
+	state = WAND;
+	llinfos << "EXPECTING CUBE..." << llendl;
+}
+
 void ImportTracker::clear()
 {
 	localids.clear();
@@ -36,6 +42,40 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated)
 {
 	switch (state)
 	{
+		//lgg crap
+		case WAND:
+			if(justCreated)
+			{
+				state=IDLE;
+				LLMessageSystem* msg = gMessageSystem;
+				msg->newMessageFast(_PREHASH_ObjectImage);
+				msg->nextBlockFast(_PREHASH_AgentData);
+				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	
+				msg->nextBlockFast(_PREHASH_ObjectData);
+				
+				msg->addU32Fast(_PREHASH_ObjectLocalID,  (U32)newid);
+				msg->addStringFast(_PREHASH_MediaURL, NULL);
+	
+				LLPrimitive obj;
+				obj.setNumTEs(U8(6));
+	
+				for (int i = 0; i < 6; i++)
+				{
+					LLTextureEntry tex =  LLTextureEntry(LLUUID(std::string("c05b278c-c8e3-821b-c326-420822fba9da")));
+					tex.setAlpha((F32)0.7f);
+					//tex.setID(LLUUID(std::string("c05b278c-c8e3-821b-c326-420822fba9da")));
+					//tex.fromLLSD("c05b278c-c8e3-821b-c326-420822fba9da");
+					obj.setTE(U8(i), tex);
+				}
+	
+				obj.packTEMessage(gMessageSystem);
+	
+				msg->sendReliable(gAgent.getRegion()->getHost());
+				llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
+			}
+		break;
 		case REZZING:
 			if (justCreated && (int)localids.size() < linkset.size())
 			{

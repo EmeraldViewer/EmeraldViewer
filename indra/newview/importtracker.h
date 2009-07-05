@@ -14,13 +14,14 @@ using namespace std;
 class ImportTracker
 {
 	public:
-		enum ImportState { IDLE, REZZING, COPYING, LINKING, POSITIONING };			
+		enum ImportState { IDLE, WAND, REZZING, COPYING, LINKING, POSITIONING };			
 		
 		ImportTracker() { state = IDLE; }
 		ImportTracker(LLSD &data) { state = IDLE; linkset = data; }
 		~ImportTracker() { localids.clear(); linkset.clear(); }
 	
 		void import(LLSD &file_data);
+		void expectRez();
 		void clear();
 		void get_update(S32 newid, BOOL justCreated = false);
 		
