@@ -3562,44 +3562,59 @@ void LLVOAvatar::idleUpdateTractorBeam()
 	}
 
 
-	F32 r, g, b;
-	LLColor4 output;
-	hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.1f), 1.0f, 0.5f, r, g, b);
-	output.set(r, g, b);
-	LLColor4U rgb;
-	rgb.setVecScaleClamp(output);
+	
+	LLColor4U rgb = LLColor4U(gAgent.getEffectColor());
+	
+	if(gSavedSettings.getBOOL("EmeraldRainbowBeam"))
+	{
+		F32 r, g, b;
+		LLColor4 output;
+		hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.1f), 1.0f, 0.5f, r, g, b);
+		output.set(r, g, b);
+		rgb.setVecScaleClamp(output);
+	
+	}else if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
+	{
+		F32 r, g, b;
+		LLColor4 output;
+		hslToRgb(0.25f+sinf(gFrameTimeSeconds*1.2f)*(0.166f/2.0f), 1.0f, 0.5f, r, g, b);
+		output.set(r, g, b);
+		rgb.setVecScaleClamp(output);
+	}
+	
 	// This is only done for yourself (maybe it should be in the agent?)
 	if (!needsRenderBeam() || !mIsBuilt)
 	{
 		mBeam = NULL;
 		if(gSavedSettings.getBOOL("EmeraldParticleChat"))
+		{
+			if(sPartsNow != FALSE)
 			{
-				if(sPartsNow != FALSE)
-				{
-					sPartsNow = FALSE;
-					LLMessageSystem* msg = gMessageSystem;
-					msg->newMessageFast(_PREHASH_ChatFromViewer);
-					msg->nextBlockFast(_PREHASH_AgentData);
-					msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-					msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-					msg->nextBlockFast(_PREHASH_ChatData);
-					msg->addStringFast(_PREHASH_Message, "stop");
-					msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
-					msg->addS32("Channel", 9000);
-					
-					gAgent.sendReliableMessage();
-					sBeamLastAt  =  LLVector3d::zero;
-					LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
-	}
+				sPartsNow = FALSE;
+				LLMessageSystem* msg = gMessageSystem;
+				msg->newMessageFast(_PREHASH_ChatFromViewer);
+				msg->nextBlockFast(_PREHASH_AgentData);
+				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+				msg->nextBlockFast(_PREHASH_ChatData);
+				msg->addStringFast(_PREHASH_Message, "stop");
+				msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
+				msg->addS32("Channel", 9000);
+				
+				gAgent.sendReliableMessage();
+				sBeamLastAt  =  LLVector3d::zero;
+				LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
 			}
+		}
 	}
 	else if (!mBeam || mBeam->isDead())
 	{
 		// VEFFECT: Tractor Beam
 		mBeam = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM);
-		mBeam->setColor(gSavedSettings.getBOOL("EmeraldRainbowBeam")? rgb : LLColor4U(gAgent.getEffectColor()));
+		mBeam->setColor( rgb );
 		mBeam->setSourceObject(this);
 		mBeamTimer.reset();
+		
 		//lgg particle beam speaking
 	}
 
@@ -3611,6 +3626,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		{
 			// get point from pointat effect
 			mBeam->setPositionGlobal(gAgent.mPointAt->getPointAtPosGlobal());
+
 			//lgg crap
 			if(gSavedSettings.getBOOL("EmeraldParticleChat"))
 			{
@@ -3652,7 +3668,9 @@ void LLVOAvatar::idleUpdateTractorBeam()
 				}
 
 			}
+			
 			mBeam->triggerLocal();
+			
 		}
 		else if (selection->getFirstRootObject() && 
 				selection->getSelectType() != SELECT_TYPE_HUD)
@@ -3685,9 +3703,26 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		}
 		if (mBeamTimer.getElapsedTimeF32() > 0.25f)
 		{
-			mBeam->setColor(gSavedSettings.getBOOL("EmeraldRainbowBeam")? rgb : LLColor4U(gAgent.getEffectColor()));
+			
+			mBeam->setColor(rgb );
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
+			
+			if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
+			{
+				mBeams.clear();
+				for(int i = 0; i <3 ; i++)
+				{
+					mBeams.push_back( (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM));
+					mBeams[i]->setPositionGlobal(mBeam->getPositionGlobal() + LLVector3d((F64)0.0,(F64)0.0,(F64)0.2 * i));
+					mBeams[i]->setColor(rgb);
+					mBeams[i]->setTargetObject(mBeam->getTargetObject());
+					mBeams[i]->setSourceObject(mBeam->getSourceObject());
+					mBeams[i]->setNeedsSendToSim(mBeam->getNeedsSendToSim());
+
+				}
+			}
+			
 		}
 	}
 }
