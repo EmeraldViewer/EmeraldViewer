@@ -1605,6 +1605,7 @@ static void send_estate_message(
 	msg->sendReliable(gAgent.getRegion()->getHost());
 }
 
+/* Apparently not in use
 static void send_estate_ban(const LLUUID& agent)
 {
 	LLUUID invoice;
@@ -1623,12 +1624,12 @@ static void send_estate_ban(const LLUUID& agent)
 	msg->addString("Method", "estateaccessdelta");
 	msg->addUUID("Invoice", invoice);
 
-	char buf[MAX_STRING];		/* Flawfinder: ignore*/
+	char buf[MAX_STRING];		// Flawfinder: ignore
 	gAgent.getID().toString(buf);
 	msg->nextBlock("ParamList");
 	msg->addString("Parameter", buf);
 
-	snprintf(buf, MAX_STRING, "%u", flags);			/* Flawfinder: ignore */
+	snprintf(buf, MAX_STRING, "%u", flags);			// Flawfinder: ignore
 	msg->nextBlock("ParamList");
 	msg->addString("Parameter", buf);
 
@@ -1638,6 +1639,7 @@ static void send_estate_ban(const LLUUID& agent)
 
 	gAgent.sendReliableMessage();
 }
+*/
 
 static void cmd_freeze(const LLUUID& avatar, const std::string &name)      { send_freeze(avatar, true); }
 static void cmd_unfreeze(const LLUUID& avatar, const std::string &name)    { send_freeze(avatar, false); }
@@ -1647,11 +1649,13 @@ static void cmd_profile(const LLUUID& avatar, const std::string &name)     { LLF
 //static void cmd_mute(const LLUUID&avatar, const std::string &name)         { LLMuteList::getInstance()->add(LLMute(avatar, name, LLMute::AGENT)); }
 //static void cmd_unmute(const LLUUID&avatar, const std::string &name)       { LLMuteList::getInstance()->remove(LLMute(avatar, name, LLMute::AGENT)); }
 static void cmd_estate_eject(const LLUUID &avatar, const std::string &name){ send_estate_message("teleporthomeuser", avatar); }
+/* Apparently not in use
 static void cmd_estate_ban(const LLUUID &avatar, const std::string &name)
 {
 	send_estate_message("teleporthomeuser", avatar); // Kick first, just to be sure
 	send_estate_ban(avatar);
 }
+*/
 
 void LLFloaterAvatarList::doCommand(void (*func)(const LLUUID &avatar, const std::string &name))
 {

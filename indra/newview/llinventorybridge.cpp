@@ -4052,7 +4052,7 @@ void wear_inventory_category_on_avatar_step2( BOOL proceed, void* userdata )
 			// Filter anything that doesn't specify an attachment point (or that specifies one that's currently locked)
 			for (S32 idxObj = obj_item_array.count() - 1; idxObj >= 0; idxObj--)
 			{
-				LLViewerJointAttachment* pAttachPt = gRlvHandler.getAttachPoint(obj_item_array.get(idxObj), true);
+				LLViewerJointAttachment* pAttachPt = gRlvHandler.getAttachPoint((LLInventoryItem*)obj_item_array.get(idxObj), true);
 				if ( (!gRlvHandler.fDbgEnableWear) && ((!pAttachPt) || (!gRlvHandler.isDetachable(pAttachPt->getObject()))) )
 					obj_item_array.remove(idxObj);
 			}
