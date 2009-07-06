@@ -17,13 +17,13 @@ class ImportTracker
 		enum ImportState { IDLE, WAND, REZZING, COPYING, LINKING, POSITIONING };			
 		
 		ImportTracker() { state = IDLE; }
-		ImportTracker(LLSD &data) { state = IDLE; linkset = data; }
+		ImportTracker(LLSD &data) { state = IDLE; linkset = data; numberExpected=0;}
 		~ImportTracker() { localids.clear(); linkset.clear(); }
 	
 		void import(LLSD &file_data);
 		void expectRez();
 		void clear();
-		void get_update(S32 newid, BOOL justCreated = false);
+		void get_update(S32 newid, BOOL justCreated = false, BOOL createSelected = false);
 		
 		const int getState() { return state; }
 		
@@ -39,6 +39,7 @@ class ImportTracker
 		void plywood_above_head();
 	
 	private:
+		int				numberExpected;
 		int				state;
 		S32				last;
 		LLVector3			root;

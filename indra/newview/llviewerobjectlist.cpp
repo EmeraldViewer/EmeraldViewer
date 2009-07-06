@@ -238,6 +238,9 @@ void LLViewerObjectList::processUpdateCore(LLViewerObject* objectp,
 	// so that the drawable parent is set properly
 	findOrphans(objectp, msg->getSenderIP(), msg->getSenderPort());
 	
+	if (gImportTracker.getState() != ImportTracker::IDLE && objectp && objectp->permYouOwner())
+			gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
+
 	// If we're just wandering around, don't create new objects selected.
 	if (just_created 
 		&& update_type != OUT_TERSE_IMPROVED 
@@ -517,8 +520,7 @@ void LLViewerObjectList::processObjectUpdate(LLMessageSystem *mesgsys,
 			}
 			processUpdateCore(objectp, user_data, i, update_type, NULL, justCreated);
 		}
-		if (gImportTracker.getState() != ImportTracker::IDLE && objectp && objectp->permYouOwner())
-			gImportTracker.get_update(local_id, justCreated);
+		
  	
 	}
 

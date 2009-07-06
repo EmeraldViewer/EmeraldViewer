@@ -27,6 +27,7 @@ void ImportTracker::import(LLSD& file_data)
 
 void ImportTracker::expectRez()
 {
+	numberExpected++;
 	state = WAND;
 	llinfos << "EXPECTING CUBE..." << llendl;
 }
@@ -38,41 +39,65 @@ void ImportTracker::clear()
 	state = IDLE;
 }
 
-void ImportTracker::get_update(S32 newid, BOOL justCreated)
+void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 {
 	switch (state)
 	{
 		//lgg crap
 		case WAND:
-			if(justCreated)
+			if(justCreated && createSelected)
 			{
-				state=IDLE;
+				numberExpected--;
+				if(numberExpected<=0)
+					state=IDLE;
 				LLMessageSystem* msg = gMessageSystem;
 				msg->newMessageFast(_PREHASH_ObjectImage);
 				msg->nextBlockFast(_PREHASH_AgentData);
 				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	
-				msg->nextBlockFast(_PREHASH_ObjectData);
-				
+				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());	
+				msg->nextBlockFast(_PREHASH_ObjectData);				
 				msg->addU32Fast(_PREHASH_ObjectLocalID,  (U32)newid);
 				msg->addStringFast(_PREHASH_MediaURL, NULL);
 	
 				LLPrimitive obj;
-				obj.setNumTEs(U8(6));
-	
-				for (int i = 0; i < 6; i++)
+				obj.setNumTEs(U8(10));	
+				S32 shinnyLevel = 0;
+				if(gSavedSettings.getString("EmeraldBuildPrefs_Shiny")== "None") shinnyLevel = 0;
+				if(gSavedSettings.getString("EmeraldBuildPrefs_Shiny")== "Low") shinnyLevel = 1;
+				if(gSavedSettings.getString("EmeraldBuildPrefs_Shiny")== "Medium") shinnyLevel = 2;
+				if(gSavedSettings.getString("EmeraldBuildPrefs_Shiny")== "High") shinnyLevel = 3;
+				
+				for (int i = 0; i < 10; i++)
 				{
-					LLTextureEntry tex =  LLTextureEntry(LLUUID(std::string("c05b278c-c8e3-821b-c326-420822fba9da")));
-					tex.setAlpha((F32)0.7f);
-					//tex.setID(LLUUID(std::string("c05b278c-c8e3-821b-c326-420822fba9da")));
-					//tex.fromLLSD("c05b278c-c8e3-821b-c326-420822fba9da");
+					LLTextureEntry tex =  LLTextureEntry(LLUUID(gSavedSettings.getString("EmeraldBuildPrefs_Texture")));
+					tex.setColor(gSavedSettings.getColor4("EmeraldBuildPrefs_Color"));
+					tex.setAlpha(1.0 - ((gSavedSettings.getF32("EmeraldBuildPrefs_Alpha")) / 100.0));
+					tex.setGlow(gSavedSettings.getF32("EmeraldBuildPrefs_Glow"));
+					if(gSavedSettings.getBOOL("EmeraldBuildPrefs_FullBright"))
+					{
+						tex.setFullbright(TEM_FULLBRIGHT_MASK);
+					}
+									
+					tex.setShiny((U8) shinnyLevel & TEM_SHINY_MASK);
+					
 					obj.setTE(U8(i), tex);
 				}
 	
 				obj.packTEMessage(gMessageSystem);
 	
 				msg->sendReliable(gAgent.getRegion()->getHost());
+				
+				msg->newMessage("ObjectFlagUpdate");
+				msg->nextBlockFast(_PREHASH_AgentData);
+				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+				msg->addU32Fast(_PREHASH_ObjectLocalID, (U32)newid );
+				msg->addBOOLFast(_PREHASH_UsePhysics, gSavedSettings.getBOOL("EmeraldBuildPrefs_Physical"));
+				msg->addBOOL("IsTemporary", gSavedSettings.getBOOL("EmeraldBuildPrefs_Temporary"));
+				msg->addBOOL("IsPhantom", gSavedSettings.getBOOL("EmeraldBuildPrefs_Phantom") );
+				msg->addBOOL("CastsShadows", true );
+				msg->sendReliable(gAgent.getRegion()->getHost());				
+
 				llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
 			}
 		break;
