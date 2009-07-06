@@ -8,7 +8,7 @@
 AppId={{204D48C5-6231-4955-83EC-623DCB437FD9}
 ;AppMutex=SecondLifeAppMutex
 AppName=GreenLife Emerald Viewer
-AppVerName=GreenLife Emerald Viewer 1.23.4 (205)
+AppVerName=GreenLife Emerald Viewer 1.23.4 (206)
 AppPublisher=ModularSystems.sl
 AppPublisherURL=http://modularsystems.sl/
 AppSupportURL=http://modularsystems.sl/
@@ -16,7 +16,7 @@ AppUpdatesURL=http://modularsystems.sl/
 DefaultDirName={pf}\GreenLife Emerald Viewer
 DefaultGroupName=GreenLife Emerald Viewer
 OutputDir=C:\emerald-setup
-OutputBaseFilename=GreenLifeSetup_1-23-4-205-lgg
+OutputBaseFilename=GreenLifeSetup_1-23-4-206-lgg
 Compression=lzma
 SolidCompression=yes
 PrivilegesRequired=poweruser
@@ -52,7 +52,19 @@ Root: HKLM; Subkey: "Software\ModularSystems.sl\GreenLife Emerald Viewer\Setting
 
 [InstallDelete]
 Type: files; Name: "{app}\secondlife-bin.exe"
-;Type: filesandordirs; Name: "{app}\skins"
+Type: filesandordirs; Name: "{app}\skins\dark"
+Type: filesandordirs; Name: "{app}\skins\darkgred"
+Type: filesandordirs; Name: "{app}\skins\darkorange"
+Type: filesandordirs; Name: "{app}\skins\default"
+Type: filesandordirs; Name: "{app}\skins\emerald"
+Type: filesandordirs; Name: "{app}\skins\gred"
+Type: filesandordirs; Name: "{app}\skins\pslgreen"
+Type: filesandordirs; Name: "{app}\skins\pslpurple"
+Type: filesandordirs; Name: "{app}\skins\ruby"
+Type: filesandordirs; Name: "{app}\skins\sapphire"
+Type: filesandordirs; Name: "{app}\skins\silves"
+Type: filesandordirs; Name: "{app}\skins\white_emerald"
+Type: files;          Name: "{app}\OpenJPEG.dll"
 ;Type: files; Name: "{app}\fmod.dll"
 ;Type: files; Name: "{app}\llkdu.dll"
 ;Type: files; Name: "{app}\SLVoice.exe"
