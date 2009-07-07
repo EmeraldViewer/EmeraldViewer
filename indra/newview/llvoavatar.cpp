@@ -3569,7 +3569,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 	{
 		F32 r, g, b;
 		LLColor4 output;
-		hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.1f), 1.0f, 0.5f, r, g, b);
+		hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.3f), 1.0f, 0.5f, r, g, b);
 		output.set(r, g, b);
 		rgb.setVecScaleClamp(output);
 	
@@ -3710,11 +3710,39 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			
 			if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
 			{
+				LLVector3d picture[]  = {
+				 LLVector3d( (F64) 0.0 , (F64) 1, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  6, (F64) 2)
+				,LLVector3d( (F64) 0.0 , (F64)  7, (F64) 0)
+				,LLVector3d( (F64) 0.0 , (F64)  5, (F64) -2)
+				,LLVector3d( (F64) 0.0 , (F64)  3, (F64) -4)
+				,LLVector3d( (F64) 0.0 , (F64)  1, (F64) -6)
+				,LLVector3d( (F64) 0.0 , (F64)  0, (F64) -6.5)
+				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) -6)
+				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) -4)
+				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) -2)
+				,LLVector3d( (F64) 0.0 , (F64)  -7, (F64) 0)
+				,LLVector3d( (F64) 0.0 , (F64)  -6, (F64) 2)
+				,LLVector3d( (F64) 0.0 , (F64)  -5, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) 4)
+				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) 4)
+				};
+				LLQuaternion itsRot = mBeam->getTargetObject()->getRotation();
+
 				mBeams.clear();
-				for(int i = 0; i <3 ; i++)
+				for(int i = 0; i < (sizeof(picture) / (sizeof(LLVector3d))); i++)
 				{
+					
+					LLVector3d offset = (picture[i]*(1.0f/7.0f)*(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f));
+					LLVector3 beamLine = LLVector3( mBeam->getPositionGlobal() - gAgent.getPositionGlobal());
+					beamLine.normalize();
+					LLQuaternion change;
+					change.shortestArc(LLVector3::x_axis,beamLine);
+					offset.rotVec(change);
 					mBeams.push_back( (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM));
-					mBeams[i]->setPositionGlobal(mBeam->getPositionGlobal() + LLVector3d((F64)0.0,(F64)0.0,(F64)0.2 * i));
+					mBeams[i]->setPositionGlobal(mBeam->getPositionGlobal() + offset + (LLVector3d(beamLine) * sinf(gFrameTimeSeconds*2.0f) * 0.2f));
 					mBeams[i]->setColor(rgb);
 					mBeams[i]->setTargetObject(mBeam->getTargetObject());
 					mBeams[i]->setSourceObject(mBeam->getSourceObject());

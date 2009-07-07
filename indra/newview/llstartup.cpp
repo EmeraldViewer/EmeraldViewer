@@ -324,7 +324,7 @@ bool idle_startup()
 {
 	LLMemType mt1(LLMemType::MTYPE_STARTUP);
 	
-	const F32 PRECACHING_DELAY = gSavedSettings.getF32("PrecachingDelay");
+	const F32 PRECACHING_DELAY = gSavedSettings.getF32("PrecachingDelay")+0.01;
 	const F32 TIMEOUT_SECONDS = 5.f;
 	const S32 MAX_TIMEOUT_COUNT = 3;
 	static LLTimer timeout;
