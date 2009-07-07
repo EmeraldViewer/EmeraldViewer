@@ -12054,6 +12054,39 @@
         <integer>0</integer>
       </array>
     </map>
+    <key>EmeraldLoadURL</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable to prevent Load URL dialogs. (Enabled by default)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldRevokePerms</key>
+    <map>
+      <key>Comment</key>
+      <string>Setting this option to 1 will revoke perms when you sit on an object, 2 will revoke perms when you get off an object, 3 will revoke perms when you sit and stand.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>U32</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldAgentUpdatesPerSecond</key>
+    <map>
+      <key>Comment</key>
+      <string>Sets the amount of updates to send per second.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>10.0</real>
+    </map>
     <key>EmeraldResetCamOnEscape</key>
     <map>
       <key>Comment</key>

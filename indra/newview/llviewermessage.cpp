@@ -3637,7 +3637,8 @@ void send_agent_update(BOOL force_send, BOOL send_reliable)
 	{
 		duplicate_count++;
 
-		if (head_rot_chg < MAX_HEAD_ROT_QDOT  &&  duplicate_count < AGENT_UPDATES_PER_SECOND)
+		//Name Short - Added to adjust agent updates.
+		if (head_rot_chg < MAX_HEAD_ROT_QDOT  &&  duplicate_count < gSavedSettings.getF32("EmeraldAgentUpdatesPerSecond"))
 		{
 			// The head_rotation is sent for updating things like attached guns.
 			// We only trigger a new update when head_rotation deviates beyond
@@ -3647,7 +3648,9 @@ void send_agent_update(BOOL force_send, BOOL send_reliable)
 			// is gradually reduce the threshold to allow a better update to 
 			// eventually get sent... should update to within 0.5 degrees in less 
 			// than a second.
-			if (head_rot_chg < THRESHOLD_HEAD_ROT_QDOT + (MAX_HEAD_ROT_QDOT - THRESHOLD_HEAD_ROT_QDOT) * duplicate_count / AGENT_UPDATES_PER_SECOND)
+
+			//Name Short - Added to adjust agent updates.
+			if (head_rot_chg < THRESHOLD_HEAD_ROT_QDOT + (MAX_HEAD_ROT_QDOT - THRESHOLD_HEAD_ROT_QDOT) * duplicate_count / gSavedSettings.getF32("EmeraldAgentUpdatesPerSecond"))
 			{
 				duplicate_count = 0;
 			}
@@ -6072,8 +6075,9 @@ void process_load_url(LLMessageSystem* msg, void**)
 	// URL is safety checked in load_url above
 
 	// Check if object or owner is muted
+	//Name Short - Added a debug for disabling load URL entirely.
 	if (LLMuteList::getInstance()->isMuted(object_id, object_name) ||
-	    LLMuteList::getInstance()->isMuted(owner_id))
+	    LLMuteList::getInstance()->isMuted(owner_id) || !gSavedSettings.getBOOL("EmeraldLoadURL"))
 	{
 		LL_INFOS("Messaging")<<"Ignoring load_url from muted object/owner."<<LL_ENDL;
 		return;

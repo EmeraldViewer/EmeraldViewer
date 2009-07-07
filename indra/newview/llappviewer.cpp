@@ -3246,7 +3246,8 @@ void LLAppViewer::idle()
 	    F32 agent_update_time = agent_update_timer.getElapsedTimeF32();
 	    BOOL flags_changed = gAgent.controlFlagsDirty() || (last_control_flags != gAgent.getControlFlags());
     
-	    if (flags_changed || (agent_update_time > (1.0f / (F32) AGENT_UPDATES_PER_SECOND)))
+		//Name Short - Added to adjust agent updates.
+	   if (flags_changed || (agent_update_time > (1.0f / gSavedSettings.getF32("EmeraldAgentUpdatesPerSecond"))))
 	    {
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();

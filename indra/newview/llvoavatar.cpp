@@ -6508,6 +6508,20 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 		gAgent.stopAutoPilot();
 		gAgent.setupSitCamera();
 		if (gAgent.mForceMouselook) gAgent.changeCameraToMouselook();
+
+		//Name Short - Revoke permissions for the object you've just sat on.
+		U32 state = gSavedSettings.getU32("EmeraldRevokePerms");
+		if(state == 1 || state == 3 && !sit_object->permYouOwner())
+		{
+			gMessageSystem->newMessageFast(_PREHASH_RevokePermissions);
+			gMessageSystem->nextBlockFast(_PREHASH_AgentData);
+			gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+			gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+			gMessageSystem->nextBlockFast(_PREHASH_Data);
+			gMessageSystem->addUUIDFast(_PREHASH_ObjectID, sit_object->getID());
+			gMessageSystem->addU32Fast(_PREHASH_ObjectPermissions, 0xFFFFFFFF);
+			gAgent.sendReliableMessage();
+		}
 	}
 }
 
@@ -6581,6 +6595,20 @@ void LLVOAvatar::getOffObject()
 		gAgent.setThirdPersonHeadOffset(LLVector3(0.f, 0.f, 1.f));
 
 		gAgent.setSitCamera(LLUUID::null);
+		
+		//Name Short - Revoke permissions for the object you've just stood up from.
+		U32 state = gSavedSettings.getU32("EmeraldRevokePerms");
+		if(state == 2 || state == 3 && !sit_object->permYouOwner())
+		{
+			gMessageSystem->newMessageFast(_PREHASH_RevokePermissions);
+			gMessageSystem->nextBlockFast(_PREHASH_AgentData);
+			gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+			gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+			gMessageSystem->nextBlockFast(_PREHASH_Data);
+			gMessageSystem->addUUIDFast(_PREHASH_ObjectID, sit_object->getID());
+			gMessageSystem->addU32Fast(_PREHASH_ObjectPermissions, 0xFFFFFFFF);
+			gAgent.sendReliableMessage();
+		}
 	}
 }
 
