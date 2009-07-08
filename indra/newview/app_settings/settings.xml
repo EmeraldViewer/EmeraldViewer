@@ -12054,6 +12054,17 @@
         <integer>0</integer>
       </array>
     </map>
+    <key>EmeraldDoubleClickZOffset</key>
+    <map>
+      <key>Comment</key>
+      <string>Sets the Z offset for double click teleport.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>1.2</real>
+    </map>
     <key>EmeraldLoadURL</key>
     <map>
       <key>Comment</key>
