@@ -186,7 +186,13 @@ BOOL LLPanelEmerald::postBuild()
 	childSetCommitCallback("EmeraldCmdLineHeight", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineTeleportHome", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineRezPlatform", onCommitApplyControl);
-	childSetCommitCallback("EmeraldCmdLineMapTo", onCommitApplyControl);
+	childSetCommitCallback("EmeraldCmdLineMapTo", onCommitApplyControl);	
+	childSetCommitCallback("EmeraldCmdLineCalc", onCommitApplyControl);
+
+	//childSetCommitCallback("EmeraldCmdLineDrawDistance", onCommitApplyControl);
+	//childSetCommitCallback("EmeraldCmdTeleportToCam", onCommitApplyControl);
+	//childSetCommitCallback("EmeraldCmdLineKeyToName", onCommitApplyControl);
+	//childSetCommitCallback("EmeraldCmdLineOfferTp", onCommitApplyControl);
 
 	childSetCommitCallback("X Modifier", onCommitSendAppearance);
 	childSetCommitCallback("Y Modifier", onCommitSendAppearance);
