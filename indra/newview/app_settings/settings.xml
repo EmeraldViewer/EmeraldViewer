@@ -12483,6 +12483,28 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldBeamShape</key>
+    <map>
+      <key>Comment</key>
+      <string>Beam file for the shape of your beam</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>emerald.xml</string>
+    </map>
+    <key>EmeraldBeamShapeScale</key>
+    <map>
+      <key>Comment</key>
+      <string>How Big You Want to let the beam be</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>1.0</real>
+    </map>
     <key>EmeraldRainbowBeam</key>
     <map>
       <key>Comment</key>
