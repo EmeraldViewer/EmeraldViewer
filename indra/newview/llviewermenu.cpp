@@ -377,7 +377,6 @@ void run_vectorize_perf_test(void *)
 {
 	gSavedSettings.setBOOL("VectorizePerfTest", TRUE);
 }
-
 // Debug UI
 void handle_web_search_demo(void*);
 void handle_web_browser_test(void*);
@@ -1395,7 +1394,7 @@ void init_debug_avatar_menu(LLMenuGL* menu)
 	menu->append(new LLMenuItemCallGL("Reload Vertex Shader", &reload_vertex_shader, NULL));
 	menu->append(new LLMenuItemToggleGL("Animation Info", &LLVOAvatar::sShowAnimationDebug));
 	menu->append(new LLMenuItemCallGL("Slow Motion Animations", &slow_mo_animations, NULL));
-	menu->append(new LLMenuItemToggleGL("Show Look At", &LLHUDEffectLookAt::sDebugLookAt));
+	menu->append(new LLMenuItemCheckGL( "Show Look At",	&menu_toggle_control, NULL, &menu_check_control, (void*)"PersistShowLookAt"));
 	menu->append(new LLMenuItemToggleGL("Show Point At", &LLHUDEffectPointAt::sDebugPointAt));
 	menu->append(new LLMenuItemToggleGL("Debug Joint Updates", &LLVOAvatar::sJointDebug));
 	menu->append(new LLMenuItemToggleGL("Disable LOD", &LLViewerJoint::sDisableLOD));

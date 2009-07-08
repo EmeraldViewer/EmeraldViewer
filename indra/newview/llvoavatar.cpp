@@ -30,6 +30,38 @@
  * $/LicenseInfo$
  */
 
+/* Copyright (c) 2009
+ *
+ * Modular Systems Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are permitted provided that the following
+ * conditions are met:
+ *
+ *   1. Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *   2. Redistributions in binary form must reproduce the above
+ *      copyright notice, this list of conditions and the following
+ *      disclaimer in the documentation and/or other materials provided
+ *      with the distribution.
+ *   3. Neither the name Modular Systems Ltd nor the names of its contributors
+ *      may be used to endorse or promote products derived from this
+ *      software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS “AS IS”
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
 #include "llviewerprecompiledheaders.h"
 
 #include "llvoavatar.h"
@@ -3615,7 +3647,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		mBeam->setSourceObject(this);
 		mBeamTimer.reset();
 		
-		//lgg particle beam speaking
+		
 	}
 
 	if (!mBeam.isNull())
@@ -3707,7 +3739,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			mBeam->setColor(rgb );
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
-			
+			//LGG Picture Projection
 			if(gSavedSettings.getBOOL("EmeraldEmeraldBeam"))
 			{
 				LLVector3d picture[]  = {
@@ -3729,10 +3761,9 @@ void LLVOAvatar::idleUpdateTractorBeam()
 				,LLVector3d( (F64) 0.0 , (F64)  -3, (F64) 4)
 				,LLVector3d( (F64) 0.0 , (F64)  -1, (F64) 4)
 				};
-				LLQuaternion itsRot = mBeam->getTargetObject()->getRotation();
 
 				mBeams.clear();
-				for(int i = 0; i < (sizeof(picture) / (sizeof(LLVector3d))); i++)
+				for(int i = 0; i < 17; i++)
 				{
 					
 					LLVector3d offset = (picture[i]*(1.0f/7.0f)*(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f));
