@@ -13010,5 +13010,16 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>EmeraldBuildPrefs_ActualRoot</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the axis on the actual root of a linkset instead of mass center</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
   </map>
 </llsd>
