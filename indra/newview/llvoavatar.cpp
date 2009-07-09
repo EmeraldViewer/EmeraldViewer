@@ -3303,7 +3303,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				}
 				if(!gSavedSettings.getBOOL("EmeraldClientTagDisplay"))
 				{
-					client = "Invalid";
+					client = "";
 				}
 				//else avatar_name_color = gColors.getColor( "AvatarNameColor" );
 				//avatar_name_color.clamp();
