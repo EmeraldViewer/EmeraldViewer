@@ -3757,8 +3757,8 @@ void LLVOAvatar::idleUpdateTractorBeam()
 					+"beams" 
 					+gDirUtilp->getDirDelimiter()
 					+gSavedSettings.getString("EmeraldBeamShape");
-	
-				LLSD mydata = lggBeamMaps::getPic(filename);
+			
+				LLSD mydata = gLggBeamMaps.getPic(filename);
 				F32 scale = (F32)mydata["scale"].asReal()/10.0f;
 				LLSD myPicture = mydata["data"];		
 				mBeams.clear();
