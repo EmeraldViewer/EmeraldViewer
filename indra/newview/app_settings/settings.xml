@@ -12966,9 +12966,49 @@
       <key>Value</key>
       <string>None</string>
     </map>
-    
-    
-
-
+    <key>EmeraldBuildPrefs_PivotX</key>
+    <map>
+      <key>Comment</key>
+      <string>Pivot point on the X axis</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>50</real>
+    </map>
+    <key>EmeraldBuildPrefs_PivotY</key>
+    <map>
+      <key>Comment</key>
+      <string>Pivot point on the Y axis</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>50</real>
+    </map>
+    <key>EmeraldBuildPrefs_PivotZ</key>
+    <map>
+      <key>Comment</key>
+      <string>Pivot point on the Z axis</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>50</real>
+    </map>
+    <key>EmeraldBuildPrefs_PivotIsPercent</key>
+    <map>
+      <key>Comment</key>
+      <string>Consider the Pivot points values as a percentage</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
   </map>
 </llsd>
