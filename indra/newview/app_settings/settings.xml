@@ -12626,6 +12626,17 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>EmeraldBeamUpdatesPerSecond</key>
+    <map>
+      <key>Comment</key>
+      <string>How many times you want your beam to update per second</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>4.0</real>
+    </map>
     <key>EmeraldChangeColorOnClient</key>
     <map>
       <key>Comment</key>
@@ -12920,7 +12931,7 @@
       <key>Type</key>
       <string>String</string>
       <key>Value</key>
-      <string>c05b278c-c8e3-821b-c326-420822fba9da</string>
+      <string>89556747-24cb-43ed-920b-47caed15465f</string>
     </map>
     <key>EmeraldBuildPrefs_Alpha</key>
     <map>
