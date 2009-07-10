@@ -1523,6 +1523,13 @@ LLVector3 LLAgent::calcFocusOffset(LLViewerObject *object, LLVector3 original_fo
 //-----------------------------------------------------------------------------
 BOOL LLAgent::calcCameraMinDistance(F32 &obj_min_distance)
 {
+	obj_min_distance = 0.f;
+	return TRUE;
+	/* Emerald:
+	We don't care about minimum distances in Emerald. No we don't.
+	~Zwag
+	*/
+	/*
 	BOOL soft_limit = FALSE; // is the bounding box to be treated literally (volumes) or as an approximation (avatars)
 
 	if (!mFocusObject || mFocusObject->isDead())
@@ -1695,6 +1702,7 @@ BOOL LLAgent::calcCameraMinDistance(F32 &obj_min_distance)
 	obj_min_distance += LLViewerCamera::getInstance()->getNear() + (soft_limit ? 0.1f : 0.2f);
 	
 	return TRUE;
+	*/
 }
 
 F32 LLAgent::getCameraZoomFraction()
@@ -1707,6 +1715,7 @@ F32 LLAgent::getCameraZoomFraction()
 		// already [0,1]
 		return mHUDTargetZoom;
 	}
+	/*
 	else if (mFocusOnAvatar && cameraThirdPerson())
 	{
 		return clamp_rescale(mCameraZoomFraction, MIN_ZOOM_FRACTION, MAX_ZOOM_FRACTION, 1.f, 0.f);
@@ -1742,7 +1751,14 @@ F32 LLAgent::getCameraZoomFraction()
 		}
 
 		return clamp_rescale(distance, min_zoom, max_zoom, 1.f, 0.f);
-	}
+		*/
+		/*
+		Emerald:
+		We still don't care about minimums and maximums. No we don't.
+		~Zwag
+		*/
+		return mCameraZoomFraction;
+	//}
 }
 
 void LLAgent::setCameraZoomFraction(F32 fraction)
@@ -1754,7 +1770,7 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 	if (selection->getObjectCount() && selection->getSelectType() == SELECT_TYPE_HUD)
 	{
 		mHUDTargetZoom = fraction;
-	}
+	}/*
 	else if (mFocusOnAvatar && cameraThirdPerson())
 	{
 		mCameraZoomFraction = rescale(fraction, 0.f, 1.f, MAX_ZOOM_FRACTION, MIN_ZOOM_FRACTION);
@@ -1765,8 +1781,10 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 		camera_offset_dir.normalize();
 		mCameraFocusOffsetTarget = camera_offset_dir * rescale(fraction, 0.f, 1.f, APPEARANCE_MAX_ZOOM, APPEARANCE_MIN_ZOOM);
 	}
+	*/
 	else
 	{
+		/*
 		F32 min_zoom = LAND_MIN_ZOOM;
 		const F32 DIST_FUDGE = 16.f; // meters
 		F32 max_zoom = llmin(mDrawDistance - DIST_FUDGE, 
@@ -1787,10 +1805,11 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 				}
 			}
 		}
-
+		*/
 		LLVector3d camera_offset_dir = mCameraFocusOffsetTarget;
 		camera_offset_dir.normalize();
-		mCameraFocusOffsetTarget = camera_offset_dir * rescale(fraction, 0.f, 1.f, max_zoom, min_zoom);
+		//mCameraFocusOffsetTarget = camera_offset_dir * rescale(fraction, 0.f, 1.f, max_zoom, min_zoom);
+		mCameraFocusOffsetTarget = camera_offset_dir * rescale(fraction, 0.f, 65535.*4., 1.f, 0.f);
 	}
 	startCameraAnimation();
 }
@@ -1870,10 +1889,14 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 
 	LLVector3d	camera_offset(mCameraFocusOffsetTarget);
 	LLVector3d	camera_offset_unit(mCameraFocusOffsetTarget);
-	F32 min_zoom = LAND_MIN_ZOOM;
+	//F32 min_zoom = LAND_MIN_ZOOM;
 	F32 current_distance = (F32)camera_offset_unit.normalize();
 	F32 new_distance = current_distance * fraction;
 
+	/*
+	Emerald:
+	So many darned limits!
+	~Zwag
 	// Don't move through focus point
 	if (mFocusObject)
 	{
@@ -1907,12 +1930,14 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 			return;
 		}
 		*/
+	/*
 	}
-
+	
 	if( cameraCustomizeAvatar() )
 	{
 		new_distance = llclamp( new_distance, APPEARANCE_MIN_ZOOM, APPEARANCE_MAX_ZOOM );
 	}
+	*/
 
 	mCameraFocusOffsetTarget = new_distance * camera_offset_unit;
 }
@@ -1942,6 +1967,7 @@ void LLAgent::cameraOrbitIn(const F32 meters)
 		LLVector3d	camera_offset_unit(mCameraFocusOffsetTarget);
 		F32 current_distance = (F32)camera_offset_unit.normalize();
 		F32 new_distance = current_distance - meters;
+		/*
 		F32 min_zoom = LAND_MIN_ZOOM;
 		
 		// Don't move through focus point
@@ -1977,7 +2003,7 @@ void LLAgent::cameraOrbitIn(const F32 meters)
 		{
 			new_distance = llclamp( new_distance, APPEARANCE_MIN_ZOOM, APPEARANCE_MAX_ZOOM );
 		}
-
+		*/
 		// Compute new camera offset
 		mCameraFocusOffsetTarget = new_distance * camera_offset_unit;
 		cameraZoomIn(1.f);
@@ -3657,7 +3683,7 @@ F32	LLAgent::calcCameraFOVZoomFactor()
 LLVector3d LLAgent::calcCameraPositionTargetGlobal(BOOL *hit_limit)
 {
 	// Compute base camera position and look-at points.
-	F32			camera_land_height;
+	//F32			camera_land_height;
 	LLVector3d	frame_center_global = mAvatarObject.isNull() ? getPositionGlobal() 
 															 : getPosGlobalFromAgent(mAvatarObject->mRoot.getWorldPosition());
 		
@@ -3781,7 +3807,7 @@ LLVector3d LLAgent::calcCameraPositionTargetGlobal(BOOL *hit_limit)
 				camera_distance = local_camera_offset.normalize();
 			}
 
-			mTargetCameraDistance = llmax(camera_distance, MIN_CAMERA_DISTANCE);
+			mTargetCameraDistance = camera_distance;//llmax(camera_distance, MIN_CAMERA_DISTANCE);
 
 			if (mTargetCameraDistance != mCurrentCameraDistance)
 			{
@@ -3863,6 +3889,7 @@ LLVector3d LLAgent::calcCameraPositionTargetGlobal(BOOL *hit_limit)
 		camera_position_global = focusPosGlobal + mCameraFocusOffset;
 	}
 
+	/*
 	if (!gSavedSettings.getBOOL("DisableCameraConstraints") && !gAgent.isGodlike())
 	{
 		LLViewerRegion* regionp = LLWorld::getInstance()->getRegionFromPosGlobal(
@@ -3910,7 +3937,7 @@ LLVector3d LLAgent::calcCameraPositionTargetGlobal(BOOL *hit_limit)
 		camera_position_global.mdV[VZ] = camera_land_height + camera_min_off_ground;
 		isConstrained = TRUE;
 	}
-
+	*/
 
 	if (hit_limit)
 	{
