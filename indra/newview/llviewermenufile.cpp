@@ -1083,7 +1083,7 @@ void upload_new_resource(const LLTransactionID &tid, LLAssetType::EType asset_ty
 	llinfos << "Expected Upload Cost: " << expected_upload_cost << llendl;
 	lldebugs << "Folder: " << gInventory.findCategoryUUIDForType((destination_folder_type == LLAssetType::AT_NONE) ? asset_type : destination_folder_type) << llendl;
 	lldebugs << "Asset Type: " << LLAssetType::lookup(asset_type) << llendl;
-	std::string url = "";//gAgent.getRegion()->getCapability("NewFileAgentInventory");
+	std::string url = gAgent.getRegion()->getCapability("NewFileAgentInventory");
 	BOOL temporary_up = gSavedSettings.getBOOL("EmeraldTemporaryUpload");
 	gSavedSettings.setBOOL("EmeraldTemporaryUpload",FALSE);
 	if (!url.empty() && temporary_up == FALSE)
