@@ -3743,10 +3743,9 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			}
 
 		}
-		F32 durration = (1.5f/4.0f) * gSavedSettings.getF32("EmeraldBeamUpdatesPerSecond");
-
-		if (mBeamTimer.getElapsedTimeF32() > (1.0f/gSavedSettings.getF32("EmeraldBeamUpdatesPerSecond")))
+		if (mBeamTimer.getElapsedTimeF32() > 0.25f)
 		{
+			
 			mBeam->setColor(rgb );
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
@@ -3784,7 +3783,6 @@ void LLVOAvatar::idleUpdateTractorBeam()
 					mBeams[i]->setTargetObject(mBeam->getTargetObject());
 					mBeams[i]->setSourceObject(mBeam->getSourceObject());
 					mBeams[i]->setNeedsSendToSim(mBeam->getNeedsSendToSim());
-					mBeams[i]->setDuration(durration);
 
 				}	
 			}
