@@ -1898,6 +1898,7 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 	So many darned limits!
 	~Zwag
 	// Don't move through focus point
+	
 	if (mFocusObject)
 	{
 		LLVector3 camera_offset_dir((F32)camera_offset_unit.mdV[VX], (F32)camera_offset_unit.mdV[VY], (F32)camera_offset_unit.mdV[VZ]);
@@ -1912,12 +1913,12 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 		}
 	}
 
-	new_distance = llmax(new_distance, min_zoom); 
+	new_distance = llmax(new_distance, min_zoom); */
 
 	// Don't zoom too far back
 	const F32 DIST_FUDGE = 16.f; // meters
-	F32 max_distance = llmin(mDrawDistance - DIST_FUDGE, 
-							 LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE );
+	F32 max_distance = /*llmin(mDrawDistance*/ INT_MAX - DIST_FUDGE//, 
+							 /*LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE )*/;
 
 	if (new_distance > max_distance)
 	{
@@ -1930,9 +1931,9 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 			return;
 		}
 		*/
-	/*
-	}
 	
+	}
+	/*
 	if( cameraCustomizeAvatar() )
 	{
 		new_distance = llclamp( new_distance, APPEARANCE_MIN_ZOOM, APPEARANCE_MAX_ZOOM );
