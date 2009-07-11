@@ -347,27 +347,7 @@ void LLPanelEmerald::onClickVoiceRevertDebug(void* data)
 	gSavedSettings.setString("vivoxDebugServerName", "bhd.vivox.com");
 	self->getChild<LLLineEditor>("debug_voice_field")->setValue("bhd.vivox.com");
 
-  std::string filename = "example_vecs.xml";
-  LLFilePicker& picker = LLFilePicker::instance();
-  if(!picker.getSaveFile( LLFilePicker::FFSAVE_ALL, filename ) )
-  {
-   // User canceled save.
-   return;
-  }
-  filename = picker.getFirstFile();
-  LLSD llsdtot;
-  LLVector3d test(1.0,2.0,3.0);
-  LLVector3d testa(1.0,2.0,3.0);
-  LLVector3d testb(2.0,5.3333,3.0);
-  LLVector3d testc(1.5,2.0,3.568);
-  llsdtot[0] = test.getValue();
-  llsdtot[1] = testa.getValue();
-  llsdtot[2] = testb.getValue();
-  llsdtot[3] = testc.getValue();
-  llofstream export_file;
-  export_file.open(filename);
-  LLSDSerialize::toPrettyXML(llsdtot, export_file);
-  export_file.close();
+ 
  
 }
 

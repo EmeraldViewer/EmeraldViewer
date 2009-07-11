@@ -50,7 +50,7 @@ LLSD lggBeamMaps::getPic(std::string filename)
 	return data;
 	
 }
-void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U rgb)
+void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam)
 {
 	if(scale == 0.0f)return;
 	
@@ -59,8 +59,7 @@ void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U
 					
 		F32 distanceAdjust = dist_vec(mBeam->getPositionGlobal(),gAgent.getPositionGlobal()) ;
 		F32 pulse = (F32)(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f);
-		LLVector3d offset = dots[i];
-		
+		LLVector3d offset = dots[i].p;
 		offset *= pulse * scale * distanceAdjust * 0.1;
 		
 		//llinfos << "dist is " << distanceAdjust << "scale is " << scale << llendl;
@@ -71,7 +70,7 @@ void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U
 		offset.rotVec(change);
 		LLPointer<LLHUDEffectSpiral> myBeam =  (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM);
 		myBeam->setPositionGlobal(mBeam->getPositionGlobal() + offset + (LLVector3d(beamLine) * sinf(gFrameTimeSeconds*2.0f) * 0.2f));
-		myBeam->setColor(rgb);
+		myBeam->setColor(LLColor4U(dots[i].c.getValue()));
 		myBeam->setTargetObject(mBeam->getTargetObject());
 		myBeam->setSourceObject(mBeam->getSourceObject());
 		myBeam->setNeedsSendToSim(mBeam->getNeedsSendToSim());
@@ -103,9 +102,13 @@ F32 lggBeamMaps::setUpAndGetDuration()
 			dots.clear();
 			for(int i = 0; i < myPicture.size(); i++)
 			{
-				LLVector3d dot = myPicture[i];
+				LLSD beamData = myPicture[i];
+				lggBeamData dot;
+				dot.p = beamData["offset"];
+				dot.p *= (gSavedSettings.getF32("EmeraldBeamShapeScale")*2.0f);
+				dot.c = beamData["color"];
 				
-				dots.push_back(dot*(gSavedSettings.getF32("EmeraldBeamShapeScale")*2.0f));
+				dots.push_back(dot);
 			}
 			
 			F32 maxBPerQS = gSavedSettings.getF32("EmeraldMaxBeamsPerSecond") / 4.0f;
