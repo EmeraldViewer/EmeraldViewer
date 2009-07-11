@@ -20,7 +20,8 @@
 #include "llworldmap.h"
 #include "llpanel.h"
 #include "llregionhandle.h"
-
+#include "lliconctrl.h"
+class lggPoint;
 class lggBeamMapFloater;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -30,12 +31,14 @@ class lggBeamMapFloater : public LLFloater, public LLFloaterSingleton<lggBeamMap
 public:
 	lggBeamMapFloater(const LLSD& seed);
 	virtual ~lggBeamMapFloater();
+	
 
 	BOOL postBuild(void);
-
+	BOOL handleMouseDown(S32 x,S32 y,MASK mask);
 	void update();
 
 	void draw();
+	void clearPoints();
 
 	// UI Handlers
 	static void onClickSave(void* data);
@@ -43,9 +46,25 @@ public:
 
 	
 private:
-	LLUUID mObjectID;
+	std::vector<lggPoint> dots;
+};
+class lggPoint
+{
+	public:
+		S32 x;
+		S32 y;
 };
 
+
+void lggBeamMapFloater::clearPoints()
+{
+	dots.clear();
+	LLPanel* panel = getChild<LLPanel>("beamshape_draw");
+	if(panel)
+	{
+		panel->deleteAllChildren();
+	}
+}
 void lggBeamMapFloater::draw()
 {
 	LLFloater::draw();
@@ -79,10 +98,34 @@ BOOL lggBeamMapFloater::postBuild(void)
 	LLPanel* panel = getChild<LLPanel>("beamshape_draw");
 	if(panel)
 	{
-		//panel->handleMouseDown
+		
 	}
-
+	
 	return true;
+}
+BOOL lggBeamMapFloater::handleMouseDown(S32 x,S32 y,MASK mask)
+{
+	lggPoint a;
+	a.x=x;
+	a.y=y;
+	dots.push_back(a);
+	LLPanel* panel = getChild<LLPanel>("beamshape_draw");
+	if(panel)
+	{
+		llinfos << "we got clicked at (" << x << ", " << y << llendl;
+		//Emerald TODO these icons dont show up!!! DX
+		LLIconCtrl* icon = new LLIconCtrl(std::string("Point "+dots.size()),
+			LLRect(x-10,y-10,x+10,y+10),
+			std::string("lag_status_good.tga"));
+			icon->setMouseOpaque(FALSE);
+			icon->setVisible(true);
+		
+	
+		panel->addChildAtEnd(icon);
+		panel->sendChildToFront(icon);
+		//panel->addCtrl((LLUICtrl*)newButton,0);
+	}
+	return LLFloater::handleMouseDown(x,y,mask);
 }
 
 void lggBeamMapFloater::update()
@@ -97,8 +140,8 @@ void lggBeamMapFloater::onClickSave(void* data)
 }
 void lggBeamMapFloater::onClickClear(void* data)
 {
-	//ggBeamMapFloater* self = (lggBeamMapFloater*)data;
-
+	lggBeamMapFloater* self = (lggBeamMapFloater*)data;
+	self->clearPoints();
 	
 }
 
