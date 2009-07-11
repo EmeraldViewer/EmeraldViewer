@@ -606,8 +606,7 @@ private:
 	friend class LLFloaterAvatarList;
 
 protected:
-	LLPointer<LLHUDEffectSpiral> mBeam;
-	std::vector<LLPointer<LLHUDEffectSpiral>> mBeams;      
+	LLPointer<LLHUDEffectSpiral> mBeam;   
 	LLFrameTimer mBeamTimer;
 
 	F32		mAdjustedPixelArea;

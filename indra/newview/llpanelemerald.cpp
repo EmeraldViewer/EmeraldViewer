@@ -38,7 +38,10 @@
 #include "llbutton.h"
 #include "lluictrlfactory.h"
 #include "llcombobox.h"
+#include "llslider.h"
 #include "lltexturectrl.h"
+
+#include "lggBeamMaps.h"
 
 // project includes
 #include "llviewercontrol.h"
@@ -163,13 +166,23 @@ LLPanelEmerald::~LLPanelEmerald()
 
 BOOL LLPanelEmerald::postBuild()
 {
-	//LLRadioGroup* skin_select = getChild<LLRadioGroup>("skin_selection");
-	//skin_select->setCommitCallback(onSelectSkin);
-	//skin_select->setCallbackUserData(this);
-	//onCommitApplyControl
+	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
+
+	if(comboBox != NULL) 
+	{
+		std::vector<std::string> names = gLggBeamMaps.getFileNames();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamShape"));
+		comboBox->setCommitCallback(onComboBoxCommit);
+	}
 	getChild<LLComboBox>("material")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Material"));
 	getChild<LLComboBox>("combobox shininess")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Shiny"));
 	
+	getChild<LLSlider>("EmeraldBeamShapeScale")->setCommitCallback(beamUpdateCall);
+
 	getChild<LLComboBox>("material")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("combobox shininess")->setCommitCallback(onComboBoxCommit);
 	getChild<LLTextureCtrl>("texture control")->setDefaultImageAssetID(LLUUID("89556747-24cb-43ed-920b-47caed15465f"));
@@ -283,6 +296,7 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceIncoming", childGetValue("EmeraldInstantMessageAnnounceIncoming").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceStealFocus", childGetValue("EmeraldInstantMessageAnnounceStealFocus").asBoolean());
 	
+	gLggBeamMaps.forceUpdate();
 }
 
 void LLPanelEmerald::cancel()
@@ -296,6 +310,10 @@ void LLPanelEmerald::onClickVoiceRevertProd(void* data)
 	LLPanelEmerald* self = (LLPanelEmerald*)data;
 	gSavedSettings.setString("vivoxProductionServerName", "bhr.vivox.com");
 	self->getChild<LLLineEditor>("production_voice_field")->setValue("bhr.vivox.com");
+}
+void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
+{
+	gLggBeamMaps.forceUpdate();
 }
 void LLPanelEmerald::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 {

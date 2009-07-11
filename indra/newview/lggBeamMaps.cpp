@@ -96,7 +96,7 @@ F32 lggBeamMaps::setUpAndGetDuration()
 						+gDirUtilp->getDirDelimiter()
 						+"beams"
 						+gDirUtilp->getDirDelimiter()
-						+settingName;
+						+settingName+".xml";
 			LLSD mydata = getPic(filename);
 			scale = (F32)mydata["scale"].asReal()/10.0f;
 			LLSD myPicture = mydata["data"];	
@@ -126,3 +126,39 @@ F32 lggBeamMaps::setUpAndGetDuration()
 	
 }
 
+
+std::vector<std::string> lggBeamMaps::getFileNames()
+{
+	//std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "windlight/skies", ""));
+	std::string path_name =gDirUtilp->getAppRODataDir() 
+						+gDirUtilp->getDirDelimiter()
+						+"beams"
+						+gDirUtilp->getDirDelimiter();
+	std::vector<std::string> names;		
+	bool found = true;			
+	while(found) 
+	{
+		std::string name;
+		found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
+		if(found)
+		{
+
+			name=name.erase(name.length()-4);
+
+			// bugfix for SL-46920: preventing filenames that break stuff.
+			char * curl_str = curl_unescape(name.c_str(), name.size());
+			std::string unescaped_name(curl_str);
+			curl_free(curl_str);
+			curl_str = NULL;
+
+			names.push_back(name);
+			
+			//LL_DEBUGS2("AppInit", "Shaders") << "name: " << name << LL_ENDL;
+			//loadPreset(unescaped_name,FALSE);
+		}
+	}
+	return names;
+
+	
+
+}

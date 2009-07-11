@@ -61,6 +61,7 @@ private:
 	static void onCommitSendAppearance(LLUICtrl* ctrl, void* userdata);	
 	static void onTexturePickerCommit(LLUICtrl* ctrl, void* userdata);
 	static void onComboBoxCommit(LLUICtrl* ctrl, void* userdata);
+	static void beamUpdateCall(LLUICtrl* ctrl, void* userdata);
 	//static void onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data);
 	//static void onCommitAvatarEffectsChange(LLUICtrl* caller, void* user_data);
 	//static void onCommitAutoResponse(LLUICtrl* caller, void* user_data);
