@@ -32,7 +32,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llpanelemerald.h"
-
+#include "lggBeamMapFloater.h"
 // linden library includes
 #include "llradiogroup.h"
 #include "llbutton.h"
@@ -182,6 +182,7 @@ BOOL LLPanelEmerald::postBuild()
 	getChild<LLComboBox>("combobox shininess")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Shiny"));
 	
 	getChild<LLSlider>("EmeraldBeamShapeScale")->setCommitCallback(beamUpdateCall);
+	getChild<LLSlider>("EmeraldMaxBeamsPerSecond")->setCommitCallback(beamUpdateCall);
 
 	getChild<LLComboBox>("material")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("combobox shininess")->setCommitCallback(onComboBoxCommit);
@@ -191,7 +192,7 @@ BOOL LLPanelEmerald::postBuild()
 		
 	//childSetCommitCallback("material",onComboBoxCommit);
 	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
-	
+	getChild<LLButton>("custom_beam_btn")->setClickedCallback(onCustomBeam, this);
 	getChild<LLButton>("revert_production_voice_btn")->setClickedCallback(onClickVoiceRevertProd, this);
 	getChild<LLButton>("revert_debug_voice_btn")->setClickedCallback(onClickVoiceRevertDebug, this);
 
@@ -310,6 +311,12 @@ void LLPanelEmerald::onClickVoiceRevertProd(void* data)
 	LLPanelEmerald* self = (LLPanelEmerald*)data;
 	gSavedSettings.setString("vivoxProductionServerName", "bhr.vivox.com");
 	self->getChild<LLLineEditor>("production_voice_field")->setValue("bhr.vivox.com");
+}
+void LLPanelEmerald::onCustomBeam(void* data)
+{
+	//LLPanelEmerald* self =(LLPanelEmerald*)data;
+	LggBeamMap::show(true);
+
 }
 void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
 {

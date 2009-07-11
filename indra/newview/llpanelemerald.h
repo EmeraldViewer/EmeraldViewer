@@ -56,6 +56,7 @@ private:
 	//static void onClickClassic(void* data);
 	//static void onClickSilver(void* data);
 	static void onClickVoiceRevertProd(void* data);
+	static void onCustomBeam(void* data);
 	static void onClickVoiceRevertDebug(void* data);
 	static void onCommitApplyControl(LLUICtrl* caller, void* user_data);
 	static void onCommitSendAppearance(LLUICtrl* ctrl, void* userdata);	
