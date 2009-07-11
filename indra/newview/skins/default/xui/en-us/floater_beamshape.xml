@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater border="false" can_close="true" can_minimize="true" bottom="400" left="300"
+     can_resize="false" height="350" name="BeamCreator" title="Beam Shape Creator" width="410">
+      <panel name="beamshape_draw" left_delta="5" width="400" height="300" bottom_delta="-320" border="true" mouse_opaque="true" bevel_style="in" background_visible="true" background_opaque="true" follows="left|top" bg_opaque_color="1,1,1,1" bg_alpha_color="white" can_resize="false">
+      </panel>
+	<button bottom_delta="-25" enabled="true" follows="left|top" font="SansSerif"
+	     halign="center" height="22" label="Save" left_delta="10"
+	     mouse_opaque="true" name="beamshape_save" scale_image="true" width="85" />
+	<button bottom_delta="0" enabled="true" follows="left|top" font="SansSerif"
+	     halign="center" height="22" label="Clear" left_delta="100"
+	     mouse_opaque="true" name="beamshape_clear" scale_image="true" width="85" />
+</floater>
