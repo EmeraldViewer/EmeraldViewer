@@ -16,7 +16,7 @@
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS “AS IS”
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS ï¿½AS ISï¿½
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -297,8 +297,8 @@ void lggBeamMapFloater::onClickLoad(void* data)
 		vec *= (scale)/(8.0f/(rec.getWidth()));
 		LLColor4 color = beamData["color"];
 		p.c = color;
-		p.x = vec.mV[VY]+rec.getCenterX();
-		p.y = vec.mV[VZ]+rec.getCenterY();
+		p.x = (S32)(vec.mV[VY]+rec.getCenterX());
+		p.y = (S32)(vec.mV[VZ]+rec.getCenterY());
 		
 						
 		self->dots.push_back(p);
