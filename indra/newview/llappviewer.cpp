@@ -188,6 +188,20 @@
 //----------------------------------------------------------------------------
 // viewer.cpp - these are only used in viewer, should be easily moved.
 
+#if COMPILE_OTR
+// $PLOTR$ OTR library includes.  See http://www.cypherpunks.ca/otr/
+extern "C" {
+#if LL_WINDOWS
+#include <unistd.h>             // various defines needed for OTR on windows
+#endif
+#include <gcrypt.h>		// gcrypt dependancies
+//#include <userstate.h>	// OTR
+#include <proto.h>		// OTR
+//#include <privkey.h>	// OTR
+//#include <message.h>	// OTR
+}
+#endif // COMPILE_OTR
+
 #if LL_DARWIN
 extern void init_apple_menu(const char* product);
 #endif // LL_DARWIN
@@ -571,6 +585,10 @@ bool LLAppViewer::init()
 	//
 	// OK to write stuff to logs now, we've now crash reported if necessary
 	//
+#if USE_OTR
+	OTRL_INIT; // $PLOTR$ Init OTR library
+#endif // USE_OTR
+
     if (!initConfiguration())
 		return false;
 

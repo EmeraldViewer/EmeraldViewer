@@ -11,6 +11,9 @@ include(ELFIO)
 include(FMOD)
 include(OPENAL)
 include(FindOpenGL)
+include(libgcrypt)
+include(libgpg-error)
+include(libotr)
 include(LLAddBuildTest)
 include(LLAudio)
 include(LLCharacter)
@@ -64,6 +67,12 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${EMERALD_INCLUDE_DIRS}
+    ../gpg.vs/inc.vs
+    ../gpg.vs/libgpg-error-1.1.vs/custom
+    ../gpg.vs/libgcrypt-1.2.2.vs/custom
+    ../libgpg-error/libgpg-error-1.0/src
+    ../libgcrypt/libgcrypt-1.2.2/src
+    ../libotr/libotr-3.2.0/src
     )
 
 set(viewer_SOURCE_FILES
@@ -1272,6 +1281,9 @@ if (WINDOWS)
 endif (WINDOWS)
 
 target_link_libraries(${VIEWER_BINARY_NAME}
+    ${LIBGPG-ERROR_LIBRARIES}
+    ${LIBGCRYPT_LIBRARIES}
+    ${LIBOTR_LIBRARIES}
     ${LLAUDIO_LIBRARIES}
     ${LLCHARACTER_LIBRARIES}
     ${LLIMAGE_LIBRARIES}
