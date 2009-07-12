@@ -787,6 +787,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 
 		element["columns"][LIST_AVATAR_ICON]["column"] = "avatar_icon";
 		element["columns"][LIST_AVATAR_ICON]["type"] = "text";
+		element["columns"][LIST_AVATAR_NAME]["color"] = gColors.getColor("DefaultListText").getValue();
 		if ( ent->isMarked() )
 		{
 			element["columns"][LIST_AVATAR_ICON]["type"] = "icon";
@@ -1308,7 +1309,7 @@ LLColor4 LLFloaterAvatarList::getAvatarColor(LLAvatarListEntry *ent, F32 distanc
 	switch(type)
 	{
 		case CT_NONE:
-			return LLColor4::black;
+			return gColors.getColor("DefaultListText").getValue();
 			break;
 		case CT_DISTANCE:
 			if ( distance <= 10.0f )

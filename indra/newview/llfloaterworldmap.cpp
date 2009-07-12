@@ -1611,6 +1611,7 @@ void LLFloaterWorldMap::updateSims(bool found_null_sim)
 			LLSD value;
 			value["id"] = sim_name;
 			value["columns"][0]["column"] = "sim_name";
+			value["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 			value["columns"][0]["value"] = sim_name;
 			list->addElement(value);
 			num_results++;
