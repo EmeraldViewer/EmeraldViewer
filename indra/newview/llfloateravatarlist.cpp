@@ -930,7 +930,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 				break;
 			case ACTIVITY_PARTICLES:
 				// TODO: Replace with something better
-				icon = /*gViewerArt.getString(*/"account_id_blue.tga"/*)*/;
+				icon = /*gViewerArt.getString(*/"account_id_orange.tga"/*)*/;
 				break;
 			case ACTIVITY_NEW:
 				icon = /*gViewerArt.getString(*/"avatar_new.tga"/*)*/;

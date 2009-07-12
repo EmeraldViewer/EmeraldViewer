@@ -69,6 +69,7 @@
 #include "llfloater.h"
 #include "llfloateractivespeakers.h"
 #include "llfloateravatarinfo.h"
+#include "llfloateravatarlist.h"
 #include "llfloaterbuildoptions.h"
 #include "llfloatercamera.h"
 #include "llfloaterchat.h"
@@ -2810,6 +2811,17 @@ void LLAgent::startTyping()
 		sendAnimationRequest(ANIM_AGENT_TYPE, ANIM_REQUEST_START);
 	}
 	gChatBar->sendChatFromViewer("", CHAT_TYPE_START, FALSE);
+
+	// Addition for avatar list support.
+	// Makes the fact that this avatar is typing appear in the list
+	if ( LLFloaterAvatarList::getInstance() )
+	{
+		LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(getID());
+		if ( NULL != ent )
+		{
+			ent->setActivity(ACTIVITY_TYPING);
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------
