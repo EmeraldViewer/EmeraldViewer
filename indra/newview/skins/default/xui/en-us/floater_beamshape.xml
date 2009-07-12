@@ -9,4 +9,8 @@
 	<button bottom_delta="0" enabled="true" follows="left|top" font="SansSerif"
 	     halign="center" height="22" label="Clear" left_delta="100"
 	     mouse_opaque="true" name="beamshape_clear" scale_image="true" width="85" />
+  <color_swatch border_color="0.45098, 0.517647, 0.607843, 1" bottom_delta="0"
+           can_apply_immediately="true" color="1, 1, 1, 1" follows="left|top"
+           height="22" label="Beam Color" left_delta="102" mouse_opaque="true"
+           name="beam_color_swatch" tool_tip="Click to open Color Picker to change dot color" width="64" />
 </floater>

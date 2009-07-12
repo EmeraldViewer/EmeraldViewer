@@ -422,6 +422,16 @@ BOOL LLFilePicker::getSaveFile(ESaveFilter filter, const std::string& filename)
 			L"XML File (*.xml)\0*.xml\0" \
 			L"\0";
 		break;
+	case FFSAVE_BEAM:
+		if (filename.empty())
+		{
+			wcsncpy( mFilesW,L"untitled.xml", FILENAME_BUFFER_SIZE);	/*Flawfinder: ignore*/
+		}
+		mOFN.lpstrDefExt = L"xml";
+		mOFN.lpstrFilter =
+			L"XML File (*.xml)\0*.xml\0" \
+			L"\0";
+		break; 
 	case FFSAVE_COLLADA:
 		if (filename.empty())
 		{

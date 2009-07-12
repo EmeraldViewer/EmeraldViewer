@@ -75,6 +75,7 @@ public:
 	
 private:
 	std::vector<lggPoint> dots;
+	static void onBackgroundChange(LLUICtrl* ctrl, void* userdata);
 };
 class lggPoint
 {
@@ -87,24 +88,26 @@ class lggPoint
 void lggBeamMapFloater::clearPoints()
 {
 	dots.clear();
-	LLPanel* panel = getChild<LLPanel>("beamshape_draw");
-	if(panel)
-	{
-		panel->deleteAllChildren();
-	}
+	getChild<LLPanel>("beamshape_draw")->deleteAllChildren();
+	
 }
 void lggBeamMapFloater::draw()
 {
 	//getChild<LLPanel>("beamshape_draw")->setBackgroundColor(getChild<LLColorSwatchCtrl>("back_color_swatch")->get());
 	LLFloater::draw();
 
-	
+	gGL.pushMatrix();
 	for(int i = 0; i < (int)dots.size();i++)
 	{	
+		gGL.color4fv(LLColor4::black.mV);
+		gl_circle_2d(dots[i].x,dots[i].y,8.0f,(S32)30,true);
+		
 		gGL.color4fv(dots[i].c.mV);
 		gl_circle_2d(dots[i].x,dots[i].y,7.0f,(S32)30,true);
+		
+		
 	}
-	gGL.pushMatrix();
+	gGL.popMatrix();
 	
 }
 
@@ -133,28 +136,39 @@ BOOL lggBeamMapFloater::postBuild(void)
 	setCanMinimize(false);
 	childSetAction("beamshape_save",onClickSave,this);
 	childSetAction("beamshape_clear",onClickClear,this);
+	getChild<LLColorSwatchCtrl>("back_color_swatch")->setCommitCallback(onBackgroundChange);
 	
-	LLPanel* panel = getChild<LLPanel>("beamshape_draw");
-	if(panel)
-	{
-		
-	}
 	
 	return true;
 }
 BOOL lggBeamMapFloater::handleMouseDown(S32 x,S32 y,MASK mask)
 {
-	lggPoint a;
-	a.x=x;
-	a.y=y;
-	a.c= 	LLColor4::red;//getChild<LLColorSwatchCtrl>("beam_color_swatch")->get();
-	dots.push_back(a);
+	LLRect r = getChild<LLPanel>("beamshape_draw")->getRect();
+	if(y>37 && x>12 && x<397 && y<323)
+	{
+		lggPoint a;
+		a.x=x;
+		a.y=y;
+		a.c= 	getChild<LLColorSwatchCtrl>("beam_color_swatch")->get();
+		dots.push_back(a);
 	
-	llinfos << "we got clicked at (" << x << ", " << y << " and color was " << a.c << llendl;
+		llinfos << "we got clicked at (" << x << ", " << y << " and color was " << a.c << llendl;
+	}
 	
 	return LLFloater::handleMouseDown(x,y,mask);
 }
-
+void lggBeamMapFloater::onBackgroundChange(LLUICtrl* ctrl, void* userdata)
+{
+	lggBeamMapFloater* self = (lggBeamMapFloater*)userdata;
+	
+	LLColorSwatchCtrl* cctrl = (LLColorSwatchCtrl*)ctrl;
+	
+	if(cctrl)
+	{
+		self->getChild<LLPanel>("beamshape_draw")->setBackgroundColor(cctrl->get());
+	}
+	
+}
 void lggBeamMapFloater::update()
 {
 	
@@ -162,11 +176,15 @@ void lggBeamMapFloater::update()
 LLSD lggBeamMapFloater::getMyDataSerialized()
 {
 	LLSD out;
+	LLPanel* panel = getChild<LLPanel>("beamshape_draw");
+	
 	for(int i =0; i<(int)dots.size();i++)
 	{
 		LLSD point;
 		lggPoint t = dots[i];
-		point["offset"]= LLVector3((F32)t.x,(F32)t.y,(F32)0.0f).getValue();
+		LLVector3 vec = LLVector3((F32)0.0,(F32)t.x,(F32)t.y);
+		vec -= LLVector3((F32)0.0,(F32)panel->getRect().getCenterX(),(F32)panel->getRect().getCenterY());
+		point["offset"]= vec.getValue();
 		point["color"] = t.c.getValue();
 
 		out[i]=point;
@@ -178,21 +196,34 @@ void lggBeamMapFloater::onClickSave(void* data)
 	lggBeamMapFloater* self = (lggBeamMapFloater*)data;
 	LLFilePicker& picker = LLFilePicker::instance();
 	
-	std::string filename="myNewBeam.xml";
-	if(!picker.getSaveFile( LLFilePicker::FFSAVE_XML, filename ) )
+	std::string filename=	gDirUtilp->getAppRODataDir() 
+						+gDirUtilp->getDirDelimiter()
+						+"beams"
+						+gDirUtilp->getDirDelimiter()
+						+"myNewBeam.xml";
+	//std::string filename="myNewBeam.xml";
+	if(!picker.getSaveFile( LLFilePicker::FFSAVE_BEAM, filename ) )
 	{
    // User canceled save.
 		return;
 	}	
-	filename = picker.getFirstFile();
+	
+	filename = gDirUtilp->getAppRODataDir() 
+						+gDirUtilp->getDirDelimiter()
+						+"beams"
+						+gDirUtilp->getDirDelimiter()
+						+gDirUtilp->getBaseFileName(picker.getFirstFile());
+
+	
 	LLSD main;
-	main["scale"] = 1.0f;
+	main["scale"] = 8.0f/(self->getChild<LLPanel>("beamshape_draw")->getRect().getWidth());
 	main["data"]=self->getMyDataSerialized();
   
 	llofstream export_file;
 	export_file.open(filename);
 	LLSDSerialize::toPrettyXML(main, export_file);
 	export_file.close();
+	gSavedSettings.setString("EmeraldBeamShape",gDirUtilp->getBaseFileName(filename,true));
 	
 }
 
