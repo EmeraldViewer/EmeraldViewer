@@ -1227,13 +1227,17 @@ bool LLAppViewer::cleanup()
 	llinfos << "Settings patched up" << llendflush;
 
 	// delete some of the files left around in the cache.
-	removeCacheFiles("*.wav");
+// skills - dont remove unpacked sounds etc
+	if (!gSavedSettings.getBOOL("EmeraldKeepUnpackedCacheFiles"))
+	{
+		removeCacheFiles("*.wav");
+		removeCacheFiles("*.lso");
+		removeCacheFiles("*.dsf");
+		removeCacheFiles("*.bodypart");
+		removeCacheFiles("*.clothing");
+	}
 	removeCacheFiles("*.tmp");
-	removeCacheFiles("*.lso");
 	removeCacheFiles("*.out");
-	removeCacheFiles("*.dsf");
-	removeCacheFiles("*.bodypart");
-	removeCacheFiles("*.clothing");
 
 	llinfos << "Cache files removed" << llendflush;
 
