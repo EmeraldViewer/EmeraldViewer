@@ -62,6 +62,7 @@ void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U
 		F32 distanceAdjust = dist_vec(mBeam->getPositionGlobal(),gAgent.getPositionGlobal()) ;
 		F32 pulse = (F32)(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f);
 		LLVector3d offset = dots[i].p;
+		offset.mdV[VY] *= -1;
 		offset *= pulse * scale * distanceAdjust * 0.1;
 		
 		//llinfos << "dist is " << distanceAdjust << "scale is " << scale << llendl;
