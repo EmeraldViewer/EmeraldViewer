@@ -11,9 +11,6 @@ include(ELFIO)
 include(FMOD)
 include(OPENAL)
 include(FindOpenGL)
-include(libgcrypt)
-include(libgpg-error)
-include(libotr)
 include(LLAddBuildTest)
 include(LLAudio)
 include(LLCharacter)
@@ -45,6 +42,9 @@ include(ViewerMiscLibs)
 
 if (WINDOWS)
     include(CopyWinLibs)
+    include(libgcrypt)
+	include(libgpg-error)
+	include(libotr)
 endif (WINDOWS)
 
 include_directories(
@@ -67,13 +67,18 @@ include_directories(
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
     ${EMERALD_INCLUDE_DIRS}
-    ../gpg.vs/inc.vs
-    ../gpg.vs/libgpg-error-1.1.vs/custom
-    ../gpg.vs/libgcrypt-1.2.2.vs/custom
-    ../libgpg-error/libgpg-error-1.0/src
-    ../libgcrypt/libgcrypt-1.2.2/src
-    ../libotr/libotr-3.2.0/src
     )
+
+if (WINDOWS)
+	include_directories(
+		../gpg.vs/inc.vs
+		../gpg.vs/libgpg-error-1.1.vs/custom
+		../gpg.vs/libgcrypt-1.2.2.vs/custom
+		../libgpg-error/libgpg-error-1.0/src
+		../libgcrypt/libgcrypt-1.2.2/src
+		../libotr/libotr-3.2.0/src
+		)
+endif (WINDOWS)
 
 set(viewer_SOURCE_FILES
 	importtracker.cpp
@@ -1281,9 +1286,6 @@ if (WINDOWS)
 endif (WINDOWS)
 
 target_link_libraries(${VIEWER_BINARY_NAME}
-    ${LIBGPG-ERROR_LIBRARIES}
-    ${LIBGCRYPT_LIBRARIES}
-    ${LIBOTR_LIBRARIES}
     ${LLAUDIO_LIBRARIES}
     ${LLCHARACTER_LIBRARIES}
     ${LLIMAGE_LIBRARIES}
@@ -1320,6 +1322,14 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${EMERALD_LIBRARIES}
     ${LUA_LIBRARY}
     )
+
+if (WINDOWS)
+	target_link_libraries(
+		${LIBGPG-ERROR_LIBRARIES}
+		${LIBGCRYPT_LIBRARIES}
+		${LIBOTR_LIBRARIES}
+		)
+endif (WINDOWS)
 
 build_version(viewer)
 
