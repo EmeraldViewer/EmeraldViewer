@@ -3905,6 +3905,17 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldMiniMapPrimMaxRadius</key>
+    <map>
+      <key>Comment</key>
+      <string>Radius of the largest prim to show on the MiniMap. Increasing beyond 256 may cause client lag.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>16.0</real>
+    </map>
     <key>EmeraldMaxBeamsPerSecond</key>
     <map>
       <key>Comment</key>
