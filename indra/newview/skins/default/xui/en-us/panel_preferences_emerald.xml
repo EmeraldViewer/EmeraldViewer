@@ -22,6 +22,11 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Rotate Camera behind avatar after Double-click Teleports" left_delta="0" mouse_opaque="true"
            name="move_camaftertp_toggle" radio_style="false" width="270" control_name="EmeraldRotateCamAfterLocalTP" />
+      <spinner decimal_digits="1" follows="left|top" height="18" increment="0.1" initial_val="0"
+           label="Double-click Teleport Z Offset" label_width="160" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0"
+           name="Double-click Teleport Z Offset"
+           tool_tip="Controls the Z Offset for Double-click Teleports"
+           width="210" control_name="EmeraldDoubleClickZOffset" />
       <check_box bottom_delta="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Play Teleport sound effect" left_delta="-50" mouse_opaque="true"
