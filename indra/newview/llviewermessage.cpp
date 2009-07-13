@@ -5585,7 +5585,8 @@ void process_teleport_local(LLMessageSystem *msg,void**)
 	}
 
 	gAgent.setPositionAgent(pos);
-	//gAgent.slamLookAt(look_at);
+	//Chalice - Enabled for EmeraldDoubleClickTeleportMode
+	gAgent.slamLookAt(look_at);
 	
 	if (!gSavedSettings.getBOOL("EmeraldRotateCamAfterLocalTP"))
 	{
