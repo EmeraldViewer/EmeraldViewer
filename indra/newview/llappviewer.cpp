@@ -3779,7 +3779,7 @@ void LLAppViewer::idleNetwork()
 	// Check that the circuit between the viewer and the agent's current
 	// region is still alive
 	LLViewerRegion *agent_region = gAgent.getRegion();
-	if (agent_region)
+	if (agent_region && LLStartUp::getStartupState() == STATE_STARTED) //fixes lost connection on login
 	{
 		LLUUID this_region_id = agent_region->getRegionID();
 		bool this_region_alive = agent_region->isAlive();

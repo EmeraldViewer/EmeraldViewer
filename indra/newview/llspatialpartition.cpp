@@ -584,12 +584,6 @@ void LLSpatialPartition::rebuildGeom(LLSpatialGroup* group)
 		group->mLastUpdateViewAngle = group->mViewAngle;
 	}
 
-	if (group->changeLOD())
-	{
-		group->mLastUpdateDistance = group->mDistance;
-		group->mLastUpdateViewAngle = group->mViewAngle;
-	}
-
 	if (group->isDead() || !group->isState(LLSpatialGroup::GEOM_DIRTY))
 	{
 		return;

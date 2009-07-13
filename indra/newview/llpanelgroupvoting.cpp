@@ -139,6 +139,7 @@ public:
 
 	std::vector<LLSD> mActiveReceived;
 	std::vector<LLSD> mHistoryReceived;
+	U32 mOtherGroupHistoryItems;
 
 	int mProposalColumnWidths[10];
 	int mHistoryColumnWidths[10];
@@ -215,6 +216,8 @@ LLPanelGroupVoting::impl::impl(LLPanelGroupVoting& panel, const LLUUID& group_id
 	mVoteHistoryTextLbl = NULL;
 	mBtnViewHistoryList = NULL;
 	mBtnViewHistoryItem = NULL;
+
+	mOtherGroupHistoryItems = 0;
 }
 
 LLPanelGroupVoting::impl::~impl()
@@ -588,11 +591,13 @@ void LLPanelGroupVoting::impl::sendGroupProposalsRequest(const LLUUID& group_id)
 	mProposalTransID.generate();
 	mProposals->deleteAllItems(); //this should delete all the objects
 	mActiveReceived.clear();
+	mOtherGroupHistoryItems = 0;
 
 	//fill in some text so the user will at least know that
 	//we're pining the server in high latency situations
 	addPendingActiveScrollListItem(0, 0, ADD_BOTTOM);
 	mProposals->setCanSelect(FALSE);
+	mBtnViewProposalItem->setEnabled(FALSE);
 
 	LLMessageSystem *msg = gMessageSystem;
 	msg->newMessageFast(_PREHASH_GroupActiveProposalsRequest);
@@ -871,6 +876,7 @@ void LLPanelGroupVoting::impl::sendGroupVoteHistoryRequest(const LLUUID& group_i
 	//add some text so the user knows we're doing something
 	addPendingHistoryScrollListItem(0, 0, ADD_BOTTOM);
 	mVotesHistory->setCanSelect(FALSE);
+	mBtnViewHistoryItem->setEnabled(FALSE);
 
 	LLMessageSystem *msg = gMessageSystem;
 	msg->newMessageFast(_PREHASH_GroupVoteHistoryRequest);
@@ -1077,6 +1083,7 @@ void LLPanelGroupVoting::impl::processGroupActiveProposalItemReply(LLMessageSyst
 		//no active proposals and make the scroll list unselectable
 		self->addNoActiveScrollListItem(ADD_BOTTOM);
 		self->mProposals->setCanSelect(FALSE);
+		self->mBtnViewProposalItem->setEnabled(FALSE);
 	}
 	else if ( (U32)received != num_expected )
 	{
@@ -1084,6 +1091,7 @@ void LLPanelGroupVoting::impl::processGroupActiveProposalItemReply(LLMessageSyst
 											 num_expected,
 											 ADD_BOTTOM);
 		self->mProposals->setCanSelect(FALSE);
+		self->mBtnViewProposalItem->setEnabled(FALSE);
 	}
 	else
 	{
@@ -1097,6 +1105,7 @@ void LLPanelGroupVoting::impl::processGroupActiveProposalItemReply(LLMessageSyst
 		}
 
 		self->mProposals->setCanSelect(TRUE);
+		self->mBtnViewProposalItem->setEnabled(TRUE);
 	}
 }
 
@@ -1145,7 +1154,7 @@ void LLPanelGroupVoting::impl::processGroupVoteHistoryItemReply(LLMessageSystem 
 		//no active proposals and make the scroll list unselectable
 		self->addNoHistoryScrollListItem(ADD_BOTTOM);
 		self->mVotesHistory->setCanSelect(FALSE);
-
+		self->mBtnViewHistoryItem->setEnabled(FALSE);
 		return;
 	}
 
@@ -1256,15 +1265,21 @@ void LLPanelGroupVoting::impl::processGroupVoteHistoryItemReply(LLMessageSystem 
 
 			self->mHistoryReceived.push_back(row);
 		} //end if proposal
+		else
+		{
+			llinfos << "Vote is not a proposal, but a " << vote_type << llendl;
+			self->mOtherGroupHistoryItems++;
+		}
 	} //end if vote_items > 0
 
 	int received = self->mHistoryReceived.size();
-	if ( (U32)received != num_expected )
+	if ( (U32)received + self->mOtherGroupHistoryItems != num_expected )
 	{
 		self->addPendingHistoryScrollListItem(received,
 											  num_expected,
 											  ADD_BOTTOM);
 		self->mVotesHistory->setCanSelect(FALSE);
+		self->mBtnViewHistoryItem->setEnabled(FALSE);
 	}
 	else
 	{
@@ -1278,6 +1293,7 @@ void LLPanelGroupVoting::impl::processGroupVoteHistoryItemReply(LLMessageSystem 
 		}
 
 		self->mVotesHistory->setCanSelect(TRUE);
+		self->mBtnViewHistoryItem->setEnabled(TRUE);
 	}
 }
 
