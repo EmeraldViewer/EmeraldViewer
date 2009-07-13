@@ -318,6 +318,11 @@ BOOL	LLPanelObject::postBuild()
 	mCtrlSculptInvert = getChild<LLCheckBoxCtrl>("sculpt invert control");
 	childSetCommitCallback("sculpt invert control", onCommitSculptType, this);
 	
+	mLabelSculptUUID = getChild<LLTextBox>("label_sculpt_uuid");
+	LineEditorSculptUUID = getChild<LLLineEditor>("Sculpt UUID");
+	childSetCommitCallback("Sculpt UUID", onCommitSculptUUID, this);
+
+	
 	// Start with everyone disabled
 	clearCtrls();
 
@@ -494,13 +499,19 @@ void LLPanelObject::getState( )
 	mCtrlRotZ->setEnabled( enable_rotate );
 
 	BOOL owners_identical;
+	BOOL creators_identical;
 	LLUUID owner_id;
+	LLUUID creator_id;
 	std::string owner_name;
+	std::string creator_name;
+
 	owners_identical = LLSelectMgr::getInstance()->selectGetOwner(owner_id, owner_name);
+	creators_identical = LLSelectMgr::getInstance()->selectGetCreator(creator_id, creator_name);
 
 	// BUG? Check for all objects being editable?
 	S32 roots_selected = LLSelectMgr::getInstance()->getSelection()->getRootObjectCount();
 	BOOL editable = root_objectp->permModify();
+	BOOL showuuid = ( editable && (gAgent.getID() == creator_id) );
 
 	// Select Single Message
 	childSetVisible("select_single", FALSE);
@@ -1216,6 +1227,9 @@ void LLPanelObject::getState( )
 	mCtrlSculptMirror->setVisible(sculpt_texture_visible);
 	mCtrlSculptInvert->setVisible(sculpt_texture_visible);
 
+	mLabelSculptUUID->setVisible(sculpt_texture_visible);
+	LineEditorSculptUUID->setVisible(sculpt_texture_visible);
+
 
 	// sculpt texture
 
@@ -1239,7 +1253,23 @@ void LLPanelObject::getState( )
 				mTextureCtrl->setTentative(FALSE);
 				mTextureCtrl->setEnabled(editable);
 				if (editable)
+				{
 					mTextureCtrl->setImageAssetID(sculpt_params->getSculptTexture());
+					if( showuuid )
+					{
+						std::string SculptUUID_string;
+						SculptUUID_string = llformat( sculpt_params->getSculptTexture().asString().c_str());
+						LineEditorSculptUUID->setText(SculptUUID_string);
+						LineEditorSculptUUID->setEnabled(editable);
+					}
+					else
+					{
+						std::string SculptUUID_string;
+						SculptUUID_string = llformat( LLUUID::null.asString().c_str());
+						LineEditorSculptUUID->setText(SculptUUID_string);
+						LineEditorSculptUUID->setEnabled(FALSE);
+					}
+				}
 				else
 					mTextureCtrl->setImageAssetID(LLUUID::null);
 			}
@@ -1270,6 +1300,11 @@ void LLPanelObject::getState( )
 			if (mLabelSculptType)
 			{
 				mLabelSculptType->setEnabled(TRUE);
+			}
+
+			if (mLabelSculptUUID)
+			{
+				mLabelSculptUUID->setEnabled(TRUE);
 			}
 		}
 	}
@@ -2224,6 +2259,25 @@ void LLPanelObject::onCommitSculpt( LLUICtrl* ctrl, void* userdata )
 	LLPanelObject* self = (LLPanelObject*) userdata;
 
 	self->sendSculpt();
+}
+
+
+void LLPanelObject::onCommitSculptUUID(LLUICtrl*, void* userdata)
+{
+	LLPanelObject* self = (LLPanelObject*) userdata;
+
+    LLTextureCtrl* mTextureCtrl = self->getChild<LLTextureCtrl>("sculpt texture control");
+	LLLineEditor*	le = self->getChild<LLLineEditor>("Sculpt UUID");
+	if(le)
+	{
+		LLUUID asset = LLUUID(le->getText());
+		mTextureCtrl->setImageAssetID(asset);
+		self->mSculptTextureRevert = asset;
+
+		LLSculptParams sculpt_params;
+		sculpt_params.setSculptTexture(asset);
+		self->mObject->setParameterEntry(LLNetworkData::PARAMS_SCULPT, sculpt_params, TRUE);
+	}
 }
 
 // static
