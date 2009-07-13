@@ -577,6 +577,13 @@ void LLSpatialPartition::rebuildGeom(LLSpatialGroup* group)
 		return;
 	}
 
+	//Chalice - Fix for avatar geometry/attachments
+	if (!LLPipeline::sSkipUpdate && group->changeLOD())
+	{
+		group->mLastUpdateDistance = group->mDistance;
+		group->mLastUpdateViewAngle = group->mViewAngle;
+	}
+
 	if (group->changeLOD())
 	{
 		group->mLastUpdateDistance = group->mDistance;

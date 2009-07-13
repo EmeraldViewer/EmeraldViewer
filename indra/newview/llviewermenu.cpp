@@ -1075,9 +1075,9 @@ void init_debug_ui_menu(LLMenuGL* menu)
 	menu->append(new LLMenuItemCallGL( "Print Selected Object Info",	&print_object_info, NULL, NULL, 'P', MASK_CONTROL|MASK_SHIFT ));
 	menu->append(new LLMenuItemCallGL( "Print Agent Info",			&print_agent_nvpairs, NULL, NULL, 'P', MASK_SHIFT ));
 	menu->append(new LLMenuItemCallGL( "Memory Stats",  &output_statistics, NULL, NULL, 'M', MASK_SHIFT | MASK_ALT | MASK_CONTROL));
-//	menu->append(new LLMenuItemCheckGL("Double-Click Auto-Pilot", 
-//		menu_toggle_control, NULL, menu_check_control, 
-//		(void*)"DoubleClickAutoPilot"));
+	menu->append(new LLMenuItemCheckGL("Double-Click Auto-Pilot", 
+		menu_toggle_control, NULL, menu_check_control, 
+		(void*)"DoubleClickAutoPilot"));
 	menu->appendSeparator();
 //	menu->append(new LLMenuItemCallGL( "Print Packets Lost",			&print_packets_lost, NULL, NULL, 'L', MASK_SHIFT ));
 	menu->append(new LLMenuItemToggleGL("Debug SelectMgr", &gDebugSelectMgr));
@@ -8111,23 +8111,23 @@ class LLEmeraldCheckPhantom: public view_listener_t
 	}
 };
 
-class LLEmeraldToggleDblTP: public view_listener_t
+class LLEmeraldToggleDoubleClickTeleport: public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		gSavedSettings.setBOOL("EmeraldDoubleClickTeleport",!gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"));
-		LLChat chat;
-		chat.mSourceType = CHAT_SOURCE_SYSTEM;
-		chat.mText = llformat("%s%s","Double-Click TP ",(gSavedSettings.getBOOL("EmeraldDoubleClickTeleport") ? "On" : "Off"));
-		LLFloaterChat::addChat(chat);
-
+			gSavedSettings.setBOOL("EmeraldDoubleClickTeleport",!gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"));
+			BOOL tp = gSavedSettings.getBOOL("EmeraldDoubleClickTeleport");
+			LLChat chat;
+			chat.mSourceType = CHAT_SOURCE_SYSTEM;
+			chat.mText = llformat("%s%s","Doubleclick Teleporting ",(tp ? "On" : "Off"));
+			LLFloaterChat::addChat(chat);
 		return true;
 	}
+
 };
 
-class LLEmeraldCheckDblTP: public view_listener_t
+class LLEmeraldCheckDoubleClickTeleport: public view_listener_t
 {
-
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
 		gMenuHolder->findControl(userdata["control"].asString())->setValue(gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"));
@@ -8499,10 +8499,9 @@ void initialize_menus()
 	//Emerlad menu, another shakey lgg mod
 	addMenu(new LLEmeraldTogglePhantom(), "Emerald.TogglePhantom");
 	addMenu(new LLEmeraldCheckPhantom(), "Emerald.CheckPhantom");
-	
-	addMenu(new LLEmeraldToggleDblTP(), "Emerald.ToggleDblTP");
-	addMenu(new LLEmeraldCheckDblTP(), "Emerald.CheckDblTP");
 	addMenu(new LLEmeraldToggleSit(), "Emerald.ToggleSit");
+	addMenu(new LLEmeraldToggleDoubleClickTeleport(), "Emerald.ToggleDoubleClickTeleport");
+	addMenu(new LLEmeraldCheckDoubleClickTeleport(), "Emerald.CheckDoubleClickTeleport");
 	addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
 	//addMenu(new LLEmeraldCheckRadar(), "Emerald.CheckAvatarList");
 	addMenu(new LLEmeraldDisable(), "Emerald.Disable");
