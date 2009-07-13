@@ -1075,9 +1075,9 @@ void init_debug_ui_menu(LLMenuGL* menu)
 	menu->append(new LLMenuItemCallGL( "Print Selected Object Info",	&print_object_info, NULL, NULL, 'P', MASK_CONTROL|MASK_SHIFT ));
 	menu->append(new LLMenuItemCallGL( "Print Agent Info",			&print_agent_nvpairs, NULL, NULL, 'P', MASK_SHIFT ));
 	menu->append(new LLMenuItemCallGL( "Memory Stats",  &output_statistics, NULL, NULL, 'M', MASK_SHIFT | MASK_ALT | MASK_CONTROL));
-	menu->append(new LLMenuItemCheckGL("Double-Click Auto-Pilot", 
-		menu_toggle_control, NULL, menu_check_control, 
-		(void*)"DoubleClickAutoPilot"));
+//	menu->append(new LLMenuItemCheckGL("Double-Click Auto-Pilot", 
+//		menu_toggle_control, NULL, menu_check_control, 
+//		(void*)"DoubleClickAutoPilot"));
 	menu->appendSeparator();
 //	menu->append(new LLMenuItemCallGL( "Print Packets Lost",			&print_packets_lost, NULL, NULL, 'L', MASK_SHIFT ));
 	menu->append(new LLMenuItemToggleGL("Debug SelectMgr", &gDebugSelectMgr));
@@ -5689,6 +5689,7 @@ class LLShowFloater : public view_listener_t
 		else if (floater_name == "teleport history")
 		{
 			gFloaterTeleportHistory->setVisible(!gFloaterTeleportHistory->getVisible());
+			gFloaterTeleportHistory->setFocus(TRUE);
 		}
 		else if (floater_name == "im")
 		{
@@ -8110,6 +8111,30 @@ class LLEmeraldCheckPhantom: public view_listener_t
 	}
 };
 
+class LLEmeraldToggleDblTP: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		gSavedSettings.setBOOL("EmeraldDoubleClickTeleport",!gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"));
+		LLChat chat;
+		chat.mSourceType = CHAT_SOURCE_SYSTEM;
+		chat.mText = llformat("%s%s","Double-Click TP ",(gSavedSettings.getBOOL("EmeraldDoubleClickTeleport") ? "On" : "Off"));
+		LLFloaterChat::addChat(chat);
+
+		return true;
+	}
+};
+
+class LLEmeraldCheckDblTP: public view_listener_t
+{
+
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"));
+		return true;
+	}
+};
+
 class LLEmeraldToggleSit: public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -8320,6 +8345,26 @@ class LLWorldWaterSettings : public view_listener_t
 	}
 };
 
+/// Sky Menu callbacks added by Kirstenlee ^^
+class LLWorldSkySettings : public view_listener_t
+{	
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		// if not there or is hidden, show it
+		if(	!LLFloaterWindLight::isOpen() || 
+			!LLFloaterWindLight::instance()->getVisible()) {
+			LLFloaterWindLight::show();
+				
+		// otherwise, close it button acts like a toggle
+		} 
+		else 
+		{
+			LLFloaterWindLight::instance()->close();
+		}
+		return true;
+	}
+};
+
 /// Post-Process callbacks
 class LLWorldPostProcess : public view_listener_t
 {
@@ -8454,6 +8499,9 @@ void initialize_menus()
 	//Emerlad menu, another shakey lgg mod
 	addMenu(new LLEmeraldTogglePhantom(), "Emerald.TogglePhantom");
 	addMenu(new LLEmeraldCheckPhantom(), "Emerald.CheckPhantom");
+	
+	addMenu(new LLEmeraldToggleDblTP(), "Emerald.ToggleDblTP");
+	addMenu(new LLEmeraldCheckDblTP(), "Emerald.CheckDblTP");
 	addMenu(new LLEmeraldToggleSit(), "Emerald.ToggleSit");
 	addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
 	//addMenu(new LLEmeraldCheckRadar(), "Emerald.CheckAvatarList");
@@ -8482,6 +8530,7 @@ void initialize_menus()
 	(new LLWorldWaterSettings())->registerListener(gMenuHolder, "World.WaterSettings");
 	(new LLWorldPostProcess())->registerListener(gMenuHolder, "World.PostProcess");
 	(new LLWorldDayCycle())->registerListener(gMenuHolder, "World.DayCycle");
+	(new LLWorldSkySettings())->registerListener(gMenuHolder, "World.SkySettings");  // KL
 
 	// Tools menu
 	addMenu(new LLToolsSelectTool(), "Tools.SelectTool");
