@@ -183,6 +183,8 @@
 <ConsoleBackground value="0, 0, 0, 255" />
 <FolderViewLoadingMessageTextColor value="240, 165, 90, 255"/>     <!-- "loading..." in the inv -->
 <InventoryBackgroundColor value="62, 62, 62, 80"/>
+<DefaultListText value="0, 0, 0, 255"/> <!-- We are replacing all the hardcoded black text with this color so we can make skins with white text on dark background -->
+<ComboBoxBg value="255, 255, 255, 255"/>
 
 <!-- Alert box colors -->
 <AlertBoxColor value="62, 62, 62, 255" />               <!-- Warnings floaters, like when returning objects -->
