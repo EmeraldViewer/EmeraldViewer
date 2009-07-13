@@ -5586,6 +5586,13 @@ void process_teleport_local(LLMessageSystem *msg,void**)
 
 	gAgent.setPositionAgent(pos);
 	//gAgent.slamLookAt(look_at);
+	
+	if (!gSavedSettings.getBOOL("EmeraldRotateCamAfterLocalTP"))
+	{
+		gAgent.resetView(FALSE);
+	}
+	else
+		gAgent.resetView(TRUE);
 
 	// likewise make sure the camera is behind the avatar
 	//gAgent.resetView(TRUE, TRUE);
