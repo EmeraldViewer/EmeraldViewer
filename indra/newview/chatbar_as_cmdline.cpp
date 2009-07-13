@@ -177,6 +177,13 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				LLVector3 agentPos = gAgent.getPositionAgent();
 				U64 agentRegion = gAgent.getRegion()->getHandle();
 				LLVector3 targetPos(agentPos.mV[0],agentPos.mV[1],LLWorld::getInstance()->resolveLandHeightAgent(agentPos));
+				if(gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc")
+				{
+					//Chalice - Hax. We want to add half the av height.
+					LLVOAvatar* avatarp = gAgent.getAvatarObject();
+					LLVector3 autoOffSet = avatarp->getScale();
+					targetPos.mV[2]=targetPos.mV[2] + (autoOffSet.mV[2] / 2.0);
+				}
 				gAgent.teleportRequest(agentRegion,targetPos);
 				return false;
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineHeight"))

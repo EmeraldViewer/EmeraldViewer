@@ -2469,41 +2469,49 @@ bool handle_go_to()
 	LLVector3d pos = LLToolPie::getInstance()->getPick().mPosGlobal;
 	if(!gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"))
 	{
-// [RLVa] - Alternate: Emerald-206
-	// TODO-RLVa: need to decide whether or not "double click teleport" should be tied tp @tploc=n or to @sittp=n
-	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasLockedAttachment()) )
-	{
-		return true;
-	}
-// [/RLVa]
- 
-	// JAMESDEBUG try simulator autopilot
-	std::vector<std::string> strings;
-	std::string val;
-	val = llformat("%g", pos.mdV[VX]);
-	strings.push_back(val);
-	val = llformat("%g", pos.mdV[VY]);
-	strings.push_back(val);
-	val = llformat("%g", pos.mdV[VZ]);
-	strings.push_back(val);
-	send_generic_message("autopilot", strings);
+		// [RLVa] - Alternate: Emerald-206
+		// TODO-RLVa: need to decide whether or not "double click teleport" should be tied tp @tploc=n or to @sittp=n
+		if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasLockedAttachment()) )
+		{
+			return true;
+		}
+		// [/RLVa]
+	 
+		// JAMESDEBUG try simulator autopilot
+		std::vector<std::string> strings;
+		std::string val;
+		val = llformat("%g", pos.mdV[VX]);
+		strings.push_back(val);
+		val = llformat("%g", pos.mdV[VY]);
+		strings.push_back(val);
+		val = llformat("%g", pos.mdV[VZ]);
+		strings.push_back(val);
+		send_generic_message("autopilot", strings);
 
-	LLViewerParcelMgr::getInstance()->deselectLand();
+		LLViewerParcelMgr::getInstance()->deselectLand();
 
-	if (gAgent.getAvatarObject() && !gSavedSettings.getBOOL("AutoPilotLocksCamera"))
-	{
-		gAgent.setFocusGlobal(gAgent.getFocusTargetGlobal(), gAgent.getAvatarObject()->getID());
-	}
-	else 
-	{
-		// Snap camera back to behind avatar
-		gAgent.setFocusOnAvatar(TRUE, ANIMATE);
-	}
+		if (gAgent.getAvatarObject() && !gSavedSettings.getBOOL("AutoPilotLocksCamera"))
+		{
+			gAgent.setFocusGlobal(gAgent.getFocusTargetGlobal(), gAgent.getAvatarObject()->getID());
+		}
+		else 
+		{
+			// Snap camera back to behind avatar
+			gAgent.setFocusOnAvatar(TRUE, ANIMATE);
+		}
 
-	// Could be first use
-	LLFirstUse::useGoTo();
-	}else
+		// Could be first use
+		LLFirstUse::useGoTo();
+	}
+	else
 	{
+		if(gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc")
+		{
+			//Chalice - Add half the av height.
+			LLVOAvatar* avatarp = gAgent.getAvatarObject();
+			LLVector3 autoOffSet = avatarp->getScale();
+			pos.mdV[2]=pos.mdV[2] + (autoOffSet.mV[2] / 2.0);
+		}
 		LLVector3d got( 0.0f, 0.0f, gSavedSettings.getF32("EmeraldDoubleClickZOffset"));
 		got += pos;
 		if(gSavedSettings.getBOOL("EmeraldVelocityDoubleClickTeleport"))got += ((LLVector3d)gAgent.getVelocity() * 0.25);
@@ -5689,7 +5697,6 @@ class LLShowFloater : public view_listener_t
 		else if (floater_name == "teleport history")
 		{
 			gFloaterTeleportHistory->setVisible(!gFloaterTeleportHistory->getVisible());
-			gFloaterTeleportHistory->setFocus(TRUE);
 		}
 		else if (floater_name == "im")
 		{

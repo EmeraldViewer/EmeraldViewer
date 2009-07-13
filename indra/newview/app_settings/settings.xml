@@ -3806,6 +3806,17 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldDoubleClickTeleportAvCalc</key>
+    <map>
+      <key>Comment</key>
+      <string>Add half of Avatar's height to doubleclick TP calculations</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>EmeraldDoubleClickTeleportMode</key>
     <map>
       <key>Comment</key>
