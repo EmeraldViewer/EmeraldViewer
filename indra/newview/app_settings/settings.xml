@@ -4114,6 +4114,50 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldOOCPrefix</key>
+    <map>
+      <key>Comment</key>
+      <string>Prefix to mark OOC chat</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>((</string>
+    </map>
+    <key>EmeraldOOCPostfix</key>
+    <map>
+      <key>Comment</key>
+      <string>Prefix to mark OOC chat</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>))</string>
+    </map>
+    <key>EmeraldUseChatBar</key>
+    <map>
+      <key>Comment</key>
+      <string>Set to FALSE to disable the chat bar and chat display in the bottom left. All chat will go to the Communicate window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldSendTypingIndicators</key>
+    <map>
+      <key>Comment</key>
+      <string>Let other clients see when you are typing in IMs</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>EmeraldVelocityDoubleClickTeleport</key>
     <map>
       <key>Comment</key>
