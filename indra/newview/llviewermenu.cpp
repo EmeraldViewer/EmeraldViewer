@@ -2505,7 +2505,7 @@ bool handle_go_to()
 	}
 	else
 	{
-		if(gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc")
+		if(gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc"))
 		{
 			//Chalice - Add half the av height.
 			LLVOAvatar* avatarp = gAgent.getAvatarObject();
