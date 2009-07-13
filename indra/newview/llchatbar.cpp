@@ -176,12 +176,37 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 	BOOL handled = FALSE;
 
 	// ALT-RETURN is reserved for windowed/fullscreen toggle
+
+	// not any more :p
+
+
 	if( KEY_RETURN == key )
 	{
 		if (mask == MASK_CONTROL)
 		{
 			// shout
 			sendChat(CHAT_TYPE_SHOUT);
+			handled = TRUE;
+		}
+		else if (mask == MASK_SHIFT)
+		{
+			// whisper
+			sendChat( CHAT_TYPE_WHISPER );
+			handled = TRUE;
+		}
+		else if (mask == MASK_ALT)
+		{
+			// ooc chat
+
+			if (mInputEditor)
+			{
+				std::string msg;
+				std::string text = mInputEditor->getText();
+				msg.assign( gSavedSettings.getString("EmeraldOOCPrefix") + " " + text + " " + gSavedSettings.getString("EmeraldOOCPostfix") );
+				mInputEditor->setText(msg);
+			}
+
+			sendChat( CHAT_TYPE_NORMAL );
 			handled = TRUE;
 		}
 		else if (mask == MASK_NONE)
@@ -448,6 +473,8 @@ void LLChatBar::sendChat( EChatType type )
 // static 
 void LLChatBar::startChat(const char* line)
 {
+	if (gSavedSettings.getBOOL("EmeraldUseChatBar"))
+	{
 	gChatBar->setVisible(TRUE);
 	gChatBar->setKeyboardFocus(TRUE);
 	gSavedSettings.setBOOL("ChatVisible", TRUE);
@@ -459,6 +486,7 @@ void LLChatBar::startChat(const char* line)
 	}
 	// always move cursor to end so users don't obliterate chat when accidentally hitting WASD
 	gChatBar->mInputEditor->setCursorToEnd();
+	}
 }
 
 
