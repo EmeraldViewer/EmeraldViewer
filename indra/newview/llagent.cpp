@@ -1290,7 +1290,7 @@ F32 LLAgent::clampPitchToLimits(F32 angle)
 
 	LLVector3 skyward = getReferenceUpVector();
 
-	F32			look_down_limit = 179.f;
+	F32			look_down_limit = 179.f * DEG_TO_RAD;
 	F32			look_up_limit = 1.f * DEG_TO_RAD;
 
 	F32 angle_from_skyward = acos( mFrameAgent.getAtAxis() * skyward );
