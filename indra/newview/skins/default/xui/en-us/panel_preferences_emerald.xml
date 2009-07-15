@@ -193,7 +193,7 @@ Recommended Settings are:
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
 		     label="IM" left="1" mouse_opaque="true" name="Misc" width="418">
-      <check_box bottom_delta="-40" enabled="true"
+      <check_box bottom_delta="-25" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Announce incoming instant messages" left_delta="10" mouse_opaque="true"
            name="EmeraldInstantMessageAnnounceIncoming" radio_style="false" width="270" />
@@ -226,12 +226,13 @@ Recommended Settings are:
            label="Autorespond on every message, not just first one they send" left_delta="25" mouse_opaque="true"
            name="EmeraldInstantMessageResponseRepeat" radio_style="false" width="270" />
       <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-           bottom_delta="-10" drop_shadow_visible="true" enabled="true" follows="left|top"
-           font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="-50"
-           mouse_opaque="false" name="text_box3" v_pad="0" width="256">
-        Instant Message Response:
+           bottom_delta="-20" drop_shadow_visible="true" enabled="true" follows="left|top"
+           font="SansSerifSmall" h_pad="0" halign="left" height="20" left_delta="-50"
+           mouse_opaque="false" name="text_box3" v_pad="0" width="500">
+        Instant Message Response (Use #f for recipient's first name,
+#l for recipient's last name, and #t for current timestamp):
       </text>
-      <text_editor type="string" length="1" bottom_delta="-80" embedded_items="false" enabled="true" follows="left|top"
+      <text_editor type="string" length="1" bottom_delta="-85" embedded_items="false" enabled="true" follows="left|top"
            font="SansSerifSmall" height="75" left_delta="0" max_length="225"
            mouse_opaque="true" name="im_response" width="330" word_wrap="true" />
       <check_box bottom_delta="-20" enabled="true"
@@ -411,7 +412,26 @@ Leave any command blank to deactivate it.
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineRezPlatform" control_name="EmeraldCmdLineRezPlatform" width="200" />
-      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
+		<slider bottom_delta="-20"
+				left="15"
+				name="EmeraldPlatformSize"
+				control_name="EmeraldPlatformSize"
+				decimal_digits="1"
+				enabled="true"
+				follows="left|top"
+				height="18"
+				increment="0.5"
+				initial_val="5"
+				label="Width"
+				label_width="30"
+				max_val="30"
+				min_val="5"
+				mouse_opaque="true"
+				show_text="true"
+				width="200"
+				auto_resize="false"
+				tool_tip="How big do you want the platform to appear to be?" />
+      <text bottom_delta="-15" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt" width="512">
         Teleport to a region by name
 (usage: cmd simname) (ex: cmd Ahern)
       </text>

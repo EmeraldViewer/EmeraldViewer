@@ -36,6 +36,7 @@
 #include "llviewermessage.h"
 
 #include <deque>
+#include <time.h>
 
 #include "audioengine.h" 
 #include "indra_constants.h"
@@ -1697,6 +1698,46 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 				}
 				std::string my_name;
 				gAgent.buildFullname(my_name);
+
+				//<-- Personalized Autoresponse by Madgeek
+				std::string autoresponse = gSavedPerAccountSettings.getText("EmeraldInstantMessageResponse");
+				//Define Wildcards
+				std::string fname_wildcard = "#f";
+				std::string lname_wildcard = "#l";
+				std::string time_wildcard = "#t";
+				//Extract Name
+				std::string f_name, l_name;
+				std::istringstream inname(name);
+				inname >> f_name >> l_name;
+				//Generate a Timestamp
+				time_t rawtime;
+				time(&rawtime);
+				char * timestamp_chars;
+				timestamp_chars = asctime(localtime(&rawtime));
+				std::string timestamp;
+				timestamp.assign(timestamp_chars);
+				timestamp = timestamp.substr(0, timestamp.find('\n'));
+				//Handle Replacements
+				size_t found = autoresponse.find(fname_wildcard);
+				while(found != string::npos)
+				{
+					autoresponse.replace(found, 2, f_name);
+					found = autoresponse.find(fname_wildcard);
+				}
+				found = autoresponse.find(lname_wildcard);
+				while(found != string::npos)
+				{
+					autoresponse.replace(found, 2, l_name);
+					found = autoresponse.find(lname_wildcard);
+				}
+				found = autoresponse.find(time_wildcard);
+				while(found != string::npos)
+				{
+					autoresponse.replace(found, 2, timestamp);
+					found = autoresponse.find(time_wildcard);
+				}
+				//--> Personalized Autoresponse
+
 				if(gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseRepeat") && has && !typing_init) {
 					// send as busy auto response instead to prevent endless repeating replies
 					// when other end is a bot or broken client that answers to every usual IM
@@ -1704,7 +1745,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 					// where PRIVMSG can be seen as IM_NOTHING_SPECIAL and NOTICE can be seen as
 					// IM_BUSY_AUTO_RESPONSE. The assumption here is that no existing client
 					// responds to IM_BUSY_AUTO_RESPONSE. --TS
-					std::string response = gSavedPerAccountSettings.getText("EmeraldInstantMessageResponse");
+					std::string response = autoresponse;
 					pack_instant_message(
 						gMessageSystem,
 						gAgent.getID(),
@@ -1717,7 +1758,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 						IM_BUSY_AUTO_RESPONSE,
 						session_id);
 				} else {
-					std::string response = "/me (auto-response): "+gSavedPerAccountSettings.getText("EmeraldInstantMessageResponse");
+					std::string response = "/me (auto-response): "+autoresponse;
 					pack_instant_message(
 						gMessageSystem,
 						gAgent.getID(),
