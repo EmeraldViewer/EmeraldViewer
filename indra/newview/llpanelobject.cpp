@@ -108,6 +108,12 @@ enum {
 	MI_PATH_TEST_PROFILE_TRI,
 	MI_PATH_TEST_PROFILE_CIRCLE,
 	MI_PATH_TEST_PROFILE_CIRCLE_HALF,
+	//<-- Working33 by Gregory Maurer
+	MI_PATH_33_PROFILE_CIRCLE,
+	MI_PATH_33_PROFILE_SQUARE,
+	MI_PATH_33_PROFILE_TRIANGLE,
+	MI_PATH_33_PROFILE_HALFCIRCLE,
+	//Working33 -->
 	MI_NONE,
 	MI_VOLUME_COUNT
 };
@@ -760,6 +766,24 @@ void LLPanelObject::getState( )
 		{
 			selected_item = MI_PATH_LINE_PROFILE_CIRCLE_HALF;
 		}
+		//<-- Working33 by Gregory Maurer
+		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_CIRCLE )
+		{
+			selected_item = MI_PATH_33_PROFILE_CIRCLE;
+		}
+		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_SQUARE )
+		{
+			selected_item = MI_PATH_33_PROFILE_SQUARE;
+		}
+		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_ISOTRI )
+		{
+			selected_item = MI_PATH_33_PROFILE_TRIANGLE;
+		}
+		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
+		{
+			selected_item = MI_PATH_33_PROFILE_HALFCIRCLE;
+		}
+		//Working33 -->
 		else
 		{
 			llinfos << "Unknown path " << (S32) path << " profile " << (S32) profile << " in getState" << llendl;
@@ -1595,6 +1619,28 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 		profile = LL_PCODE_PROFILE_CIRCLE;
 		path = LL_PCODE_PATH_CIRCLE;
 		break;
+		
+//<-- Working33 by Gregory Maurer
+	case MI_PATH_33_PROFILE_CIRCLE:
+		profile = LL_PCODE_PROFILE_CIRCLE;
+		path = LL_PCODE_PATH_CIRCLE_33;
+		break;
+
+	case MI_PATH_33_PROFILE_SQUARE:
+		profile = LL_PCODE_PROFILE_SQUARE;
+		path = LL_PCODE_PATH_CIRCLE_33;
+		break;
+
+	case MI_PATH_33_PROFILE_TRIANGLE:
+		profile = LL_PCODE_PROFILE_ISOTRI;
+		path = LL_PCODE_PATH_CIRCLE_33;
+		break;
+
+	case MI_PATH_33_PROFILE_HALFCIRCLE:
+		profile = LL_PCODE_PROFILE_CIRCLE_HALF;
+		path = LL_PCODE_PATH_CIRCLE_33;
+		break;
+//Working33 -->
 		
 	default:
 		llwarns << "Unknown base type " << selected_type 

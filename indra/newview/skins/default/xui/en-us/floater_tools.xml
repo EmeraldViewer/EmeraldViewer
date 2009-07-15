@@ -765,6 +765,20 @@
         <combo_item name="PathTestProfileHalfCircle" value="PathTestProfileHalfCircle">
           Test->Half-Circle
         </combo_item>
+		<!-- Working33 by Gregory Maurer -->
+		<combo_item name="Path33Profile0" value="Path33Profile0">
+			33->Circle
+		</combo_item>
+		<combo_item name="Path33Profile1" value="Path33Profile1">
+			33->Square
+		</combo_item>
+		<combo_item name="Path33Profile2" value="Path33Profile2">
+			33->Triangle
+		</combo_item>
+		<combo_item name="Path33Profile5" value="Path33Profile5">
+			33->HalfCircle
+		</combo_item>
+		<!-- End Working33 by Gregory Maurer -->
       </combo_box>
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom_delta="-12" drop_shadow_visible="true" follows="left|top"
