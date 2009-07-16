@@ -255,8 +255,11 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				}
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineTP2"))
 			{
-				std::string name = revised_text.substr(command.length()+1);
-				cmdline_tp2name(name);
+				if (revised_text.length() > command.length() + 1) //Typing this command with no argument was causing a crash. -Madgeek
+				{
+					std::string name = revised_text.substr(command.length()+1);
+					cmdline_tp2name(name);
+				}
 				return false;
 			}
 		}
