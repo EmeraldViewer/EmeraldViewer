@@ -717,7 +717,7 @@ you up or down without altering your shape.
         name="EmPivotPercToggle" radio_style="false" width="100" control_name="EmeraldBuildPrefs_PivotIsPercent" />
       <check_box bottom_delta="60" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
-           label="Enable the highlighting of selected prims (Restart Required)" left_delta="140" mouse_opaque="true"
+           label="Enable the highlighting of selected prims" left_delta="140" mouse_opaque="true"
            name="EmBuildPrefsRenderHighlight_toggle" control_name="EmeraldRenderHighlightSelections" radio_style="false" width="270" />
       <check_box bottom_delta="-20" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
