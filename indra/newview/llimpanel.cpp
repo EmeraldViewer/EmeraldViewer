@@ -1689,6 +1689,24 @@ BOOL LLFloaterIMPanel::handleKeyHere( KEY key, MASK mask )
 		sendMsg();
 		handled = TRUE;
 	}
+	else if (KEY_RETURN == key && (mask == (MASK_ALT | MASK_SHIFT | MASK_CONTROL)))
+	{
+		//Insert new line symbol after the current cursor pos, then increment the curser by 1.
+		if (mInputEditor)
+		{
+			std::string msg = mInputEditor->getText();
+			if (mInputEditor->getCursor() > 0)
+			{
+				if (msg[mInputEditor->getCursor() - 1] != '\n')
+				{
+					//For some reason you have to use a newline character, the ¶ wont show up in chat.
+					msg = msg.insert(mInputEditor->getCursor(), "\n");
+					mInputEditor->setText(msg);
+					mInputEditor->setCursor(mInputEditor->getCursor() + 1);
+				}
+			}
+		}
+	}
 
 	else if ( KEY_ESCAPE == key )
 	{
