@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<panel border="true" bottom="-409" enabled="true" follows="left|top|right|bottom"
-     height="408" label="Emerald" left="102" mouse_opaque="true"
+<panel border="true" bottom="-439" enabled="true" follows="left|top|right|bottom"
+     height="438" label="Emerald" left="102" mouse_opaque="true"
      name="Emerald panel" width="517">
   <tab_container label="o.o" bottom="0" height="408" left="0" mouse_opaque="false" name="tab"
 	     tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
@@ -22,11 +22,30 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Rotate Camera behind avatar after Double-click Teleports" left_delta="0" mouse_opaque="true"
            name="move_camaftertp_toggle" radio_style="false" width="270" control_name="EmeraldRotateCamAfterLocalTP" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Always fly after teleports" left_delta="0" mouse_opaque="true"
+           name="flyaftertp_toggle" radio_style="false" width="270" control_name="EmeraldFlyAfterTeleport" />
       <spinner decimal_digits="1" follows="left|top" height="18" increment="0.1" initial_val="0"
            label="Double-click Teleport Z Offset" label_width="160" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0"
            name="Double-click Teleport Z Offset"
            tool_tip="Controls the Z Offset for Double-click Teleports"
            width="210" control_name="EmeraldDoubleClickZOffset" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Additionally offset up by half the avatar height" left_delta="0" mouse_opaque="true"
+           name="avcalc_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleportAvCalc" />
+		<radio_group bottom="-180" draw_border="false" follows="top|left" height="40"
+			 name="EmeraldDoubleClickTeleportMode" width="270">
+			<radio_item bottom="-20" height="20" left="0" name="0" width="270" 
+			  tool_tip="This makes the avatar rotation stay the same between doubleclick teleports.">
+				Keep avatar rotation the same when doubleclick teleporting
+			</radio_item>
+			<radio_item bottom="-40" height="20" left="0" name="1" width="270" 
+			  tool_tip="This makes the avatar use the camera's left/right rotation on doubleclick teleport.">
+				Rotate avatar according to camera left/right rotation on doubleclick teleport
+			</radio_item>
+		</radio_group>
       <check_box bottom_delta="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Play Teleport sound effect" left_delta="-50" mouse_opaque="true"

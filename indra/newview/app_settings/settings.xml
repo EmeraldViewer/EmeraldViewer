@@ -3826,18 +3826,18 @@
       <key>Type</key>
       <string>Boolean</string>
       <key>Value</key>
-      <integer>0</integer>
+      <integer>1</integer>
     </map>
     <key>EmeraldDoubleClickTeleportMode</key>
     <map>
       <key>Comment</key>
-      <string>Double click teleport cam mode: 0 - Default, 1 - keep AV rotation, 2 - Use cam rotaton</string>
+      <string>Double click teleport cam mode: 0 - Default, 1 - Use cam rotaton</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
-      <string>S32</string>
+      <string>Boolean</string>
       <key>Value</key>
-      <integer>2</integer>
+      <integer>1</integer>
     </map>
     <key>EmeraldDoubleClickWearInventoryObjects</key>
     <map>
@@ -3865,6 +3865,17 @@
     <map>
       <key>Comment</key>
       <string>download tags</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldFlyAfterTeleport</key>
+    <map>
+      <key>Comment</key>
+      <string>Fly after teleports</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>

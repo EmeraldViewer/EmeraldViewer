@@ -5616,13 +5616,21 @@ void process_teleport_local(LLMessageSystem *msg,void**)
 	}
 
 	// Sim tells us whether the new position is off the ground
-	if (teleport_flags & TELEPORT_FLAGS_IS_FLYING)
+	//Chalice - Always fly after Teleport
+	if (gSavedSettings.getBOOL("EmeraldFlyAfterTeleport"))
 	{
 		gAgent.setFlying(TRUE);
 	}
 	else
 	{
-		gAgent.setFlying(FALSE);
+		if (teleport_flags & TELEPORT_FLAGS_IS_FLYING)
+		{
+			gAgent.setFlying(TRUE);
+		}
+		else
+		{
+			gAgent.setFlying(FALSE);
+		}
 	}
 
 	gAgent.setPositionAgent(pos);

@@ -1017,6 +1017,20 @@ BOOL LLItemBridge::isItemCopyable() const
 	LLViewerInventoryItem* item = getItem();
 	if (item)
 	{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		return (item->getPermissions().allowCopyBy(gAgent.getID()));
 	}
 	return FALSE;
