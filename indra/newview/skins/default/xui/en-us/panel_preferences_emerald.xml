@@ -74,8 +74,8 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Disable Logout Progress Screen" left_delta="0" mouse_opaque="true"
            name="logout_screen_toggle" radio_style="false" width="270" control_name="EmeraldDisableLogoutScreens" />
-      <spinner decimal_digits="1" follows="left|top" height="18" increment="1" initial_val="0"
-           label="Login Precaching Delay" label_width="125" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0"
+      <spinner decimal_digits="1" follows="left|top" height="18" increment="1" initial_val="0.1"
+           label="Login Precaching Delay" label_width="125" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0.1"
            name="Login Precaching Delay"
            tool_tip="Controls the time on login it waits to let you in"
            width="175" control_name="PrecachingDelay" />
