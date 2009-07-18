@@ -347,7 +347,7 @@
         Thrax Linden
       </text>
       <button bottom="-66" follows="top|right" font="SansSerifSmall" halign="center"
-			     height="20" label="Profile..." label_selected="Profile..." left_delta="94"
+			     height="16" label="Profile..." label_selected="Profile..." left_delta="94"
 			     mouse_opaque="true" name="button creator profile" scale_image="TRUE"
 			     width="78" />
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
