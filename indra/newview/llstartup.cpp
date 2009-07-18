@@ -323,9 +323,7 @@ static S32 sAuthUriNum = -1;
 bool idle_startup()
 {
 	LLMemType mt1(LLMemType::MTYPE_STARTUP);
-	
-	const F32 PRECACHING_DELAY = gSavedSettings.getF32("PrecachingDelay")+0.1;
-	if(PRECACHING_DELAY == 0.1)gSavedSettings.setF32("PrecachingDelay",0.1);
+
 	const F32 TIMEOUT_SECONDS = 5.f;
 	const S32 MAX_TIMEOUT_COUNT = 3;
 	static LLTimer timeout;
@@ -2290,6 +2288,14 @@ bool idle_startup()
 			// JC: Initializing audio requests many sounds for download.
 			init_audio();
 
+			// Zwag: Moving shader init here. LL picked a dumb spot.
+			// should fix all the shader loading problems.
+			if (!LLViewerShaderMgr::sInitialized)
+			{
+				LLViewerShaderMgr::sInitialized = TRUE;
+				LLViewerShaderMgr::instance()->setShaders();
+			}
+
 			// JC: Initialize "active" gestures.  This may also trigger
 			// many gesture downloads, if this is the user's first
 			// time on this machine or -purge has been run.
@@ -2429,7 +2435,7 @@ bool idle_startup()
 
 	if (STATE_PRECACHE == LLStartUp::getStartupState())
 	{
-		F32 timeout_frac = timeout.getElapsedTimeF32()/PRECACHING_DELAY;
+		F32 timeout_frac = timeout.getElapsedTimeF32()/(gSavedSettings.getF32("PrecachingDelay")+0.1f);
 
 		// We now have an inventory skeleton, so if this is a user's first
 		// login, we can start setting up their clothing and avatar 
@@ -2473,11 +2479,6 @@ bool idle_startup()
 				LLTrans::getString("LoginPrecaching"),
 					gAgent.mMOTD);
 			display_startup();
-			if (!LLViewerShaderMgr::sInitialized)
-			{
-				LLViewerShaderMgr::sInitialized = TRUE;
-				LLViewerShaderMgr::instance()->setShaders();
-			}
 		}
 
 		return TRUE;

@@ -754,6 +754,7 @@ public:
 
 	LLOctreeDirtyTexture(const std::set<LLViewerImage*>& textures) : mTextures(textures) { }
 
+	using LLTreeTraveler<LLDrawable>::visit;
 	virtual void visit(const LLOctreeNode<LLDrawable>* node)
 	{
 		LLSpatialGroup* group = (LLSpatialGroup*) node->getListener(0);
