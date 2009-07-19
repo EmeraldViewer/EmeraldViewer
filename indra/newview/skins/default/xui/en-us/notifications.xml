@@ -2348,14 +2348,14 @@ Please choose the male or female avatar. You can change your mind later.
   <notification
    icon="alertmodal.tga"
    name="GrantedModifyRights"
-   type="alertmodal">
+   type="notifytip">
 You have been granted the privilege to modify [FIRST_NAME] [LAST_NAME]&apos;s objects.
   </notification>
 
   <notification
    icon="alertmodal.tga"
    name="RevokedModifyRights"
-   type="alertmodal">
+   type="notifytip">
 Your privilege to modify [FIRST_NAME] [LAST_NAME]&apos;s objects has been revoked
   </notification>
 
