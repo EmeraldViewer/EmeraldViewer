@@ -17,9 +17,21 @@ ImportTracker gImportTracker;
 
 extern LLAgent gAgent;
 
-void ImportTracker::import(LLSD& file_data)
+void ImportTracker::prepare(LLSD& file_data)
 {
-	linkset = file_data;
+	linksetgroups=file_data;
+	llinfos << "LOADED LINKSETS, PREPARING.." << llendl;
+	groupcounter=0;
+	LLSD ls_llsd;
+	ls_llsd=linksetgroups[groupcounter]["Object"];
+	linksetoffset=linksetgroups[groupcounter]["ObjectPos"];
+	initialPos=gAgent.getCameraPositionAgent();
+	import(ls_llsd);
+}
+
+void ImportTracker::import(LLSD& ls_data)
+{
+	linkset = ls_data;
 	state = REZZING;
 	llinfos << "IMPORTED, REZZING.." << llendl;
 	plywood_above_head();
@@ -36,6 +48,14 @@ void ImportTracker::clear()
 {
 	localids.clear();
 	linkset.clear();
+	//state = IDLE;
+}
+void ImportTracker::cleargroups()
+{
+	linksetgroups.clear();
+	groupcounter=0;
+	linksetoffset=LLVector3(0.0f,0.0f,0.0f);
+	initialPos=LLVector3(0.0f,0.0f,0.0f);
 	state = IDLE;
 }
 
@@ -368,6 +388,15 @@ void ImportTracker::link()
 	}
 	else
 		clear();
+	if(groupcounter != (linksetgroups.size() - 1))
+	{
+		++groupcounter;
+		LLSD ls_llsd;
+		ls_llsd=linksetgroups[groupcounter]["Object"];
+		linksetoffset=linksetgroups[groupcounter]["ObjectPos"];
+		import(ls_llsd);
+	}
+	else cleargroups();
 }
 
 void ImportTracker::wear(LLSD &prim)
@@ -441,13 +470,13 @@ void ImportTracker::plywood_above_head()
 		volume_params.setShear(0, 0);
 		LLVolumeMessage::packVolumeParams(&volume_params, msg);
 		msg->addU8Fast(_PREHASH_PCode, 9);
-		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.5f, 0.5f, 0.5f));
+		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.1f, 0.1f, 0.1f));
 		LLQuaternion rot;
 		msg->addQuatFast(_PREHASH_Rotation, rot);
 		LLViewerRegion *region = gAgent.getRegion();
 		
 		if (!localids.size())
-			root = region->getPosRegionFromGlobal(gAgent.getPositionGlobal()) + LLVector3(0.0f, 0.0f, .0f);
+			root = (initialPos + linksetoffset);
 		
 		msg->addVector3Fast(_PREHASH_RayStart, root);
 		msg->addVector3Fast(_PREHASH_RayEnd, root);

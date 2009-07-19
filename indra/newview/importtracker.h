@@ -20,7 +20,10 @@ class ImportTracker
 		ImportTracker(LLSD &data) { state = IDLE; linkset = data; numberExpected=0;}
 		~ImportTracker() { localids.clear(); linkset.clear(); }
 	
-		void import(LLSD &file_data);
+		//Chalice - support import of linkset groups
+		void prepare(LLSD &file_data);
+		void cleargroups();
+		void import(LLSD &ls_data);
 		void expectRez();
 		void clear();
 		void get_update(S32 newid, BOOL justCreated = false, BOOL createSelected = false);
@@ -44,6 +47,10 @@ class ImportTracker
 		S32				last;
 		LLVector3			root;
 		std::list<S32>			localids;
+		LLSD				linksetgroups;
+		int					groupcounter;
+		LLVector3			linksetoffset;
+		LLVector3			initialPos;
 		LLSD				linkset;
 };
 

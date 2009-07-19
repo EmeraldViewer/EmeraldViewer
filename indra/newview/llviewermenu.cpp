@@ -2278,38 +2278,44 @@ class LLObjectEnableExport : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
-		bool new_value = (object != NULL);
-		
-		if (new_value)
+		bool new_value=1;
+		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
+			 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
 		{
-			new_value = !object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer();
-			// Disable for avatars, we can only export prims
-			//LLVOAvatar* avatar = find_avatar_from_object(object); 
-			//new_value = (avatar == NULL);
+			LLSelectNode* selectNode = *iter;
+			LLViewerObject* object = selectNode->getObject();
+			if (object)
+				if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+				{
+					new_value=0;
+					break;
+				}
 		}
-		
+
 		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
 		
 		return true;
 	}
 };
 
-void export_object()
+LLSD export_object(LLSelectNode* node)
 {
-	LLObjectSelectionHandle selection = LLSelectMgr::getInstance()->getSelection();
+	//Chalice - Changed to support exporting linkset groups.
 	LLViewerObject* root_object = NULL;
 	LLViewerObject* object = NULL;
-	LLSelectNode* node = selection->getFirstRootNode();
 	
+	// Create an LLSD object that will hold the entire tree structure that can be serialized to a file
+	LLSD llsd;
+
 	if (!node)
-		return;
-	
+		return llsd;
+
 	object = root_object = node->getObject();
 	
 	if (!object)
-		return;
-	
+		return llsd;
+	if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+		return llsd;
 	// Build a list of everything that we'll actually be exporting
 	LLDynamicArray<LLViewerObject*> export_objects;
 	
@@ -2322,21 +2328,13 @@ void export_object()
 	for (LLViewerObject::child_list_t::iterator i = child_list.begin(); i != child_list.end(); ++i)
 	{
 		LLViewerObject* child = *i;
-		// Put the child objects on the export list
-		export_objects.put(child);
+		if(!child->isAvatar())
+		{
+			// Put the child objects on the export list
+			export_objects.put(child);
+		}
 	}
-	
-	// Open the file save dialog
-	LLFilePicker& file_picker = LLFilePicker::instance();
-	
-	if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
-		return; // User canceled save.
-	
-	std::string file_name = file_picker.getFirstFile();
-	
-	// Create an LLSD object that will hold the entire tree structure that can be serialized to a file
-	LLSD llsd;
-	
+		
 	S32 object_index = 0;
 	
 	while ((object_index < export_objects.count()))
@@ -2435,30 +2433,64 @@ void export_object()
 		// Changed to use link numbers zero-indexed.
 		llsd[object_index - 1] = prim_llsd;
 	}
-
-	// Create a file stream and write to it
-	llofstream export_file(file_name);
-	LLSDSerialize::toPrettyXML(llsd, export_file);
-	export_file.close();
+	return llsd;
 }
 
 class LLObjectExport : public view_listener_t
 {
+	//Chalice - Changed to support exporting linkset groups
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		// Open the file save dialog
+		LLFilePicker& file_picker = LLFilePicker::instance();
 		
-		if (!object)
-			return true;
+		if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
+			return true; // User canceled save.
 		
-		//LLVOAvatar* avatar = find_avatar_from_object(object); 
-		if (object->isAvatar())
-			return true;
-		// Can't export avatars (at least not yet...)
-		
-		//if (!avatar)
-		export_object();
-		
+		std::string file_name = file_picker.getFirstFile();
+		// Create a file stream and write to it
+		llofstream export_file(file_name);
+		int count;
+		count=0;
+		LLSD ls_llsd;
+		LLVector3 first_pos;
+		bool ps=1;
+		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
+			 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
+		{
+			LLSelectNode* selectNode = *iter;
+			LLViewerObject* object = selectNode->getObject();
+			if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+			{
+				ps=0;
+				break;
+			}
+			LLVector3 object_pos=object->getPosition();
+			LLSD pos_llsd;
+			if(!count)
+			{
+				first_pos=object_pos;
+				pos_llsd["ObjectPos"]=LLVector3(0.0f,0.0f,0.0f).getValue();
+			}
+			else
+			{
+				pos_llsd["ObjectPos"]=(object_pos - first_pos).getValue();
+			}
+			if (object && !(object->isAvatar()))
+			{
+				LLSD temp_llsd=export_object(selectNode);
+				if(!temp_llsd.isUndefined())
+					pos_llsd["Object"]=temp_llsd;
+				ls_llsd[count]=pos_llsd;
+			}
+			++count;
+		}
+		if(ps)
+		{
+			if(!(ls_llsd.isUndefined()))
+				LLSDSerialize::toPrettyXML(ls_llsd, export_file);
+			export_file.close();
+		}
 		return true;
 	}
 };
