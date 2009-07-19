@@ -2485,12 +2485,16 @@ class LLObjectExport : public view_listener_t
 			}
 			++count;
 		}
-		if(ps)
+		if(ps && !(ls_llsd.isUndefined()))
 		{
-			if(!(ls_llsd.isUndefined()))
-				LLSDSerialize::toPrettyXML(ls_llsd, export_file);
-			export_file.close();
+			LLSD file;
+			LLSD header;
+			header["Version"]=2;
+			file["Header"]=header;
+			file["Objects"]=ls_llsd;
+			LLSDSerialize::toPrettyXML(file, export_file);
 		}
+		export_file.close();
 		return true;
 	}
 };
