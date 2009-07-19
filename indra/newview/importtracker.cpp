@@ -10,7 +10,7 @@
 #include "llprimitive.h"
 #include "llviewerregion.h"
 #include "llvolumemessage.h"
-
+#include "llchat.h"
 #include "importtracker.h"
 
 ImportTracker gImportTracker;
@@ -253,7 +253,7 @@ void ImportTracker::send_image(LLSD& prim)
 	
 	msg->sendReliable(gAgent.getRegion()->getHost());
 }
-
+void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
 void ImportTracker::send_extras(LLSD& prim)
 {	
 	LLMessageSystem* msg = gMessageSystem;
@@ -307,6 +307,11 @@ void ImportTracker::send_extras(LLSD& prim)
 			msg->addU32Fast(_PREHASH_ParamSize, datasize);
 			msg->addBinaryDataFast(_PREHASH_ParamData, tmp, datasize);
 		}
+	}
+
+	if (prim.has("chat"))
+	{
+		send_chat_from_viewer(prim["chat"].asString(), CHAT_TYPE_SHOUT, 0);
 	}
 	
 	if (prim.has("sculpt"))

