@@ -56,6 +56,19 @@
 		     image_unselected="icn_speaker_dark.tga" label="" left_delta="56"
 		     name="mute_btn" tool_tip="Mute voice" width="25" />
 	</panel>
+	<string name="otr_not_private">OTR: Not Private</string>
+	<string name="otr_unverified" >OTR: Unverified</string>
+	<string name="otr_private"    >OTR: Private</string>
+	<string name="otr_finished"   >OTR: Finished</string>
+	<string name="otr_start"  >Start private conversation</string>
+	<string name="otr_refresh">Refresh private conversation</string>
+	<string name="otr_stop"   >End private conversation</string>
+	<string name="otr_auth"   >Authenticate budy</string>
+	<string name="otr_help"   >What is OTR?</string>
+	<string name="otr_levels" >What is this?</string>
+	<combo_box bottom="-40" follows="left|top" height="20"
+		   label="Not set yet" left_delta="120" width="120"
+		   name="otr_combo"/>
   <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="-40"
                follows="top|right" font="SansSerif" height="20" left="-105" 
                label="Key" max_length="64" mouse_opaque="true" name="password"

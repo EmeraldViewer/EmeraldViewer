@@ -42,10 +42,13 @@ include(ViewerMiscLibs)
 
 if (WINDOWS)
     include(CopyWinLibs)
-    include(libgcrypt)
-	include(libgpg-error)
-	include(libotr)
 endif (WINDOWS)
+
+if (COMPILE_OTR)
+    include(libgcrypt)
+    include(libgpg-error)
+    include(libotr)
+endif (COMPILE_OTR)
 
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
@@ -69,16 +72,20 @@ include_directories(
     ${EMERALD_INCLUDE_DIRS}
     )
 
-if (WINDOWS)
-	include_directories(
-		../gpg.vs/inc.vs
-		../gpg.vs/libgpg-error-1.1.vs/custom
-		../gpg.vs/libgcrypt-1.2.2.vs/custom
-		../libgpg-error/libgpg-error-1.0/src
-		../libgcrypt/libgcrypt-1.2.2/src
-		../libotr/libotr-3.2.0/src
-		)
-endif (WINDOWS)
+if (COMPILE_OTR)
+    if (WINDOWS)
+        include_directories(
+            ../gpg.vs/inc.vs
+            ../gpg.vs/libgpg-error-1.1.vs/custom
+            ../gpg.vs/libgcrypt-1.2.2.vs/custom
+        )
+    endif (WINDOWS)
+    include_directories(
+        ../libgpg-error/libgpg-error-1.0/src
+        ../libgcrypt/libgcrypt-1.2.2/src
+        ../libotr/libotr-3.2.0/src
+    )
+endif (COMPILE_OTR)
 
 set(viewer_SOURCE_FILES
 	importtracker.cpp
@@ -483,6 +490,10 @@ set(viewer_SOURCE_FILES
 
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
     "The name of the viewer executable to create.")
+
+if (COMPILE_OTR)
+   LIST(APPEND viewer_SOURCE_FILES otr_wrapper.cpp)
+endif (COMPILE_OTR)
 
 if (LINUX)
   # We can't set these flags for Darwin, because they get passed to
@@ -911,6 +922,10 @@ set(viewer_HEADER_FILES
     rlvextensions.h
     rlvfloaterbehaviour.h
     )
+
+if (COMPILE_OTR)
+    LIST(APPEND viewer_HEADER_FILES otr_wrapper.h)
+endif (COMPILE_OTR)
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)
 

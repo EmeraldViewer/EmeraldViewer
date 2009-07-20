@@ -148,6 +148,10 @@
 extern LLMap< const LLUUID, LLFloaterAvatarInfo* > gAvatarInfoInstances; // Only defined in llfloateravatarinfo.cpp
 // [/RLVa]
 
+#if COMPILE_OTR          // [$PLOTR$]
+#include "otr_wrapper.h"
+#endif // COMPILE_OTR    // [/$PLOTR$]
+
 //
 // Constants
 //
@@ -1557,6 +1561,50 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 
 	std::string decrypted_msg;
 	bool encrypted = gIMMgr->decryptMessage(session_id, from_id, message, decrypted_msg);
+#if USE_OTR // [$PLOTR]
+    int ignore_message = 0;
+    char *newmessage = NULL;
+    OtrlTLV *tlvs = NULL;
+
+    if (gOTR && (IM_NOTHING_SPECIAL == dialog))
+    {
+        // only try OTR for 1 on 1 IM's
+        char my_uuid[UUID_STR_SIZE];
+        char their_uuid[UUID_STR_SIZE];
+        gAgent.getID().toString(&(my_uuid[0]));
+        from_id.toString(&(their_uuid[0]));
+        ignore_message = otrl_message_receiving(
+            gOTR->get_userstate(), 
+            gOTR->get_uistate(), 
+            &session_id,
+            my_uuid,
+            gOTR->get_protocolid(),
+            their_uuid,
+            &(message[0]), &newmessage,
+            &tlvs,
+            NULL, NULL);
+    }
+    if (tlvs)
+    {
+        // $TODO$ handle TLVS -- especially SMP
+        llinfos << "$PLOTR$ recieved TLVs" << llendl;
+        otrl_tlv_free(tlvs);
+    }
+    if (1 == ignore_message)
+    {
+        // an internal OTR protocol message was recieved, don't show anything to the user
+        llinfos << "$PLOTR$ [OTR PROTOCOL MESSAGE (" << message << ")]" << llendl;
+        show_otr_status(session_id);
+        return;
+    }
+    if (newmessage)
+    {
+        // message was decrypted normally, display the decrypted message
+        decrypted_msg = newmessage;
+        otrl_message_free(newmessage);
+        encrypted = true;
+    }
+#endif // USE_OTR // [/$PLOTR$]
 
 	std::string separator_string(": ");
 	int message_offset = 0;

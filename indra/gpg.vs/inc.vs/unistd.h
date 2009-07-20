@@ -49,9 +49,11 @@ typedef int socklen_t;
 #define UINT64_C(C) (C)
 typedef unsigned __int64 uint64_t;
 
-/* $PLOTR$ */
-#if WIN32
+#if WIN32          /* [$PLOTR$] */
 #ifndef snprintf
 #define snprintf sprintf_s
 #endif
-#endif
+#include <io.h>
+#include <process.h>
+#pragma warning(disable : 4996)
+#endif /* WIN32 */ /* [/$PLOTR$] */

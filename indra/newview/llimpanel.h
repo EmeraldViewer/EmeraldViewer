@@ -41,6 +41,10 @@
 #include "llvoiceclient.h"
 #include "llstyle.h"
 
+#if COMPILE_OTR          // [$PLOTR$]
+#   include "otr_wrapper.h"
+#endif // COMPILE_OTR    // [/$PLOTR$]
+
 class LLLineEditor;
 class LLViewerTextEditor;
 class LLInventoryItem;
@@ -173,6 +177,14 @@ private:
 	BOOL		mReceivedCall;
 };
 
+#if COMPILE_OTR       // [$PLOTR$]
+extern void show_otr_status(LLUUID session_id);
+extern void deliver_message(const std::string& utf8_text,
+                            const LLUUID& im_session_id,
+                            const LLUUID& other_participant_id,
+                            EInstantMessage dialog);
+#endif // COMPILE_OTR // [/$PLOTR$]
+
 class LLFloaterIMPanel : public LLFloater
 {
 public:
@@ -302,6 +314,15 @@ private:
 
 	std::string encrypt(const std::string &msg);
 	
+#if COMPILE_OTR       // [$PLOTR$]
+public:
+    static void onClickOtr(LLUICtrl* source, void* userdata);
+    void doOtrMenu();
+    void showOtrStatus();
+private:
+    ConnContext *getOtrContext(int add_if_not = 0, int *context_added = NULL);
+#endif // COMPILE_OTR // [/$PLOTR$]
+    
 private:
 	LLLineEditor* mInputEditor;
 	LLViewerTextEditor* mHistoryEditor;
