@@ -31,6 +31,9 @@ void ImportTracker::prepare(LLSD& file_data)
 
 void ImportTracker::import(LLSD& ls_data)
 {
+	if(!(linkset.size()))
+		if(!(linksetgroups.size()))
+			initialPos=gAgent.getCameraPositionAgent();
 	linkset = ls_data;
 	state = REZZING;
 	llinfos << "IMPORTED, REZZING.." << llendl;
@@ -48,7 +51,7 @@ void ImportTracker::clear()
 {
 	localids.clear();
 	linkset.clear();
-	//state = IDLE;
+	state = IDLE;
 }
 void ImportTracker::cleargroups()
 {
@@ -395,7 +398,7 @@ void ImportTracker::link()
 		clear();
 	if(linksetgroups.size())
 	{
-		if(groupcounter != (linksetgroups.size() - 1))
+		if(groupcounter < (linksetgroups.size() - 1))
 		{
 			++groupcounter;
 			LLSD ls_llsd;
