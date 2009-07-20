@@ -36,9 +36,18 @@ OTR_Wrapper::~OTR_Wrapper()
     }
 }
 
+#if 1
+static void otrwui_trace(const char *msg)
+{
+    llinfos << "$PLOTR$TRACE$" << msg << llendl;
+}
+#else
+#define otrwui_trace(x) /* nothing */
+#endif
+
 static void otrwui_tbd(const char *msg)
 {
-    llinfos << "$PLOTR$" << msg << llendl;
+    llinfos << "$PLOTR$TBD$" << msg << llendl;
 }
 
 static OtrlPolicy otrwui_policy(void *opdata, ConnContext *context)
@@ -58,6 +67,7 @@ static void otrwui_create_privkey(
     void *opdata, const char *accountname,
     const char *protocol)
 {
+    otrwui_trace("otrwui_create_privkey()");
     /* Create a private key for the given accountname/protocol if
      * desired. */
     if (gOTR)
@@ -69,6 +79,7 @@ static int otrwui_is_logged_in(
     void *opdata, const char *accountname,
     const char *protocol, const char *recipient)
 {
+    otrwui_trace("otrwui_is_logged_in()");
     /* Report whether you think the given user is online.  Return 1 if
      * you think he is, 0 if you think he isn't, -1 if you're not sure.
      *
@@ -82,7 +93,6 @@ static int otrwui_is_logged_in(
     if (!info)                  result = -1;
     else if (!info->isOnline()) result = 0;
     else                        result = 1;
-    llinfos << "$PLOTR$ otrwui_is_logged_in(" << recipient << ") returns " << result << llendl;
     return result;
 }
 
@@ -90,12 +100,9 @@ static void otrwui_inject_message(
     void *opdata, const char *accountname,
     const char *protocol, const char *recipient, const char *message)
 {
+    otrwui_trace("otrwui_inject_message()");
     /* Send the given IM to the given recipient from the given
      * accountname/protocol. */
-    llinfos
-        << "$PLOTR$ otrwui_inject_message(): "
-        << "from " << accountname << "@" << protocol << " to " << recipient << " '"
-        << message << "'" << llendl;
     if (!opdata)
     {
         // don't know how to deliver this with no opdata.  $TODO$ error?
@@ -134,9 +141,10 @@ static int otrwui_display_otr_message(
      * function is NULL), the control message will be displayed inline,
      * as a received message, or else by using the above notify()
      * callback. */
-    std::string trace = "otrwui_display_otr_message: "; trace += msg;
-    otrwui_tbd(trace.c_str()); // $TODO$ write me
-    return -1; // force display by some other method
+    otrwui_trace("otrwui_log_message()");
+    LLUUID sessionUUID = *((LLUUID*)opdata);
+    otr_log_message(sessionUUID, msg);
+    return 0;
 }
 
 static void otrwui_update_context_list(
@@ -152,6 +160,7 @@ static const char *otrwui_protocol_name(
 {
     /* Return a newly allocated string containing a human-friendly name
      * for the given protocol id */
+    otrwui_trace("otrwui_protocol_name()");
     return "SecondLife";
 }
 
@@ -159,6 +168,7 @@ static void otrwui_protocol_name_free(
     void *opdata, const char *protocol_name)
 {
     /* Deallocate a string allocated by protocol_name */
+    otrwui_trace("otrwui_protocol_name_free()");
     return; // no need to deallocate a const char *
 }
 
@@ -180,6 +190,7 @@ static void otrwui_new_fingerprint(
 static void otrwui_write_fingerprints(
     void *opdata)
 {
+    otrwui_trace("otrwui_write_fingerprints()");
     /* The list of known fingerprints has changed.  Write them to disk. */
     if (gOTR)
         otrl_privkey_write_fingerprints(gOTR->get_userstate(), OTR_PUBLIC_KEYS_FILE);
@@ -188,44 +199,62 @@ static void otrwui_write_fingerprints(
 static void otrwui_gone_secure(
     void *opdata, ConnContext *context)
 {
+    otrwui_trace("otrwui_gone_secure()");
     /* A ConnContext has entered a secure state. */
+    if (! opdata)
+    {
+        otrwui_tbd("otrwui_gone_secure() called with null opdata");
+        return;
+    }
     LLUUID session_id = *((LLUUID*)opdata);
+    otr_log_message_getstring(session_id, "otr_log_gone_secure");
     show_otr_status(session_id);
-    otrwui_tbd("otrwui_gone_secure"); // $TODO$ write me
 }
 
 static void otrwui_gone_insecure(
     void *opdata, ConnContext *context)
 {
+    otrwui_trace("otrwui_gone_insecure()");
     /* A ConnContext has left a secure state. */
+    if (! opdata)
+    {
+        otrwui_tbd("otrwui_gone_insecure() called with null opdata");
+        return;
+    }
     LLUUID session_id = *((LLUUID*)opdata);
+    otr_log_message_getstring(session_id, "otr_log_gone_insecure");
     show_otr_status(session_id);
-    otrwui_tbd("otrwui_gone_insecure"); // $TODO$ write me
 }
 
 static void otrwui_still_secure(
     void *opdata, ConnContext *context, int is_reply)
 {
+    otrwui_trace("otrwui_still_secure()");
     /* We have completed an authentication, using the D-H keys we
      * already knew.  is_reply indicates whether we initiated the AKE. */
+    if (! opdata)
+    {
+        otrwui_tbd("otrwui_still_secure() called with null opdata");
+        return;
+    }
     LLUUID session_id = *((LLUUID*)opdata);
+    otr_log_message_getstring(session_id, "otr_log_still_secure");
     show_otr_status(session_id);
-    otrwui_tbd("otrwui_still_secure"); // $TODO$ write me
 }
 
 static void otrwui_log_message(
     void *opdata, const char *message)
 {
     /* Log a message.  The passed message will end in "\n". */
-    std::string trace= "otrwui_log_message: "; trace += message;
-    otrwui_tbd(trace.c_str()); // $TODO$ write me
+    otrwui_trace("otrwui_log_message()");
+    llinfos << message << llendl;
 }
 
 static int otrwui_max_message_size(
     void *opdata, ConnContext *context)
 {
     /* Find the maximum message size supported by this protocol. */
-    return MAX_MSG_BUF_SIZE - 1;
+    return (MAX_MSG_BUF_SIZE - 1);
 }
 
 static const char *otrwui_account_name(
@@ -235,6 +264,8 @@ static const char *otrwui_account_name(
     /* Return a newly allocated string containing a human-friendly
      * representation for the given account */
     otrwui_tbd("otrwui_account_name"); // $TODO$ write me
+    // std::string *result = new std::string();
+    // gAgent.buildFullname(result);
     return "no name"; // gAgent.getID(); to use uuid
 }
 
@@ -242,6 +273,7 @@ static void otrwui_account_name_free(
     void *opdata, const char *account_name)
 {
     /* Deallocate a string returned by account_name */
+    // std::string *result = new std::string(); // how do we free here if all we have is the char*???
     otrwui_tbd("otrwui_account_name_free"); // $TODO$ write me
 }
 

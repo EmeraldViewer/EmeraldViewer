@@ -56,12 +56,25 @@
 		     image_unselected="icn_speaker_dark.tga" label="" left_delta="56"
 		     name="mute_btn" tool_tip="Mute voice" width="25" />
 	</panel>
+	<!--[$PLOTR$]-->
+	<string name="otr_err_send_in_finished">[NAME] has ended the private converstation, so your message was not sent.  You should restart the private conversation, or end the private conversation.</string>
+	<string name="otr_err_failed_sending">Unable to encrypt your message for some reason; it has not been sent.</string>
+	<string name="otr_err_failed_starting">Unable to start private conversation.</string>
+	<string name="otr_prog_I_start">Attempting to start a private conversation with [NAME].</string>
+	<string name="otr_prog_I_stop">You have ended the private conversation with [NAME].</string>
+	<string name="otr_prog_they_start">[NAME] is attempting to start a private conversation.</string>
+	<string name="otr_prog_they_stop">[NAME] has ended the private conversation.</string>
+	<string name="otr_generic_name">Your buddy</string>
+	<string name="otr_log_gone_secure">Private conversation started.</string>
+	<string name="otr_log_gone_insecure">Private conversation ended.</string>
+	<string name="otr_log_still_secure">Private conversation started.</string>
 	<string name="otr_not_private">OTR: Not Private</string>
 	<string name="otr_unverified" >OTR: Unverified</string>
 	<string name="otr_private"    >OTR: Private</string>
 	<string name="otr_finished"   >OTR: Finished</string>
 	<string name="otr_start"  >Start private conversation</string>
 	<string name="otr_refresh">Refresh private conversation</string>
+	<string name="otr_restart">Restart private conversation</string>
 	<string name="otr_stop"   >End private conversation</string>
 	<string name="otr_auth"   >Authenticate budy</string>
 	<string name="otr_help"   >What is OTR?</string>
@@ -69,6 +82,7 @@
 	<combo_box bottom="-40" follows="left|top" height="20"
 		   label="Not set yet" left_delta="120" width="120"
 		   name="otr_combo"/>
+	<!--[/$PLOTR$]-->
   <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="-40"
                follows="top|right" font="SansSerif" height="20" left="-105" 
                label="Key" max_length="64" mouse_opaque="true" name="password"

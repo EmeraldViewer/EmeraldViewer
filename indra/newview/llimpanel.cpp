@@ -2085,6 +2085,95 @@ void LLFloaterIMPanel::onClickOtr(LLUICtrl* source, void* userdata)
     }
 }
 
+void LLFloaterIMPanel::doOtrStart()
+{
+    if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
+    {
+        llinfos << "$PLOTR$ otr menu start/restart/refresh" << llendl;
+        gcry_error_t err = 0;
+        char *newmessage = NULL;
+        char my_uuid[UUID_STR_SIZE];
+        char their_uuid[UUID_STR_SIZE];
+        gAgent.getID().toString(&(my_uuid[0]));
+        mOtherParticipantUUID.toString(&(their_uuid[0]));
+
+        if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
+        {
+            // only try OTR for 1 on 1 IM's
+            err = otrl_message_sending(
+                gOTR->get_userstate(), 
+                gOTR->get_uistate(), 
+                &mSessionUUID,
+                my_uuid,
+                gOTR->get_protocolid(),
+                their_uuid,
+                "?OTRv2?", NULL, &newmessage,
+                NULL, NULL);
+        }
+        if (err)
+        {
+            llwarns << "$PLOTR$ OTR failed to encrypt start message" << llendl;
+            otrLogMessageGetstring("otr_err_failed_starting");
+            return;
+        }
+        else if (newmessage)
+        {
+            // OTR encrypted the message.  Handle fragmentation of the message
+            int context_added = 0;
+            ConnContext *context = getOtrContext(1, &context_added);
+            if (context_added)
+            {
+                llwarns << "$PLOTR$ context added *after* send start but before fragmentation." << llendl;
+            }
+            if (! context)
+            {
+                otrLogMessageGetstring("otr_err_failed_starting");
+                llwarns << "$PLOTR$ can't find context, not sending start message." << llendl;
+                return;
+            }
+            else
+            {
+                char *extrafragment = NULL;
+                err = otrl_message_fragment_and_send(
+                    gOTR->get_uistate(), 
+                    &mSessionUUID,
+                    context,
+                    newmessage,
+                    OTRL_FRAGMENT_SEND_ALL,
+                    &extrafragment);
+            }
+            if (newmessage) otrl_message_free(newmessage);
+            otrLogMessageGetstringName("otr_prog_I_start");
+        }
+        else
+        {
+            llwarns << "$PLOTR$ can't start OTR for some reason." << llendl;
+            otrLogMessageGetstring("otr_err_failed_starting");
+            return;
+        }
+    }
+}
+
+void LLFloaterIMPanel::doOtrStop()
+{
+    if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
+    {
+        llinfos << "$PLOTR$ otr menu stop" << llendl;
+        char my_uuid[UUID_STR_SIZE];
+        char their_uuid[UUID_STR_SIZE];
+        gAgent.getID().toString(&(my_uuid[0]));
+        mOtherParticipantUUID.toString(&(their_uuid[0]));
+        otrl_message_disconnect(
+            gOTR->get_userstate(), 
+            gOTR->get_uistate(), 
+            &mSessionUUID,
+            my_uuid,
+            gOTR->get_protocolid(),
+            their_uuid);
+        otrLogMessageGetstringName("otr_prog_I_stop");
+    }
+}
+
 void LLFloaterIMPanel::doOtrMenu()
 {
     if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
@@ -2098,80 +2187,14 @@ void LLFloaterIMPanel::doOtrMenu()
         {
             std::string choice = combo->getSimple();
             if ((getString("otr_start") == choice) ||
+                (getString("otr_restart") == choice) ||
                 (getString("otr_refresh") == choice))
             {
-                llinfos << "$PLOTR$ otr menu start/refresh" << llendl;
-                gcry_error_t err = 0;
-                char *newmessage = NULL;
-                char my_uuid[UUID_STR_SIZE];
-                char their_uuid[UUID_STR_SIZE];
-                gAgent.getID().toString(&(my_uuid[0]));
-                mOtherParticipantUUID.toString(&(their_uuid[0]));
-
-                if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
-                {
-                    // only try OTR for 1 on 1 IM's
-                    err = otrl_message_sending(
-                        gOTR->get_userstate(), 
-                        gOTR->get_uistate(), 
-                        &mSessionUUID,
-                        my_uuid,
-                        gOTR->get_protocolid(),
-                        their_uuid,
-                        "?OTRv2?", NULL, &newmessage,
-                        NULL, NULL);
-                }
-                if (err)
-                {
-                    // OTR tried to encrypt but failed, don't send this message in the clear
-                    llwarns << "$PLOTR$ OTR failed to encrypt, don't send message!" << llendl;
-                }
-                else if (newmessage)
-                {
-                    // OTR encrypted the message.  Handle fragmentation of the message
-                    int context_added = 0;
-                    ConnContext *context = getOtrContext(1, &context_added);
-                    if (context_added)
-                    {
-                        llwarns << "$PLOTR$ context added *after* send but before fragmentation." << llendl;
-                    }
-                    if (! context)
-                    {
-                        llwarns << "$PLOTR$ can't find context, not sending message." << llendl;
-                    }
-                    else
-                    {
-                        char *extrafragment = NULL;
-                        err = otrl_message_fragment_and_send(
-                            gOTR->get_uistate(), 
-                            &mSessionUUID,
-                            context,
-                            newmessage,
-                            OTRL_FRAGMENT_SEND_ALL,
-                            &extrafragment);
-                    }
-                    if (newmessage) otrl_message_free(newmessage);
-                    showOtrStatus();
-                }
-                else
-                {
-                    llwarns << "$PLOTR$ can't start OTR for some reason." << llendl;
-                }
+                doOtrStart();
             }
             else if (getString("otr_stop") == choice)
             {
-                llinfos << "$PLOTR$ otr menu stop" << llendl;
-                char my_uuid[UUID_STR_SIZE];
-                char their_uuid[UUID_STR_SIZE];
-                gAgent.getID().toString(&(my_uuid[0]));
-                mOtherParticipantUUID.toString(&(their_uuid[0]));
-                otrl_message_disconnect(
-                        gOTR->get_userstate(), 
-                        gOTR->get_uistate(), 
-                        &mSessionUUID,
-                        my_uuid,
-                        gOTR->get_protocolid(),
-                        their_uuid);
+                doOtrStop();
             }
             else if (getString("otr_auth") == choice)
             {
@@ -2216,8 +2239,6 @@ ConnContext *LLFloaterIMPanel::getOtrContext(int create_if_not_found, int *conte
 
 void LLFloaterIMPanel::showOtrStatus()
 {
-    llinfos << "$PLOTR$ showOtrStatus" << llendl;
-    
     if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
     {
         LLComboBox *combo = getChild<LLComboBox>("otr_combo");
@@ -2241,8 +2262,12 @@ void LLFloaterIMPanel::showOtrStatus()
             }
             else if (context && (context->msgstate == OTRL_MSGSTATE_FINISHED))
             {
+                if (OTRL_MSGSTATE_ENCRYPTED == mOtrLastStatus)
+                {
+                    otrLogMessageGetstringName("otr_prog_they_stop");
+                }
                 combo->removeall();
-                combo->add(getString("otr_start"),   ADD_BOTTOM, FALSE);
+                combo->add(getString("otr_restart"), ADD_BOTTOM, TRUE);
                 combo->add(getString("otr_stop"),    ADD_BOTTOM, TRUE);
                 combo->add(getString("otr_auth"),    ADD_BOTTOM, FALSE);
                 combo->add(getString("otr_help"),    ADD_BOTTOM, TRUE);
@@ -2259,8 +2284,52 @@ void LLFloaterIMPanel::showOtrStatus()
                 combo->add(getString("otr_levels"),  ADD_BOTTOM, TRUE);
                 combo->setLabel(getString("otr_not_private"));
             }
+            if (context)
+            {
+                mOtrLastStatus = context->msgstate;
+            }
         }
     }    
+}
+
+void LLFloaterIMPanel::otrLogMessage(std::string message)
+{
+    addHistoryLine(message, gSavedSettings.getColor("SystemChatColor"), true, gAgent.getID());
+}
+
+void LLFloaterIMPanel::otrLogMessageGetstring(const char *message_name)
+{
+    LLUIString msg = getString(message_name);
+    otrLogMessage(msg);
+}
+
+void LLFloaterIMPanel::otrLogMessageGetstringName(const char *message_name)
+{
+    LLUIString msg = getString(message_name);
+    std::string them;
+    if (!gCacheName->getFullName(mOtherParticipantUUID, them)) them = getString("otr_generic_name");
+    msg.setArg("[NAME]", them);
+    otrLogMessage(msg);
+}
+
+void otr_log_message(LLUUID session_id, const char *message)
+{
+	LLFloaterIMPanel* floater = gIMMgr->findFloaterBySession(session_id);
+    if (floater) floater->otrLogMessage(message);
+    else
+    {
+        llinfos << "$PLOTR$ otr_log_message(" << message << ") failed to find floater." << llendl;
+    }
+}
+
+void otr_log_message_getstring(LLUUID session_id, const char *message_name)
+{
+	LLFloaterIMPanel* floater = gIMMgr->findFloaterBySession(session_id);
+    if (floater) floater->otrLogMessageGetstring(message_name);
+    else
+    {
+        llinfos << "$PLOTR$ otr_log_message_getstring(" << message_name << ") failed to find floater." << llendl;
+    }
 }
 
 void show_otr_status(LLUUID session_id)
@@ -2336,8 +2405,6 @@ void LLFloaterIMPanel::sendMsg()
                 ConnContext *context = getOtrContext();
                 if (gOTR && context && (context->msgstate == OTRL_MSGSTATE_FINISHED))
                 {
-                    llwarns << "$PLOTR$ OTR tried to send into finished conv.  Prevent it!" << llendl;
-                    // $TODO$ Tell the user here?  Take this test out?
                     was_finished = true;
                 }
                 else if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
@@ -2355,11 +2422,14 @@ void LLFloaterIMPanel::sendMsg()
                 }
                 if (err)
                 {
-                    llwarns << "$PLOTR$ OTR failed to encrypt, don't send message!" << llendl;
+                    otrLogMessageGetstring("otr_err_failed_sending");
+                    return; // leave the unsent message in the edit box
                 }
                 else if (was_finished)
                 {
                     llinfos << "$PLOTR$ OTR tried to send into finished conv, not sending message!" << llendl;
+                    otrLogMessageGetstringName("otr_err_send_in_finished");
+                    return; // leave the unsent message in the edit box
                 }
                 else if (newmessage)
                 {
@@ -2373,6 +2443,8 @@ void LLFloaterIMPanel::sendMsg()
                     if (! context)
                     {
                         llwarns << "$PLOTR$ can't find context, not sending message." << llendl;
+                        otrLogMessageGetstring("otr_err_failed_sending");
+                        return; // leave the unsent message in the edit box
                     }
                     else
                     {

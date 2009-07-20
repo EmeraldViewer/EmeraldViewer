@@ -178,6 +178,8 @@ private:
 };
 
 #if COMPILE_OTR       // [$PLOTR$]
+extern void otr_log_message_getstring(LLUUID session_id, const char *message_name);
+extern void otr_log_message(LLUUID session_id, const char *message);
 extern void show_otr_status(LLUUID session_id);
 extern void deliver_message(const std::string& utf8_text,
                             const LLUUID& im_session_id,
@@ -319,7 +321,13 @@ public:
     static void onClickOtr(LLUICtrl* source, void* userdata);
     void doOtrMenu();
     void showOtrStatus();
+    void otrLogMessage(std::string message);
+    void otrLogMessageGetstring(const char *message_name);
+    void otrLogMessageGetstringName(const char *message_name);
 private:
+    void doOtrStart();
+    void doOtrStop();
+    OtrlMessageState mOtrLastStatus;
     ConnContext *getOtrContext(int add_if_not = 0, int *context_added = NULL);
 #endif // COMPILE_OTR // [/$PLOTR$]
     
