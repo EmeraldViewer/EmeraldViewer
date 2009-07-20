@@ -88,7 +88,7 @@
 #include "llfloateravatarinfo.h"
 #include "llfloateravatartextures.h"
 #include "llfloaterbulkpermission.h"
-#include "llfloaterbeacons.h"
+//#include "llfloaterbeacons.h"
 #include "llfloaterbuildoptions.h"
 #include "llfloaterbump.h"
 #include "llfloaterbuy.h"
@@ -5849,10 +5849,6 @@ class LLShowFloater : public view_listener_t
 		{
 			LLFloaterActiveSpeakers::toggleInstance(LLSD());
 		}
-		else if (floater_name == "beacons")
-		{
-			LLFloaterBeacons::toggleInstance(LLSD());
-		}
 		else if (floater_name == "perm prefs")
 		{
 			LLFloaterPerms::toggleInstance(LLSD());
@@ -5923,10 +5919,6 @@ class LLFloaterVisible : public view_listener_t
 		else if (floater_name == "active speakers")
 		{
 			new_value = LLFloaterActiveSpeakers::instanceVisible(LLSD());
-		}
-		else if (floater_name == "beacons")
-		{
-			new_value = LLFloaterBeacons::instanceVisible(LLSD());
 		}
 		else if (floater_name == "inventory")
 		{
@@ -7957,6 +7949,148 @@ class LLViewCheckHighlightTransparent : public view_listener_t
 	}
 };
 
+//Chalice - Old beacon style
+class LLViewBeaconWidth : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		std::string width = userdata.asString();
+		if(width == "1")
+		{
+			gSavedSettings.setS32("DebugBeaconLineWidth", 1);
+		}
+		else if(width == "4")
+		{
+			gSavedSettings.setS32("DebugBeaconLineWidth", 4);
+		}
+		else if(width == "16")
+		{
+			gSavedSettings.setS32("DebugBeaconLineWidth", 16);
+		}
+		else if(width == "32")
+		{
+			gSavedSettings.setS32("DebugBeaconLineWidth", 32);
+		}
+
+		return true;
+	}
+};
+
+//PURPLESL - Old beacon style
+class LLViewToggleBeacon : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		std::string beacon = userdata.asString();
+		if (beacon == "scriptsbeacon")
+		{
+			LLPipeline::toggleRenderScriptedBeacons(NULL);
+			gSavedSettings.setBOOL( "scriptsbeacon", LLPipeline::getRenderScriptedBeacons(NULL) );
+			// toggle the other one off if it's on
+			if (LLPipeline::getRenderScriptedBeacons(NULL) && LLPipeline::getRenderScriptedTouchBeacons(NULL))
+			{
+				LLPipeline::toggleRenderScriptedTouchBeacons(NULL);
+				gSavedSettings.setBOOL( "scripttouchbeacon", LLPipeline::getRenderScriptedTouchBeacons(NULL) );
+			}
+		}
+		else if (beacon == "physicalbeacon")
+		{
+			LLPipeline::toggleRenderPhysicalBeacons(NULL);
+			gSavedSettings.setBOOL( "physicalbeacon", LLPipeline::getRenderPhysicalBeacons(NULL) );
+		}
+		else if (beacon == "soundsbeacon")
+		{
+			LLPipeline::toggleRenderSoundBeacons(NULL);
+			gSavedSettings.setBOOL( "soundsbeacon", LLPipeline::getRenderSoundBeacons(NULL) );
+		}
+		else if (beacon == "particlesbeacon")
+		{
+			LLPipeline::toggleRenderParticleBeacons(NULL);
+			gSavedSettings.setBOOL( "particlesbeacon", LLPipeline::getRenderParticleBeacons(NULL) );
+		}
+		else if (beacon == "scripttouchbeacon")
+		{
+			LLPipeline::toggleRenderScriptedTouchBeacons(NULL);
+			gSavedSettings.setBOOL( "scripttouchbeacon", LLPipeline::getRenderScriptedTouchBeacons(NULL) );
+			// toggle the other one off if it's on
+			if (LLPipeline::getRenderScriptedBeacons(NULL) && LLPipeline::getRenderScriptedTouchBeacons(NULL))
+			{
+				LLPipeline::toggleRenderScriptedBeacons(NULL);
+				gSavedSettings.setBOOL( "scriptsbeacon", LLPipeline::getRenderScriptedBeacons(NULL) );
+			}
+		}
+		else if (beacon == "renderbeacons")
+		{
+			LLPipeline::toggleRenderBeacons(NULL);
+			gSavedSettings.setBOOL( "renderbeacons", LLPipeline::getRenderBeacons(NULL) );
+			// toggle the other one on if it's not
+			if (!LLPipeline::getRenderBeacons(NULL) && !LLPipeline::getRenderHighlights(NULL))
+			{
+				LLPipeline::toggleRenderHighlights(NULL);
+				gSavedSettings.setBOOL( "renderhighlights", LLPipeline::getRenderHighlights(NULL) );
+			}
+		}
+		else if (beacon == "renderhighlights")
+		{
+			LLPipeline::toggleRenderHighlights(NULL);
+			gSavedSettings.setBOOL( "renderhighlights", LLPipeline::getRenderHighlights(NULL) );
+			// toggle the other one on if it's not
+			if (!LLPipeline::getRenderBeacons(NULL) && !LLPipeline::getRenderHighlights(NULL))
+			{
+				LLPipeline::toggleRenderBeacons(NULL);
+				gSavedSettings.setBOOL( "renderbeacons", LLPipeline::getRenderBeacons(NULL) );
+			}
+		}
+			
+		return true;
+	}
+};
+//PURPLESL - Old beacon style
+class LLViewCheckBeaconEnabled : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		std::string beacon = userdata["data"].asString();
+		bool new_value = false;
+		if (beacon == "scriptsbeacon")
+		{
+			LLPipeline::setRenderScriptedBeacons(new_value);
+		}
+		else if (beacon == "physicalbeacon")
+		{
+			new_value = gSavedSettings.getBOOL( "physicalbeacon");
+			LLPipeline::setRenderPhysicalBeacons(new_value);
+		}
+		else if (beacon == "soundsbeacon")
+		{
+			new_value = gSavedSettings.getBOOL( "soundsbeacon");
+			LLPipeline::setRenderSoundBeacons(new_value);
+		}
+		else if (beacon == "particlesbeacon")
+		{
+			new_value = gSavedSettings.getBOOL( "particlesbeacon");
+			LLPipeline::setRenderParticleBeacons(new_value);
+		}
+		else if (beacon == "scripttouchbeacon")
+		{
+			new_value = gSavedSettings.getBOOL( "scripttouchbeacon");
+			LLPipeline::setRenderScriptedTouchBeacons(new_value);
+		}
+		else if (beacon == "renderbeacons")
+		{
+			new_value = gSavedSettings.getBOOL( "renderbeacons");
+			LLPipeline::setRenderBeacons(new_value);
+		}
+		else if (beacon == "renderhighlights")
+		{
+			new_value = gSavedSettings.getBOOL( "renderhighlights");
+			LLPipeline::setRenderHighlights(new_value);
+		}
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		return true;
+	}
+};
+
 class LLViewToggleRenderType : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -8520,6 +8654,8 @@ void initialize_menus()
 	addMenu(new LLViewLookAtLastChatter(), "View.LookAtLastChatter");
 	addMenu(new LLViewShowHoverTips(), "View.ShowHoverTips");
 	addMenu(new LLViewHighlightTransparent(), "View.HighlightTransparent");
+	addMenu(new LLViewToggleBeacon(), "View.ToggleBeacon");
+	addMenu(new LLViewBeaconWidth(), "View.BeaconWidth");
 	addMenu(new LLViewToggleRenderType(), "View.ToggleRenderType");
 	addMenu(new LLViewShowHUDAttachments(), "View.ShowHUDAttachments");
 	addMenu(new LLZoomer(1.2f), "View.ZoomOut");
@@ -8536,6 +8672,7 @@ void initialize_menus()
 	addMenu(new LLViewCheckJoystickFlycam(), "View.CheckJoystickFlycam");
 	addMenu(new LLViewCheckShowHoverTips(), "View.CheckShowHoverTips");
 	addMenu(new LLViewCheckHighlightTransparent(), "View.CheckHighlightTransparent");
+	addMenu(new LLViewCheckBeaconEnabled(), "View.CheckBeaconEnabled");
 	addMenu(new LLViewCheckRenderType(), "View.CheckRenderType");
 	addMenu(new LLViewCheckHUDAttachments(), "View.CheckHUDAttachments");
 
