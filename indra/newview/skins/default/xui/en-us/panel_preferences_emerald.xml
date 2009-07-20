@@ -5,7 +5,7 @@
   <tab_container label="o.o" bottom="0" height="408" left="0" mouse_opaque="false" name="tab"
 	     tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
     <panel border="true" bottom="-408" follows="left|top|right|bottom" height="408"
-		     label="Teleport/Login" left="1" mouse_opaque="true" name="Teleport/Login" width="517">
+		     label="TP/Login" left="1" mouse_opaque="true" name="Teleport/Login" width="517">
       <check_box bottom_delta="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Double-click Teleport" left_delta="10" mouse_opaque="true"
@@ -742,6 +742,8 @@ you up or down without altering your shape.
            label="Show axis arrow on root prim position" left_delta="0" mouse_opaque="true"
 	tool_tip="Default behaviour is to show the axis on the center of mass of a linkset. If enabled, the axis will be shown on the root prim of the linkset instead."
            name="EmBuildPrefsActualRoot_toggle" control_name="EmeraldBuildPrefs_ActualRoot" radio_style="false" width="270" />
+    </panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Inventory" left="1" mouse_opaque="true" name="Inventory" width="418">
     </panel>
   </tab_container>
 </panel>
