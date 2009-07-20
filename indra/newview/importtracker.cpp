@@ -393,13 +393,16 @@ void ImportTracker::link()
 	}
 	else
 		clear();
-	if(groupcounter != (linksetgroups.size() - 1))
+	if(linksetgroups.size())
 	{
-		++groupcounter;
-		LLSD ls_llsd;
-		ls_llsd=linksetgroups[groupcounter]["Object"];
-		linksetoffset=linksetgroups[groupcounter]["ObjectPos"];
-		import(ls_llsd);
+		if(groupcounter != (linksetgroups.size() - 1))
+		{
+			++groupcounter;
+			LLSD ls_llsd;
+			ls_llsd=linksetgroups[groupcounter]["Object"];
+			linksetoffset=linksetgroups[groupcounter]["ObjectPos"];
+			import(ls_llsd);
+		}
 	}
 	else cleargroups();
 }
