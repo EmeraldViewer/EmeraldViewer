@@ -59,9 +59,9 @@ BOOL OtrFloaterSmp::postBuild()
         combo->setCommitCallback(onClickCombo);
         combo->setCallbackUserData(this);
         combo->removeall();
-        combo->add(getString("otr_smp_how_by_qa"),  ADD_BOTTOM, TRUE);
-        combo->add(getString("otr_smp_how_by_ss"),  ADD_BOTTOM, TRUE);
         combo->add(getString("otr_smp_how_by_mfv"), ADD_BOTTOM, TRUE);
+        combo->add(getString("otr_smp_how_by_qa"),  ADD_BOTTOM, FALSE);
+        combo->add(getString("otr_smp_how_by_ss"),  ADD_BOTTOM, FALSE);
         combo->selectFirstItem();
         doComboMenu();
     }

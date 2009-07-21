@@ -1565,12 +1565,12 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
     int ignore_message = 0;
     char *newmessage = NULL;
     OtrlTLV *tlvs = NULL;
+    char my_uuid[UUID_STR_SIZE];
+    char their_uuid[UUID_STR_SIZE];
 
     if (gOTR && (IM_NOTHING_SPECIAL == dialog))
     {
         // only try OTR for 1 on 1 IM's
-        char my_uuid[UUID_STR_SIZE];
-        char their_uuid[UUID_STR_SIZE];
         gAgent.getID().toString(&(my_uuid[0]));
         from_id.toString(&(their_uuid[0]));
         ignore_message = otrl_message_receiving(
@@ -1599,10 +1599,17 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
     }
     if (newmessage)
     {
-        // message was decrypted normally, display the decrypted message
-        decrypted_msg = newmessage;
+        // message was processed by OTR.  Maybe decrypted, maybe just stripping off the white-space "I have OTR" tag
+        decrypted_msg = newmessage;  // use processed message
+        message = newmessage;        // use processed message
         otrl_message_free(newmessage);
-        encrypted = true;
+        ConnContext *context = otrl_context_find(
+            gOTR->get_userstate(), 
+            their_uuid,
+            my_uuid,
+            gOTR->get_protocolid(),
+            0, NULL, NULL, NULL);
+        encrypted = (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate));
     }
 #endif // USE_OTR // [/$PLOTR$]
 
