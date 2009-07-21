@@ -238,8 +238,10 @@ void LLViewerObjectList::processUpdateCore(LLViewerObject* objectp,
 	// so that the drawable parent is set properly
 	findOrphans(objectp, msg->getSenderIP(), msg->getSenderPort());
 	
-	if (gImportTracker.getState() != ImportTracker::IDLE && objectp && objectp->permYouOwner())
-			gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
+	LLVector3 pScale=objectp->getScale();
+	if(pScale.mV[VX] == 0.12345f && pScale.mV[VY] == 0.12346f && pScale.mV[VZ] == 0.12347f)
+		if (gImportTracker.getState() != ImportTracker::IDLE && objectp && objectp->permYouOwner())
+				gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
 
 	// If we're just wandering around, don't create new objects selected.
 	if (just_created 

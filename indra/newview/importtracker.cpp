@@ -35,6 +35,11 @@ void ImportTracker::import(LLSD& ls_data)
 		if(!(linksetgroups.size()))
 			initialPos=gAgent.getCameraPositionAgent();
 	linkset = ls_data;
+	LLSD rot = linkset[0]["rotation"];
+	rootrot.mQ[VX] = (F32)(rot[0].asReal());
+	rootrot.mQ[VY] = (F32)(rot[1].asReal());
+	rootrot.mQ[VZ] = (F32)(rot[2].asReal());
+	rootrot.mQ[VW] = (F32)(rot[3].asReal());
 	state = REZZING;
 	llinfos << "IMPORTED, REZZING.." << llendl;
 	plywood_above_head();
@@ -170,17 +175,20 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 	}
 }
 
-void ImportTracker::send_vectors(LLSD& prim)
+void ImportTracker::send_vectors(LLSD& prim,int counter)
 {
-	LLVector3 position = prim["position"] + root;
-	
+	LLVector3 position = ((LLVector3)prim["position"] * rootrot) + root;
 	LLSD rot = prim["rotation"];
 	LLQuaternion rotq;
 	rotq.mQ[VX] = (F32)(rot[0].asReal());
 	rotq.mQ[VY] = (F32)(rot[1].asReal());
 	rotq.mQ[VZ] = (F32)(rot[2].asReal());
 	rotq.mQ[VW] = (F32)(rot[3].asReal());
-	LLVector3 rotation = rotq.packToVector3();
+	LLVector3 rotation;
+	if(counter == 1)
+		rotation = rotq.packToVector3();
+	else
+		rotation = (rootrot * rotq).packToVector3();
 	LLVector3 scale = prim["scale"];
 	U8 data[256];
 	
@@ -346,15 +354,16 @@ void ImportTracker::send_extras(LLSD& prim)
 void ImportTracker::update_next()
 {
 	int received = 0;
-	
+	int counter = 0;
 	for (LLSD::array_iterator prim = linkset.beginArray(); prim != linkset.endArray(); ++prim)
 	{
+		++counter;
 		if (!(*prim).has("Updated"))
 		{
 			send_shape(*prim);
 			send_image(*prim);
 			send_extras(*prim);
-			send_vectors(*prim);
+			send_vectors(*prim,counter);
 			(*prim)["Updated"] = true;
 			return;
 		}
@@ -481,7 +490,7 @@ void ImportTracker::plywood_above_head()
 		volume_params.setShear(0, 0);
 		LLVolumeMessage::packVolumeParams(&volume_params, msg);
 		msg->addU8Fast(_PREHASH_PCode, 9);
-		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.1f, 0.1f, 0.1f));
+		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.12345f, 0.12346f, 0.12347f));
 		LLQuaternion rot;
 		msg->addQuatFast(_PREHASH_Rotation, rot);
 		LLViewerRegion *region = gAgent.getRegion();

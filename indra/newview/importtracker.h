@@ -31,7 +31,7 @@ class ImportTracker
 		const int getState() { return state; }
 		
 	protected:		
-		void send_vectors(LLSD &prim);
+		void send_vectors(LLSD &prim, int counter);
 		void send_shape(LLSD &prim);
 		void send_image(LLSD &prim);
 		void send_extras(LLSD &prim);
@@ -46,6 +46,7 @@ class ImportTracker
 		int				state;
 		S32				last;
 		LLVector3			root;
+		LLQuaternion		rootrot;
 		std::list<S32>			localids;
 		LLSD				linksetgroups;
 		int					groupcounter;
