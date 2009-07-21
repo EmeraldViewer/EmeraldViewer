@@ -188,7 +188,7 @@ void ImportTracker::send_vectors(LLSD& prim,int counter)
 	if(counter == 1)
 		rotation = rotq.packToVector3();
 	else
-		rotation = (rootrot * rotq).packToVector3();
+		rotation = (rotq * rootrot).packToVector3();
 	LLVector3 scale = prim["scale"];
 	U8 data[256];
 	
