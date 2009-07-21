@@ -232,6 +232,9 @@ private:
 	bool mAgentRegionLastAlive;
 	LLUUID mAgentRegionLastID;
 
+	static void dSpam(const LLSD &data);
+	static void cSpam(const LLSD &data);
+
 public:
 	static F32 sMainLoopTimeOutDefault;
 	static BOOL sFreezeTime;

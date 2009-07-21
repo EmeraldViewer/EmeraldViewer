@@ -561,6 +561,36 @@ LLAppViewer::~LLAppViewer()
 	removeMarkerFile();
 }
 
+void LLAppViewer::dSpam(const LLSD &data)
+{
+	dialogSpamOn = (bool)data.asBoolean();
+	if(!dialogSpamOn)
+	{
+		if(d_spam.getStarted())
+		{
+			d_spam.stop();
+		}
+		if(!lastd_names.empty())
+		{
+			lastd_names.erase(lastd_names.begin(),lastd_names.end());
+		}
+	}
+}
+void LLAppViewer::cSpam(const LLSD &data)
+{
+	callingSpamOn = (bool)data.asBoolean();
+	if(!callingSpamOn)
+	{
+		if(c_spam.getStarted())
+		{
+			c_spam.stop();
+		}
+		if(!lastc_agents.empty())
+		{
+			lastc_agents.erase(lastc_agents.begin(),lastc_agents.end());
+		}
+	}
+}
 bool LLAppViewer::init()
 {
 	//
@@ -870,6 +900,9 @@ bool LLAppViewer::init()
 	LLViewerJoystick::getInstance()->init(false);
 
 	TSStuff::init();
+
+	gSavedSettings.getControl("EmeraldDialogSpamEnabled")->getSignal()->connect(&dSpam);
+	gSavedSettings.getControl("EmeraldCardSpamEnabled")->getSignal()->connect(&cSpam);
 
 	return true;
 }

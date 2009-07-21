@@ -2385,7 +2385,7 @@ LLSD export_object(LLSelectNode* node, std::string filename)
 			}
 			
 			prim_llsd["position"] = LLVector3(0, 0, 0).getValue();
-			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
+			prim_llsd["rotation"] = ll_sd_from_quaternion(LLQuaternion(0.0f, 0.0f, 0.0f, 1.0f));
 		}
 		else
 		{
@@ -8369,17 +8369,21 @@ class LLEmeraldCheckRadar: public view_listener_t
 		return true;
 	}
 };
-
-class LLEmeraldCheckSit: public view_listener_t
+*/
+//wtf this is entirely unreferenced, burning
+class EmeraldMarkAllDead : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
+		LLChat chat;
+		chat.mSourceType = CHAT_SOURCE_SYSTEM;
+		chat.mText = "Clearing ViewerEffects...";
+		LLFloaterChat::addChat(chat);
+		LLHUDObject::markViewerEffectsDead();
 		return true;
 	}
-	//i dont know how to handle all this check bul crap... someone else please
-	//ur a catface, you could at least follow syntax convention with the newlines and tabbing *fixes*
-};*/
-//wtf this is entirely unreferenced, burning
+};
+
 
 
 class LLToolsSelectTool : public view_listener_t
@@ -8686,6 +8690,7 @@ void initialize_menus()
 	//addMenu(new LLEmeraldCheckRadar(), "Emerald.CheckAvatarList");
 	addMenu(new LLEmeraldDisable(), "Emerald.Disable");
 	addMenu(new LLToggleDebugMenus(), "ToggleDebugMenus");
+	addMenu(new EmeraldMarkAllDead(), "Emerald.ClearEffects");
 
 	// World menu
 	addMenu(new LLWorldChat(), "World.Chat");
