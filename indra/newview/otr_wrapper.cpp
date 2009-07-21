@@ -36,7 +36,7 @@ OTR_Wrapper::~OTR_Wrapper()
     }
 }
 
-#if 1
+#if 1 // $TODO$ use some debug compile flag?
 static void otrwui_trace(const char *msg)
 {
     llinfos << "$PLOTR$TRACE$" << msg << llendl;
@@ -54,12 +54,12 @@ static OtrlPolicy otrwui_policy(void *opdata, ConnContext *context)
 {
     // $TODO$ Add a preferences tab with easily understood choices
     return (0
-//            | OTRL_POLICY_ALLOW_V1
-            | OTRL_POLICY_ALLOW_V2
+//            | OTRL_POLICY_ALLOW_V1            // don't even expose this?
+            | OTRL_POLICY_ALLOW_V2              // $TODO$ set as default
 //            | OTRL_POLICY_REQUIRE_ENCRYPTION
-            | OTRL_POLICY_SEND_WHITESPACE_TAG
-//            | OTRL_POLICY_WHITESPACE_START_AKE
-//            | OTRL_POLICY_ERROR_START_AKE
+            | OTRL_POLICY_SEND_WHITESPACE_TAG   // $TODO$ set as default
+//            | OTRL_POLICY_WHITESPACE_START_AKE // $TODO$ set as default
+//            | OTRL_POLICY_ERROR_START_AKE      // $TODO$ set as default
         );
 }
 
@@ -105,8 +105,8 @@ static void otrwui_inject_message(
      * accountname/protocol. */
     if (!opdata)
     {
-        // don't know how to deliver this with no opdata.  $TODO$ error?
-        llinfos << "$PLOTR$ ERROR? otrwui_inject_message() called with NULL opdata; not delivering message" << llendl;
+        // don't know how to deliver this with no opdata.
+        llwarns << "$PLOTR$ otrwui_inject_message() called with NULL opdata; not delivering message" << llendl;
     }
     else
     {
@@ -272,18 +272,21 @@ static const char *otrwui_account_name(
 {
     /* Return a newly allocated string containing a human-friendly
      * representation for the given account */
-    otrwui_tbd("otrwui_account_name"); // $TODO$ write me
-    // std::string *result = new std::string();
-    // gAgent.buildFullname(result);
-    return "no name"; // gAgent.getID(); to use uuid
+    otrwui_trace("otrwui_account_name");
+    std::string name;
+    LLUUID uuid = LLUUID(account);
+    if (!gCacheName->getFullName(uuid, name)) name = account;
+    char *result = (char *)malloc(name.length()+1);
+    strncpy(result, name.c_str(), name.length()+1);
+    return result;
 }
 
 static void otrwui_account_name_free(
     void *opdata, const char *account_name)
 {
     /* Deallocate a string returned by account_name */
-    // std::string *result = new std::string(); // how do we free here if all we have is the char*???
-    otrwui_tbd("otrwui_account_name_free"); // $TODO$ write me
+    otrwui_trace("otrwui_account_name_free");
+    free((void *)account_name);
 }
 
 void OTR_Wrapper::init()
