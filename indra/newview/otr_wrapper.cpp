@@ -57,7 +57,7 @@ static OtrlPolicy otrwui_policy(void *opdata, ConnContext *context)
 //            | OTRL_POLICY_ALLOW_V1            // don't even expose this?
             | OTRL_POLICY_ALLOW_V2              // $TODO$ set as default
 //            | OTRL_POLICY_REQUIRE_ENCRYPTION
-            | OTRL_POLICY_SEND_WHITESPACE_TAG   // $TODO$ set as default
+//            | OTRL_POLICY_SEND_WHITESPACE_TAG   // $TODO$ set as default
 //            | OTRL_POLICY_WHITESPACE_START_AKE // $TODO$ set as default
 //            | OTRL_POLICY_ERROR_START_AKE      // $TODO$ set as default
         );
