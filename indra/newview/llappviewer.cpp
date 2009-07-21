@@ -275,6 +275,9 @@ BOOL gCrashOnStartup = FALSE;
 BOOL gLLErrorActivated = FALSE;
 BOOL gLogoutInProgress = FALSE;
 
+F32 LLAppViewer::sMainLoopTimeOutDefault = 0.f;
+BOOL LLAppViewer::sFreezeTime = FALSE;
+
 ////////////////////////////////////////////////////////////
 // Internal globals... that should be removed.
 static std::string gArgs;
@@ -302,6 +305,24 @@ std::vector<std::string> gLoginURIs;
 static std::string gHelperURI;
 
 LLAppViewer::LLUpdaterInfo *LLAppViewer::sUpdaterInfo = NULL ;
+
+void updateMainLoopTimeOutDefault(const LLSD& data)
+{
+	if(data.asReal() > 0.1f)
+		LLAppViewer::sMainLoopTimeOutDefault = data.asReal();
+	else
+		LLAppViewer::sMainLoopTimeOutDefault = 50.0f;
+}
+
+void updateFreezeTime(const LLSD& data)
+{
+	LLAppViewer::sFreezeTime = data.asBoolean();
+}
+
+void handleCmdLineURIsUpdate(const LLSD& newvalue)
+{
+	LLViewerLogin::sCmdLineURIs = newvalue;
+}
 
 void idle_afk_check()
 {
@@ -619,6 +640,10 @@ bool LLAppViewer::init()
 	/////////////////////////////////////////////////
 
 	//test_cached_control();
+
+	gSavedSettings.getControl("MainloopTimeoutDefault")->getSignal()->connect(&updateMainLoopTimeOutDefault);
+	gSavedSettings.getControl("FreezeTime")->getSignal()->connect(&updateFreezeTime);
+	gSavedSettings.getControl("CmdLineLoginURI")->getSignal()->connect(&handleCmdLineURIsUpdate);
 
 	// track number of times that app has run
 	mNumSessions = gSavedSettings.getS32("NumSessions");
@@ -3938,7 +3963,7 @@ void LLAppViewer::resumeMainloopTimeout(const std::string& state, F32 secs)
 	{
 		if(secs < 0.0f)
 		{
-			secs = gSavedSettings.getF32("MainloopTimeoutDefault");
+			secs = sMainLoopTimeOutDefault;//gSavedSettings.getF32("MainloopTimeoutDefault");
 		}
 		
 		mMainloopTimeout->setTimeout(secs);
@@ -3965,7 +3990,7 @@ void LLAppViewer::pingMainloopTimeout(const std::string& state, F32 secs)
 	{
 		if(secs < 0.0f)
 		{
-			secs = gSavedSettings.getF32("MainloopTimeoutDefault");
+			secs = sMainLoopTimeOutDefault;//gSavedSettings.getF32("MainloopTimeoutDefault");
 		}
 
 		mMainloopTimeout->setTimeout(secs);

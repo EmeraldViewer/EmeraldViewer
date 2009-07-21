@@ -514,7 +514,7 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 		gMenuHolder->hideMenus();
 	}
 
-	if (change_camera && !gSavedSettings.getBOOL("FreezeTime"))
+	if (change_camera && !LLAppViewer::sFreezeTime)
 	{
 		changeCameraToDefault();
 		
@@ -1955,7 +1955,7 @@ void LLAgent::cameraOrbitIn(const F32 meters)
 		
 		mCameraZoomFraction = (mTargetCameraDistance - meters) / camera_offset_dist;
 
-		if (!gSavedSettings.getBOOL("FreezeTime") && mCameraZoomFraction < MIN_ZOOM_FRACTION && meters > 0.f)
+		if (!LLAppViewer::sFreezeTime && mCameraZoomFraction < MIN_ZOOM_FRACTION && meters > 0.f)
 		{
 			// No need to animate, camera is already there.
 			changeCameraToMouselook(FALSE);
@@ -6407,7 +6407,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 void LLAgent::setTeleportState(ETeleportState state)
 {
 	mTeleportState = state;
-	if (mTeleportState > TELEPORT_NONE && gSavedSettings.getBOOL("FreezeTime"))
+	if (mTeleportState > TELEPORT_NONE && LLAppViewer::sFreezeTime)
 	{
 		LLFloaterSnapshot::hide(0);
 	}

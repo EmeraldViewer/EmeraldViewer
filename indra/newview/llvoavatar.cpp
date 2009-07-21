@@ -7161,7 +7161,7 @@ BOOL LLVOAvatar::updateIsFullyLoaded()
 
 BOOL LLVOAvatar::isFullyLoaded()
 {
-	if (gSavedSettings.getBOOL("RenderUnloadedAvatar"))
+	if (LLPipeline::sRenderUnloadedAvatar)
 		return TRUE;
 	else
 		return mFullyLoaded;

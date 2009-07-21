@@ -233,6 +233,8 @@ private:
 	LLUUID mAgentRegionLastID;
 
 public:
+	static F32 sMainLoopTimeOutDefault;
+	static BOOL sFreezeTime;
 	//some information for updater
 	typedef struct
 	{

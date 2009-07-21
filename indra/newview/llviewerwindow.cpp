@@ -2940,7 +2940,7 @@ BOOL LLViewerWindow::handlePerFrameHover()
 		}
 	}		
 	
-	if (tool && tool != gToolNull  && tool != LLToolCompInspect::getInstance() && tool != LLToolDragAndDrop::getInstance() && !gSavedSettings.getBOOL("FreezeTime"))
+	if (tool && tool != gToolNull  && tool != LLToolCompInspect::getInstance() && tool != LLToolDragAndDrop::getInstance() && !LLAppViewer::sFreezeTime)
 	{ 
 		LLMouseHandler *captor = gFocusMgr.getMouseCapture();
 		// With the null, inspect, or drag and drop tool, don't muck

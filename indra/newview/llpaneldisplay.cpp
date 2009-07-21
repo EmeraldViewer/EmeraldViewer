@@ -378,7 +378,7 @@ void LLPanelDisplay::refresh()
 	mCustomSettings = gSavedSettings.getBOOL("RenderCustomSettings");
 
 	// shader settings
-	mBumpShiny = gSavedSettings.getBOOL("RenderObjectBump");
+	mBumpShiny = LLPipeline::sRenderBump;
 	mShaderEnable = gSavedSettings.getBOOL("VertexShaderEnable");
 	mWindLight = gSavedSettings.getBOOL("WindLightUseAtmosShaders");
 	mReflections = gSavedSettings.getBOOL("RenderWaterReflections");

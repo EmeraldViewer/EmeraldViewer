@@ -48,6 +48,7 @@
 #include "roles_constants.h"
 
 #include "lluictrlfactory.h"
+#include "pipeline.h"
 
 LLPanelLandSelectObserver* LLPanelLandInfo::sObserver = NULL;
 LLPanelLandInfo* LLPanelLandInfo::sInstance = NULL;
@@ -72,7 +73,7 @@ BOOL	LLPanelLandInfo::postBuild()
 	childSetAction("button show owners help", onShowOwnersHelp, this);
 
 	mCheckShowOwners = getChild<LLCheckBoxCtrl>("checkbox show owners");
-	childSetValue("checkbox show owners", gSavedSettings.getBOOL("ShowParcelOwners"));
+	childSetValue("checkbox show owners", LLPipeline::sShowParcelOwners);
 
 	return TRUE;
 }
