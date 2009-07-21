@@ -214,11 +214,11 @@ char *otrl_proto_default_query_msg(const char *ourname, OtrlPolicy policy)
      * require that they g_free() it, because this pointer will probably
      * get passed to the main IM application for processing (and
      * free()ing). */
-    const char *format = "?OTR%s\n<b>%s</b> has requested an "
-	    "<a href=\"http://otr.cypherpunks.ca/\">Off-the-Record "
-	    "private conversation</a>.  However, you do not have a plugin "
-	    "to support that.\nSee <a href=\"http://otr.cypherpunks.ca/\">"
-	    "http://otr.cypherpunks.ca/</a> for more information.";
+    const char *format = "?OTR%s\n%s has requested an Off-the-Record "
+        "private conversation.  However, your viewer doesn't support "
+        "OTR.  GreenLife Emerald Viewer does, see "
+        "http://modularsystems.sl/ for more information about GreenLife, "
+        "and http://otr.cypherpunks.ca/ for more information about OTR.";
 
     /* Figure out the version tag */
     v1_supported = (policy & OTRL_POLICY_ALLOW_V1);
