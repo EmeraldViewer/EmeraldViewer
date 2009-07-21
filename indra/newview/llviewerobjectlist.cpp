@@ -239,9 +239,11 @@ void LLViewerObjectList::processUpdateCore(LLViewerObject* objectp,
 	findOrphans(objectp, msg->getSenderIP(), msg->getSenderPort());
 	
 	LLVector3 pScale=objectp->getScale();
-	if(pScale.mV[VX] == 0.12345f && pScale.mV[VY] == 0.12346f && pScale.mV[VZ] == 0.12347f)
-		if (gImportTracker.getState() != ImportTracker::IDLE && objectp && objectp->permYouOwner())
-				gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
+	if(objectp->permYouOwner())
+		if(pScale.mV[VX] == 0.52345f && pScale.mV[VY] == 0.52346f && pScale.mV[VZ] == 0.52347f)
+			if(objectp->permModify() && objectp->permCopy() && objectp->permTransfer())
+				if (gImportTracker.getState() != ImportTracker::IDLE && objectp)
+					gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
 
 	// If we're just wandering around, don't create new objects selected.
 	if (just_created 

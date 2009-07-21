@@ -35,13 +35,14 @@ void ImportTracker::import(LLSD& ls_data)
 		if(!(linksetgroups.size()))
 			initialPos=gAgent.getCameraPositionAgent();
 	linkset = ls_data;
+	updated=0;
 	LLSD rot = linkset[0]["rotation"];
 	rootrot.mQ[VX] = (F32)(rot[0].asReal());
 	rootrot.mQ[VY] = (F32)(rot[1].asReal());
 	rootrot.mQ[VZ] = (F32)(rot[2].asReal());
 	rootrot.mQ[VW] = (F32)(rot[3].asReal());
-	state = REZZING;
-	llinfos << "IMPORTED, REZZING.." << llendl;
+	state = BUILDING;
+	llinfos << "IMPORTED, BUILDING.." << llendl;
 	plywood_above_head();
 }
 
@@ -129,37 +130,42 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
 			}
 		break;
-		case REZZING:
+		case BUILDING:
 			if (justCreated && (int)localids.size() < linkset.size())
 			{
 				localids.push_back(newid);
 				localids.sort();
 				localids.unique();
-				
+
+				linkset[localids.size() -1]["LocalID"] = newid;
+				LLSD prim = linkset[localids.size() -1];
+
+				//MAKERIGHT
+				if (!(prim).has("Updated"))
+				{
+					++updated;
+					send_shape(prim);
+					send_image(prim);
+					send_extras(prim);
+					send_vectors(prim,updated);
+					(prim)["Updated"] = true;
+				}
 				if ((int)localids.size() < linkset.size())
-					//plywood_above_head();
+				{
+					plywood_above_head();
 					return;
+				}
 				else
 				{
-					for (int i = 0; i < linkset.size(); i++)
+					if (updated >= linkset.size())
 					{
-						linkset[i]["LocalID"] = localids.front();
-						localids.pop_front();
+						updated=0;
+						llinfos << "FINISHED BUILDING, LINKING.." << llendl;
+						state = LINKING;
+						link();
 					}
-					
-					llinfos << "FINISHED REZZING, UPDATING.." << llendl;
-					state = COPYING;
-					update_next();
 				}
 			}
-		break;
-		case COPYING:
-			for (LLSD::array_iterator prim = linkset.beginArray(); prim != linkset.endArray(); ++prim)
-			{
-				if ((*prim)["LocalID"].asInteger() == newid)
-					(*prim)["Received"] = true;
-			}
-			update_next();
 		break;
 		case LINKING:
 			link();
@@ -351,34 +357,6 @@ void ImportTracker::send_extras(LLSD& prim)
 	msg->sendReliable(gAgent.getRegion()->getHost());
 }
 
-void ImportTracker::update_next()
-{
-	int received = 0;
-	int counter = 0;
-	for (LLSD::array_iterator prim = linkset.beginArray(); prim != linkset.endArray(); ++prim)
-	{
-		++counter;
-		if (!(*prim).has("Updated"))
-		{
-			send_shape(*prim);
-			send_image(*prim);
-			send_extras(*prim);
-			send_vectors(*prim,counter);
-			(*prim)["Updated"] = true;
-			return;
-		}
-		else if ((*prim).has("Received"))
-			++received;
-	}
-	
-	if (received == linkset.size())
-	{
-		llinfos << "FINISHED UPDATING, LINKING.." << llendl;
-		state = LINKING;
-		link();
-	}
-}
-
 void ImportTracker::link()
 {	
 	LLMessageSystem* msg = gMessageSystem;
@@ -471,8 +449,6 @@ void ImportTracker::position(LLSD &prim)
 
 void ImportTracker::plywood_above_head()
 {
-	for (int i = 0; i < linkset.size(); i++)
-	{
 		LLMessageSystem* msg = gMessageSystem;
 		msg->newMessageFast(_PREHASH_ObjectAdd);
 		msg->nextBlockFast(_PREHASH_AgentData);
@@ -490,7 +466,7 @@ void ImportTracker::plywood_above_head()
 		volume_params.setShear(0, 0);
 		LLVolumeMessage::packVolumeParams(&volume_params, msg);
 		msg->addU8Fast(_PREHASH_PCode, 9);
-		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.12345f, 0.12346f, 0.12347f));
+		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.52345f, 0.52346f, 0.52347f));
 		LLQuaternion rot;
 		msg->addQuatFast(_PREHASH_Rotation, rot);
 		LLViewerRegion *region = gAgent.getRegion();
@@ -505,6 +481,5 @@ void ImportTracker::plywood_above_head()
 		msg->addU8Fast(_PREHASH_State, (U8)0);
 		msg->addUUIDFast(_PREHASH_RayTargetID, LLUUID::null);
 		msg->sendReliable(region->getHost());
-	}
 }
 

@@ -14,7 +14,7 @@ using namespace std;
 class ImportTracker
 {
 	public:
-		enum ImportState { IDLE, WAND, REZZING, COPYING, LINKING, POSITIONING };			
+		enum ImportState { IDLE, WAND, BUILDING, LINKING, POSITIONING };			
 		
 		ImportTracker() { state = IDLE; }
 		ImportTracker(LLSD &data) { state = IDLE; linkset = data; numberExpected=0;}
@@ -35,7 +35,6 @@ class ImportTracker
 		void send_shape(LLSD &prim);
 		void send_image(LLSD &prim);
 		void send_extras(LLSD &prim);
-		void update_next();
 		void link();
 		void wear(LLSD &prim);
 		void position(LLSD &prim);
@@ -50,6 +49,7 @@ class ImportTracker
 		std::list<S32>			localids;
 		LLSD				linksetgroups;
 		int					groupcounter;
+		int					updated;
 		LLVector3			linksetoffset;
 		LLVector3			initialPos;
 		LLSD				linkset;
