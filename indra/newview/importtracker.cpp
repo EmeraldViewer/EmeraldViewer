@@ -359,20 +359,55 @@ void ImportTracker::send_extras(LLSD& prim)
 
 void ImportTracker::link()
 {	
-	LLMessageSystem* msg = gMessageSystem;
-	msg->newMessageFast(_PREHASH_ObjectLink);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
-	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	
-	for (LLSD::array_iterator prim = linkset.beginArray(); prim != linkset.endArray(); ++prim)
+	if(linkset.size() == 256)
 	{
-		msg->nextBlockFast(_PREHASH_ObjectData);
-		msg->addU32Fast(_PREHASH_ObjectLocalID, (*prim)["LocalID"].asInteger());		
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ObjectLink);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		
+		LLSD::array_iterator prim = linkset.beginArray();
+		++prim;
+		for (prim; prim != linkset.endArray(); ++prim)
+		{
+			msg->nextBlockFast(_PREHASH_ObjectData);
+			msg->addU32Fast(_PREHASH_ObjectLocalID, (*prim)["LocalID"].asInteger());		
+		}
+		
+		msg->sendReliable(gAgent.getRegion()->getHost());
+
+		LLMessageSystem* msg2 = gMessageSystem;
+		msg2->newMessageFast(_PREHASH_ObjectLink);
+		msg2->nextBlockFast(_PREHASH_AgentData);
+		msg2->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		msg2->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		
+		LLSD prim2 = linkset[0];
+		msg2->nextBlockFast(_PREHASH_ObjectData);
+		msg2->addU32Fast(_PREHASH_ObjectLocalID, (prim2)["LocalID"].asInteger());		
+		prim2 = linkset[1];
+		msg2->nextBlockFast(_PREHASH_ObjectData);
+		msg2->addU32Fast(_PREHASH_ObjectLocalID, (prim2)["LocalID"].asInteger());		
+
+		msg2->sendReliable(gAgent.getRegion()->getHost());
 	}
-	
-	msg->sendReliable(gAgent.getRegion()->getHost());
-	
+	else
+	{
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ObjectLink);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		
+		for (LLSD::array_iterator prim = linkset.beginArray(); prim != linkset.endArray(); ++prim)
+		{
+			msg->nextBlockFast(_PREHASH_ObjectData);
+			msg->addU32Fast(_PREHASH_ObjectLocalID, (*prim)["LocalID"].asInteger());		
+		}
+		msg->sendReliable(gAgent.getRegion()->getHost());
+	}
+
 	llinfos << "FINISHED IMPORT" << llendl;
 	
 	if (linkset[0].has("Attachment"))
