@@ -493,6 +493,7 @@ set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
 
 if (COMPILE_OTR)
    LIST(APPEND viewer_SOURCE_FILES otr_wrapper.cpp)
+   LIST(APPEND viewer_SOURCE_FILES otr_floater_smp.cpp)
 endif (COMPILE_OTR)
 
 if (LINUX)
@@ -925,6 +926,7 @@ set(viewer_HEADER_FILES
 
 if (COMPILE_OTR)
     LIST(APPEND viewer_HEADER_FILES otr_wrapper.h)
+    LIST(APPEND viewer_HEADER_FILES otr_floater_smp.h)
 endif (COMPILE_OTR)
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)

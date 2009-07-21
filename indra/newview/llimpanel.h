@@ -178,6 +178,8 @@ private:
 };
 
 #if COMPILE_OTR       // [$PLOTR$]
+extern void otr_authenticate_key(LLUUID session_id, const char *trust);
+extern void otr_log_message_getstring_name(LLUUID session_id, const char *message_name);
 extern void otr_log_message_getstring(LLUUID session_id, const char *message_name);
 extern void otr_log_message(LLUUID session_id, const char *message);
 extern void show_otr_status(LLUUID session_id);
@@ -324,9 +326,12 @@ public:
     void otrLogMessage(std::string message);
     void otrLogMessageGetstring(const char *message_name);
     void otrLogMessageGetstringName(const char *message_name);
+    bool otherIsOtrAuthenticated();
+    void otrAuthenticateKey(const char *trust);
 private:
     void doOtrStart();
     void doOtrStop();
+    void doOtrAuth();
     OtrlMessageState mOtrLastStatus;
     ConnContext *getOtrContext(int add_if_not = 0, int *context_added = NULL);
 #endif // COMPILE_OTR // [/$PLOTR$]

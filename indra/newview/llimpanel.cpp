@@ -81,6 +81,7 @@
 #if COMPILE_OTR          // [$PLOTR$]
 #include "llcombobox.h"
 #include "otr_wrapper.h"
+#include "otr_floater_smp.h"
 #endif // COMPILE_OTR    // [/$PLOTR$]
 
 //
@@ -2097,6 +2098,14 @@ void LLFloaterIMPanel::doOtrStart()
         gAgent.getID().toString(&(my_uuid[0]));
         mOtherParticipantUUID.toString(&(their_uuid[0]));
 
+        const LLRelationship* info = NULL;
+        info = LLAvatarTracker::instance().getBuddyInfo(mOtherParticipantUUID);
+        if (info && (!info->isOnline()))
+        {
+            otrLogMessageGetstringName("otr_err_offline");
+            return;
+        }
+
         if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
         {
             // only try OTR for 1 on 1 IM's
@@ -2174,6 +2183,34 @@ void LLFloaterIMPanel::doOtrStop()
     }
 }
 
+void LLFloaterIMPanel::doOtrAuth()
+{
+    if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
+    {
+        llinfos << "$PLOTR$ otr menu auth" << llendl;
+    
+        ConnContext *context = getOtrContext();
+        if (!context)
+        {
+            llwarns << "$PLOTR$ doOtrAuth can't find context." << llendl;
+            return;
+        }
+        char my_uuid[UUID_STR_SIZE];
+        gAgent.getID().toString(&(my_uuid[0]));
+        char my_fingerprint[45];
+        otrl_privkey_fingerprint(gOTR->get_userstate(),
+                                 my_fingerprint,
+                                 my_uuid,
+                                 gOTR->get_protocolid());
+        char other_fingerprint[45];
+        otrl_privkey_hash_to_human(other_fingerprint, context->active_fingerprint->fingerprint);
+        OtrFloaterSmp *auth_dialog = new OtrFloaterSmp(
+            mSessionUUID, mOtherParticipantUUID,
+            &(my_fingerprint[0]), &(other_fingerprint[0]));
+        auth_dialog->show();
+    }
+}
+
 void LLFloaterIMPanel::doOtrMenu()
 {
     if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
@@ -2198,7 +2235,7 @@ void LLFloaterIMPanel::doOtrMenu()
             }
             else if (getString("otr_auth") == choice)
             {
-                llinfos << "$PLOTR$ otr menu auth" << llendl;
+                doOtrAuth();
             }
             else if (getString("otr_help") == choice)
             {
@@ -2237,6 +2274,24 @@ ConnContext *LLFloaterIMPanel::getOtrContext(int create_if_not_found, int *conte
     return context;
 }
 
+bool LLFloaterIMPanel::otherIsOtrAuthenticated()
+{
+    if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
+    {
+        ConnContext *context = getOtrContext();
+        if (context && context->active_fingerprint &&
+            context->active_fingerprint->trust &&
+            *(context->active_fingerprint->trust))
+        {
+            llinfos << "$PLOTR$ they are authenticated -- trust level is "
+                    << (context->active_fingerprint->trust) << llendl;
+            return true;
+        }
+    }
+    llinfos << "$PLOTR$ they are NOT authenticated" << llendl;
+    return false;
+}
+
 void LLFloaterIMPanel::showOtrStatus()
 {
     if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
@@ -2250,7 +2305,7 @@ void LLFloaterIMPanel::showOtrStatus()
         {
             // $TODO$ check if buddy is authenticated
             ConnContext *context = getOtrContext();
-            if (context && (context->msgstate == OTRL_MSGSTATE_ENCRYPTED))
+            if (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate))
             {
                 combo->removeall();
                 combo->add(getString("otr_refresh"), ADD_BOTTOM, TRUE);
@@ -2258,13 +2313,19 @@ void LLFloaterIMPanel::showOtrStatus()
                 combo->add(getString("otr_auth"),    ADD_BOTTOM, TRUE);
                 combo->add(getString("otr_help"),    ADD_BOTTOM, TRUE);
                 combo->add(getString("otr_levels"),  ADD_BOTTOM, TRUE);
-                combo->setLabel(getString("otr_unverified"));
+                if (otherIsOtrAuthenticated())
+                    combo->setLabel(getString("otr_private"));
+                else
+                    combo->setLabel(getString("otr_unverified"));
             }
-            else if (context && (context->msgstate == OTRL_MSGSTATE_FINISHED))
+            else if (context && (OTRL_MSGSTATE_FINISHED == context->msgstate))
             {
                 if (OTRL_MSGSTATE_ENCRYPTED == mOtrLastStatus)
                 {
-                    otrLogMessageGetstringName("otr_prog_they_stop");
+                    if (otherIsOtrAuthenticated())
+                        otrLogMessageGetstringName("otr_prog_they_stop_private");
+                    else
+                        otrLogMessageGetstringName("otr_prog_they_stop_unverified");
                 }
                 combo->removeall();
                 combo->add(getString("otr_restart"), ADD_BOTTOM, TRUE);
@@ -2329,6 +2390,40 @@ void otr_log_message_getstring(LLUUID session_id, const char *message_name)
     else
     {
         llinfos << "$PLOTR$ otr_log_message_getstring(" << message_name << ") failed to find floater." << llendl;
+    }
+}
+
+void otr_log_message_getstring_name(LLUUID session_id, const char *message_name)
+{
+	LLFloaterIMPanel* floater = gIMMgr->findFloaterBySession(session_id);
+    if (floater) floater->otrLogMessageGetstringName(message_name);
+    else
+    {
+        llinfos << "$PLOTR$ otr_log_message_getstring_name(" << message_name << ") failed to find floater." << llendl;
+    }
+}
+
+void LLFloaterIMPanel::otrAuthenticateKey(const char *trust)
+{
+    int context_added = 0;
+    ConnContext *context = getOtrContext(0, &context_added);
+    if (gOTR && context)
+    {
+        otrl_context_set_trust(context->active_fingerprint, trust);
+        otrLogMessageGetstringName("otr_log_authenticated");
+        otrLogMessageGetstringName("otr_log_start_private");
+        otrl_privkey_write_fingerprints(gOTR->get_userstate(), OTR_PUBLIC_KEYS_FILE);
+        showOtrStatus();
+    }
+}
+
+void otr_authenticate_key(LLUUID session_id, const char *trust)
+{
+	LLFloaterIMPanel* floater = gIMMgr->findFloaterBySession(session_id);
+    if (floater) floater->otrAuthenticateKey(trust);
+    else
+    {
+        llinfos << "$PLOTR$ otr_authenticate_key(" << session_id << ", " << trust << ") failed to find floater." << llendl;
     }
 }
 
