@@ -750,6 +750,29 @@ void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channe
 	}
 // [/RLVa:KB]
 
+// [RLVa:KB] - Alternate: Emerald-370
+	// Emerald specific: the RLV spec defines a "nothing to return" as a zero length chat message which gets inhibited by the code below
+	//
+	// TODO-RLVa: it would be better to just send the message directly from inside RlvHandler, but postpone that until v1.1 so no
+	//            subtle new bug gets introduced at the last minute
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.isReplyInProgress()) && (0 == utf8_out_text.length()) )
+	{
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ChatFromViewer);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		msg->nextBlockFast(_PREHASH_ChatData);
+		msg->addStringFast(_PREHASH_Message, utf8_out_text);
+		msg->addU8Fast(_PREHASH_Type, type);
+		msg->addS32("Channel", channel);
+
+		gAgent.sendReliableMessage();
+
+		LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+	}
+// [/RLVa:KB]
+
 	// same code like in llimpanel.cpp
 	U32 split = MAX_MSG_BUF_SIZE - 1;
 	U32 pos = 0;
