@@ -26,6 +26,7 @@ class ImportTracker
 		void import(LLSD &ls_data);
 		void expectRez();
 		void clear();
+		void cleanUp();
 		void get_update(S32 newid, BOOL justCreated = false, BOOL createSelected = false);
 		
 		const int getState() { return state; }

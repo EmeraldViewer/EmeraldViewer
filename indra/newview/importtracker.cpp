@@ -68,6 +68,23 @@ void ImportTracker::cleargroups()
 	state = IDLE;
 }
 
+void ImportTracker::cleanUp()
+{
+	clear();
+	if(linksetgroups.size())
+	{
+		if(groupcounter < (linksetgroups.size() - 1))
+		{
+			++groupcounter;
+			LLSD ls_llsd;
+			ls_llsd=linksetgroups[groupcounter]["Object"];
+			linksetoffset=linksetgroups[groupcounter]["ObjectPos"];
+			import(ls_llsd);
+		}
+	}
+	else cleargroups();
+}
+
 void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 {
 	switch (state)
@@ -169,14 +186,6 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 		break;
 		case LINKING:
 			link();
-		break;
-		case POSITIONING:
-			if (newid == linkset[0]["LocalID"].asInteger())
-			{
-				position(linkset[0]);
-				llinfos << "POSITIONED, IMPORT COMPLETED" << llendl;
-				clear();
-			}
 		break;
 	}
 }
@@ -417,19 +426,7 @@ void ImportTracker::link()
 		wear(linkset[0]);
 	}
 	else
-		clear();
-	if(linksetgroups.size())
-	{
-		if(groupcounter < (linksetgroups.size() - 1))
-		{
-			++groupcounter;
-			LLSD ls_llsd;
-			ls_llsd=linksetgroups[groupcounter]["Object"];
-			linksetoffset=linksetgroups[groupcounter]["ObjectPos"];
-			import(ls_llsd);
-		}
-	}
-	else cleargroups();
+		cleanUp();
 }
 
 void ImportTracker::wear(LLSD &prim)
@@ -446,10 +443,7 @@ void ImportTracker::wear(LLSD &prim)
 	msg->addQuatFast(_PREHASH_Rotation, LLQuaternion(0.0f, 0.0f, 0.0f, 1.0f));
 	
 	msg->sendReliable(gAgent.getRegion()->getHost());
-}
 
-void ImportTracker::position(LLSD &prim)
-{
 	LLVector3 position = prim["attachpos"];
 	
 	LLSD rot = prim["attachrot"];
@@ -461,25 +455,27 @@ void ImportTracker::position(LLSD &prim)
 	LLVector3 rotation = rotq.packToVector3();
 	U8 data[256];
 	
-	LLMessageSystem* msg = gMessageSystem;
-	msg->newMessageFast(_PREHASH_MultipleObjectUpdate);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	LLMessageSystem* msg2 = gMessageSystem;
+	msg2->newMessageFast(_PREHASH_MultipleObjectUpdate);
+	msg2->nextBlockFast(_PREHASH_AgentData);
+	msg2->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg2->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 	
-	msg->nextBlockFast(_PREHASH_ObjectData);
-	msg->addU32Fast(_PREHASH_ObjectLocalID, prim["LocalID"].asInteger());
-	msg->addU8Fast(_PREHASH_Type, U8(0x01 | 0x08));
+	msg2->nextBlockFast(_PREHASH_ObjectData);
+	msg2->addU32Fast(_PREHASH_ObjectLocalID, prim["LocalID"].asInteger());
+	msg2->addU8Fast(_PREHASH_Type, U8(0x01 | 0x08));
 	htonmemcpy(&data[0], &(position.mV), MVT_LLVector3, 12);
-	msg->addBinaryDataFast(_PREHASH_Data, data, 12);
+	msg2->addBinaryDataFast(_PREHASH_Data, data, 12);
 	
-	msg->nextBlockFast(_PREHASH_ObjectData);
-	msg->addU32Fast(_PREHASH_ObjectLocalID, prim["LocalID"].asInteger());
-	msg->addU8Fast(_PREHASH_Type, U8(0x02 | 0x08));
+	msg2->nextBlockFast(_PREHASH_ObjectData);
+	msg2->addU32Fast(_PREHASH_ObjectLocalID, prim["LocalID"].asInteger());
+	msg2->addU8Fast(_PREHASH_Type, U8(0x02 | 0x08));
 	htonmemcpy(&data[0], &(rotation.mV), MVT_LLQuaternion, 12); 
-	msg->addBinaryDataFast(_PREHASH_Data, data, 12);
+	msg2->addBinaryDataFast(_PREHASH_Data, data, 12);
 	
-	msg->sendReliable(gAgent.getRegion()->getHost());
+	msg2->sendReliable(gAgent.getRegion()->getHost());
+	llinfos << "POSITIONED, IMPORT COMPLETED" << llendl;
+	cleanUp();
 }
 
 void ImportTracker::plywood_above_head()
