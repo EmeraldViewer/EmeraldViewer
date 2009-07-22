@@ -4202,6 +4202,17 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>EmeraldUseOTR</key>
+    <map>
+      <key>Comment</key>
+      <string>Setting this to 0 will require the use of OTR in every IM, 1 will try OTR when available, 2 will accept incoming OTR requests, and 3 will deny OTR usage</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>U32</string>
+      <key>Value</key>
+      <integer>2</integer>
+    </map>
     <key>EmeraldVelocityDoubleClickTeleport</key>
     <map>
       <key>Comment</key>

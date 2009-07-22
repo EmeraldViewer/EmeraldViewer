@@ -212,9 +212,29 @@ Recommended Settings are:
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
 		     label="IM" left="1" mouse_opaque="true" name="Misc" width="418">
-      <check_box bottom_delta="-25" enabled="true"
+        <radio_group bottom="-85" draw_border="false" enabled="true" follows="left|top" height="80" left="300" mouse_opaque="true"
+    name="EmeraldUseOTR-toggle" control_name="EmeraldUseOTR" width="160">
+          <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="0" width="98"
+                  tool_tip="Require use of OTR in IMs">
+            Require use of OTR in IMs
+          </radio_item>
+          <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="1" width="98"
+                  tool_tip="Request OTR if available.">
+            Request OTR if available
+          </radio_item>
+          <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="2" width="98"
+                  tool_tip="Accept OTR requests. (Default Behaviour)">
+            Accept OTR requests
+          </radio_item>
+          <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="3" width="98"
+                  tool_tip="Decline use of OTR.">
+            Decline use of OTR
+          </radio_item>
+        </radio_group>
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="-10" follows="top|left" height="100" left_delta="-30" name="OTRBorder" width="0" />
+      <check_box bottom="-25" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Announce incoming instant messages" left_delta="10" mouse_opaque="true"
+           label="Announce incoming instant messages" left="10" mouse_opaque="true"
            name="EmeraldInstantMessageAnnounceIncoming" radio_style="false" width="270" />
       <check_box bottom_delta="-20" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
