@@ -689,8 +689,8 @@ bool LLAppViewer::init()
 	// This also will get rid of the Invalid control... spam when a skin doesn't have that color
 	// setting defined as long as we keep the default skin up to date. Maybe make invalid controls
 	// errors again?
-	std::string default_base_filename = gDirUtilp->findSkinnedFilename(
-										gDirUtilp->getDefaultSkinDir(),
+	std::string default_base_filename = gDirUtilp->getExpandedFilename(LL_PATH_SKINS,
+										"default",
 										"colors_base.xml");
 	LL_DEBUGS("InitInfo") << "Loading default base colors from " << default_base_filename << LL_ENDL;
 	gColors.loadFromFileLegacy(default_base_filename, FALSE, TYPE_COL4U);
