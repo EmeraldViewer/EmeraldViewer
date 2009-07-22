@@ -4080,6 +4080,6 @@ void LLAppViewer::handleLoginComplete()
 	}
 // [/RLVa:KB]
 #if USE_OTR         // [$PLOTR$]
-	OTR_Wrapper::init();
+    OTR_Wrapper::init();
 #endif // USE_OTR   // [/$PLOTR$]
 }

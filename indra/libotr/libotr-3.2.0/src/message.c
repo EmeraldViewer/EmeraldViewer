@@ -937,9 +937,9 @@ int otrl_message_receiving(OtrlUserState us, const OtrlMessageAppOps *ops,
 		    /* Don't use g_strdup_printf here, because someone
 		     * (not us) is going to free() the *newmessagep pointer,
 		     * not g_free() it. */
-		    format = "<b>The encrypted message received from %s is "
+		    format = "The encrypted message received from %s is "
 			"unreadable, as you are not currently communicating "
-			"privately.</b>";
+			"privately.";
 		    buf = malloc(strlen(format) + strlen(context->username)
 			    - 1);  /* Remove "%s", add username + '\0' */
 		    if (buf) {
@@ -1285,8 +1285,8 @@ int otrl_message_receiving(OtrlUserState us, const OtrlMessageAppOps *ops,
 		 * (not us) is going to free() the *message pointer,
 		 * not g_free() it. */
 		const char *plainmsg = (*newmessagep) ? *newmessagep : message;
-		const char *format = "<b>The following message received "
-		    "from %s was <i>not</i> encrypted: [</b>%s<b>]</b>";
+		const char *format = "The following message received "
+		    "from %s was NOT encrypted: [%s]";
 		char *buf = malloc(strlen(format) + strlen(context->username)
 			+ strlen(plainmsg) - 3);
 			/* Remove "%s%s", add username + message + '\0' */
