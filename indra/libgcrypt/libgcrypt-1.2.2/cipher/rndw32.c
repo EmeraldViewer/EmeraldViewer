@@ -543,12 +543,13 @@ _gcry_rndw32_gather_random( void (*add)(const void*, size_t, int),
 	log_debug ("rndw32#gather_random: req=%d len=%u lvl=%d\n",
 			   requester, (unsigned int)length, level );
 
-    if ( has_toolhelp ) {
-        slow_gatherer_windows95 ( add, requester );
-    }
-    if ( is_windowsNT ) {
+	if ( is_windowsNT ) {
         slow_gatherer_windowsNT ( add, requester );
     }
+    else if ( has_toolhelp ) {
+        slow_gatherer_windows95 ( add, requester );
+    }
+
 
     return 0;
 }
