@@ -94,6 +94,11 @@ class ViewerManifest(LLManifest):
                         self.end_prefix("*/html")
                 self.end_prefix("skins")
         
+        # beams
+        if self.prefix(src="beams"):
+        		self.path("*.xml")
+        		self.end_prefix("beams")
+        		
         # Files in the newview/ directory
         self.path("gpu_table.txt")
 

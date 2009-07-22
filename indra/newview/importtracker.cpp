@@ -369,7 +369,7 @@ void ImportTracker::link()
 		
 		LLSD::array_iterator prim = linkset.beginArray();
 		++prim;
-		for (prim; prim != linkset.endArray(); ++prim)
+		for (; prim != linkset.endArray(); ++prim)
 		{
 			msg->nextBlockFast(_PREHASH_ObjectData);
 			msg->addU32Fast(_PREHASH_ObjectLocalID, (*prim)["LocalID"].asInteger());		

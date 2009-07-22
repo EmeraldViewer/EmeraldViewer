@@ -1312,7 +1312,7 @@ void LLWorldMapView::drawAvatar(F32 x_pixels,
 	{ 
 		dot_image = sAvatarAboveImage;
 	}
-	S32 dot_width = dot_radius * 2;
+	S32 dot_width = (S32)(dot_radius * 2);
 	dot_image->draw(
 		llround(x_pixels - dot_radius),
 		llround(y_pixels - dot_radius),
