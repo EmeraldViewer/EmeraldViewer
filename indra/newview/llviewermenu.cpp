@@ -2385,7 +2385,7 @@ LLSD export_object(LLSelectNode* node, std::string filename)
 			}
 			
 			prim_llsd["position"] = LLVector3(0, 0, 0).getValue();
-			prim_llsd["rotation"] = ll_sd_from_quaternion(LLQuaternion(0.0f, 0.0f, 0.0f, 1.0f));
+			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
 		}
 		else
 		{
