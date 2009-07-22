@@ -198,6 +198,10 @@
 #include "lldxhardware.h"
 #endif
 
+#if COMPILE_OTR          // [$PLOTR$]
+#include "otr_wrapper.h"
+#endif // COMPILE_OTR    // [/$PLOTR$]
+
 //
 // exported globals
 //
@@ -2576,6 +2580,9 @@ bool idle_startup()
 			gAgent.requestEnterGodMode();
 		}
 		gInventory.startBackgroundFetch();
+#if USE_OTR         // [$PLOTR$]
+        OTR_Wrapper::init();
+#endif // USE_OTR   // [/$PLOTR$]
 		
 		// Start automatic replay if the flag is set.
 		if (gSavedSettings.getBOOL("StatsAutoRun"))

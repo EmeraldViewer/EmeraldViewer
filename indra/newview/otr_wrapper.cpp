@@ -306,36 +306,41 @@ void OTR_Wrapper::init()
     if (! gOTR)
     {
         gOTR = new OTR_Wrapper;
-    }
-    if (gOTR)
-    {
-        gOTR->uistate.policy = &otrwui_policy;
-        gOTR->uistate.create_privkey = &otrwui_create_privkey;
-        gOTR->uistate.is_logged_in = &otrwui_is_logged_in;
-        gOTR->uistate.inject_message = &otrwui_inject_message;
-        gOTR->uistate.notify = &otrwui_notify;
-        gOTR->uistate.display_otr_message = &otrwui_display_otr_message;
-        gOTR->uistate.update_context_list = &otrwui_update_context_list;
-        gOTR->uistate.protocol_name = &otrwui_protocol_name;
-        gOTR->uistate.protocol_name_free = &otrwui_protocol_name_free;
-        gOTR->uistate.new_fingerprint = &otrwui_new_fingerprint;
-        gOTR->uistate.write_fingerprints = &otrwui_write_fingerprints;
-        gOTR->uistate.gone_secure = &otrwui_gone_secure;
-        gOTR->uistate.gone_insecure = &otrwui_gone_insecure;
-        gOTR->uistate.still_secure = &otrwui_still_secure;
-        gOTR->uistate.log_message = &otrwui_log_message;
-        gOTR->uistate.max_message_size = &otrwui_max_message_size;
-        gOTR->uistate.account_name = &otrwui_account_name;
-        gOTR->uistate.account_name_free = &otrwui_account_name_free;
-        OTRL_INIT;
-        gOTR->userstate = otrl_userstate_create();
-        std::string privpath =
-            gDirUtilp->getExpandedFilename(
-                LL_PATH_PER_SL_ACCOUNT, OTR_PRIVATE_KEYS_FILE);
-        otrl_privkey_read(gOTR->userstate,              privpath.c_str());
-        std::string pubpath =
-            gDirUtilp->getExpandedFilename(
-                LL_PATH_PER_SL_ACCOUNT, OTR_PUBLIC_KEYS_FILE);
-        otrl_privkey_read_fingerprints(gOTR->userstate, pubpath.c_str(), NULL, NULL);
+        if (!gOTR)
+        {
+            llwarns << "$PLOTR$ Can't new otr_wrapper." << llendl;
+        }
+        else
+        {
+            llinfos << "$PLOTR$ newed otr_wrapper." << llendl;
+            gOTR->uistate.policy = &otrwui_policy;
+            gOTR->uistate.create_privkey = &otrwui_create_privkey;
+            gOTR->uistate.is_logged_in = &otrwui_is_logged_in;
+            gOTR->uistate.inject_message = &otrwui_inject_message;
+            gOTR->uistate.notify = &otrwui_notify;
+            gOTR->uistate.display_otr_message = &otrwui_display_otr_message;
+            gOTR->uistate.update_context_list = &otrwui_update_context_list;
+            gOTR->uistate.protocol_name = &otrwui_protocol_name;
+            gOTR->uistate.protocol_name_free = &otrwui_protocol_name_free;
+            gOTR->uistate.new_fingerprint = &otrwui_new_fingerprint;
+            gOTR->uistate.write_fingerprints = &otrwui_write_fingerprints;
+            gOTR->uistate.gone_secure = &otrwui_gone_secure;
+            gOTR->uistate.gone_insecure = &otrwui_gone_insecure;
+            gOTR->uistate.still_secure = &otrwui_still_secure;
+            gOTR->uistate.log_message = &otrwui_log_message;
+            gOTR->uistate.max_message_size = &otrwui_max_message_size;
+            gOTR->uistate.account_name = &otrwui_account_name;
+            gOTR->uistate.account_name_free = &otrwui_account_name_free;
+            OTRL_INIT;
+            gOTR->userstate = otrl_userstate_create();
+            std::string privpath =
+                gDirUtilp->getExpandedFilename(
+                    LL_PATH_PER_SL_ACCOUNT, OTR_PRIVATE_KEYS_FILE);
+            otrl_privkey_read(gOTR->userstate,              privpath.c_str());
+            std::string pubpath =
+                gDirUtilp->getExpandedFilename(
+                    LL_PATH_PER_SL_ACCOUNT, OTR_PUBLIC_KEYS_FILE);
+            otrl_privkey_read_fingerprints(gOTR->userstate, pubpath.c_str(), NULL, NULL);
+        }
     }
 }
