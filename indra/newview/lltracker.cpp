@@ -181,12 +181,8 @@ void LLTracker::render3D()
 		}
 		else
 		{
-			//renderBeacon( instance()->mTrackedPositionGlobal, gTrackColor, 
-			//		  	instance()->mBeaconText, instance()->mTrackedLocationName );
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a) | Added: RLVa-1.0.0a
-			renderBeacon(instance()->mTrackedPositionGlobal, gTrackColor, instance()->mBeaconText, 
-				(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? instance()->mTrackedLocationName : rlv_handler_t::cstrHidden);
-// [/RLVa:KB]
+			renderBeacon( instance()->mTrackedPositionGlobal, gTrackColor, 
+					  	instance()->mBeaconText, instance()->mTrackedLocationName );
 		}
 	}
 
@@ -227,12 +223,8 @@ void LLTracker::render3D()
 					// and back again
 					instance()->mHasReachedLandmark = FALSE;
 				}
-				//renderBeacon( instance()->mTrackedPositionGlobal, gTrackColor, 
-				//			  instance()->mBeaconText, instance()->mTrackedLandmarkName );
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a) | Added: RLVa-1.0.0a
-				renderBeacon( instance()->mTrackedPositionGlobal, gTrackColor, instance()->mBeaconText, 
-					(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? instance()->mTrackedLandmarkName : rlv_handler_t::cstrHidden);
-// [/RLVa:KB]
+				renderBeacon( instance()->mTrackedPositionGlobal, gTrackColor, 
+							  instance()->mBeaconText, instance()->mTrackedLandmarkName );
 			}
 		}
 		else
@@ -260,12 +252,8 @@ void LLTracker::render3D()
 			}
 			else
 			{
-				//renderBeacon( av_tracker.getGlobalPos(), gTrackColor, 
-				//		  	instance()->mBeaconText, av_tracker.getName() );
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a) | Added: RLVa-1.0.0a
-				renderBeacon( av_tracker.getGlobalPos(), gTrackColor, instance()->mBeaconText, 
-					(!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) ? av_tracker.getName() : rlv_handler_t::cstrHidden);
-// [/RLVa:KB]
+				renderBeacon( av_tracker.getGlobalPos(), gTrackColor, 
+						  	instance()->mBeaconText, av_tracker.getName() );
 			}
 		}
 		else

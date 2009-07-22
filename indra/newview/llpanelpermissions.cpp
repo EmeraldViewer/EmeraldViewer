@@ -330,7 +330,7 @@ void LLPanelPermissions::refresh()
 		}
 	}
 
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e)
+// [RLVa] - Alternate: Emerald-206
 	bool fRlvEnableOwner = true; bool fRlvEnableLastOwner = true;
 	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
 	{
@@ -340,8 +340,6 @@ void LLPanelPermissions::refresh()
 			owner_name = gRlvHandler.getAnonym(owner_name);
 			fRlvEnableOwner = false;
 		}
-
-		// Emerald specific code
 		// TODO-RLVa: need to test the last owner filtering more
 		if ( (owners_identical) && (mLastOwnerID.notNull()) && (!last_owner_name.empty()) )
 		{
@@ -349,22 +347,22 @@ void LLPanelPermissions::refresh()
 			fRlvEnableLastOwner = false;
 		}
 	}
-// [/RLVa:KB]
+// [/RLVa]
 
 	childSetText("Owner Name",owner_name);
 	childSetEnabled("Owner Name",TRUE);
 //	childSetEnabled("button owner profile",owners_identical && (mOwnerID.notNull() || LLSelectMgr::getInstance()->selectIsGroupOwned()));
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e)
+// [RLVa] - Alternate: Emerald-206
 	childSetEnabled("button owner profile",
 		fRlvEnableOwner && owners_identical && (mOwnerID.notNull() || LLSelectMgr::getInstance()->selectIsGroupOwned()));
-// [/RLVa:KB]
+// [/RLVa]
 
 	childSetText("Last Owner Name",last_owner_name);
 	childSetEnabled("Last Owner Name",TRUE);
 //	childSetEnabled("button last owner profile",owners_identical && mLastOwnerID.notNull());
-// [RLVa:KB] - Alternate: Emerald-370
+// [RLVa] - Alternate: Emerald-206
 	childSetEnabled("button last owner profile", fRlvEnableLastOwner && owners_identical && mLastOwnerID.notNull());
-// [/RLVa:KB]
+// [/RLVa]
 
 	// update group text field
 	childSetEnabled("Group:",true);
@@ -881,12 +879,12 @@ void LLPanelPermissions::onClickOwner(void *data)
 	}
 	else
 	{
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e)
-		if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+// [RLVa] - Alternate: Emerald-206
+		if ( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
 		{
 			LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
 		}
-// [/RLVa:KB]
+// [/RLVa]
 //		LLFloaterAvatarInfo::showFromObject(self->mOwnerID);
 	}
 }
@@ -895,13 +893,13 @@ void LLPanelPermissions::onClickLastOwner(void *data)
 {
 	LLPanelPermissions *self = (LLPanelPermissions *)data;
 
-// [RLVa:KB] - Alternate: Emerald-370
+// [RLVa] - Alternate: Emerald-206
 	if ( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) && (self->mLastOwnerID.notNull()) )
 	{
 		LLFloaterAvatarInfo::showFromObject(self->mLastOwnerID);
 	}
-// [/RLVa:KB]
-//	if(self->mLastOwnerID.notNull())LLFloaterAvatarInfo::showFromObject(self->mLastOwnerID);
+// [/RLVa]
+	//if(self->mLastOwnerID.notNull())LLFloaterAvatarInfo::showFromObject(self->mLastOwnerID);
 }
 
 void LLPanelPermissions::onClickGroup(void* data)

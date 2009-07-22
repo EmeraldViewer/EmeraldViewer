@@ -232,12 +232,12 @@ void LLPanelLandInfo::refresh()
 //static
 void LLPanelLandInfo::onClickClaim(void*)
 {
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+// [RLVa]
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) )
 	{
 		return;
 	}
-// [/RLVa:KB]
+// [/RLVa]
 	LLViewerParcelMgr::getInstance()->startBuyLand();
 }
 

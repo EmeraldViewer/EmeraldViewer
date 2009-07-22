@@ -1979,10 +1979,10 @@ BOOL LLVOVolume::lineSegmentIntersect(const LLVector3& start, const LLVector3& e
 {
 	if (!mbCanSelect ||
 //		(gHideSelectedObjects && isSelected()) ||
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
+// [RLVa]
 		( (gHideSelectedObjects && isSelected()) && 
 		  ((!rlv_handler_t::isEnabled()) || (!isHUDAttachment()) || (gRlvHandler.isDetachable(this))) ) ||
-// [/RLVa:KB]
+// [/RLVa]
 			mDrawable->isDead() || 
 			!gPipeline.hasRenderType(mDrawable->getRenderType()))
 	{
@@ -2128,14 +2128,14 @@ void LLVolumeGeometryManager::registerFace(LLSpatialGroup* group, LLFace* facep,
 //	{
 //		return;
 //	}
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
+// [RLVa]
 	LLViewerObject* pObj = facep->getViewerObject();
 	if ( (pObj->isSelected() && gHideSelectedObjects) && 
 		 ((!rlv_handler_t::isEnabled()) || (!pObj->isHUDAttachment()) || (gRlvHandler.isDetachable(pObj))) )
 	{
 		return;
 	}
-// [/RVLa:KB]
+// [/RVLa]
 
 	//add face to drawmap
 	LLSpatialGroup::drawmap_elem_t& draw_vec = group->mDrawMap[type];	

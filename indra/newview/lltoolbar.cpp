@@ -307,7 +307,7 @@ void LLToolBar::refresh()
 	}
 	gSavedSettings.setBOOL("BuildBtnState", build_mode);
 
-// [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-10 (RLVa-1.0.0g)
+// [RLVa] - Version: 1.23.0 | Alternate: Emerald-206
 	// Called per-frame so this really can't be slow
 	if (rlv_handler_t::isEnabled())
 	{
@@ -322,7 +322,7 @@ void LLToolBar::refresh()
 		// Emerald-specific
 		childSetEnabled("avatar_list_btn", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES));
 	}
-// [/RLVa:KB]
+// [/RLVa]
 
 	if (isInVisibleChain())
 	{
@@ -492,13 +492,13 @@ void LLToolBar::onClickSit(void*)
 	}
 	else
 	{
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+// [RLVa]
 		// NOTE-RLVa: dead code?
 		if (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT))
 		{
 			return;
 		}
-// [/RLVa:KB]
+// [/RLVa]
 
 		// stand up
 		gAgent.setFlying(FALSE);

@@ -2018,12 +2018,12 @@ void LLVOAvatar::buildCharacter()
 					if (attachment->getGroup() == i)
 					{
 						LLMenuItemCallGL* item;
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
+// [RLVa]
 						// We need the userdata param to disable options in this pie menu later on (Left Hand / Right Hand option)
 						item = new LLMenuItemCallGL(attachment->getName(), 
 													NULL, 
 													object_selected_and_point_valid, attachment);
-// [/RLVa:KB]
+// [/RLVa]
 //						item = new LLMenuItemCallGL(attachment->getName(), 
 //													NULL, 
 //													object_selected_and_point_valid);
@@ -2081,12 +2081,12 @@ void LLVOAvatar::buildCharacter()
 			if (attachment->getGroup() == 8)
 			{
 				LLMenuItemCallGL* item;
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
+// [RLVa]
 				// We need the userdata param to disable options in this pie menu later on
 				item = new LLMenuItemCallGL(attachment->getName(), 
 											NULL, 
 											object_selected_and_point_valid, attachment);
-// [/RLVa:KB]
+// [/RLVa]
 //				item = new LLMenuItemCallGL(attachment->getName(), 
 //											NULL, 
 //											object_selected_and_point_valid);
@@ -2108,7 +2108,6 @@ void LLVOAvatar::buildCharacter()
 				{
 					continue;
 				}
-				// RELEASE-RLVa: random comment because we want know if LL ever changes this to not include "attachment" as userdata
 				LLMenuItemCallGL* item = new LLMenuItemCallGL(attachment->getName(), 
 															  NULL, &object_selected_and_point_valid,
 															  &attach_label, attachment);
@@ -2168,11 +2167,11 @@ void LLVOAvatar::buildCharacter()
 				LLViewerJointAttachment* attachment = get_if_there(mAttachmentPoints, attach_index, (LLViewerJointAttachment*)NULL);
 				if (attachment)
 				{
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
+// [RLVa]
 					// We need the userdata param to disable options in this pie menu later on
 					LLMenuItemCallGL* item = new LLMenuItemCallGL(attachment->getName(), 
 																  NULL, object_selected_and_point_valid, attachment);
-// [/RLVa:KB]
+// [/RLVa]
 //					LLMenuItemCallGL* item = new LLMenuItemCallGL(attachment->getName(), 
 //																  NULL, object_selected_and_point_valid);
 					gAttachBodyPartPieMenus[group]->append(item);
@@ -3210,7 +3209,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	const F32 time_visible = mTimeVisible.getElapsedTimeF32();
 	const F32 NAME_SHOW_TIME = gSavedSettings.getF32("RenderNameShowTime");	// seconds
 	const F32 FADE_DURATION = gSavedSettings.getF32("RenderNameFadeDuration"); // seconds
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
 	BOOL fRlvShowNames = gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES);
 // [/RLVa:KB]
 	BOOL visible_avatar = isVisible() || mNeedsAnimUpdate;
@@ -3240,7 +3239,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 			new_name = TRUE;
 		}
 		
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Alternate: Emerald-206 | Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
 		if (fRlvShowNames)
 		{
 			if (mRenderGroupTitles)
@@ -3251,7 +3250,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 		}
 		else if (sRenderGroupTitles != mRenderGroupTitles)
 // [/RLVa]
-//		if (sRenderGroupTitles != mRenderGroupTitles)
+		//if (sRenderGroupTitles != mRenderGroupTitles)
 		{
 			mRenderGroupTitles = sRenderGroupTitles;
 			new_name = TRUE;
@@ -3367,7 +3366,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				|| is_appearance != mNameAppearance || client.length() != 0)
 			{
 				std::string line;
-// [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Version: 1.23.0 | Alternate: Emerald-206 | Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
 				if (!fRlvShowNames)
 				{
 // [/RLVa:KB]
@@ -3392,7 +3391,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 
 					line += " ";
 					line += lastname->getString();
-// [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Version: 1.23.0 | Alternate: Emerald-206 | Checked: 2009-05-18 (RLVa-0.2.0b) | Added: RLVa-0.2.0b
 				}
 				else
 				{
@@ -6373,12 +6372,12 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 	{
 		updateAttachmentVisibility(gAgent.getCameraMode());
 		
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+// [RLVa]
 		if (rlv_handler_t::isEnabled())
 		{
 			gRlvHandler.onAttach(attachment);
 		}
-// [/RLVa:KB]
+// [/RLVa]
 
 		// Then make sure the inventory is in sync with the avatar.
 		gInventory.addChangedMask( LLInventoryObserver::LABEL, attachment->getItemID() );
@@ -6441,13 +6440,13 @@ BOOL LLVOAvatar::detachObject(LLViewerObject *viewer_object)
 		// only one object per attachment point for now
 		if (attachment->getObject() == viewer_object)
 		{
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+// [RLVa]
 			// URGENT-RLV: it looks like LLApp::isExiting() isn't always accurate so find something better (if it exists)
 			if ( (rlv_handler_t::isEnabled()) && (!LLApp::isExiting()) && (mIsSelf) )
 			{
 				gRlvHandler.onDetach(attachment);
 			}
-// [/RLVa:KB]
+// [/RLVa]
 
 			LLUUID item_id = attachment->getItemID();
 			attachment->removeObject(viewer_object);
@@ -6507,11 +6506,11 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 
 	gPipeline.markMoved(mDrawable, TRUE);
 	mIsSitting = TRUE;
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.1d
+// [RLVa:KB] - Checked: 2009-06-16 (RLVa-0.2.1d) | Added: RLVa-0.2.1d
 	#ifdef RLV_EXTENSION_STARTLOCATION
 	if (rlv_handler_t::isEnabled())
 	{
-		RlvSettings::updateLoginLastLocation();
+		rlvUpdateLoginLocationSetting();
 	}
 	#endif // RLV_EXTENSION_STARTLOCATION
 // [/RLVa:KB]
@@ -6590,11 +6589,11 @@ void LLVOAvatar::getOffObject()
 	gPipeline.markMoved(mDrawable, TRUE);
 
 	mIsSitting = FALSE;
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.1d
+// [RLVa:KB] - Checked: 2009-06-16 (RLVa-0.2.1d) | Added: RLVa-0.2.1d
 	#ifdef RLV_EXTENSION_STARTLOCATION
 	if (rlv_handler_t::isEnabled())
 	{
-		RlvSettings::updateLoginLastLocation();
+		rlvUpdateLoginLocationSetting();
 	}
 	#endif // RLV_EXTENSION_STARTLOCATION
 // [/RLVa:KB]

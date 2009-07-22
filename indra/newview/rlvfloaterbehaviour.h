@@ -30,18 +30,13 @@ public:
 public:
 	/*virtual*/ void changed();
 
-	/*
-	 * Member functions
-	 */
 public:
 	static void show(void*);
-	static void onAvatarNameLookup(const LLUUID& uuid, const std::string& strFirst, const std::string& strLast, BOOL fGroup, void* pParam);
+	static void onNameLookup();
 protected:
 	void refreshAll();
 private:
 	RlvFloaterBehaviour(const LLSD& key = LLSD());
-
-	std::list<LLUUID> m_PendingLookup;
 };
 
 // ============================================================================

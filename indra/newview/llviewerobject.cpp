@@ -1007,12 +1007,6 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 					coloru.mV[3] = 255 - coloru.mV[3];
 					mText->setColor(LLColor4(coloru));
 					mText->setStringUTF8(temp_string);
-// [RLVa:KB] - Checked: 2009-07-09 (RLVa-1.0.0f) | Added: RLVa-1.0.0f
-					if (rlv_handler_t::isEnabled())
-					{
-						mText->setObjectText(temp_string);
-					}
-// [/RLVa:KB]
 					
 					if (mDrawable.notNull())
 					{
@@ -1430,12 +1424,6 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 					coloru.mV[3] = 255 - coloru.mV[3];
 					mText->setColor(LLColor4(coloru));
 					mText->setStringUTF8(temp_string);
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-09 (RLVa-1.0.0f) | Added: RLVa-1.0.0f
-					if (rlv_handler_t::isEnabled())
-					{
-						mText->setObjectText(temp_string);
-					}
-// [/RLVa:KB]
 
 					setChanged(TEXTURE);
 				}
@@ -4832,9 +4820,10 @@ BOOL LLViewerObject::permTransfer() const
 // given you modify rights to.  JC
 BOOL LLViewerObject::allowOpen() const
 {
-// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0b)
-	return !flagInventoryEmpty() && (permYouOwner() || permModify()) && (!gRlvHandler.hasBehaviour(RLV_BHVR_EDIT));
-// [/RLVa:KB]
+// [RLVa]
+	return !flagInventoryEmpty() && (permYouOwner() || permModify()) && 
+		( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasBehaviour(RLV_BHVR_EDIT)) );
+// [/RLVa]
 //	return !flagInventoryEmpty() && (permYouOwner() || permModify());
 }
 

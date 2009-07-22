@@ -43,9 +43,9 @@
 #include "llviewerobject.h"
 #include "lluictrlfactory.h"
 
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
-#include "rlvhandler.h"
-// [/RLVa:KB]
+// [RLVa]
+#include "llagent.h"
+// [/RLVa]
 
 LLFloaterInspect* LLFloaterInspect::sInstance = NULL;
 
@@ -150,12 +150,12 @@ void LLFloaterInspect::onClickOwnerProfile(void* ctrl)
 		if(node)
 		{
 			const LLUUID& owner_id = node->mPermissions->getOwner();
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
-			if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+// [RLVa]
+			if ( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)))
 			{
 				LLFloaterAvatarInfo::showFromDirectory(owner_id);
 			}
-// [/RLVa:KB]
+// [/RLVa]
 //			LLFloaterAvatarInfo::showFromDirectory(owner_id);
 		}
 	}
@@ -174,10 +174,7 @@ void LLFloaterInspect::onSelectObject(LLUICtrl* ctrl, void* user_data)
 {
 	if(LLFloaterInspect::getSelectedUUID() != LLUUID::null)
 	{
-		//sInstance->childSetEnabled("button owner", true);
-// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-1.0.0e
-		sInstance->childSetEnabled("button owner", !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES));
-// [/RLVa:KB]
+		sInstance->childSetEnabled("button owner", true);
 		sInstance->childSetEnabled("button creator", true);
 	}
 }
@@ -237,13 +234,13 @@ void LLFloaterInspect::refresh()
 		LLStringUtil::copy(time, ctime(&timestamp), MAX_STRING);
 		time[24] = '\0';
 		gCacheName->getFullName(obj->mPermissions->getOwner(), owner_name);
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-08 (RLVa-1.0.0e)
-		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+// [RLVa]
+		if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES)) )
 		{
-			// TODO-RLVa: shouldn't filter if this is a group-owned prim (will show "(nobody)")
+			// TODO-RLV: shouldn't filter if this is a group-owned prim (will show "(nobody)", also disable the owner button
 			owner_name = gRlvHandler.getAnonym(owner_name);
 		}
-// [/RLVa:KB]
+// [/RLVa]
 		gCacheName->getFullName(obj->mPermissions->getCreator(), creator_name);
 		row["id"] = obj->getObject()->getID();
 		row["columns"][0]["column"] = "object_name";
