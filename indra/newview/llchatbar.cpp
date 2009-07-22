@@ -82,7 +82,7 @@ LLChatBar *gChatBar = NULL;
 void toggleChatHistory(void* user_data);
 void toggleChanSelect(void* user_data);
 //void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
-// [RLVa:KB] - Alternate: Emerald-206
+// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
 void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
 // [/RLVa:KB]
 
@@ -544,7 +544,7 @@ void LLChatBar::onInputEditorKeystroke( LLLineEditor* caller, void* userdata )
 	S32 length = raw_text.length();
 
 	//if( (length > 0) && (raw_text[0] != '/') )  // forward slash is used for escape (eg. emote) sequences
-// [RLVa:KB] - Checked: 2009-06-07 (RLVa-0.2.1c)
+// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d)
 	if ( (length > 0) && (raw_text[0] != '/') && (!gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT)) )
 // [/RLVa:KB]
 	{
@@ -653,7 +653,7 @@ void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL 
 		utf8_text = utf8str_truncate(utf8_text, MAX_STRING - 1);
 	}
 
-// [RLVa:KB] - Checked: 2009-06-07 (RLVa-0.2.1c) | Modified: RLVa-0.2.0b
+// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.0b
 	if ( (0 == channel) && (rlv_handler_t::isEnabled()) )
 	{
 		// Adjust the (public) chat "volume" on chat and gestures (also takes care of playing the proper animation)
@@ -703,12 +703,12 @@ void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL 
 	send_chat_from_viewer(utf8_out_text, type, channel);
 }
 
-// void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel)
-// [RLVa:KB] - Alternate: Emerald-206
+//void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel)
+// [RLVa:KB] - Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
 void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel)
 // [/RLVa:KB]
 {
-// [RLVa:KB] - Alternate: Emerald-206 | Checked: 2009-07-02 (RLVa-0.2.2a) | Modified: RLVa-0.2.2a
+// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
 	// Only process chat messages (ie not CHAT_TYPE_START, CHAT_TYPE_STOP, etc)
 	if ( (rlv_handler_t::isEnabled()) && (!gRlvHandler.isReplyInProgress()) &&
 		 ( (CHAT_TYPE_WHISPER == type) || (CHAT_TYPE_NORMAL == type) || (CHAT_TYPE_SHOUT == type) ) )
@@ -732,7 +732,7 @@ void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channe
 
 			// Filter public chat if sendchat restricted (and filter anything that redirchat didn't redirect)
 			if ( (gRlvHandler.hasBehaviour("sendchat")) || (gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT)) )
-				gRlvHandler.filterChat(utf8_out_text);
+				gRlvHandler.filterChat(utf8_out_text, true);
 		}
 		else
 		{
@@ -740,13 +740,41 @@ void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channe
 			if ( (gRlvHandler.hasBehaviour("sendchannel")) && (!gRlvHandler.hasBehaviour("sendchannel", llformat("%d", channel))) )
 				return;
 
-			// Don't allow chatting on the debug channel if @sendchat or @redirchat restricted (shows as public chat on viewers)
-			if ( (channel >= CHAT_CHANNEL_DEBUG) && 
-				 ((gRlvHandler.hasBehaviour("sendchat")) || (gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT))) )
+			// Don't allow chat on debug channel if @sendchat, @redirchat or @rediremote restricted (shows as public chat on viewers)
+			if (channel >= CHAT_CHANNEL_DEBUG)
 			{
-				return;
+				bool fIsEmote = rlvIsEmote(utf8_out_text);
+				if ( (gRlvHandler.hasBehaviour("sendchat")) || 
+					 ((!fIsEmote) && (gRlvHandler.hasBehaviour(RLV_BHVR_REDIRCHAT))) || 
+					 ((fIsEmote) && (gRlvHandler.hasBehaviour(RLV_BHVR_REDIREMOTE))) )
+				{
+					return;
+				}
 			}
 		}
+	}
+// [/RLVa:KB]
+
+// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Modified: RLVa-0.2.2a
+	// Emerald specific: the RLV spec defines a "nothing to return" as a zero length chat message which gets inhibited by the code below
+	//
+	// TODO-RLVa: it would be better to just send the message directly from inside RlvHandler, but postpone that until v1.1 so no
+	//            subtle new bug gets introduced at the last minute
+	if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.isReplyInProgress()) && (0 == utf8_out_text.length()) )
+	{
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ChatFromViewer);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		msg->nextBlockFast(_PREHASH_ChatData);
+		msg->addStringFast(_PREHASH_Message, utf8_out_text);
+		msg->addU8Fast(_PREHASH_Type, type);
+		msg->addS32("Channel", channel);
+
+		gAgent.sendReliableMessage();
+
+		LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
 	}
 // [/RLVa:KB]
 

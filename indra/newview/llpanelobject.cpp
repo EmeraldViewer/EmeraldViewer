@@ -76,9 +76,9 @@
 
 #include "lldrawpool.h"
 
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 #include "llvoavatar.h"
-// [/RLVa]
+// [/RLVa:KB]
 
 //
 // Constants
@@ -412,7 +412,7 @@ void LLPanelObject::getState( )
 		enable_rotate = FALSE;
 	}
 
-// [RLVa:KB] - Checked: 2009-06-02 (RLVa-0.2.0g)
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 	if ( (rlv_handler_t::isEnabled()) && ((gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) || (gRlvHandler.hasBehaviour(RLV_BHVR_SITTP))) )
 	{
 		LLVOAvatar* pAvatar = gAgent.getAvatarObject();
