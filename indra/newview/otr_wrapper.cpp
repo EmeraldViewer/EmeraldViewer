@@ -63,6 +63,8 @@ static OtrlPolicy otrwui_policy(void *opdata, ConnContext *context)
         );
 }
 
+
+
 static void otrwui_create_privkey(
     void *opdata, const char *accountname,
     const char *protocol)
@@ -71,8 +73,13 @@ static void otrwui_create_privkey(
     /* Create a private key for the given accountname/protocol if
      * desired. */
     if (gOTR)
-        otrl_privkey_generate(gOTR->get_userstate(), OTR_PRIVATE_KEYS_FILE,
-                              accountname, protocol);
+    {
+        std::string path =
+            gDirUtilp->getExpandedFilename(
+                LL_PATH_PER_SL_ACCOUNT, OTR_PRIVATE_KEYS_FILE);
+        otrl_privkey_generate(
+            gOTR->get_userstate(), path.c_str(), accountname, protocol);
+    }
 }
 
 static int otrwui_is_logged_in(
@@ -193,7 +200,12 @@ static void otrwui_write_fingerprints(
     otrwui_trace("otrwui_write_fingerprints()");
     /* The list of known fingerprints has changed.  Write them to disk. */
     if (gOTR)
-        otrl_privkey_write_fingerprints(gOTR->get_userstate(), OTR_PUBLIC_KEYS_FILE);
+    {
+        std::string path =
+            gDirUtilp->getExpandedFilename(
+                LL_PATH_PER_SL_ACCOUNT, OTR_PUBLIC_KEYS_FILE);
+        otrl_privkey_write_fingerprints(gOTR->get_userstate(), path.c_str());
+    }
 }
 
 static void otrwui_gone_secure(
@@ -317,7 +329,13 @@ void OTR_Wrapper::init()
         gOTR->uistate.account_name_free = &otrwui_account_name_free;
         OTRL_INIT;
         gOTR->userstate = otrl_userstate_create();
-        otrl_privkey_read(gOTR->userstate,              OTR_PRIVATE_KEYS_FILE);
-        otrl_privkey_read_fingerprints(gOTR->userstate, OTR_PUBLIC_KEYS_FILE, NULL, NULL);
+        std::string privpath =
+            gDirUtilp->getExpandedFilename(
+                LL_PATH_PER_SL_ACCOUNT, OTR_PRIVATE_KEYS_FILE);
+        otrl_privkey_read(gOTR->userstate,              privpath.c_str());
+        std::string pubpath =
+            gDirUtilp->getExpandedFilename(
+                LL_PATH_PER_SL_ACCOUNT, OTR_PUBLIC_KEYS_FILE);
+        otrl_privkey_read_fingerprints(gOTR->userstate, pubpath.c_str(), NULL, NULL);
     }
 }

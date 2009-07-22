@@ -2412,7 +2412,10 @@ void LLFloaterIMPanel::otrAuthenticateKey(const char *trust)
         otrl_context_set_trust(context->active_fingerprint, trust);
         otrLogMessageGetstringName("otr_log_authenticated");
         otrLogMessageGetstringName("otr_log_start_private");
-        otrl_privkey_write_fingerprints(gOTR->get_userstate(), OTR_PUBLIC_KEYS_FILE);
+        std::string pubpath =
+            gDirUtilp->getExpandedFilename(
+                LL_PATH_PER_SL_ACCOUNT, OTR_PUBLIC_KEYS_FILE);
+        otrl_privkey_write_fingerprints(gOTR->get_userstate(), pubpath.c_str());
         showOtrStatus();
     }
 }

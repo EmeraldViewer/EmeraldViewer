@@ -625,9 +625,6 @@ bool LLAppViewer::init()
 	//
 	// OK to write stuff to logs now, we've now crash reported if necessary
 	//
-#if USE_OTR         // [$PLOTR$]
-	OTR_Wrapper::init();
-#endif // USE_OTR   // [/$PLOTR$]
 
     if (!initConfiguration())
 		return false;
@@ -4082,4 +4079,7 @@ void LLAppViewer::handleLoginComplete()
 		#endif // RLV_EXTENSION_STARTLOCATION
 	}
 // [/RLVa:KB]
+#if USE_OTR         // [$PLOTR$]
+	OTR_Wrapper::init();
+#endif // USE_OTR   // [/$PLOTR$]
 }
