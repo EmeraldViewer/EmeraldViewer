@@ -52,6 +52,7 @@
 
 #include "llfloaterfriends.h"
 #include "llfloatergroupinfo.h"
+#include "llfloatergroups.h"
 #include "llfloaterworldmap.h"
 #include "llfloatermute.h"
 #include "llfloateravatarinfo.h"
@@ -86,7 +87,7 @@
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
 BOOL LLPanelAvatar::sAllowFirstLife = FALSE;
 
-extern void invite_to_group(const LLUUID& dest_id);
+extern void callback_invite_to_group(LLUUID group_id, void *user_data);
 extern void handle_lure(const LLUUID& invitee);
 extern void handle_pay_by_id(const LLUUID& payee);
 
@@ -1456,6 +1457,8 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 			}
 			childSetVisible("Instant Message...",FALSE);
 			childSetEnabled("Instant Message...",FALSE);
+			childSetVisible("EmeraldGroupInvite_Button",FALSE);
+			childSetEnabled("EmeraldGroupInvite_Button",FALSE);
 			childSetVisible("Mute",FALSE);
 			childSetEnabled("Mute",FALSE);
 			childSetVisible("Offer Teleport...",FALSE);
@@ -1479,6 +1482,8 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 
 			childSetVisible("Instant Message...",TRUE);
 			childSetEnabled("Instant Message...",FALSE);
+			childSetVisible("EmeraldGroupInvite_Button",TRUE);
+			childSetEnabled("EmeraldGroupInvite_Button",FALSE);
 			childSetVisible("Mute",TRUE);
 			childSetEnabled("Mute",FALSE);
 
@@ -1590,9 +1595,16 @@ void LLPanelAvatar::onClickIM(void* userdata)
 void LLPanelAvatar::onClickGroupInvite(void* userdata)
 {
 	LLPanelAvatar* self = (LLPanelAvatar*) userdata;
-	if (self->mAvatarID.notNull())
+	if (self->getAvatarID().notNull())
 	{
-		invite_to_group(self->getAvatarID());//neil psh
+		LLFloaterGroupPicker* widget;
+		widget = LLFloaterGroupPicker::showInstance(LLSD(gAgent.getID()));
+		if (widget)
+		{
+			widget->center();
+			widget->setPowersMask(GP_MEMBER_INVITE);
+			widget->setSelectCallback(callback_invite_to_group, (void *)&(self->getAvatarID()));
+		}
 	}
 }
 
@@ -1813,6 +1825,7 @@ void LLPanelAvatar::processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 			continue;
 		}
 		self->childSetEnabled("Instant Message...",TRUE);
+		self->childSetEnabled("EmeraldGroupInvite_Button",TRUE);
 		self->childSetEnabled("Pay...",TRUE);
 		self->childSetEnabled("Mute",TRUE);
 
