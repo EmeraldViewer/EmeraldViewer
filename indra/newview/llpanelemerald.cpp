@@ -386,14 +386,18 @@ void LLPanelEmerald::onBeamDelete(void* data)
 
 	if(comboBox != NULL) 
 	{
-		std::string filename = gDirUtilp->getAppRODataDir() 
-						+gDirUtilp->getDirDelimiter()
-						+"beams"
-						+gDirUtilp->getDirDelimiter()
-						+comboBox->getValue().asString()+".xml";
-		if(gDirUtilp->fileExists(filename))
+		std::string filename = comboBox->getValue().asString()+".xml";
+		std::string path_name1(gDirUtilp->getExpandedFilename( LL_PATH_APP_SETTINGS , "beams", filename));
+		std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beams", filename));
+		
+		if(gDirUtilp->fileExists(path_name1))
 		{
-			LLFile::remove(filename);
+			LLFile::remove(path_name1);
+			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
+		}
+		if(gDirUtilp->fileExists(path_name2))
+		{
+			LLFile::remove(path_name2);
 			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
 		}
 	}
