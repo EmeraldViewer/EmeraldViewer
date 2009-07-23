@@ -86,6 +86,7 @@
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
 BOOL LLPanelAvatar::sAllowFirstLife = FALSE;
 
+extern void invite_to_group(const LLUUID& dest_id);
 extern void handle_lure(const LLUUID& invitee);
 extern void handle_pay_by_id(const LLUUID& payee);
 
@@ -1591,7 +1592,7 @@ void LLPanelAvatar::onClickGroupInvite(void* userdata)
 	LLPanelAvatar* self = (LLPanelAvatar*) userdata;
 	if (self->mAvatarID.notNull())
 	{
-		//LGG HELP PLOX invite_to_group(self->getAvatarID());//neil psh
+		invite_to_group(self->getAvatarID());//neil psh
 	}
 }
 
