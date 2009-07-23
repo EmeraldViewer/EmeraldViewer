@@ -220,11 +220,11 @@
           Require use of OTR in IMs
         </radio_item>
         <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="1" width="98"
-                    tool_tip="Request OTR if available.">
+                    tool_tip="Request OTR if available. (Default Behaviour)">
           Request OTR if available
         </radio_item>
         <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="2" width="98"
-                    tool_tip="Accept OTR requests. (Default Behaviour)">
+                    tool_tip="Accept OTR requests.">
           Accept OTR requests
         </radio_item>
         <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="3" width="98"
