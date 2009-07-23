@@ -2508,7 +2508,7 @@ void LLFloaterIMPanel::sendMsg()
                 mOtherParticipantUUID.toString(&(their_uuid[0]));
 
                 bool was_finished = false;
-                ConnContext *context = getOtrContext();
+                ConnContext *context = getOtrContext(1);
                 if (gOTR && context && (context->msgstate == OTRL_MSGSTATE_FINISHED))
                 {
                     was_finished = true;
@@ -2526,33 +2526,68 @@ void LLFloaterIMPanel::sendMsg()
                         &(utf8_text[0]), NULL, &newmessage,
                         NULL, NULL);
                 }
+                context = getOtrContext();
                 if (err)
                 {
                     otrLogMessageGetstring("otr_err_failed_sending");
                     return; // leave the unsent message in the edit box
                 }
-                else if (was_finished)
+                if (was_finished)
                 {
                     llinfos << "$PLOTR$ OTR tried to send into finished conv, not sending message!" << llendl;
                     otrLogMessageGetstringName("otr_err_send_in_finished");
                     return; // leave the unsent message in the edit box
                 }
-                else if (newmessage)
+                OtrlMessageType msgtype = OTRL_MSGTYPE_NOTOTR;
+                if (newmessage) msgtype = otrl_proto_message_type(newmessage);
+                if (newmessage && (OTRL_MSGTYPE_TAGGEDPLAINTEXT == msgtype))
                 {
-                    // OTR encrypted the message, or maybe just added the whitespace tag.
-                    int context_added = 0;
-                    context = getOtrContext(1, &context_added);
-                    if (context_added)
+                    // OTR just added the whitespace tag.
+                    otrl_message_free(newmessage); // don't send the message with whitespace tag
+                    err = otrl_message_sending(
+                        gOTR->get_userstate(), 
+                        gOTR->get_uistate(), 
+                        &mSessionUUID,
+                        my_uuid,
+                        gOTR->get_protocolid(),
+                        their_uuid,
+                        "typing", NULL, &newmessage,
+                        NULL, NULL);
+                    if (!newmessage)
                     {
-                        llwarns << "$PLOTR$ context added *after* send but before fragmentation." << llendl;
+                        llwarns << "$PLOTR$ shouldn't happen, OTR should keep adding whitespace tags till we get a reply from them." << llendl;
                     }
+                    else
+                    {
+                        // deliver a whitespace tagged "typing" in a IM_TYPING_STOP packet
+                        std::string my_name;
+                        gAgent.buildFullname(my_name);
+                        pack_instant_message(
+                            gMessageSystem,
+                            gAgent.getID(),
+                            FALSE,
+                            gAgent.getSessionID(),
+                            mOtherParticipantUUID,
+                            my_name,
+                            newmessage,
+                            IM_OFFLINE,
+                            IM_TYPING_STOP,
+                            mSessionUUID);
+                        gAgent.sendReliableMessage();
+                        otrl_message_free(newmessage);
+                        newmessage = NULL;
+                    }
+                }
+                if (newmessage)
+                {
+                    // OTR encrypted the message
                     if (! context)
                     {
                         llwarns << "$PLOTR$ can't find context, not sending message." << llendl;
                         otrLogMessageGetstring("otr_err_failed_sending");
                         return; // leave the unsent message in the edit box
                     }
-                    else
+
                     {
                         // Handle fragmentation of the message
                         char *extrafragment = NULL;

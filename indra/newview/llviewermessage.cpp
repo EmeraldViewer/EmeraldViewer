@@ -1581,18 +1581,18 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	bool encrypted = gIMMgr->decryptMessage(session_id, from_id, message, decrypted_msg);
 #if USE_OTR // [$PLOTR]
 	U32 otrpref = gSavedSettings.getU32("EmeraldUseOTR");
-	if(otrpref != 3 && !is_muted && chat.mSourceType == CHAT_SOURCE_AGENT)
+    // otrpref: 0 == Require use of OTR in IMs, 1 == Request OTR if available, 2 == Accept OTR requests, 3 == Decline use of OTR
+	if ((otrpref != 3) && !is_muted && (chat.mSourceType == CHAT_SOURCE_AGENT))
 	{
-		//Setting this to 0 will require the use of OTR in every IM, 1 will try OTR when available, 2 will accept incoming OTR requests, and 3 will deny OTR usage
 		int ignore_message = 0;
 		char *newmessage = NULL;
 		OtrlTLV *tlvs = NULL;
 		char my_uuid[UUID_STR_SIZE];
 		char their_uuid[UUID_STR_SIZE];
 
-		if (gOTR && (IM_NOTHING_SPECIAL == dialog || (dialog == IM_TYPING_STOP && message != "typing")))
+		if (gOTR && (IM_NOTHING_SPECIAL == dialog || ((IM_TYPING_STOP == dialog) && (message != "typing"))))
 		{
-			// only try OTR for 1 on 1 IM's
+			// only try OTR for 1 on 1 IM's or special tagged typing_stop packets
 			gAgent.getID().toString(&(my_uuid[0]));
 			from_id.toString(&(their_uuid[0]));
 			ignore_message = otrl_message_receiving(
