@@ -19,8 +19,12 @@
    02111-1307, USA.  */
 
 #include "llviewerprecompiledheaders.h"
+#include "llviewercontrol.h"
 #include "llimpanel.h"
 #include "otr_wrapper.h"
+#include "llagent.h"
+#include "llimview.h"
+
 
 OTR_Wrapper *gOTR = 0;
 
@@ -56,8 +60,8 @@ static OtrlPolicy otrwui_policy(void *opdata, ConnContext *context)
     return (0
 //            | OTRL_POLICY_ALLOW_V1            // don't even expose this?
             | OTRL_POLICY_ALLOW_V2              // $TODO$ set as default
-//            | OTRL_POLICY_REQUIRE_ENCRYPTION
-//            | OTRL_POLICY_SEND_WHITESPACE_TAG   // $TODO$ set as default
+			| (gSavedSettings.getU32("EmeraldUseOTR") == 0 ? OTRL_POLICY_REQUIRE_ENCRYPTION : 0)
+            | OTRL_POLICY_SEND_WHITESPACE_TAG   // $TODO$ set as default
 //            | OTRL_POLICY_WHITESPACE_START_AKE // $TODO$ set as default
 //            | OTRL_POLICY_ERROR_START_AKE      // $TODO$ set as default
         );
@@ -131,6 +135,23 @@ static void otrwui_notify(
 {
     /* Display a notification message for a particular accountname /
      * protocol / username conversation. */
+	 //accountname is a uuid.  protocol is "SecondLife". recipient is their uuid.
+	/*LLUUID rec = LLUUID(std::string(username));
+	std::string my_name;
+	gAgent.buildFullname(my_name);
+	pack_instant_message(
+		gMessageSystem,
+		gAgent.getID(),
+		FALSE,
+		gAgent.getSessionID(),
+		rec,
+		my_name,
+		std::string(title)+"\n"+std::string(secondary),
+		IM_OFFLINE,
+		IM_NOTHING_SPECIAL,
+		LLIMMgr::computeSessionID(IM_NOTHING_SPECIAL,rec));*/
+
+
     std::string trace = "otrwui_notify: \n";
     trace += "title(";     trace += title;     trace += ")\n";
     trace += "primary(";   trace += primary;   trace += ")\n";

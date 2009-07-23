@@ -328,8 +328,8 @@ public:
     void otrLogMessageGetstringName(const char *message_name);
     bool otherIsOtrAuthenticated();
     void otrAuthenticateKey(const char *trust);
-private:
     void doOtrStart();
+private:
     void doOtrStop();
     void doOtrAuth();
     OtrlMessageState mOtrLastStatus;

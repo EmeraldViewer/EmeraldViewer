@@ -75,6 +75,7 @@
 #include "llhttpclient.h"
 #include "llmutelist.h"
 #include "llstylemap.h"
+#include "context.h"
 
 #include "emerald.h"
 
@@ -2501,7 +2502,28 @@ void LLFloaterIMPanel::sendMsg()
                 mOtherParticipantUUID.toString(&(their_uuid[0]));
 
                 bool was_finished = false;
-                ConnContext *context = getOtrContext();
+                ConnContext *context = getOtrContext(1);
+				if(context->otr_offer != context::OFFER_REJECTED)
+				{
+					context->otr_offer = context::OFFER_SENT;
+					std::string foo = "typing";
+					foo += OTRL_MESSAGE_TAG_BASE;
+					foo += OTRL_MESSAGE_TAG_V2;
+					std::string my_name;
+					gAgent.buildFullname(my_name);
+					pack_instant_message(
+						gMessageSystem,
+						gAgent.getID(),
+						FALSE,
+						gAgent.getSessionID(),
+						mOtherParticipantUUID,
+						my_name,
+						foo,
+						IM_OFFLINE,
+						IM_TYPING_STOP,
+						mSessionUUID);
+
+				}
                 if (gOTR && context && (context->msgstate == OTRL_MSGSTATE_FINISHED))
                 {
                     was_finished = true;

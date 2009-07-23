@@ -456,8 +456,8 @@ static void maybe_resend(EncrData *edata)
 	err = otrl_proto_create_data(&resendmsg,
 		edata->context, edata->context->lastmessage, NULL, 0);
 	if (!err) {
-	    const char *format = "<b>The last message "
-		"to %s was resent.</b>";
+	    const char *format = "The last message "
+		"to %s was resent.";
 	    char *buf;
 
 	    /* Resend the message */

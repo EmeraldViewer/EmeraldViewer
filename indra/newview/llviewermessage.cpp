@@ -1573,55 +1573,97 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	std::string decrypted_msg;
 	bool encrypted = gIMMgr->decryptMessage(session_id, from_id, message, decrypted_msg);
 #if USE_OTR // [$PLOTR]
-    int ignore_message = 0;
-    char *newmessage = NULL;
-    OtrlTLV *tlvs = NULL;
-    char my_uuid[UUID_STR_SIZE];
-    char their_uuid[UUID_STR_SIZE];
+	U32 otrpref = gSavedSettings.getU32("EmeraldUseOTR");
+	if(otrpref != 3 && !is_muted && chat.mSourceType == CHAT_SOURCE_AGENT)
+	{
+		//Setting this to 0 will require the use of OTR in every IM, 1 will try OTR when available, 2 will accept incoming OTR requests, and 3 will deny OTR usage
+		int ignore_message = 0;
+		char *newmessage = NULL;
+		OtrlTLV *tlvs = NULL;
+		char my_uuid[UUID_STR_SIZE];
+		char their_uuid[UUID_STR_SIZE];
 
-    if (gOTR && (IM_NOTHING_SPECIAL == dialog))
-    {
-        // only try OTR for 1 on 1 IM's
-        gAgent.getID().toString(&(my_uuid[0]));
-        from_id.toString(&(their_uuid[0]));
-        ignore_message = otrl_message_receiving(
-            gOTR->get_userstate(), 
-            gOTR->get_uistate(), 
-            &session_id,
-            my_uuid,
-            gOTR->get_protocolid(),
-            their_uuid,
-            &(message[0]), &newmessage,
-            &tlvs,
-            NULL, NULL);
-    }
-    if (tlvs)
-    {
-        // $TODO$ handle TLVS -- especially SMP
-        llinfos << "$PLOTR$ recieved TLVs" << llendl;
-        otrl_tlv_free(tlvs);
-    }
-    if (1 == ignore_message)
-    {
-        // an internal OTR protocol message was recieved, don't show anything to the user
-        llinfos << "$PLOTR$ [OTR PROTOCOL MESSAGE (" << message << ")]" << llendl;
-        show_otr_status(session_id);
-        return;
-    }
-    if (newmessage)
-    {
-        // message was processed by OTR.  Maybe decrypted, maybe just stripping off the white-space "I have OTR" tag
-        decrypted_msg = newmessage;  // use processed message
-        message = newmessage;        // use processed message
-        otrl_message_free(newmessage);
-        ConnContext *context = otrl_context_find(
-            gOTR->get_userstate(), 
-            their_uuid,
-            my_uuid,
-            gOTR->get_protocolid(),
-            0, NULL, NULL, NULL);
-        encrypted = (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate));
-    }
+		if (gOTR && (IM_NOTHING_SPECIAL == dialog || (dialog == IM_TYPING_STOP && message != "typing")))
+		{
+			// only try OTR for 1 on 1 IM's
+			gAgent.getID().toString(&(my_uuid[0]));
+			from_id.toString(&(their_uuid[0]));
+			ignore_message = otrl_message_receiving(
+				gOTR->get_userstate(), 
+				gOTR->get_uistate(), 
+				&session_id,
+				my_uuid,
+				gOTR->get_protocolid(),
+				their_uuid,
+				&(message[0]), &newmessage,
+				&tlvs,
+				NULL, NULL);
+		}
+		if (tlvs)
+		{
+			// $TODO$ handle TLVS -- especially SMP
+			llinfos << "$PLOTR$ recieved TLVs" << llendl;
+			otrl_tlv_free(tlvs);
+		}
+		if (1 == ignore_message)
+		{
+			// an internal OTR protocol message was recieved, don't show anything to the user
+			llinfos << "$PLOTR$ [OTR PROTOCOL MESSAGE (" << message << ")]" << llendl;
+			show_otr_status(session_id);
+			return;
+		}
+		if (newmessage)
+		{
+			// message was processed by OTR.  Maybe decrypted, maybe just stripping off the white-space "I have OTR" tag
+			decrypted_msg = newmessage;  // use processed message
+			message = newmessage;        // use processed message
+			otrl_message_free(newmessage);
+			ConnContext *context = otrl_context_find(
+				gOTR->get_userstate(), 
+				their_uuid,
+				my_uuid,
+				gOTR->get_protocolid(),
+				0, NULL, NULL, NULL);
+			encrypted = (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate));
+		}
+	}
+
+	if(!encrypted && otrpref == 0 && dialog == IM_NOTHING_SPECIAL && !is_muted)
+	{
+		LLUUID session = LLIMMgr::computeSessionID(dialog,from_id);
+		if(!gIMMgr->hasSession(session))
+		{
+			gIMMgr->addSession(name,IM_NOTHING_SPECIAL,from_id);
+		}
+		std::string my_name;
+		gAgent.buildFullname(my_name);
+		pack_instant_message(
+						gMessageSystem,
+						gAgent.getID(),
+						FALSE,
+						gAgent.getSessionID(),
+						from_id,
+						my_name,
+						"This users settings do not allow unencrypted instant messaging. Your message will not be displayed.",
+						IM_OFFLINE,
+						IM_BUSY_AUTO_RESPONSE,
+						session);
+		gIMMgr->addMessage(
+							session,
+							from_id,
+							SYSTEM_FROM,
+							">:|",
+							LLStringUtil::null,
+							IM_NOTHING_SPECIAL,
+							parent_estate_id,
+							region_id,
+							position,
+							false);
+		LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session);
+		if(pan)pan->doOtrStart();
+		return;
+		//doOtrStart()
+	}
 #endif // USE_OTR // [/$PLOTR$]
 
 	std::string separator_string(": ");

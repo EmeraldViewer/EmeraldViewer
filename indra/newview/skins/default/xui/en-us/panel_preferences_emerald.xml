@@ -5,7 +5,7 @@
   <tab_container label="o.o" bottom="0" height="408" left="0" mouse_opaque="false" name="tab"
 	     tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
     <panel border="true" bottom="-408" follows="left|top|right|bottom" height="408"
-		     label="Teleport/Login" left="1" mouse_opaque="true" name="Teleport/Login" width="517">
+		     label="TP/Login" left="1" mouse_opaque="true" name="Teleport/Login" width="517">
       <check_box bottom_delta="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Double-click Teleport" left_delta="10" mouse_opaque="true"
@@ -213,7 +213,7 @@ Recommended Settings are:
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
 		     label="IM" left="1" mouse_opaque="true" name="Misc" width="418">
         <radio_group bottom="-85" draw_border="false" enabled="true" follows="left|top" height="80" left="300" mouse_opaque="true"
-    name="EmeraldUseOTR-toggle" control_name="EmeraldUseOTR" width="160">
+    name="EmeraldUseOTR" width="160">
           <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="0" width="98"
                   tool_tip="Require use of OTR in IMs">
             Require use of OTR in IMs
@@ -762,6 +762,44 @@ you up or down without altering your shape.
            label="Show axis arrow on root prim position" left_delta="0" mouse_opaque="true"
 	tool_tip="Default behaviour is to show the axis on the center of mass of a linkset. If enabled, the axis will be shown on the root prim of the linkset instead."
            name="EmBuildPrefsActualRoot_toggle" control_name="EmeraldBuildPrefs_ActualRoot" radio_style="false" width="270" />
+    </panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Inventory" left="1" mouse_opaque="true" name="Inventory" width="418">
+      <check_box bottom_delta="-25" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
+           label="Enable Mirroring" left_delta="10" mouse_opaque="true"
+           name="fdgfd" control_name="EmeraldEnableInvMirror" radio_style="false" width="270" />
+      <text type="string" bottom_delta="-10"
+             follows="left|top" font="SansSerifSmall" halign="left"
+             height="10" left_delta="0" mouse_opaque="false" name="lolyou"
+             v_pad="0" width="200">
+        Mirror Location:
+      </text>
+      <button bottom_delta="-28" enabled="true" follows="left|top" font="SansSerif"
+           halign="center" height="22" label="Set" label_selected="Set" left_delta="-7"
+           mouse_opaque="true" name="set_mirror" scale_image="true" width="50" />
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="0"
+           enabled="true" follows="left|top" font="SansSerif"
+           handle_edit_keys_directly="true" height="20" left_delta="57"
+           max_length="4096" mouse_opaque="true" name="mirror_location" control_name="EmeraldInvMirrorLocation"
+           select_all_on_focus_received="false" width="425" word_wrap="false" />
+      <icon bottom_delta="-20" color="1 1 1 1" enabled="true" follows="left|top" height="16"
+           image_name="inv_item_gesture.tga" left="12" mouse_opaque="true"
+           name="icon_gesture" width="16" />
+      <check_box bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall"
+           height="16" initial_value="false" label="Mirror Gestures" left_delta="18"
+           mouse_opaque="true" name="check_gesture" control_name="EmeraldInvMirrorGestures" width="126" />
+      <icon bottom_delta="-20" color="1 1 1 1" enabled="true" follows="left|top" height="16"
+           image_name="inv_item_notecard.tga" left="12" mouse_opaque="true"
+           name="icon_notecard" width="16" />
+      <check_box bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall"
+           height="16" initial_value="false" label="Mirror Notecards" left_delta="18"
+           mouse_opaque="true" name="check_notecard" control_name="EmeraldInvMirrorNotecards" width="126" />
+      <icon bottom_delta="-20" color="1 1 1 1" enabled="true" follows="left|top" height="16"
+           image_name="inv_item_script.tga" left="12" mouse_opaque="true"
+           name="icon_script" width="16" />
+      <check_box bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall"
+           height="16" initial_value="false" label="Mirror Scripts" left_delta="18"
+           mouse_opaque="true" name="check_script" control_name="EmeraldInvMirrorScripts" width="126" />
     </panel>
   </tab_container>
 </panel>
