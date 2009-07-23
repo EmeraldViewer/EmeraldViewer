@@ -2305,7 +2305,6 @@ void LLFloaterIMPanel::showOtrStatus()
         }
         else
         {
-            // $TODO$ check if buddy is authenticated
             ConnContext *context = getOtrContext();
             if (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate))
             {
@@ -2509,28 +2508,7 @@ void LLFloaterIMPanel::sendMsg()
                 mOtherParticipantUUID.toString(&(their_uuid[0]));
 
                 bool was_finished = false;
-                ConnContext *context = getOtrContext(1);
-				if(context->otr_offer != context::OFFER_REJECTED)
-				{
-					context->otr_offer = context::OFFER_SENT;
-					std::string foo = "typing";
-					foo += OTRL_MESSAGE_TAG_BASE;
-					foo += OTRL_MESSAGE_TAG_V2;
-					std::string my_name;
-					gAgent.buildFullname(my_name);
-					pack_instant_message(
-						gMessageSystem,
-						gAgent.getID(),
-						FALSE,
-						gAgent.getSessionID(),
-						mOtherParticipantUUID,
-						my_name,
-						foo,
-						IM_OFFLINE,
-						IM_TYPING_STOP,
-						mSessionUUID);
-
-				}
+                ConnContext *context = getOtrContext();
                 if (gOTR && context && (context->msgstate == OTRL_MSGSTATE_FINISHED))
                 {
                     was_finished = true;
@@ -2561,7 +2539,7 @@ void LLFloaterIMPanel::sendMsg()
                 }
                 else if (newmessage)
                 {
-                    // OTR encrypted the message.  Handle fragmentation of the message
+                    // OTR encrypted the message, or maybe just added the whitespace tag.
                     int context_added = 0;
                     context = getOtrContext(1, &context_added);
                     if (context_added)
@@ -2576,6 +2554,7 @@ void LLFloaterIMPanel::sendMsg()
                     }
                     else
                     {
+                        // Handle fragmentation of the message
                         char *extrafragment = NULL;
                         err = otrl_message_fragment_and_send(
                             gOTR->get_uistate(), 
