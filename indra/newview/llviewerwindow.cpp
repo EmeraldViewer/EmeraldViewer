@@ -3325,7 +3325,7 @@ void LLViewerWindow::renderSelections( BOOL for_gl_pick, BOOL pick_parcel_walls,
 							moveable_object_selected = TRUE;
 							this_object_movable = TRUE;
 
-// [RLVa:KB] - Checked: 2009-06-02 (RLVa-0.2.0g) | Modified: RLVa-0.2.0g
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0g
 							if ( (rlv_handler_t::isEnabled()) && 
 								 ((gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) || (gRlvHandler.hasBehaviour(RLV_BHVR_SITTP))) )
 							{

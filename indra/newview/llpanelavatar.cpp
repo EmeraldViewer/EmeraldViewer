@@ -808,9 +808,9 @@ void LLPanelAvatarClassified::refresh()
 	S32 tab_count = tabs ? tabs->getTabCount() : 0;
 
 	bool allow_new = tab_count < MAX_CLASSIFIEDS;
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	allow_new &= !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC);
-// [/RLVa]
+// [/RLVa:KB]
 	bool allow_delete = (tab_count > 0);
 	bool show_help = (tab_count == 0);
 
@@ -946,12 +946,12 @@ void LLPanelAvatarClassified::processAvatarClassifiedReply(LLMessageSystem* msg,
 // static
 void LLPanelAvatarClassified::onClickNew(void* data)
 {
-// [RLVa] - Version: 1.23.0
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-04 (RLVa-1.0.0a)
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		return;
 	}
-// [/RLVa]
+// [/RLVa:KB]
 	LLPanelAvatarClassified* self = (LLPanelAvatarClassified*)data;
 
 	LLNotifications::instance().add("AddClassified", LLSD(), LLSD(), boost::bind(&LLPanelAvatarClassified::callbackNew, self, _1, _2));
@@ -1047,9 +1047,9 @@ void LLPanelAvatarPicks::refresh()
 	BOOL self = (gAgent.getID() == getPanelAvatar()->getAvatarID());
 	LLTabContainer*	tabs = getChild<LLTabContainer>("picks tab");
 	S32 tab_count = tabs ? tabs->getTabCount() : 0;
-// [RLVa] - Added: RLVa-0.x.yc
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	childSetEnabled("New...", self && tab_count < MAX_AVATAR_PICKS && (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) );
-// [/RLVa]
+// [/RLVa:KB]
 	//childSetEnabled("New...",    self && tab_count < MAX_AVATAR_PICKS);
 	childSetEnabled("Delete...", self && tab_count > 0);
 	childSetVisible("New...",    self && getPanelAvatar()->isEditable());
@@ -1128,12 +1128,12 @@ void LLPanelAvatarPicks::processAvatarPicksReply(LLMessageSystem* msg, void**)
 // static
 void LLPanelAvatarPicks::onClickNew(void* data)
 {
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		return;
 	}
-// [/RLVa]
+// [/RLVa:KB]
 	LLPanelAvatarPicks* self = (LLPanelAvatarPicks*)data;
 	LLPanelPick* panel_pick = new LLPanelPick(FALSE);
 	LLTabContainer* tabs =  self->getChild<LLTabContainer>("picks tab");

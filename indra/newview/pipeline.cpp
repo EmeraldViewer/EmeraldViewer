@@ -1980,11 +1980,11 @@ void LLPipeline::stateSort(LLDrawable* drawablep, LLCamera& camera)
 	{
 //		if (drawablep->getVObj().notNull() &&
 //			drawablep->getVObj()->isSelected())
-// [RLVa]
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
 		LLViewerObject* pObj = drawablep->getVObj();
 		if ( (pObj) && (pObj->isSelected()) && 
 			 ((!rlv_handler_t::isEnabled()) || (!pObj->isHUDAttachment()) || (gRlvHandler.isDetachable(pObj))) )
-// [/RVLa]
+// [/RVLa:KB]
 		{
 			return;
 		}
