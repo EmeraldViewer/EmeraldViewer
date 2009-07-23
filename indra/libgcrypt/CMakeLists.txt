@@ -2,14 +2,22 @@
 
 project(libgcrypt)
 
-include_directories(
-    ../gpg.vs/inc.vs
-    ../gpg.vs/libgcrypt-1.2.2.vs/custom
-    ../libgpg-error/libgpg-error-1.0/src
-    libgcrypt-1.2.2/src
-    libgcrypt-1.2.2/mpi
-    libgcrypt-1.2.2/mpi/generic
-    )
+if (WINDOWS)
+    include_directories(
+	../gpg.vs/inc.vs
+	../gpg.vs/libgcrypt-1.2.2.vs/custom
+	../libgpg-error/libgpg-error-1.0/src
+	libgcrypt-1.2.2/src
+	libgcrypt-1.2.2/mpi
+	libgcrypt-1.2.2/mpi/generic
+	)
+else (WINDOWS)
+    include_directories(
+	libgcrypt-1.2.2/src
+	libgcrypt-1.2.2/mpi
+	libgcrypt-1.2.2/mpi/generic
+	)
+endif (WINDOWS)
 
 set(libgcrypt_SOURCE_FILES
     libgcrypt-1.2.2/src/ath.c

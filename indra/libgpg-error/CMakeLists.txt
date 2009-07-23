@@ -2,11 +2,17 @@
 
 project(libgpg-error)
 
-include_directories(
-    ../gpg.vs/inc.vs
-    ../gpg.vs/libgpg-error-1.1.vs/custom
-    libgpg-error-1.0/src
-    )
+if (WINDOWS)
+    include_directories(
+	../gpg.vs/inc.vs
+	../gpg.vs/libgpg-error-1.1.vs/custom
+	libgpg-error-1.0/src
+	)
+else (WINDOWS)
+    include_directories(
+	libgpg-error-1.0/src
+	)
+endif (WINDOWS)
 
 set(libgpg-error_SOURCE_FILES
     libgpg-error-1.0/src/code-from-errno.c

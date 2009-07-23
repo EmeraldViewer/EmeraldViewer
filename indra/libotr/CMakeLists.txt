@@ -2,13 +2,20 @@
 
 project(libotr)
 
-include_directories(
-    ../gpg.vs/inc.vs
-    ../gpg.vs/libgpg-error-1.1.vs/custom
-    ../gpg.vs/libgcrypt-1.2.2.vs/custom
-    ../libgpg-error/libgpg-error-1.0/src
-    ../libgcrypt/libgcrypt-1.2.2/src
-    )
+if (WINDOWS)
+    include_directories(
+        ../gpg.vs/inc.vs
+        ../gpg.vs/libgpg-error-1.1.vs/custom
+        ../gpg.vs/libgcrypt-1.2.2.vs/custom
+        ../libgpg-error/libgpg-error-1.0/src
+        ../libgcrypt/libgcrypt-1.2.2/src
+        )
+else (WINDOWS)
+    include_directories(
+        ../libgpg-error/libgpg-error-1.0/src
+        ../libgcrypt/libgcrypt-1.2.2/src
+        )
+endif (WINDOWS)
 
 set(libotr_SOURCE_FILES
     libotr-3.2.0/src/auth.c
