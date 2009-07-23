@@ -56,6 +56,8 @@ class ViewerManifest(LLManifest):
 
             # include the entire shaders directory recursively
             self.path("shaders")
+            # include the entire beams directory
+            self.path("beams")
             # ... and the entire windlight directory
             self.path("windlight")
             self.end_prefix("app_settings")
@@ -94,10 +96,10 @@ class ViewerManifest(LLManifest):
                         self.end_prefix("*/html")
                 self.end_prefix("skins")
         
-        # beams
-        if self.prefix(src="beams"):
-        		self.path("*.xml")
-        		self.end_prefix("beams")
+#        # beams moved in app_settings 
+#        if self.prefix(src="beams"):
+#        		self.path("*.xml")
+#        		self.end_prefix("beams")
         		
         # Files in the newview/ directory
         self.path("gpu_table.txt")
