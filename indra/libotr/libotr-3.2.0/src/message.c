@@ -1287,9 +1287,19 @@ int otrl_message_receiving(OtrlUserState us, const OtrlMessageAppOps *ops,
 		const char *plainmsg = (*newmessagep) ? *newmessagep : message;
 		const char *format = "The following message received "
 		    "from %s was NOT encrypted: [%s]";
-		char *buf = malloc(strlen(format) + strlen(context->username)
-			+ strlen(plainmsg) - 3);
-			/* Remove "%s%s", add username + message + '\0' */
+		char *buf = 0;
+                if (policy & OTRL_POLICY_REQUIRE_ENCRYPTION) {
+                    format = "%s sent a message that was NOT encrypted.";
+                    buf = malloc(strlen(format) + strlen(context->username)
+                                 + strlen(plainmsg) - 1);
+                    /* Remove "%s", add username + message + '\0' */
+                }
+                else
+                {
+                    buf = malloc(strlen(format) + strlen(context->username)
+                                 + strlen(plainmsg) - 3);
+                    /* Remove "%s%s", add username + message + '\0' */
+                }
 		if (buf) {
 		    sprintf(buf, format, context->username, plainmsg);
 		    if (ops->display_otr_message) {

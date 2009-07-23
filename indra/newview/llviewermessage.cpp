@@ -1607,9 +1607,30 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		}
 		if (1 == ignore_message)
 		{
-			// an internal OTR protocol message was recieved, don't show anything to the user
-			llinfos << "$PLOTR$ [OTR PROTOCOL MESSAGE (" << message << ")]" << llendl;
-			show_otr_status(session_id);
+            OtrlMessageType msgtype = otrl_proto_message_type(&(message[0]));
+            if (OTRL_MSGTYPE_NOTOTR == msgtype)
+            {
+                llinfos << "$PLOTR$ [not otr, but to be ignored (" << message << ")]" << llendl;
+                if ((0 == otrpref) && (IM_NOTHING_SPECIAL == dialog) && !is_muted)
+                {
+                    LLUUID session = LLIMMgr::computeSessionID(dialog,from_id);
+                    if(!gIMMgr->hasSession(session))
+                    {
+                        gIMMgr->addSession(name,IM_NOTHING_SPECIAL,from_id);
+                    }
+                    deliver_message(
+                        "/me's settings require OTR encrypted instant messages. Your message was not displayed.",
+                        session, from_id, IM_NOTHING_SPECIAL);
+                    LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session);
+                    if(pan)pan->doOtrStart();
+                }
+            }
+            else
+            {
+                // an internal OTR protocol message was recieved, don't show anything to the user
+                llinfos << "$PLOTR$ [OTR PROTOCOL MESSAGE (" << message << ")]" << llendl;
+            }
+            show_otr_status(session_id);
 			return;
 		}
 		if (newmessage)
@@ -1628,42 +1649,6 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		}
 	}
 
-	if(!encrypted && otrpref == 0 && dialog == IM_NOTHING_SPECIAL && !is_muted)
-	{
-		LLUUID session = LLIMMgr::computeSessionID(dialog,from_id);
-		if(!gIMMgr->hasSession(session))
-		{
-			gIMMgr->addSession(name,IM_NOTHING_SPECIAL,from_id);
-		}
-		std::string my_name;
-		gAgent.buildFullname(my_name);
-		pack_instant_message(
-						gMessageSystem,
-						gAgent.getID(),
-						FALSE,
-						gAgent.getSessionID(),
-						from_id,
-						my_name,
-						"This users settings do not allow unencrypted instant messaging. Your message will not be displayed.",
-						IM_OFFLINE,
-						IM_BUSY_AUTO_RESPONSE,
-						session);
-		gIMMgr->addMessage(
-							session,
-							from_id,
-							SYSTEM_FROM,
-							">:|",
-							LLStringUtil::null,
-							IM_NOTHING_SPECIAL,
-							parent_estate_id,
-							region_id,
-							position,
-							false);
-		LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session);
-		if(pan)pan->doOtrStart();
-		return;
-		//doOtrStart()
-	}
 #endif // USE_OTR // [/$PLOTR$]
 
 	std::string separator_string(": ");

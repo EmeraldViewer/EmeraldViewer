@@ -56,15 +56,58 @@ static void otrwui_tbd(const char *msg)
 
 static OtrlPolicy otrwui_policy(void *opdata, ConnContext *context)
 {
-    // $TODO$ Add a preferences tab with easily understood choices
-    return (0
-//            | OTRL_POLICY_ALLOW_V1            // don't even expose this?
-            | OTRL_POLICY_ALLOW_V2              // $TODO$ set as default
-			| (gSavedSettings.getU32("EmeraldUseOTR") == 0 ? OTRL_POLICY_REQUIRE_ENCRYPTION : 0)
-            | OTRL_POLICY_SEND_WHITESPACE_TAG   // $TODO$ set as default
-//            | OTRL_POLICY_WHITESPACE_START_AKE // $TODO$ set as default
-//            | OTRL_POLICY_ERROR_START_AKE      // $TODO$ set as default
-        );
+    OtrlPolicy result = 0;
+    U32 useotr = gSavedSettings.getU32("EmeraldUseOTR");
+    if (3 < useotr)
+    {
+        llwarns << "$PLOTR$ Unknown setting for EmeraldUseOTR" << useotr << llendl;
+        useotr = 2;
+    }
+    if (0 == useotr) // Require use of OTR in IMs
+    {
+        result = (0
+//                  | OTRL_POLICY_ALLOW_V1            // don't even expose this?
+                  | OTRL_POLICY_ALLOW_V2
+                  | OTRL_POLICY_REQUIRE_ENCRYPTION
+                  | OTRL_POLICY_SEND_WHITESPACE_TAG
+                  | OTRL_POLICY_WHITESPACE_START_AKE
+                  | OTRL_POLICY_ERROR_START_AKE
+            );
+    }
+    else if (1 == useotr) // Request OTR if available
+    {
+        result = (0
+//                  | OTRL_POLICY_ALLOW_V1            // don't even expose this?
+                  | OTRL_POLICY_ALLOW_V2
+//                  | OTRL_POLICY_REQUIRE_ENCRYPTION
+                  | OTRL_POLICY_SEND_WHITESPACE_TAG
+                  | OTRL_POLICY_WHITESPACE_START_AKE
+                  | OTRL_POLICY_ERROR_START_AKE
+            );
+    }
+    else if (2 == useotr) // Accept OTR requests
+    {
+        result = (0
+//                  | OTRL_POLICY_ALLOW_V1            // don't even expose this?
+                  | OTRL_POLICY_ALLOW_V2
+//                  | OTRL_POLICY_REQUIRE_ENCRYPTION
+//                  | OTRL_POLICY_SEND_WHITESPACE_TAG
+                  | OTRL_POLICY_WHITESPACE_START_AKE
+                  | OTRL_POLICY_ERROR_START_AKE
+            );
+    }
+    else if (3 == useotr) // Decline use of OTR
+    {
+        result = (0
+//                  | OTRL_POLICY_ALLOW_V1            // don't even expose this?
+//                  | OTRL_POLICY_ALLOW_V2
+//                  | OTRL_POLICY_REQUIRE_ENCRYPTION
+//                  | OTRL_POLICY_SEND_WHITESPACE_TAG
+//                  | OTRL_POLICY_WHITESPACE_START_AKE
+//                  | OTRL_POLICY_ERROR_START_AKE
+            );
+    }
+    return result;
 }
 
 

@@ -62,6 +62,8 @@
 
 #include "lldirpicker.h"
 
+#include "llweb.h" // [$PLOTR$/]
+
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Class JCInvDropTarget
@@ -212,7 +214,9 @@ BOOL LLPanelEmerald::postBuild()
 	childSetCommitCallback("Y Modifier", onCommitSendAppearance);
 	childSetCommitCallback("Z Modifier", onCommitSendAppearance);
 	childSetValue("EmeraldDoubleClickTeleportMode", gSavedSettings.getBOOL("EmeraldDoubleClickTeleportMode"));
-	childSetValue("EmeraldUseOTR", LLSD((S32)gSavedSettings.getU32("EmeraldUseOTR")));
+	childSetValue("EmeraldUseOTR", LLSD((S32)gSavedSettings.getU32("EmeraldUseOTR"))); // [$PLOTR$]
+	getChild<LLButton>("otr_help_btn")->setClickedCallback(onClickOtrHelp, this);      // [/$PLOTR$]
+
 
 	LLView *target_view = getChild<LLView>("im_give_drop_target_rect");
 	if(target_view)
@@ -352,6 +356,11 @@ void LLPanelEmerald::onTexturePickerCommit(LLUICtrl* ctrl, void* userdata)
 		gSavedSettings.setString("EmeraldBuildPrefs_Texture", image_ctrl->getImageAssetID().asString());
 	}
 }
+
+void LLPanelEmerald::onClickOtrHelp(void* data)           // [$PLOTR$]
+{
+    LLWeb::loadURL("http://www.cypherpunks.ca/otr/");
+}                                                         // [/$PLOTR$]
 
 void LLPanelEmerald::onRefresh(void* data)
 {
