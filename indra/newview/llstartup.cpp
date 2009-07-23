@@ -943,6 +943,10 @@ bool idle_startup()
 		std::string user_windlight_days_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "windlight/days", ""));
 		LLFile::mkdir(user_windlight_days_path_name.c_str());
 
+		//guna make a beams directior here too /lgg		
+		std::string lgg_beams_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beams", ""));
+		LLFile::mkdir(lgg_beams_path_name.c_str());		
+
 
 		if (show_connect_box)
 		{

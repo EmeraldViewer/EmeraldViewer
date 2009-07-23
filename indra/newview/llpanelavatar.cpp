@@ -80,6 +80,7 @@
 #include "llinventorymodel.h"
 #include "roles_constants.h"
 #include "lluictrlfactory.h"
+#include "llviewermenu.h"
 
 // Statics
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
@@ -434,6 +435,7 @@ BOOL LLPanelAvatarSecondLife::postBuild(void)
 
 	childSetAction("Find on Map", LLPanelAvatar::onClickTrack, getPanelAvatar());
 	childSetAction("Instant Message...", LLPanelAvatar::onClickIM, getPanelAvatar());
+	childSetAction("EmeraldGroupInvite_Button", LLPanelAvatar::onClickGroupInvite, getPanelAvatar());
 	
 	childSetAction("Add Friend...", LLPanelAvatar::onClickAddFriend, getPanelAvatar());
 	childSetAction("Pay...", LLPanelAvatar::onClickPay, getPanelAvatar());
@@ -1582,6 +1584,15 @@ void LLPanelAvatar::onClickIM(void* userdata)
 	LLNameEditor* nameedit = self->mPanelSecondLife->getChild<LLNameEditor>("name");
 	if (nameedit) name = nameedit->getText();
 	gIMMgr->addSession(name, IM_NOTHING_SPECIAL, self->mAvatarID);
+}
+
+void LLPanelAvatar::onClickGroupInvite(void* userdata)
+{
+	LLPanelAvatar* self = (LLPanelAvatar*) userdata;
+	if (self->mAvatarID.notNull())
+	{
+		//LGG HELP PLOX invite_to_group(self->getAvatarID());//neil psh
+	}
 }
 
 
