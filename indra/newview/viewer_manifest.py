@@ -420,6 +420,9 @@ class DarwinManifest(ViewerManifest):
 	    # Lua lib
 	    self.path("../../libraries/universal-darwin/lib_release/liblua5.1.dylib", "MacOS/liblua5.1.dylib");
 
+	    # otr lib
+	    self.path("../../libraries/universal-darwin/lib_release/libotr.dylib", "MacOS/libotr.dylib");
+
             # replace the default theme with our custom theme (so scrollbars work).
             if self.prefix(src="mozilla-theme", dst="MacOS/chrome"):
                 self.path("classic.jar")
