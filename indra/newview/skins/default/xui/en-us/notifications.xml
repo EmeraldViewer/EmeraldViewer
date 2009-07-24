@@ -6421,6 +6421,25 @@ The URL you clicked cannot be opened from this web browser.
   </notification>
   
   <notification
+   icon="notify.tga"
+   name="QueryEmeraldOTR"
+   type="alertmodal">
+    OTR is a way to encrypt your Instant Messages, which secures your privacy by making it impossible for anyone other than your intended target to read your Instant Messages.
+    This prevents third parties from reading your messages, and such a level of privacy removes Linden Labs ability to verify and respond to reports concerning activity inside private messages.
+    Do you want this feature to be automatically activated when available?
+    <form name="form">
+      <button
+       index="0"
+       name="Yes"
+       text="Yes"/>
+      <button
+       index="1"
+       name="No"
+       text="No"/>
+    </form>
+  </notification>
+  
+  <notification
 	   icon="notifytip.tga"
 	   name="BlockedDialogs"
 	   type="notifytip">
