@@ -323,7 +323,16 @@ static void otrwui_still_secure(
         return;
     }
     LLUUID session_id = *((LLUUID*)opdata);
-    otr_log_message_getstring(session_id, "otr_log_still_secure");
+    if (context && context->active_fingerprint &&
+        context->active_fingerprint->trust &&
+        *(context->active_fingerprint->trust))
+    {
+        otr_log_message_getstring_name(session_id, "otr_log_still_private");
+    }
+    else
+    {
+        otr_log_message_getstring_name(session_id, "otr_log_still_unverified");
+    }
     show_otr_status(session_id);
 }
 
