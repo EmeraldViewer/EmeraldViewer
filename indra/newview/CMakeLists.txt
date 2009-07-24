@@ -38,7 +38,6 @@ include(UnixInstall)
 include(LLKDU)
 include(Emerald)
 include(LUA)
-include(libotrb)
 include(ViewerMiscLibs)
 
 if (WINDOWS)
@@ -50,6 +49,9 @@ if (COMPILE_OTR)
     include(libgpg-error)
     include(libotr)
 endif (COMPILE_OTR)
+if (DARWIN)
+    include(libotrb)
+endif (DARWIN)
 
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
@@ -1343,7 +1345,6 @@ if (WINDOWS)
 		${ELFIO_LIBRARIES}
 		${EMERALD_LIBRARIES}
 		${LUA_LIBRARY}
-		${OTR_LIBRARY}
 		)
 else (WINDOWS)
 	target_link_libraries(${VIEWER_BINARY_NAME}
