@@ -198,16 +198,7 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 		{
 			// ooc chat
 
-			if (mInputEditor)
-			{
-				if (!mInputEditor->getLength()) return TRUE;
-				std::string msg;
-				std::string text = mInputEditor->getText();
-				msg.assign( gSavedSettings.getString("EmeraldOOCPrefix") + " " + text + " " + gSavedSettings.getString("EmeraldOOCPostfix") );
-				mInputEditor->setText(msg);
-			}
-
-			sendChat( CHAT_TYPE_NORMAL );
+			sendChat( CHAT_TYPE_OOC );
 			handled = TRUE;
 		}
 		else if (mask == MASK_NONE)
@@ -226,12 +217,13 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 				{
 					if (msg[mInputEditor->getCursor() - 1] != '\n')
 					{
-						//For some reason you have to use a newline character, the ï¿½ wont show up in chat.
+						//For some reason you have to use a newline character, the ¶ wont show up in chat.
 						msg = msg.insert(mInputEditor->getCursor(), "\n");
 						mInputEditor->setText(msg);
 						mInputEditor->setCursor(mInputEditor->getCursor() + 1);
 					}
 				}
+				handled = true;
 			}
 		}
 	}
@@ -439,6 +431,13 @@ void LLChatBar::sendChat( EChatType type )
 		LLWString text = mInputEditor->getConvertedText();
 		if (!text.empty())
 		{
+			if(type == CHAT_TYPE_OOC)
+			{
+				std::string tempText=mInputEditor->getText();
+				tempText = gSavedSettings.getString("EmeraldOOCPrefix") + " " + tempText + " " + gSavedSettings.getString("EmeraldOOCSuffix");
+				mInputEditor->setText(tempText);
+				text = utf8str_to_wstring(tempText);
+			}
 			// store sent line in history, duplicates will get filtered
 			if (mInputEditor) mInputEditor->updateHistory();
 			// Check if this is destined for another channel
@@ -463,11 +462,15 @@ void LLChatBar::sendChat( EChatType type )
 			}
 
 			utf8_revised_text = utf8str_trim(utf8_revised_text);
-
-			if (!utf8_revised_text.empty() && cmd_line_chat(utf8_revised_text, type))
+			EChatType nType;
+			if(type == CHAT_TYPE_OOC)
+				nType=CHAT_TYPE_NORMAL;
+			else
+				nType=type;
+			if (!utf8_revised_text.empty() && cmd_line_chat(utf8_revised_text, nType))
 			{
 				// Chat with animation
-				sendChatFromViewer(utf8_revised_text, type, TRUE);
+				sendChatFromViewer(utf8_revised_text, nType, TRUE);
 			}
 		}
 	}

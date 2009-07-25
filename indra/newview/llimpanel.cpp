@@ -1692,7 +1692,7 @@ BOOL LLFloaterIMPanel::handleKeyHere( KEY key, MASK mask )
 	BOOL handled = FALSE;
 	if( KEY_RETURN == key && mask == MASK_NONE)
 	{
-		sendMsg();
+		sendMsg(0);
 		handled = TRUE;
 
 		// Close talk panels on hitting return
@@ -1705,16 +1705,7 @@ BOOL LLFloaterIMPanel::handleKeyHere( KEY key, MASK mask )
 	else if ( KEY_RETURN == key && mask == MASK_ALT)
 	{
 		// ooc chat
-		if (mInputEditor)
-		{
-			if (!mInputEditor->getLength()) return TRUE;
-			std::string msg;
-			std::string text = mInputEditor->getText();
-//			std::string text = self->mInputEditor->getText();
-			msg.assign( gSavedSettings.getString("EmeraldOOCPrefix") + " " + text + " " + gSavedSettings.getString("EmeraldOOCPostfix") );
-			mInputEditor->setText(msg);
-		}
-		sendMsg();
+		sendMsg(1);
 		handled = TRUE;
 	}
 	else if (KEY_RETURN == key && (mask == (MASK_ALT | MASK_SHIFT | MASK_CONTROL)))
@@ -1727,7 +1718,7 @@ BOOL LLFloaterIMPanel::handleKeyHere( KEY key, MASK mask )
 			{
 				if (msg[mInputEditor->getCursor() - 1] != '\n')
 				{
-					//For some reason you have to use a newline character, the ï¿½ wont show up in chat.
+					//For some reason you have to use a newline character, the ¶ wont show up in chat.
 					msg = msg.insert(mInputEditor->getCursor(), "\n");
 					mInputEditor->setText(msg);
 					mInputEditor->setCursor(mInputEditor->getCursor() + 1);
@@ -1922,7 +1913,7 @@ void LLFloaterIMPanel::onClickEndCall(void* userdata)
 void LLFloaterIMPanel::onClickSend(void* userdata)
 {
 	LLFloaterIMPanel* self = (LLFloaterIMPanel*)userdata;
-	self->sendMsg();
+	self->sendMsg(0);
 }
 
 // static
@@ -1937,7 +1928,7 @@ void LLFloaterIMPanel::onClickToggleActiveSpeakers(void* userdata)
 void LLFloaterIMPanel::onCommitChat(LLUICtrl* caller, void* userdata)
 {
 	LLFloaterIMPanel* self= (LLFloaterIMPanel*) userdata;
-	self->sendMsg();
+	self->sendMsg(0);
 }
 
 // static
@@ -2444,7 +2435,7 @@ void show_otr_status(LLUUID session_id)
 }
 #endif // COMPILE_OTR // [/$PLOTR$]
 
-void LLFloaterIMPanel::sendMsg()
+void LLFloaterIMPanel::sendMsg(bool ooc)
 {
 	if (!gAgent.isGodlike() 
 		&& (mDialog == IM_NOTHING_SPECIAL)
@@ -2459,6 +2450,10 @@ void LLFloaterIMPanel::sendMsg()
 		LLWString text = mInputEditor->getConvertedText();
 		if(!text.empty())
 		{
+			std::string tempText=mInputEditor->getText();
+			tempText = gSavedSettings.getString("EmeraldOOCPrefix") + " " + tempText + " " + gSavedSettings.getString("EmeraldOOCSuffix");
+			mInputEditor->setText(tempText);
+			text = utf8str_to_wstring(tempText);
 			// Truncate and convert to UTF8 for transport
 			std::string utf8_text = wstring_to_utf8str(text);
 			//utf8_text = utf8str_truncate(utf8_text, MAX_MSG_BUF_SIZE - 1);
