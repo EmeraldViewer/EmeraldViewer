@@ -434,7 +434,7 @@ void LLChatBar::sendChat( EChatType type )
 			if(type == CHAT_TYPE_OOC)
 			{
 				std::string tempText=mInputEditor->getText();
-				tempText = gSavedSettings.getString("EmeraldOOCPrefix") + " " + tempText + " " + gSavedSettings.getString("EmeraldOOCSuffix");
+				tempText = gSavedSettings.getString("EmeraldOOCPrefix") + " " + tempText + " " + gSavedSettings.getString("EmeraldOOCPostfix");
 				mInputEditor->setText(tempText);
 				text = utf8str_to_wstring(tempText);
 			}
