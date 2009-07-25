@@ -1707,6 +1707,7 @@ BOOL LLFloaterIMPanel::handleKeyHere( KEY key, MASK mask )
 		// ooc chat
 		if (mInputEditor)
 		{
+			if (!mInputEditor->getLength()) return TRUE;
 			std::string msg;
 			std::string text = mInputEditor->getText();
 //			std::string text = self->mInputEditor->getText();
@@ -1726,13 +1727,14 @@ BOOL LLFloaterIMPanel::handleKeyHere( KEY key, MASK mask )
 			{
 				if (msg[mInputEditor->getCursor() - 1] != '\n')
 				{
-					//For some reason you have to use a newline character, the ¶ wont show up in chat.
+					//For some reason you have to use a newline character, the ï¿½ wont show up in chat.
 					msg = msg.insert(mInputEditor->getCursor(), "\n");
 					mInputEditor->setText(msg);
 					mInputEditor->setCursor(mInputEditor->getCursor() + 1);
 				}
 			}
 		}
+		handled = TRUE;
 	}
 
 	else if ( KEY_ESCAPE == key )
