@@ -2450,10 +2450,13 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 		LLWString text = mInputEditor->getConvertedText();
 		if(!text.empty())
 		{
-			std::string tempText=mInputEditor->getText();
-			tempText = gSavedSettings.getString("EmeraldOOCPrefix") + " " + tempText + " " + gSavedSettings.getString("EmeraldOOCSuffix");
-			mInputEditor->setText(tempText);
-			text = utf8str_to_wstring(tempText);
+			if(ooc)
+			{
+				std::string tempText=mInputEditor->getText();
+				tempText = gSavedSettings.getString("EmeraldOOCPrefix") + " " + tempText + " " + gSavedSettings.getString("EmeraldOOCPostfix");
+				mInputEditor->setText(tempText);
+				text = utf8str_to_wstring(tempText);
+			}
 			// Truncate and convert to UTF8 for transport
 			std::string utf8_text = wstring_to_utf8str(text);
 			//utf8_text = utf8str_truncate(utf8_text, MAX_MSG_BUF_SIZE - 1);
