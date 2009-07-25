@@ -126,7 +126,7 @@ void LLFloaterMap::draw()
 // [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-05 (RLVa-1.0.0c)
 void LLFloaterMap::open()
 {
-	if (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWMINIMAP))
+	if ( (rlv_handler_t::isEnabled()) && !gRlvHandler.hasBehaviour(RLV_BHVR_SHOWMINIMAP))
 	{
 		LLFloater::open();
 	}

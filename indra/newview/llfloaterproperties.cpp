@@ -356,7 +356,7 @@ void LLFloaterProperties::refreshFromItem(LLInventoryItem* item)
 		{
 			gCacheName->getFullName(perm.getOwner(), name);
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
-			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+			if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 			{
 				name = gRlvHandler.getAnonym(name);
 			}

@@ -347,7 +347,7 @@ void LLFloaterReporter::getObjectInfo(const LLUUID& object_id)
 				}
 				childSetText("object_name", object_owner);
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RVLa-1.0.0e
-				if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+				if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 				{
 					childSetVisible("object_name", false);	// Hide the object name if the picked object represents an avataz
 				}
@@ -627,7 +627,7 @@ void LLFloaterReporter::setPickedObjectProperties(const std::string& object_name
 {
 	childSetText("object_name", object_name);
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RVLa-1.0.0e
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+	if ((rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 	{
 		childSetVisible("object_name", true);	// Show the object name if the picked object is actually an object
 	}

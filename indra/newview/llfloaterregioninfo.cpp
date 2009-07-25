@@ -3278,7 +3278,7 @@ bool LLDispatchSetEstateAccess::operator()(
 void LLFloaterRegionInfo::open()
 {
 	// We'll allow access to the estate tools for estate managers (and for the sim owner)
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		LLViewerRegion* pRegion = gAgent.getRegion();
 		if (!pRegion)

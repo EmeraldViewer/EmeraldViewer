@@ -125,7 +125,7 @@ typedef enum e_radar_alert_type
 void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool entering)
 {
 // [RLVa:KB] - Alternate: Emerald-370
-	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+	if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 	{
 		name = gRlvHandler.getAnonym(name);
 	}
