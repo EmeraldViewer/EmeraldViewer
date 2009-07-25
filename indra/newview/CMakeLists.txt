@@ -44,14 +44,13 @@ if (WINDOWS)
     include(CopyWinLibs)
 endif (WINDOWS)
 
-if (COMPILE_OTR)
-    include(libgcrypt)
-    include(libgpg-error)
-    include(libotr)
-endif (COMPILE_OTR)
-if (DARWIN)
+include(libgcrypt)
+include(libgpg-error)
+include(libotr)
+
+if (DARWIN OR LINUX)
     include(libotrb)
-endif (DARWIN)
+endif (DARWIN OR LINUX)
 
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
@@ -75,20 +74,18 @@ include_directories(
     ${EMERALD_INCLUDE_DIRS}
     )
 
-if (COMPILE_OTR OR DARWIN)
-    if (WINDOWS)
-        include_directories(
-            ../gpg.vs/inc.vs
-            ../gpg.vs/libgpg-error-1.1.vs/custom
-            ../gpg.vs/libgcrypt-1.2.2.vs/custom
-        )
-    endif (WINDOWS)
+if (WINDOWS)
     include_directories(
-        ../libgpg-error/libgpg-error-1.0/src
-        ../libgcrypt/libgcrypt-1.2.2/src
-        ../libotr/libotr-3.2.0/src
+        ../gpg.vs/inc.vs
+        ../gpg.vs/libgpg-error-1.1.vs/custom
+        ../gpg.vs/libgcrypt-1.2.2.vs/custom
     )
-endif (COMPILE_OTR OR DARWIN)
+endif (WINDOWS)
+include_directories(
+    ../libgpg-error/libgpg-error-1.0/src
+    ../libgcrypt/libgcrypt-1.2.2/src
+    ../libotr/libotr-3.2.0/src
+)
 
 set(viewer_SOURCE_FILES
 	importtracker.cpp
@@ -489,15 +486,12 @@ set(viewer_SOURCE_FILES
     rlvmultistringsearch.cpp
     rlvextensions.cpp
     rlvfloaterbehaviour.cpp
+    otr_wrapper.cpp
+    otr_floater_smp.cpp
     )
 
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
     "The name of the viewer executable to create.")
-
-if (COMPILE_OTR OR DARWIN)
-   LIST(APPEND viewer_SOURCE_FILES otr_wrapper.cpp)
-   LIST(APPEND viewer_SOURCE_FILES otr_floater_smp.cpp)
-endif (COMPILE_OTR OR DARWIN)
 
 if (LINUX)
   # We can't set these flags for Darwin, because they get passed to
@@ -925,12 +919,9 @@ set(viewer_HEADER_FILES
     rlvmultistringsearch.h
     rlvextensions.h
     rlvfloaterbehaviour.h
+    otr_wrapper.h
+    otr_floater_smp.h
     )
-
-if (COMPILE_OTR OR DARWIN)
-    LIST(APPEND viewer_HEADER_FILES otr_wrapper.h)
-    LIST(APPEND viewer_HEADER_FILES otr_floater_smp.h)
-endif (COMPILE_OTR OR DARWIN)
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)
 

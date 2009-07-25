@@ -142,16 +142,17 @@ if (LINUX)
       -g
       -pthread
       )
-  if (COMPILE_OTR)
+  #if (COMPILE_OTR)
     add_definitions(
         -DCOMPILE_OTR=1
-        )
-  endif (COMPILE_OTR)
-  if (USE_OTR)
-    add_definitions(
         -DUSE_OTR=1
         )
-  endif (USE_OTR)
+  #endif (COMPILE_OTR)
+  #if (USE_OTR)
+  #  add_definitions(
+  #      -DUSE_OTR=1
+  #      )
+  #endif (USE_OTR)
      
 
   if (SERVER)
