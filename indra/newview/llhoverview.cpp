@@ -246,7 +246,7 @@ void LLHoverView::updateText()
 			if (firstname && lastname)
 			{
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e)
-				if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+				if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 				{
 					line = gRlvHandler.getAnonym(line.append(firstname->getString()).append(1, ' ').append(lastname->getString()));
 				}

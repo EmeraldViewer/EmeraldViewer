@@ -755,7 +755,7 @@ void LLAgent::movePitch(S32 direction)
 BOOL LLAgent::canFly()
 {
 // [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-05 (RLVa-1.0.0c)
-	if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_FLY)) return FALSE;
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_FLY)) return FALSE;
 // [/RLVa:KB]
 	if (isGodlike()) return TRUE;
 	//LGG always fly code
@@ -813,7 +813,7 @@ void LLAgent::setFlying(BOOL fly)
 	if (fly)
 	{
 // [RLVa:KB] - Checked: 2009-07-05 (RLVa-1.0.0c)
-		if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_FLY))
+		if (gRlvHandler.hasBehaviour(RLV_BHVR_FLY))
 		{
 			return;
 		}
@@ -4294,7 +4294,7 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 	}
 
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
-	if ( ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) )
+	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) )
 	{
 		return;
 	}
@@ -5339,7 +5339,7 @@ BOOL LLAgent::setUserGroupFlags(const LLUUID& group_id, BOOL accept_notices, BOO
 void LLAgent::buildLocationString(std::string& str)
 {
 // [RLVa:KB] - Checked: 2009-07-04 (RLVa-1.0.0a)
-	if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		str = rlv_handler_t::cstrHidden;
 		return;

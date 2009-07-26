@@ -2901,7 +2901,7 @@ void LLPanelLandCovenant::updateEstateOwnerName(const std::string& name)
 void LLFloaterLand::open()
 {
 	// We'll allow "About Land" as long as you have the ability to return prims (through ownership or through group powers)
-	if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 	{
 		LLParcelSelection* pParcelSel = LLViewerParcelMgr::getInstance()->getFloatingParcelSelection();
 		if ( (!pParcelSel) || (pParcelSel->hasOthersSelected()) )

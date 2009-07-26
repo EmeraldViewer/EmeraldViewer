@@ -358,7 +358,7 @@ void LLFloaterAvatarPicker::draw()
 		LLPanel* pNearMePanel = getChild<LLPanel>("NearMePanel");
 		if ( (pNearMePanel) && (childGetVisibleTab("ResidentChooserTabs") == pNearMePanel) )
 		{
-			if ( gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
+			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 			{
 				if (mNearMeListComplete)
 				{

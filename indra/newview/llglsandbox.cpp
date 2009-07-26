@@ -245,7 +245,7 @@ void LLToolSelectRect::handleRectangleSelection(S32 x, S32 y, MASK mask)
 		LLViewerCamera::getInstance()->setNear(new_near);
 	}
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
-	if ( (rlv_handler_t::isEnabled()) && gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH))
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_FARTOUCH))
 	{
 		// We'll allow drag selection under fartouch, but only within the fartouch range
 		// (just copy/paste the code above us to make that work, thank you Lindens!)
