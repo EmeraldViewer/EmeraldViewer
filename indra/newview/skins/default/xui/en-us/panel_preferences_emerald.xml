@@ -270,7 +270,7 @@ Recommended Settings are:
       <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
            bottom_delta="-10" drop_shadow_visible="true" enabled="true" follows="left|top"
            font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="-50"
-           mouse_opaque="false" name="text_box3" v_pad="0" width="420">
+           mouse_opaque="false" name="text_box3" v_pad="0" width="440">
         Response Text: (Use #f for recipient's first name, #l for last name, #t for timestamp):
       </text>
       <text_editor type="string" length="1" bottom_delta="-85" embedded_items="false" enabled="true" follows="left|top"
