@@ -8066,6 +8066,7 @@ class LLViewCheckBeaconEnabled : public view_listener_t
 		bool new_value = false;
 		if (beacon == "scriptsbeacon")
 		{
+			new_value = gSavedSettings.getBOOL( "scriptsbeacon");
 			LLPipeline::setRenderScriptedBeacons(new_value);
 		}
 		else if (beacon == "physicalbeacon")
