@@ -121,6 +121,8 @@ static void otrwui_create_privkey(
      * desired. */
     if (gOTR)
     {
+        LLUUID session_id = *((LLUUID*)opdata);
+        otr_log_message_getstring(session_id, "otr_gen_key_please_wait");
         std::string path =
             gDirUtilp->getExpandedFilename(
                 LL_PATH_PER_SL_ACCOUNT, OTR_PRIVATE_KEYS_FILE);
