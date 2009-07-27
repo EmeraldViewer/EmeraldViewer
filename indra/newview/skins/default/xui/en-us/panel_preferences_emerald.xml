@@ -403,6 +403,16 @@ Recommended Settings are:
          label="Allow ESC key to reset camera position in Camera Mode (Ctrl-1)" left_delta="0" mouse_opaque="true"
          name="EmResetCamOnEscape-toggle" radio_style="false" width="270" control_name="EmeraldResetCamOnEscape"
 		tool_tip="Setting this value to False prevents the camera from resetting when escape is pressed from within Camera mode (Ctrl+1)." />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Auto complete OOC comments." left_delta="0" mouse_opaque="true"
+         name="AutoCloseOOC-toggle" radio_style="false" width="270" control_name="EmeraldAutoCloseOOC"
+		tool_tip="Auto-close OOC chat" />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="Allow MU* poses" left_delta="0" mouse_opaque="true"
+         name="AllowMUpose-toggle" radio_style="false" width="270" control_name="EmeraldAllowMUpose"
+		tool_tip="Allow MU* pose style in chat and IM (with ':' as a synonymous to '/me ')" />
       <check_box bottom_delta="-40" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
          label="Enable Restrained Life [RLV] features (requires restart)" left_delta="0" mouse_opaque="true"

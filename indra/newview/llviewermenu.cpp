@@ -8730,6 +8730,7 @@ void initialize_menus()
 	addMenu(new LLEmeraldTogglePhantom(), "Emerald.TogglePhantom");
 	addMenu(new LLEmeraldCheckPhantom(), "Emerald.CheckPhantom");
 	addMenu(new LLEmeraldToggleSit(), "Emerald.ToggleSit");
+	addMenu(new LLEmeraldCheckSit(), "Emerald.CheckSit");
 	addMenu(new LLEmeraldToggleDoubleClickTeleport(), "Emerald.ToggleDoubleClickTeleport");
 	addMenu(new LLEmeraldCheckDoubleClickTeleport(), "Emerald.CheckDoubleClickTeleport");
 	addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
