@@ -2461,40 +2461,43 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 			std::string utf8_text = wstring_to_utf8str(text);
 			if (gSavedSettings.getBOOL("EmeraldAutoCloseOOC"))
 			{
-				// Chalice - OOC autoclosing patch based on code by Henri Beauchamp
-				int needsClosingType=0;
-				if (utf8_text.find("((") == 0 && utf8_text.find("))") == -1)
-					needsClosingType=1;
-				else if(utf8_text.find("[[") == 0 && utf8_text.find("]]") == -1)
-					needsClosingType=2;
-				if(needsClosingType==1)
+				if(utf8_text.length() > 2)
 				{
-					if(utf8_text.at(utf8_text.length() - 1) == ')')
-						utf8_text+=" ";
-					utf8_text+="))";
-				}
-				else if(needsClosingType==2)
-				{
-					if(utf8_text.at(utf8_text.length() - 1) == ']')
-						utf8_text+=" ";
-					utf8_text+="]]";
-				}
-				needsClosingType=0;
-				if (utf8_text.find("((") == -1 && utf8_text.find("))") == (utf8_text.length() - 2))
-					needsClosingType=1;
-				else if (utf8_text.find("[[") == -1 && utf8_text.find("]]") == (utf8_text.length() - 2))
-					needsClosingType=2;
-				if(needsClosingType==1)
-				{
-					if(utf8_text.at(0) == '(')
-						utf8_text.insert(0," ");
-					utf8_text.insert(0,"((");
-				}
-				else if(needsClosingType==2)
-				{
-					if(utf8_text.at(0) == '[')
-						utf8_text.insert(0," ");
-					utf8_text.insert(0,"[[");
+					// Chalice - OOC autoclosing patch based on code by Henri Beauchamp
+					int needsClosingType=0;
+					if (utf8_text.find("((") == 0 && utf8_text.find("))") == -1)
+						needsClosingType=1;
+					else if(utf8_text.find("[[") == 0 && utf8_text.find("]]") == -1)
+						needsClosingType=2;
+					if(needsClosingType==1)
+					{
+						if(utf8_text.at(utf8_text.length() - 1) == ')')
+							utf8_text+=" ";
+						utf8_text+="))";
+					}
+					else if(needsClosingType==2)
+					{
+						if(utf8_text.at(utf8_text.length() - 1) == ']')
+							utf8_text+=" ";
+						utf8_text+="]]";
+					}
+					needsClosingType=0;
+					if (utf8_text.find("((") == -1 && utf8_text.find("))") == (utf8_text.length() - 2))
+						needsClosingType=1;
+					else if (utf8_text.find("[[") == -1 && utf8_text.find("]]") == (utf8_text.length() - 2))
+						needsClosingType=2;
+					if(needsClosingType==1)
+					{
+						if(utf8_text.at(0) == '(')
+							utf8_text.insert(0," ");
+						utf8_text.insert(0,"((");
+					}
+					else if(needsClosingType==2)
+					{
+						if(utf8_text.at(0) == '[')
+							utf8_text.insert(0," ");
+						utf8_text.insert(0,"[[");
+					}
 				}
 			}
 			// Convert MU*s style poses into IRC emotes here.
