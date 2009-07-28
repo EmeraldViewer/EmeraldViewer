@@ -78,12 +78,12 @@
 
 #include "emerald.h"
 
-#if COMPILE_OTR          // [$PLOTR$]
+#if USE_OTR          // [$PLOTR$]
 #include "context.h"
 #include "llcombobox.h"
 #include "otr_wrapper.h"
 #include "otr_floater_smp.h"
-#endif // COMPILE_OTR    // [/$PLOTR$]
+#endif // USE_OTR    // [/$PLOTR$]
 
 //
 // Constants
@@ -2065,7 +2065,63 @@ void deliver_message(const std::string& utf8_text,
 	}
 }
 
-#if COMPILE_OTR       // [$PLOTR$]
+#if USE_OTR       // [$PLOTR$]
+void deliver_otr_message(const std::string& utf8_text,
+                         const LLUUID& im_session_id,
+                         const LLUUID& other_participant_id,
+                         EInstantMessage dialog)
+{
+    std::string name;
+    gAgent.buildFullname(name);
+
+    // Send message, try to keep SL from saving it if the other participant is offline.
+    U8 offline = IM_OFFLINE; // this doesn't always (ever?) work.
+
+    // default to IM_SESSION_SEND unless it's nothing special - in
+    // which case it's probably an IM to everyone.
+    U8 new_dialog = dialog;
+
+    if ( dialog != IM_NOTHING_SPECIAL )
+    {
+        new_dialog = IM_SESSION_SEND;
+    }
+    pack_instant_message(
+        gMessageSystem,
+        gAgent.getID(),
+        FALSE,
+        gAgent.getSessionID(),
+        other_participant_id,
+        name.c_str(),
+        utf8_text.c_str(),
+        offline,
+        (EInstantMessage)new_dialog,
+        im_session_id);
+    gAgent.sendReliableMessage();
+
+    // If there is a mute list and this is not a group chat...
+    if ( LLMuteList::getInstance() )
+    {
+        // ... the target should not be in our mute list for some message types.
+        // Auto-remove them if present.
+        switch( dialog )
+        {
+        case IM_NOTHING_SPECIAL:
+        case IM_GROUP_INVITATION:
+        case IM_INVENTORY_OFFERED:
+        case IM_SESSION_INVITE:
+        case IM_SESSION_P2P_INVITE:
+        case IM_SESSION_CONFERENCE_START:
+        case IM_SESSION_SEND: // This one is marginal - erring on the side of hearing.
+        case IM_LURE_USER:
+        case IM_GODLIKE_LURE_USER:
+        case IM_FRIENDSHIP_OFFERED:
+            LLMuteList::getInstance()->autoRemove(other_participant_id, LLMuteList::AR_IM);
+            break;
+        default: ; // do nothing
+        }
+    }
+}
+
 // static
 void LLFloaterIMPanel::onClickOtr(LLUICtrl* source, void* userdata)
 {
@@ -2083,6 +2139,14 @@ void LLFloaterIMPanel::onClickOtr(LLUICtrl* source, void* userdata)
 
 void LLFloaterIMPanel::doOtrStart()
 {
+    U32 otrpref = gSavedSettings.getU32("EmeraldUseOTR");
+    // otrpref: 0 == Require use of OTR in IMs, 1 == Request OTR if available, 2 == Accept OTR requests, 3 == Decline use of OTR
+    if (3 == otrpref)
+    {
+        otrLogMessageGetstring("otr_err_deacivated");
+        showOtrStatus();
+        return;
+    }
     if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
     {
         llinfos << "$PLOTR$ otr menu start/restart/refresh" << llendl;
@@ -2097,7 +2161,7 @@ void LLFloaterIMPanel::doOtrStart()
         info = LLAvatarTracker::instance().getBuddyInfo(mOtherParticipantUUID);
         if (info && (!info->isOnline()))
         {
-            otrLogMessageGetstringName("otr_err_offline");
+            otrLogMessageGetstringName("otr_err_offline_start");
             return;
         }
 
@@ -2158,15 +2222,18 @@ void LLFloaterIMPanel::doOtrStart()
     }
 }
 
-void LLFloaterIMPanel::doOtrStop()
+void LLFloaterIMPanel::doOtrStop(bool pretend_they_did)
 {
+    llinfos << "$PLOTR$ otr menu stop 1" << llendl;
+    // do not disable this bassed on gSavedSettings.getU32("EmeraldUseOTR");
+    // when the user disables OTR we may still need to stop currently encrypted conversations
     if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
     {
-        llinfos << "$PLOTR$ otr menu stop" << llendl;
         char my_uuid[UUID_STR_SIZE];
         char their_uuid[UUID_STR_SIZE];
         gAgent.getID().toString(&(my_uuid[0]));
         mOtherParticipantUUID.toString(&(their_uuid[0]));
+        llinfos << "$PLOTR$ otr menu stop 2 their_uuid:" << mOtherParticipantUUID << llendl;
         otrl_message_disconnect(
             gOTR->get_userstate(), 
             gOTR->get_uistate(), 
@@ -2174,7 +2241,15 @@ void LLFloaterIMPanel::doOtrStop()
             my_uuid,
             gOTR->get_protocolid(),
             their_uuid);
-        otrLogMessageGetstringName("otr_prog_I_stop");
+        if (pretend_they_did)
+        {
+            otrLogMessageGetstringName("otr_prog_they_stop");
+        }
+        else
+        {
+            otrLogMessageGetstringName("otr_prog_I_stop");
+        }
+        showOtrStatus();
     }
 }
 
@@ -2299,7 +2374,23 @@ void LLFloaterIMPanel::showOtrStatus()
         else
         {
             ConnContext *context = getOtrContext();
-            if (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate))
+            U32 otrpref = gSavedSettings.getU32("EmeraldUseOTR");
+            // otrpref: 0 == Require OTR, 1 == Request OTR, 2 == Accept OTR, 3 == Decline OTR
+            if (3 == otrpref)
+            {
+                if (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate))
+                {
+                    doOtrStop();
+                }
+                combo->removeall();
+                combo->add(getString("otr_start"),   ADD_BOTTOM, TRUE); // to tell them where to turn it back on
+                combo->add(getString("otr_stop"),    ADD_BOTTOM, FALSE);
+                combo->add(getString("otr_auth"),    ADD_BOTTOM, FALSE);
+                combo->add(getString("otr_help"),    ADD_BOTTOM, TRUE);
+                combo->add(getString("otr_levels"),  ADD_BOTTOM, TRUE);
+                combo->setLabel(getString("otr_not_private"));
+            }
+            else if (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate))
             {
                 combo->removeall();
                 combo->add(getString("otr_refresh"), ADD_BOTTOM, TRUE);
@@ -2430,10 +2521,25 @@ void show_otr_status(LLUUID session_id)
     if (floater) floater->showOtrStatus();
     else
     {
-        llinfos << "$PLOTR$ show_otr_status() failed to find floater." << llendl;
+        llinfos << "$PLOTR$ can't find floater." << llendl;
     }
 }
-#endif // COMPILE_OTR // [/$PLOTR$]
+
+void LLFloaterIMPanel::pretendTheyOtrStop()
+{
+    llinfos << "$PLOTR$ pretending they did doOtrStop()" << llendl;
+    // we really stop our end, but...
+    doOtrStop(true); // yes, pretend they did it
+    // ...pretend that they did it
+    ConnContext *context = getOtrContext();
+    if (context) context->msgstate = OTRL_MSGSTATE_FINISHED;
+    else
+    {
+        llwarns << "$PLOTR$ can't find context." << llendl;
+    }
+    showOtrStatus();
+}
+#endif // USE_OTR // [/$PLOTR$]
 
 void LLFloaterIMPanel::sendMsg(bool ooc)
 {
@@ -2553,6 +2659,21 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 			if ( mSessionInitialized )
 			{
 #if USE_OTR // [$PLOTR$]
+                const LLRelationship* info = NULL;
+                info = LLAvatarTracker::instance().getBuddyInfo(mOtherParticipantUUID);
+                ConnContext *context = getOtrContext(1);
+                if (info && (!info->isOnline()) && context &&
+                    (   (OTRL_MSGSTATE_ENCRYPTED == context->msgstate)
+                     || (OTRL_MSGSTATE_FINISHED == context->msgstate)))
+                {
+                    // we can't continue this encrypted session but we
+                    // can't let the user accidentally send unencrypted
+                    if (OTRL_MSGSTATE_ENCRYPTED == context->msgstate)
+                        pretendTheyOtrStop();
+                    otrLogMessageGetstringName("otr_err_offline_send");
+                    return; // leave the unsent message in the edit box
+                }
+
                 gcry_error_t err = 0;
                 char *newmessage = NULL;
                 char my_uuid[UUID_STR_SIZE];
@@ -2561,7 +2682,6 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
                 mOtherParticipantUUID.toString(&(their_uuid[0]));
 
                 bool was_finished = false;
-                ConnContext *context = getOtrContext(1);
                 if (gOTR && context && (context->msgstate == OTRL_MSGSTATE_FINISHED))
                 {
                     was_finished = true;
@@ -2983,6 +3103,17 @@ void LLFloaterIMPanel::setOffline()
 	{
 		childSetEnabled("profile_tele_btn", false);
 	}
+#if USE_OTR       // [$PLOTR$]
+    llinfos << "$PLOTR$ friend went offline" << llendl;
+    if (gOTR)
+    {
+        ConnContext *context = getOtrContext();
+        if (context && (context->msgstate == OTRL_MSGSTATE_ENCRYPTED))
+        {
+            pretendTheyOtrStop();
+        }
+    }
+#endif // USE_OTR // [/$PLOTR$]
 }
 
 void LLFloaterIMPanel::showSessionStartError(

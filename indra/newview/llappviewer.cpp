@@ -188,9 +188,9 @@
 //----------------------------------------------------------------------------
 // viewer.cpp - these are only used in viewer, should be easily moved.
 
-#if COMPILE_OTR          // [$PLOTR$]
+#if USE_OTR          // [$PLOTR$]
 #include "otr_wrapper.h"
-#endif // COMPILE_OTR    // [/$PLOTR$]
+#endif // USE_OTR    // [/$PLOTR$]
 
 #if LL_DARWIN
 extern void init_apple_menu(const char* product);
@@ -2695,6 +2695,9 @@ void LLAppViewer::forceQuit()
 void LLAppViewer::requestQuit()
 {
 	llinfos << "requestQuit" << llendl;
+#if USE_OTR          // [$PLOTR$]
+    OTR_Wrapper::logout();
+#endif // USE_OTR    // [/$PLOTR$]
 
 	LLViewerRegion* region = gAgent.getRegion();
 	

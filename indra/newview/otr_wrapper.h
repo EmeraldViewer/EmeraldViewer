@@ -42,6 +42,8 @@ private:
 
 public:
     static void init();
+    static void stopAll();
+    static void logout();
     OtrlUserState get_userstate()    { return this->userstate; }
     OtrlMessageAppOps *get_uistate() { return &(this->uistate); }
     const char * get_protocolid()    { return "SecondLife"; }

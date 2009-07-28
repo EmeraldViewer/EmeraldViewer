@@ -1625,7 +1625,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
                     {
                         gIMMgr->addSession(name,IM_NOTHING_SPECIAL,from_id);
                     }
-                    deliver_message(
+                    deliver_otr_message(
                         "/me's settings require OTR encrypted instant messages. Your message was not displayed.",
                         session, from_id, IM_NOTHING_SPECIAL);
                     LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session);
