@@ -2892,6 +2892,20 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		is_owned_by_me = chatter->permYouOwner();
 	}
 
+// twisted
+    if(chat.mSourceType == CHAT_SOURCE_OBJECT 
+    && chat.mChatType != CHAT_TYPE_DEBUG_MSG
+    && !owner_id.isNull()
+    && owner_id != gAgent.getID())
+    {
+//        std::string ownername;
+//        if(gCacheName->getFullName(owner_id,ownername))
+//            from_name += (" (" + ownername + ")");
+        chat.mURL = llformat("secondlife:///app/agent/%s/about",owner_id.asString().c_str());
+    }
+
+// end twisted
+
 	if (is_audible)
 	{
 		BOOL visible_in_chat_bubble = FALSE;
