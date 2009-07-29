@@ -543,7 +543,8 @@ LLAppViewer::LLAppViewer() :
 	mLogoutRequestSent(false),
 	mYieldTime(-1),
 	mMainloopTimeout(NULL),
-	mAgentRegionLastAlive(false)
+	mAgentRegionLastAlive(false),
+	mLogoutMarkerFile(NULL)
 {
 	if(NULL != sInstance)
 	{
@@ -667,10 +668,6 @@ bool LLAppViewer::init()
 	/////////////////////////////////////////////////
 
 	//test_cached_control();
-
-	gSavedSettings.getControl("MainloopTimeoutDefault")->getSignal()->connect(&updateMainLoopTimeOutDefault);
-	gSavedSettings.getControl("FreezeTime")->getSignal()->connect(&updateFreezeTime);
-	gSavedSettings.getControl("CmdLineLoginURI")->getSignal()->connect(&handleCmdLineURIsUpdate);
 
 	// track number of times that app has run
 	mNumSessions = gSavedSettings.getS32("NumSessions");
@@ -1803,6 +1800,16 @@ bool LLAppViewer::initConfiguration()
 	LLFirstUse::addConfigVariable("FirstSculptedPrim");
 	LLFirstUse::addConfigVariable("FirstVoice");
 	LLFirstUse::addConfigVariable("FirstMedia");
+
+	//Zwagoth: Uhg... these have to go here because otherwise the command line parser
+	// does not trigger the callbacks. Putting it above this function causes null ptrs
+	// because gSavedSettings is not set up yet. Also... above this line, we don't have the
+	// possible values loaded yet, so it returns null controls if you move it up more.
+	// Moral: DON'T MOVE THESE!!!
+	//Emerald: Fixes bug #22
+	gSavedSettings.getControl("MainloopTimeoutDefault")->getSignal()->connect(&updateMainLoopTimeOutDefault);
+	gSavedSettings.getControl("FreezeTime")->getSignal()->connect(&updateFreezeTime);
+	gSavedSettings.getControl("CmdLineLoginURI")->getSignal()->connect(&handleCmdLineURIsUpdate);
 		
 	// - read command line settings.
 	LLControlGroupCLP clp;
