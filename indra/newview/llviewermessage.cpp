@@ -137,6 +137,8 @@
 #include "llviewerdisplay.h"
 #include "llkeythrottle.h"
 
+#include "llfloaterfriends.h"
+
 #include <boost/tokenizer.hpp>
 
 #if LL_WINDOWS // For Windows specific error handler
@@ -2623,6 +2625,8 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			// doesn't hurt for dupes.
 			LLAvatarTracker::formFriendship(from_id);
 			
+			LLPanelFriends::FriendImportState(from_id, true);
+			
 			std::vector<std::string> strings;
 			strings.push_back(from_id.asString());
 			send_generic_message("requestonlinenotification", strings);
@@ -2632,7 +2636,11 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		}
 		break;
 
-	case IM_FRIENDSHIP_DECLINED_DEPRECATED:
+	case IM_FRIENDSHIP_DECLINED_DEPRECATED://deprecated my ass
+		args["NAME"] = name;
+		LLNotifications::instance().add("FriendshipDeclined", args);
+		LLPanelFriends::FriendImportState(from_id, false);
+		break;
 	default:
 		LL_WARNS("Messaging") << "Instant message calling for unknown dialog "
 				<< (S32)dialog << LL_ENDL;
