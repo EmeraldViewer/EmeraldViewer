@@ -1,6 +1,21 @@
 <?xml version="1.0" ?>
 <llsd>
   <map>
+    <key>ColorllFunction</key>
+    <map>
+      <key>Comment</key>
+      <string>Color for llFunction builtins in the script editor.</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Color3</string>
+      <key>Value</key>
+      <array>
+        <real>0.5</real>
+        <real>0.0</real>
+        <real>0.15</real>
+      </array>
+    </map>
     <key>RestrainedLife</key>
     <map>
       <key>Comment</key>
