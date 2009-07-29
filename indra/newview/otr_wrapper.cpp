@@ -191,23 +191,6 @@ static void otrwui_notify(
 {
     /* Display a notification message for a particular accountname /
      * protocol / username conversation. */
-	 //accountname is a uuid.  protocol is "SecondLife". recipient is their uuid.
-	/*LLUUID rec = LLUUID(std::string(username));
-	std::string my_name;
-	gAgent.buildFullname(my_name);
-	pack_instant_message(
-		gMessageSystem,
-		gAgent.getID(),
-		FALSE,
-		gAgent.getSessionID(),
-		rec,
-		my_name,
-		std::string(title)+"\n"+std::string(secondary),
-		IM_OFFLINE,
-		IM_NOTHING_SPECIAL,
-		LLIMMgr::computeSessionID(IM_NOTHING_SPECIAL,rec));*/
-
-
     std::string trace = "otrwui_notify: \n";
     trace += "title(";     trace += title;     trace += ")\n";
     trace += "primary(";   trace += primary;   trace += ")\n";

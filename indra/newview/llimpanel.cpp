@@ -2074,8 +2074,10 @@ void deliver_otr_message(const std::string& utf8_text,
     std::string name;
     gAgent.buildFullname(name);
 
-    // Send message, try to keep SL from saving it if the other participant is offline.
-    U8 offline = IM_OFFLINE; // this doesn't always (ever?) work.
+	const LLRelationship* info = NULL;
+	info = LLAvatarTracker::instance().getBuddyInfo(other_participant_id);
+	
+	U8 offline = (!info || info->isOnline()) ? IM_ONLINE : IM_OFFLINE;
 
     // default to IM_SESSION_SEND unless it's nothing special - in
     // which case it's probably an IM to everyone.
@@ -2529,8 +2531,7 @@ void LLFloaterIMPanel::pretendTheyOtrStop()
 {
     llinfos << "$PLOTR$ pretending they did doOtrStop()" << llendl;
     // we really stop our end, but...
-    doOtrStop(true); // yes, pretend they did it
-    // ...pretend that they did it
+    doOtrStop(true); // ... pretend that they did it
     ConnContext *context = getOtrContext();
     if (context) context->msgstate = OTRL_MSGSTATE_FINISHED;
     else

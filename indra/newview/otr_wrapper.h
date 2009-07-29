@@ -51,9 +51,6 @@ public:
 
 extern OTR_Wrapper *gOTR; // the singleton OTR wrapper
 
-// $TODO$ better file names/paths.  Should be per avy, especially the
-// private keys, currently it's per install directory.
-
 #define OTR_PRIVATE_KEYS_FILE "OTR-my-private-key.dat"
 #define OTR_PUBLIC_KEYS_FILE  "OTR-public-keys.dat"
 
