@@ -398,7 +398,8 @@ LLAgent::LLAgent() :
 	mAgentWearablesUpdateSerialNum(0),
 	mWearablesLoaded(FALSE),
 	mTextureCacheQueryID(0),
-	mAppearanceSerialNum(0)
+	mAppearanceSerialNum(0),
+	mFriendObserver(0)
 {
 	U32 i;
 	for (i = 0; i < TOTAL_CONTROLS; i++)
