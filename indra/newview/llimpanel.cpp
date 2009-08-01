@@ -78,12 +78,13 @@
 
 #include "emerald.h"
 
-#if USE_OTR          // [$PLOTR$]
+#if USE_OTR       // [$PLOTR$]
 #include "context.h"
 #include "llcombobox.h"
 #include "otr_wrapper.h"
-#include "otr_floater_smp.h"
-#endif // USE_OTR    // [/$PLOTR$]
+#include "otr_floater_smp_dialog.h"
+#include "otr_floater_smp_progress.h"
+#endif // USE_OTR // [/$PLOTR$]
 
 //
 // Constants
@@ -1107,6 +1108,10 @@ LLFloaterIMPanel::LLFloaterIMPanel(
 	mCallBackEnabled(TRUE),
 	mSpeakers(NULL),
 	mSpeakerPanel(NULL),
+#if USE_OTR       // [$PLOTR$]
+    mOtrSmpDialog(NULL),
+    mOtrSmpProgress(NULL),
+#endif // USE_OTR // [/$PLOTR$]
 	mFirstKeystrokeTimer(),
 	mLastKeystrokeTimer()
 {
@@ -1139,6 +1144,10 @@ LLFloaterIMPanel::LLFloaterIMPanel(
 	mCallBackEnabled(TRUE),
 	mSpeakers(NULL),
 	mSpeakerPanel(NULL),
+#if USE_OTR       // [$PLOTR$]
+    mOtrSmpDialog(NULL),
+    mOtrSmpProgress(NULL),
+#endif // USE_OTR // [/$PLOTR$]
 	mFirstKeystrokeTimer(),
 	mLastKeystrokeTimer()
 {
@@ -1281,6 +1290,11 @@ LLFloaterIMPanel::~LLFloaterIMPanel()
 	{
 		mInputEditor->setFocusLostCallback( NULL );
 	}
+
+#if USE_OTR       // [$PLOTR$]
+    if (mOtrSmpDialog)   delete mOtrSmpDialog;
+    if (mOtrSmpProgress) delete mOtrSmpProgress;
+#endif // USE_OTR // [/$PLOTR$]
 }
 
 static void passwordFocusChanged(LLFocusableElement *element, void *userdata)
@@ -2257,6 +2271,18 @@ void LLFloaterIMPanel::doOtrStop(bool pretend_they_did)
 
 void LLFloaterIMPanel::doOtrAuth()
 {
+    if (mOtrSmpDialog)
+    {
+        llinfos << "$PLOTR$ mOtrSmpDialog SMP already in progress, ignoring request to start it" << llendl;
+        return;
+    }
+    if (mOtrSmpDialog || mOtrSmpProgress)
+    {
+        llinfos << "$PLOTR$ SMP already in progress, ignoring request to start it" << llendl;
+        // $TODO$ Tell the user nicely to cancel the one in progress.
+        // $TODO$ better yet, cancel it/them for the user
+        return;
+    }
     if (gOTR && (IM_NOTHING_SPECIAL == mDialog))
     {
         llinfos << "$PLOTR$ otr menu auth" << llendl;
@@ -2276,10 +2302,8 @@ void LLFloaterIMPanel::doOtrAuth()
                                  gOTR->get_protocolid());
         char other_fingerprint[45];
         otrl_privkey_hash_to_human(other_fingerprint, context->active_fingerprint->fingerprint);
-        OtrFloaterSmp *auth_dialog = new OtrFloaterSmp(
-            mSessionUUID, mOtherParticipantUUID,
-            &(my_fingerprint[0]), &(other_fingerprint[0]));
-        auth_dialog->show();
+        startSmpDialog(mSessionUUID, mOtherParticipantUUID,
+                       &(my_fingerprint[0]), &(other_fingerprint[0]));
     }
 }
 
@@ -2539,6 +2563,254 @@ void LLFloaterIMPanel::pretendTheyOtrStop()
         llwarns << "$PLOTR$ can't find context." << llendl;
     }
     showOtrStatus();
+}
+
+void LLFloaterIMPanel::startSmpDialog(
+    LLUUID session_id, LLUUID other_id,
+    std::string my_fingerprint, std::string other_fingerprint)
+{
+    if (mOtrSmpDialog)
+    {
+        mOtrSmpDialog->close();
+        delete mOtrSmpDialog;
+    }
+    mOtrSmpDialog = new OtrFloaterSmpDialog(
+        this, mSessionUUID, mOtherParticipantUUID,
+        my_fingerprint, other_fingerprint);
+    if (mOtrSmpDialog) mOtrSmpDialog->show();
+    else
+    {
+        llwarns << "$PLOTR$ couldn't new OtrFloaterSmpDialog" << llendl;
+    }
+}
+
+void LLFloaterIMPanel::startSmpDialogQA(
+    LLUUID session_id, LLUUID other_id, std::string question, OtrlTLV *tlv)
+{
+    if (mOtrSmpDialog)
+    {
+        mOtrSmpDialog->close();
+        delete mOtrSmpDialog;
+    }
+    mOtrSmpDialog = new OtrFloaterSmpDialog(
+        this, mSessionUUID, mOtherParticipantUUID, question, tlv);
+    if (mOtrSmpDialog) mOtrSmpDialog->show();
+    else
+    {
+        llwarns << "$PLOTR$ couldn't new OtrFloaterSmpDialog" << llendl;
+    }
+}
+
+void LLFloaterIMPanel::startSmpDialogSS(
+    LLUUID session_id, LLUUID other_id, OtrlTLV *tlv)
+{
+    if (mOtrSmpDialog)
+    {
+        mOtrSmpDialog->close();
+        delete mOtrSmpDialog;
+    }
+    mOtrSmpDialog = new OtrFloaterSmpDialog(
+        this, mSessionUUID, mOtherParticipantUUID, tlv);
+    if (mOtrSmpProgress) mOtrSmpDialog->show();
+    else
+    {
+        llwarns << "$PLOTR$ couldn't new OtrFloaterSmpDialog" << llendl;
+    }
+}
+
+void LLFloaterIMPanel::endSmpDialog()
+{
+    if (!mOtrSmpDialog)
+    {
+        llwarns << "$PLOTR$ couldn't find OtrFloaterSmpDialog" << llendl;
+    }
+    else 
+    {
+        delete mOtrSmpDialog;
+        mOtrSmpDialog = NULL;
+    }
+}
+
+void LLFloaterIMPanel::startSmpProgress(
+    LLUUID session_id, LLUUID other_id,
+    std::string a_question, std::string a_secret_answer, bool is_reply)
+{
+    if (mOtrSmpProgress)
+    {
+        mOtrSmpProgress->close();
+        delete mOtrSmpProgress;
+    }
+    mOtrSmpProgress =
+        new OtrFloaterSmpProgress(this, mSessionUUID, mOtherParticipantUUID,
+                                  a_question, a_secret_answer, is_reply);
+    if (mOtrSmpProgress) mOtrSmpProgress->show();
+    else
+    {
+        llwarns << "$PLOTR$ couldn't new OtrFloaterSmpProgress" << llendl;
+    }
+}
+
+void LLFloaterIMPanel::startSmpProgress(
+    LLUUID session_id, LLUUID other_id,
+    std::string a_secret, bool is_reply)
+{
+    if (mOtrSmpProgress)
+    {
+        mOtrSmpProgress->close();
+        delete mOtrSmpProgress;
+    }
+    mOtrSmpProgress =
+        new OtrFloaterSmpProgress(this, mSessionUUID, mOtherParticipantUUID,
+                                  a_secret, is_reply);
+    if (mOtrSmpProgress) mOtrSmpProgress->show();
+    else
+    {
+        llwarns << "$PLOTR$ couldn't new OtrFloaterSmpProgress" << llendl;
+    }
+}
+
+void LLFloaterIMPanel::endSmpProgress()
+{
+    if (!mOtrSmpProgress)
+    {
+        llwarns << "$PLOTR$ couldn't find OtrFloaterSmpProgress" << llendl;
+    }
+    else 
+    {
+        delete mOtrSmpProgress;
+        mOtrSmpProgress = NULL;
+    }
+}
+
+void LLFloaterIMPanel::handleOtrTlvs(OtrlTLV *tlvs)
+{
+    ConnContext *context = getOtrContext();
+    if (! context)
+    {
+        llwarns << "$PLOTR$ Can't find otr context" << llendl;
+        return;
+    }
+    if (! context->smstate)
+    {
+        llwarns << "$PLOTR$ OTR context doesn't have smstate" << llendl;
+        return;
+    }
+    if (context->smstate->sm_prog_state == OTRL_SMP_PROG_CHEATED)
+    {
+        if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_errored");
+        context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+        context->smstate->sm_prog_state = OTRL_SMP_PROG_OK;
+        return;
+    }
+    NextExpectedSMP nextMsg = context->smstate->nextExpected;
+    OtrlTLV *tlv = NULL;
+	tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1Q);
+	if (tlv)
+    {
+	    if (nextMsg != OTRL_SMP_EXPECT1)
+        {
+            if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_errored");
+            return;
+        }
+        // Start a challenge SMP dialog
+        char *question = (char *)tlv->data;
+        char *eoq = (char *)memchr(question, '\0', tlv->len);
+        if (!eoq)
+        {
+            llwarns << "$PLOTR$ bad format in OTRL_TLV_SMP1Q, no end to question." << llendl;
+            if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_errored");
+            return;
+        }
+        startSmpDialogQA(mSessionUUID, mOtherParticipantUUID, question, tlv);
+        if (mOtrSmpProgress) mOtrSmpProgress->setPercent(25);
+        return;
+    }
+	tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP1);
+	if (tlv)
+    {
+	    if (nextMsg != OTRL_SMP_EXPECT1)
+        {
+            if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_errored");
+            return;
+        }
+        // Start a challenge SMP dialog
+        startSmpDialogSS(mSessionUUID, mOtherParticipantUUID, tlv);
+        if (mOtrSmpProgress) mOtrSmpProgress->setPercent(25);
+        return;
+    }
+	tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP2);
+	if (tlv)
+    {
+	    if (nextMsg != OTRL_SMP_EXPECT2)
+        {
+            if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_errored");
+            return;
+        }
+	    else
+        {
+            // If we received TLV2, we will send TLV3 and expect TLV4
+            context->smstate->nextExpected = OTRL_SMP_EXPECT4;
+            if (mOtrSmpProgress) mOtrSmpProgress->setPercent(75);
+	    }
+	}
+	tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP3);
+	if (tlv)
+    {
+	    if (nextMsg != OTRL_SMP_EXPECT3)
+        {
+            if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_errored");
+            return;
+        }
+	    else
+        {
+            // If we received TLV3, we will send TLV4
+            // We will not expect more messages, so prepare for next SMP
+            context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+            // Report result to user
+            if (context->active_fingerprint &&
+                context->active_fingerprint->trust &&
+                *(context->active_fingerprint->trust))
+            {
+                if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_ok");
+            }
+            else
+            {
+                if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_failed");
+            }
+	    }
+	}
+	tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP4);
+	if (tlv)
+    {
+	    if (nextMsg != OTRL_SMP_EXPECT4)
+        {
+            if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_errored");
+            return;
+        }
+	    else {
+            // We will not expect more messages, so prepare for next SMP
+            context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+            // Report result to user
+            if (context->active_fingerprint &&
+                context->active_fingerprint->trust &&
+                *(context->active_fingerprint->trust))
+            {
+                if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_ok");
+            }
+            else
+            {
+                if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_failed");
+            }
+	    }
+	}
+	tlv = otrl_tlv_find(tlvs, OTRL_TLV_SMP_ABORT);
+	if (tlv)
+    {
+	    // The message we are waiting for will not arrive, so reset
+	    // and prepare for the next SMP
+	    context->smstate->nextExpected = OTRL_SMP_EXPECT1;
+        if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_aborted");
+	}
 }
 #endif // USE_OTR // [/$PLOTR$]
 

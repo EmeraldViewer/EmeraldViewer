@@ -14,7 +14,7 @@
    License for more details.
  
    You should have received a copy of the GNU Lesser General Public
-   License along with Libgcrypt; if not, write to the Free Software
+   License along with the viewer; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA.  */
 
@@ -30,6 +30,7 @@ extern "C" {
 #include <proto.h>      // OTR
 #include <privkey.h>    // OTR
 #include <../libotr/libotr-3.2.0/src/message.h> // OTR
+#include <context.h>
 }
 
 class OTR_Wrapper

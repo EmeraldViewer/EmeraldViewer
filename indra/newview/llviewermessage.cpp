@@ -150,9 +150,9 @@
 extern LLMap< const LLUUID, LLFloaterAvatarInfo* > gAvatarInfoInstances; // Only defined in llfloateravatarinfo.cpp
 // [/RLVa:KB]
 
-#if COMPILE_OTR          // [$PLOTR$]
+#if USE_OTR          // [$PLOTR$]
 #include "otr_wrapper.h"
-#endif // COMPILE_OTR    // [/$PLOTR$]
+#endif // USE_OTR    // [/$PLOTR$]
 
 //silly spam define D:
 bool dialogSpamOn;
@@ -1610,9 +1610,16 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		}
 		if (tlvs)
 		{
-			// $TODO$ handle TLVS -- especially SMP
 			llinfos << "$PLOTR$ recieved TLVs" << llendl;
-			otrl_tlv_free(tlvs);
+            // currently the only TLVs we deal with are SMP, and they require an IM panel
+            LLUUID session = LLIMMgr::computeSessionID(dialog,from_id);
+            if(!gIMMgr->hasSession(session))
+            {
+                gIMMgr->addSession(name,IM_NOTHING_SPECIAL,from_id);
+            }
+            LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session);
+            if (pan) pan->handleOtrTlvs(tlvs);
+            otrl_tlv_free(tlvs);
 		}
 		if (1 == ignore_message)
 		{
@@ -1627,7 +1634,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
                     {
                         gIMMgr->addSession(name,IM_NOTHING_SPECIAL,from_id);
                     }
-                    deliver_otr_message(
+                    deliver_otr_message(  // $TODO$ move the following message to some .xml file
                         "/me's settings require OTR encrypted instant messages. Your message was not displayed.",
                         session, from_id, IM_NOTHING_SPECIAL);
                     LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session);
