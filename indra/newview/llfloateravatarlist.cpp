@@ -957,7 +957,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		{	
 			element["columns"][LIST_ACTIVITY]["type"] = "icon";
 			element["columns"][LIST_ACTIVITY]["value"] = icon;
-			element["columns"][LIST_ACTIVITY]["color"] = gColors.getColor("DefaultListColor").getValue();
+			element["columns"][LIST_ACTIVITY]["color"] = gColors.getColor("DefaultListIcon").getValue();
 			//llinfos << "Activity icon: " << activity_icon << llendl;
 		}
 
