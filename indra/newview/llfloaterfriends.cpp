@@ -249,6 +249,7 @@ BOOL LLPanelFriends::addFriend(const LLUUID& agent_id)
 	LLSD& online_status_column = element["columns"][LIST_ONLINE_STATUS];
 	online_status_column["column"] = "icon_online_status";
 	online_status_column["type"] = "icon";
+	online_status_column["color"] = gColors.getColor("DefaultListIcon").getValue();
 	
 	if (isOnline)
 	{
