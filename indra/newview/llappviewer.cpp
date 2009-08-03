@@ -188,8 +188,10 @@
 //----------------------------------------------------------------------------
 // viewer.cpp - these are only used in viewer, should be easily moved.
 
+#if COMPILE_OTR          // [$PLOTR$]
 #if USE_OTR          // [$PLOTR$]
 #include "otr_wrapper.h"
+#endif // COMPILE_OTR    // [/$PLOTR$]
 #endif // USE_OTR    // [/$PLOTR$]
 
 #if LL_DARWIN
@@ -543,6 +545,7 @@ LLAppViewer::LLAppViewer() :
 	mLogoutRequestSent(false),
 	mYieldTime(-1),
 	mMainloopTimeout(NULL),
+	mAgentRegionLastAlive(false)
 	mAgentRegionLastAlive(false),
 	mLogoutMarkerFile(NULL)
 {
@@ -668,6 +671,10 @@ bool LLAppViewer::init()
 	/////////////////////////////////////////////////
 
 	//test_cached_control();
+
+	gSavedSettings.getControl("MainloopTimeoutDefault")->getSignal()->connect(&updateMainLoopTimeOutDefault);
+	gSavedSettings.getControl("FreezeTime")->getSignal()->connect(&updateFreezeTime);
+	gSavedSettings.getControl("CmdLineLoginURI")->getSignal()->connect(&handleCmdLineURIsUpdate);
 
 	// track number of times that app has run
 	mNumSessions = gSavedSettings.getS32("NumSessions");
@@ -3328,14 +3335,18 @@ void LLAppViewer::idle()
 	    gAgent.autoPilot(&yaw);
     
 	    static LLFrameTimer agent_update_timer;
+		static LLFrameTimer stream_update_timer;
 	    static U32 				last_control_flags;
     
 	    //	When appropriate, update agent location to the simulator.
 	    F32 agent_update_time = agent_update_timer.getElapsedTimeF32();
+		F32 stream_update_time = stream_update_timer.getElapsedTimeF32();
 	    BOOL flags_changed = gAgent.controlFlagsDirty() || (last_control_flags != gAgent.getControlFlags());
     
 		//Name Short - Added to adjust agent updates.
-	   if (flags_changed || (agent_update_time > (1.0f / gSavedSettings.getF32("EmeraldAgentUpdatesPerSecond"))))
+		//theGenius Indigo - Name, don't try to divide by zero here...seriously, what were you smoking?
+		F32 AgentUpdateFrequency = gSavedSettings.getF32("EmeraldAgentUpdatesPerSecond");
+		if (flags_changed || (agent_update_time > (1.0f / max(AgentUpdateFrequency, 0.0001f))))
 	    {
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();
@@ -3348,6 +3359,17 @@ void LLAppViewer::idle()
 			}
 		    agent_update_timer.reset();
 	    }
+		//theGenius Indigo - Joystick data is streamed inworld on a specific channel
+		BOOL canSend = gAgent.getTeleportState() == LLAgent::TELEPORT_NONE && !LLAppViewer::instance()->logoutRequestSent() && gAgent.getRegion() != NULL;
+		if(canSend)
+		{
+		   F32 JoystickStreamFrequency = gSavedSettings.getF32("JoystickStreamRefresh");
+		   if(gSavedSettings.getBOOL("JoystickStreamEnabled") && (stream_update_time > (1.0f / max(JoystickStreamFrequency, 0.0001f))))
+		   {
+				LLViewerJoystick::getInstance()->cansend(); //Allow data to be sent on the next joystick scan
+				stream_update_timer.reset();
+		   }
+		}
 	}
 
 	//////////////////////////////////////

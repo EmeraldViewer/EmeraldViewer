@@ -555,6 +555,18 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("FlycamAxisDeadZone4")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("FlycamAxisDeadZone5")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("FlycamAxisDeadZone6")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale0")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale1")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale2")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale3")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale4")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisScale5")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone0")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone1")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone2")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone3")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone4")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
+	gSavedSettings.getControl("JoystickStreamAxisDeadZone5")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("AvatarAxisScale0")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("AvatarAxisScale1")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
 	gSavedSettings.getControl("AvatarAxisScale2")->getSignal()->connect(boost::bind(&handleJoystickChanged, _1));
@@ -719,4 +731,3 @@ void test_cached_control()
 	if((std::string)test_BrowserHomePage != "http://www.secondlife.com") llerrs << "Fail BrowserHomePage" << llendl;
 }
 #endif // TEST_CACHED_CONTROL
-
