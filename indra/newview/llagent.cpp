@@ -1893,14 +1893,14 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 
 	LLVector3d	camera_offset(mCameraFocusOffsetTarget);
 	LLVector3d	camera_offset_unit(mCameraFocusOffsetTarget);
-	//F32 min_zoom = LAND_MIN_ZOOM;
+	F32 min_zoom = 0.f;//LAND_MIN_ZOOM;
 	F32 current_distance = (F32)camera_offset_unit.normalize();
 	F32 new_distance = current_distance * fraction;
 
-	/*
-	Emerald:
-	So many darned limits!
-	~Zwag
+	
+	//Emerald:
+	//So many darned limits!
+	//~Zwag
 	// Don't move through focus point
 	
 	if (mFocusObject)
@@ -1917,7 +1917,7 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 		}
 	}
 
-	new_distance = llmax(new_distance, min_zoom); */
+	new_distance = llmax(new_distance, min_zoom);
 
 	// Don't zoom too far back
 	const F32 DIST_FUDGE = 16.f; // meters

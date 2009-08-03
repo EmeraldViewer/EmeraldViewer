@@ -545,7 +545,6 @@ LLAppViewer::LLAppViewer() :
 	mLogoutRequestSent(false),
 	mYieldTime(-1),
 	mMainloopTimeout(NULL),
-	mAgentRegionLastAlive(false)
 	mAgentRegionLastAlive(false),
 	mLogoutMarkerFile(NULL)
 {
