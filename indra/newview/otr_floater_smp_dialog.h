@@ -44,7 +44,7 @@ private:
     static void onClickVeri(LLUICtrl* source, void* userdata);
     void doClickAuth();
     static void onClickAuth(void* userdata);
-    std::string getStringName(char *message_name);
+    std::string getStringName(const char *message_name);
 
 public:
     OtrFloaterSmpDialog(LLFloaterIMPanel *im_panel, LLUUID session_id, LLUUID other_id,

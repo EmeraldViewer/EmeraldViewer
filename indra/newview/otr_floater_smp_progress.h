@@ -49,9 +49,9 @@ public:
     OtrFloaterSmpProgress(LLFloaterIMPanel *im_panel, LLUUID session_id, LLUUID other_id,
                           std::string a_secret_answer, bool is_reply = false);
     void setPercent(float percent);
-    void setStatus(char *message_string_name);
-    void setStatusName(char *message_string_name);
-    void setFinalStatus(char *message_string_name);
+    void setStatus(const char *message_string_name);
+    void setStatusName(const char *message_string_name);
+    void setFinalStatus(const char *message_string_name);
     virtual ~OtrFloaterSmpProgress();
     /*virtual*/ BOOL postBuild();
     /*virtual*/ void onClose(bool app_quitting);

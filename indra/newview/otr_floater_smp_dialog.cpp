@@ -30,7 +30,7 @@
 #include "otr_floater_smp_progress.h"
 #include "otr_floater_smp_dialog.h"
 
-std::string OtrFloaterSmpDialog::getStringName(char *message_name)
+std::string OtrFloaterSmpDialog::getStringName(const char *message_name)
 {
     LLUIString message = getString(message_name);
     std::string them;

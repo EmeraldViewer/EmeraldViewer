@@ -194,7 +194,7 @@ void OtrFloaterSmpProgress::setPercent(float percent)
     }
 }
 
-void OtrFloaterSmpProgress::setStatus(char *message_string_name)
+void OtrFloaterSmpProgress::setStatus(const char *message_string_name)
 {
     LLTextBox *status = getChild<LLTextBox>("otr_smp_prog_status");
     if (!status)
@@ -205,7 +205,7 @@ void OtrFloaterSmpProgress::setStatus(char *message_string_name)
     status->setWrappedText(getString(message_string_name));
 }
 
-void OtrFloaterSmpProgress::setStatusName(char *message_string_name)
+void OtrFloaterSmpProgress::setStatusName(const char *message_string_name)
 {
     LLTextBox *status = getChild<LLTextBox>("otr_smp_prog_status");
     if (!status)
@@ -220,7 +220,7 @@ void OtrFloaterSmpProgress::setStatusName(char *message_string_name)
     status->setWrappedText(msg.getString());
 }
 
-void OtrFloaterSmpProgress::setFinalStatus(char *message_string_name)
+void OtrFloaterSmpProgress::setFinalStatus(const char *message_string_name)
 {
     setPercent(100);
     setStatus(message_string_name);
