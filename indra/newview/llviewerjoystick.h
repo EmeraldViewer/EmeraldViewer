@@ -74,7 +74,7 @@ public:
 	bool toggleFlycam();
 	void setSNDefaults();
 	std::string getDescription();
-	void LLViewerJoystick::cansend() { mSendStream = true; }
+	void cansend() { mSendStream = true; }
 	
 protected:
 	void updateEnabled(bool autoenable);

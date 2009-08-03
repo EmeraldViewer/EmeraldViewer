@@ -1035,7 +1035,7 @@ void LLViewerJoystick::streamData(bool reset) //tG
 
 		sStreamDelta[i] = sStreamDelta[i] + (cur_delta[i]-sStreamDelta[i])*time*feather;
 
-		is_zero = is_zero && (abs(sStreamDelta[i]) < 0.001f); //Check (almost) zero value after feathering
+		is_zero = is_zero && (abs((int)sStreamDelta[i]) < 0.001f); //Check (almost) zero value after feathering
 	}
 	//Note: this only streams the processed axis values (i.e. not position/quat rotation)
 	if(!mSendStream)return; //Only send if prompted (i.e. on a timer)

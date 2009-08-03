@@ -226,7 +226,7 @@ void LLFloaterJoystick::refresh()
 	mJoystickStreamFeathering = gSavedSettings.getF32("JoystickStreamFeathering");
 
 	mJoystickStreamRefresh = gSavedSettings.getF32("JoystickStreamRefresh");
-	mJoystickStreamChannel = gSavedSettings.getF32("JoystickStreamChannel");
+	mJoystickStreamChannel = (S32)gSavedSettings.getF32("JoystickStreamChannel");
 
 }
 
