@@ -69,9 +69,9 @@
 #include "llviewernetwork.h"
 
 //Maximum number of people you can select to do an operation on at once.
-#define MAX_FRIEND_SELECT 20
+#define MAX_FRIEND_SELECT 2000
 #define DEFAULT_PERIOD 5.0
-#define RIGHTS_CHANGE_TIMEOUT 5.0
+#define RIGHTS_CHANGE_TIMEOUT 1.0
 #define OBSERVER_TIMEOUT 0.5
 
 #define ONLINE_SIP_ICON_NAME "slim_icon_16_viewer.tga"
