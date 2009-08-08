@@ -4574,6 +4574,8 @@ void LLWearableBridge::openItem()
 		{
 			wearOnAvatar();
 		}
+		else
+			performAction(NULL, NULL, "take_off");
 	}
 	else
 	{
