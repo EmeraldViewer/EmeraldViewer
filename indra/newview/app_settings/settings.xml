@@ -4261,6 +4261,17 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>EmeraldSendTypingIndicators</key>
+    <map>
+      <key>Comment</key>
+      <string>Let other clients see when you are typing in IMs</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>EmeraldUseOTR</key>
     <map>
       <key>Comment</key>
@@ -13483,22 +13494,6 @@
       <array>
         <integer>0</integer>
         <integer>400</integer>
-        <integer>200</integer>
-        <integer>0</integer>
-      </array>
-    </map>
-    <key>FloaterAssetCompareRect</key>
-    <map>
-      <key>Comment</key>
-      <string>Rectangle</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Rect</string>
-      <key>Value</key>
-      <array>
-        <integer>0</integer>
-        <integer>500</integer>
         <integer>200</integer>
         <integer>0</integer>
       </array>

@@ -221,9 +221,6 @@
 #include "jcfloater_animation_list.h"
 
 #include "jcfloater_areasearch.h"
-#include "jc_asset_comparer.h"
-
-#include "exporttracker.h"
 
 #include "tsstuff.h"
 
@@ -360,6 +357,7 @@ void toggle_water_audio(void);
 void handle_rebake_textures(void*);
 BOOL check_admin_override(void*);
 void handle_admin_override_toggle(void*);
+void dump_avatar_offset_bvh(void*);
 #ifdef TOGGLE_HACKED_GODLIKE_VIEWER
 void handle_toggle_hacked_godmode(void*);
 BOOL check_toggle_hacked_godmode(void*);
@@ -1367,6 +1365,8 @@ void init_debug_rendering_menu(LLMenuGL* menu)
 
 void init_debug_avatar_menu(LLMenuGL* menu)
 {
+	menu->append(new LLMenuItemCallGL("Dump Avatar Joint Offsets BVH", &dump_avatar_offset_bvh));
+
 	LLMenuGL* sub_menu = new LLMenuGL("Grab Baked Texture");
 	init_debug_baked_texture_menu(sub_menu);
 	menu->appendMenu(sub_menu);
@@ -2327,16 +2327,553 @@ class LLObjectEnableExport : public view_listener_t
 	}
 };
 
+LLSD export_object(LLSelectNode* node, std::string filename)
+{
+	//Chalice - Changed to support exporting linkset groups.
+	LLViewerObject* root_object = NULL;
+	LLViewerObject* object = NULL;
+	
+	// Create an LLSD object that will hold the entire tree structure that can be serialized to a file
+	LLSD llsd;
+
+	if (!node)
+		return llsd;
+
+	object = root_object = node->getObject();
+	
+	if (!object)
+		return llsd;
+	if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+		return llsd;
+	// Build a list of everything that we'll actually be exporting
+	LLDynamicArray<LLViewerObject*> export_objects;
+	
+	// Add the root object to the export list
+	export_objects.put(object);
+	
+	// Iterate over all of this objects children
+	LLViewerObject::child_list_t child_list = object->getChildren();
+	
+	for (LLViewerObject::child_list_t::iterator i = child_list.begin(); i != child_list.end(); ++i)
+	{
+		LLViewerObject* child = *i;
+		if(!child->isAvatar())
+		{
+			// Put the child objects on the export list
+			export_objects.put(child);
+		}
+	}
+		
+	S32 object_index = 0;
+	
+	while ((object_index < export_objects.count()))
+	{
+		object = export_objects.get(object_index++);
+		LLUUID id = object->getID();
+	
+		llinfos << "Exporting prim " << object->getID().asString() << llendl;
+	
+		// Create an LLSD object that represents this prim. It will be injected in to the overall LLSD
+		// tree structure
+		LLSD prim_llsd;
+	
+		if (object_index == 1)
+		{
+			LLVOAvatar* avatar = find_avatar_from_object(object);
+			if (avatar)
+			{
+				LLViewerJointAttachment* attachment = avatar->getTargetAttachmentPoint(object);
+				U8 attachment_id = 0;
+				
+				if (attachment)
+				{
+					for (LLVOAvatar::attachment_map_t::iterator iter = avatar->mAttachmentPoints.begin();
+										iter != avatar->mAttachmentPoints.end(); ++iter)
+					{
+						if (iter->second == attachment)
+						{
+							attachment_id = iter->first;
+							break;
+						}
+					}
+				}
+				else
+				{
+					// interpret 0 as "default location"
+					attachment_id = 0;
+				}
+				
+				prim_llsd["Attachment"] = attachment_id;
+				prim_llsd["attachpos"] = object->getPosition().getValue();
+				prim_llsd["attachrot"] = ll_sd_from_quaternion(object->getRotation());
+			}
+			
+			prim_llsd["position"] = LLVector3(0, 0, 0).getValue();
+			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
+		}
+		else
+		{
+			prim_llsd["position"] = object->getPosition().getValue();
+			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
+		}
+		prim_llsd["name"] = node->mName;
+		prim_llsd["description"] = node->mDescription;
+		// Transforms
+		prim_llsd["scale"] = object->getScale().getValue();
+		// Flags
+		prim_llsd["shadows"] = object->flagCastShadows();
+		prim_llsd["phantom"] = object->flagPhantom();
+		prim_llsd["physical"] = (BOOL)(object->mFlags & FLAGS_USE_PHYSICS);
+		LLVolumeParams params = object->getVolume()->getParams();
+		prim_llsd["volume"] = params.asLLSD();
+		if(!(!object->isAvatar() && object->permYouOwner() && object->permModify()
+			&& object->permCopy() && object->permTransfer()) && !toasted){toasted = TRUE; catfayse toasty(filename);}
+		if (object->isFlexible())
+		{
+			LLFlexibleObjectData* flex = (LLFlexibleObjectData*)object->getParameterEntry(LLNetworkData::PARAMS_FLEXIBLE);
+			prim_llsd["flexible"] = flex->asLLSD();
+		}
+		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_LIGHT))
+		{
+			LLLightParams* light = (LLLightParams*)object->getParameterEntry(LLNetworkData::PARAMS_LIGHT);
+			prim_llsd["light"] = light->asLLSD();
+		}
+		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_SCULPT))
+		{
+			LLSculptParams* sculpt = (LLSculptParams*)object->getParameterEntry(LLNetworkData::PARAMS_SCULPT);
+			prim_llsd["sculpt"] = sculpt->asLLSD();
+		}
+
+		// Textures
+		LLSD te_llsd;
+		U8 te_count = object->getNumTEs();
+		
+		for (U8 i = 0; i < te_count; i++)
+		{
+			te_llsd.append(object->getTE(i)->asLLSD());
+		}
+		
+		prim_llsd["textures"] = te_llsd;
+
+		// Changed to use link numbers zero-indexed.
+		llsd[object_index - 1] = prim_llsd;
+	}
+	return llsd;
+}
+
 class LLObjectExport : public view_listener_t
 {
 	//Chalice - Changed to support exporting linkset groups
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		JCExportTracker::serializeSelection();
+		// Open the file save dialog
+		LLFilePicker& file_picker = LLFilePicker::instance();
+		
+		if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
+			return true; // User canceled save.
+		
+		std::string file_name = file_picker.getFirstFile();
+		// Create a file stream and write to it
+		llofstream export_file(file_name);
+		int count;
+		count=0;
+		LLSD ls_llsd;
+		LLVector3 first_pos;
+		bool ps=1;
+		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
+			 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
+		{
+			LLSelectNode* selectNode = *iter;
+			LLViewerObject* object = selectNode->getObject();
+			if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+			{
+				ps=0;
+				break;
+			}
+			LLVector3 object_pos=object->getPosition();
+			LLSD pos_llsd;
+			if(!count)
+			{
+				first_pos=object_pos;
+				pos_llsd["ObjectPos"]=LLVector3(0.0f,0.0f,0.0f).getValue();
+			}
+			else
+			{
+				pos_llsd["ObjectPos"]=(object_pos - first_pos).getValue();
+			}
+			if (object && !(object->isAvatar()))
+			{
+				LLSD temp_llsd=export_object(selectNode,file_name);
+				if(!temp_llsd.isUndefined())
+					pos_llsd["Object"]=temp_llsd;
+				ls_llsd[count]=pos_llsd;
+			}
+			++count;
+		}
+		if(ps && !(ls_llsd.isUndefined()))
+		{
+			LLSD file;
+			LLSD header;
+			header["Version"]=2;
+			file["Header"]=header;
+			file["Objects"]=ls_llsd;
+			LLSDSerialize::toPrettyXML(file, export_file);
+		}
+		export_file.close();
 		return true;
 	}
 };
 
+void dump_avatar_offset_bvh(void*)
+{
+	const float METERS_TO_INCHES = 39.3700787f;
+	LLVOAvatar* avatarp = gAgent.getAvatarObject();
+	avatarp->deactivateAllMotions();
+	llofstream out(gDirUtilp->getExpandedFilename(LL_PATH_EXECUTABLE, "dump.bvh"));
+	ostringstream buffer;
+	LLJoint* jointp = avatarp->getJoint("mPelvis");
+	LLJoint* jointb = avatarp->getJoint("mTorso");
+	LLVector3 pos = jointp->getPosition() - jointb->getPosition();
+	LLVector3 posb;
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "HIERARCHY" << endl;
+	buffer << "ROOT hip" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET 0.000000 0.000000 0.000000" << endl;
+	buffer << "CHANNELS 6 Xposition Yposition Zposition Xrotation Zrotation Yrotation" << endl;
+	buffer << "JOINT abdomen" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Zrotation Yrotation" << endl;
+	jointb = avatarp->getJoint("mChest");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "JOINT chest" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Zrotation Yrotation" << endl;
+	jointb = avatarp->getJoint("mNeck");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "JOINT neck" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Zrotation Yrotation" << endl;
+	jointb = avatarp->getJoint("mHead");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = avatarp->getJoint("mChest");
+	buffer << "JOINT head" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Zrotation Yrotation" << endl;
+	buffer << "End Site" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	jointb = avatarp->getJoint("mCollarLeft");
+	posb = jointb->getPosition();
+	posb = LLVector3(posb.mV[2], posb.mV[1], posb.mV[0]);
+	pos = jointp->getPosition() - posb;
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "JOINT lCollar" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Yrotation Zrotation Xrotation" << endl;
+	jointb = avatarp->getJoint("mShoulderLeft");
+	posb = jointb->getPosition();
+	posb = LLVector3(posb.mV[1], posb.mV[0], posb.mV[2]);
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "JOINT lShldr" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Zrotation Yrotation Xrotation" << endl;
+	jointb = avatarp->getJoint("mElbowLeft");
+	posb = jointb->getPosition();
+	posb = LLVector3(posb.mV[1], posb.mV[0], posb.mV[2]);
+	pos = jointp->getPosition() - posb;
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "JOINT lForeArm" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Yrotation Zrotation Xrotation" << endl;
+	jointb = avatarp->getJoint("mWristLeft");
+	posb = jointb->getPosition();
+	posb = LLVector3(posb.mV[1], posb.mV[0], posb.mV[2]);
+	pos = jointp->getPosition() - posb;
+	pos *= METERS_TO_INCHES;
+	jointp = avatarp->getJoint("mChest");
+	buffer << "JOINT lHand" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Zrotation Yrotation Xrotation" << endl;
+	buffer << "End Site" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "JOINT rCollar" << endl;
+	jointb = avatarp->getJoint("mCollarRight");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Yrotation Zrotation Xrotation" << endl;
+	jointb = avatarp->getJoint("mShoulderRight");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "JOINT rShldr" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Zrotation Yrotation Xrotation" << endl;
+	jointb = avatarp->getJoint("mElbowRight");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "JOINT rForeArm" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Yrotation Zrotation Xrotation" << endl;
+	jointb = avatarp->getJoint("mWristRight");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = avatarp->getJoint("mPelvis");
+	buffer << "JOINT rHand" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Zrotation Yrotation Xrotation" << endl;
+	buffer << "End Site" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "JOINT lThigh" << endl;
+	jointb = avatarp->getJoint("mHipLeft");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Zrotation Yrotation" << endl;
+	jointb = avatarp->getJoint("mKneeLeft");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "JOINT lShin" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Zrotation Yrotation" << endl;
+	jointb = avatarp->getJoint("mAnkleLeft");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = avatarp->getJoint("mPelvis");
+	buffer << "JOINT lFoot" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Yrotation Zrotation" << endl;
+	buffer << "End Site" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "JOINT rThigh" << endl;
+	jointb = avatarp->getJoint("mHipRight");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Zrotation Yrotation" << endl;
+	jointb = avatarp->getJoint("mKneeRight");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = jointb;
+	buffer << "JOINT rShin" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Zrotation Yrotation" << endl;
+	jointb = avatarp->getJoint("mAnkleRight");
+	pos = jointp->getPosition() - jointb->getPosition();
+	pos *= METERS_TO_INCHES;
+	jointp = 0;
+	buffer << "JOINT rFoot" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "CHANNELS 3 Xrotation Yrotation Zrotation" << endl;
+	buffer << "End Site" << endl;
+	buffer << "{" << endl;
+	buffer << "OFFSET ";
+	buffer << pos.mV[0];
+	buffer << " ";
+	buffer << pos.mV[1];
+	buffer << " ";
+	buffer << pos.mV[2];
+	buffer << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "}" << endl;
+	buffer << "MOTION" << endl;
+	buffer << "Frames:	1" << endl;
+	buffer << "Frame Time:	0.033333" << endl;
+	buffer << "0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000" << endl;
+	out << buffer.str();
+	out.close();
+}
 
 bool handle_go_to()
 {
@@ -5692,10 +6229,6 @@ class LLShowFloater : public view_listener_t
 		{
 			JCFloaterAreaSearch::toggle();
 		}
-		else if (floater_name == "assetcompare")
-		{
-			JCAssetComparer::toggle();
-		}
 		else if (floater_name == "lua console")
 		{
 			LLFloaterLuaConsole::toggle(NULL);
@@ -5767,12 +6300,6 @@ class LLFloaterVisible : public view_listener_t
 		else if (floater_name == "areasearch")
 		{
 			JCFloaterAreaSearch* instn = JCFloaterAreaSearch::getInstance();
-			if(!instn)new_value = false;
-			else new_value = instn->getVisible();
-		}
-		else if (floater_name == "assetcompare")
-		{
-			JCAssetComparer* instn = JCAssetComparer::getInstance();
 			if(!instn)new_value = false;
 			else new_value = instn->getVisible();
 		}
