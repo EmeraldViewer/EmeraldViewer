@@ -89,9 +89,11 @@ include_directories(
 
 set(viewer_SOURCE_FILES
 	importtracker.cpp
+	exporttracker.cpp
 	chatbar_as_cmdline.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
+	jc_asset_comparer.cpp
 	jcobjectpropertylist.cpp
 	lggBeamMapFloater.cpp
 	lggBeamMaps.cpp
@@ -515,8 +517,10 @@ set(viewer_HEADER_FILES
     chatbar_as_cmdline.h
 	jcfloater_animation_list.h
 	jcfloater_areasearch.h
+	jc_asset_comparer.h
 	jcobjectpropertylist.h
 	importtracker.h
+	exporttracker.h
 	lggBeamMaps.h
 	lggBeamMapFloater.h
 	llfloaterassetbrowser.h

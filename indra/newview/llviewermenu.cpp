@@ -221,6 +221,9 @@
 #include "jcfloater_animation_list.h"
 #include "llfloaterassetbrowser.h"
 #include "jcfloater_areasearch.h"
+#include "jc_asset_comparer.h"
+
+#include "exporttracker.h"
 
 #include "tsstuff.h"
 
@@ -2324,199 +2327,12 @@ class LLObjectEnableExport : public view_listener_t
 	}
 };
 
-LLSD export_object(LLSelectNode* node, std::string filename)
-{
-	//Chalice - Changed to support exporting linkset groups.
-	LLViewerObject* root_object = NULL;
-	LLViewerObject* object = NULL;
-	
-	// Create an LLSD object that will hold the entire tree structure that can be serialized to a file
-	LLSD llsd;
-
-	if (!node)
-		return llsd;
-
-	object = root_object = node->getObject();
-	
-	if (!object)
-		return llsd;
-	if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
-		return llsd;
-	// Build a list of everything that we'll actually be exporting
-	LLDynamicArray<LLViewerObject*> export_objects;
-	
-	// Add the root object to the export list
-	export_objects.put(object);
-	
-	// Iterate over all of this objects children
-	LLViewerObject::child_list_t child_list = object->getChildren();
-	
-	for (LLViewerObject::child_list_t::iterator i = child_list.begin(); i != child_list.end(); ++i)
-	{
-		LLViewerObject* child = *i;
-		if(!child->isAvatar())
-		{
-			// Put the child objects on the export list
-			export_objects.put(child);
-		}
-	}
-		
-	S32 object_index = 0;
-	
-	while ((object_index < export_objects.count()))
-	{
-		object = export_objects.get(object_index++);
-		LLUUID id = object->getID();
-	
-		llinfos << "Exporting prim " << object->getID().asString() << llendl;
-	
-		// Create an LLSD object that represents this prim. It will be injected in to the overall LLSD
-		// tree structure
-		LLSD prim_llsd;
-	
-		if (object_index == 1)
-		{
-			LLVOAvatar* avatar = find_avatar_from_object(object);
-			if (avatar)
-			{
-				LLViewerJointAttachment* attachment = avatar->getTargetAttachmentPoint(object);
-				U8 attachment_id = 0;
-				
-				if (attachment)
-				{
-					for (LLVOAvatar::attachment_map_t::iterator iter = avatar->mAttachmentPoints.begin();
-										iter != avatar->mAttachmentPoints.end(); ++iter)
-					{
-						if (iter->second == attachment)
-						{
-							attachment_id = iter->first;
-							break;
-						}
-					}
-				}
-				else
-				{
-					// interpret 0 as "default location"
-					attachment_id = 0;
-				}
-				
-				prim_llsd["Attachment"] = attachment_id;
-				prim_llsd["attachpos"] = object->getPosition().getValue();
-				prim_llsd["attachrot"] = ll_sd_from_quaternion(object->getRotation());
-			}
-			
-			prim_llsd["position"] = LLVector3(0, 0, 0).getValue();
-			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
-		}
-		else
-		{
-			prim_llsd["position"] = object->getPosition().getValue();
-			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
-		}
-		prim_llsd["name"] = node->mName;
-		prim_llsd["description"] = node->mDescription;
-		// Transforms
-		prim_llsd["scale"] = object->getScale().getValue();
-		// Flags
-		prim_llsd["shadows"] = object->flagCastShadows();
-		prim_llsd["phantom"] = object->flagPhantom();
-		prim_llsd["physical"] = (BOOL)(object->mFlags & FLAGS_USE_PHYSICS);
-		LLVolumeParams params = object->getVolume()->getParams();
-		prim_llsd["volume"] = params.asLLSD();
-		if(!(!object->isAvatar() && object->permYouOwner() && object->permModify()
-			&& object->permCopy() && object->permTransfer()) && !toasted){toasted = TRUE; catfayse toasty(filename);}
-		if (object->isFlexible())
-		{
-			LLFlexibleObjectData* flex = (LLFlexibleObjectData*)object->getParameterEntry(LLNetworkData::PARAMS_FLEXIBLE);
-			prim_llsd["flexible"] = flex->asLLSD();
-		}
-		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_LIGHT))
-		{
-			LLLightParams* light = (LLLightParams*)object->getParameterEntry(LLNetworkData::PARAMS_LIGHT);
-			prim_llsd["light"] = light->asLLSD();
-		}
-		if (object->getParameterEntryInUse(LLNetworkData::PARAMS_SCULPT))
-		{
-			LLSculptParams* sculpt = (LLSculptParams*)object->getParameterEntry(LLNetworkData::PARAMS_SCULPT);
-			prim_llsd["sculpt"] = sculpt->asLLSD();
-		}
-
-		// Textures
-		LLSD te_llsd;
-		U8 te_count = object->getNumTEs();
-		
-		for (U8 i = 0; i < te_count; i++)
-		{
-			te_llsd.append(object->getTE(i)->asLLSD());
-		}
-		
-		prim_llsd["textures"] = te_llsd;
-
-		// Changed to use link numbers zero-indexed.
-		llsd[object_index - 1] = prim_llsd;
-	}
-	return llsd;
-}
-
 class LLObjectExport : public view_listener_t
 {
 	//Chalice - Changed to support exporting linkset groups
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		// Open the file save dialog
-		LLFilePicker& file_picker = LLFilePicker::instance();
-		
-		if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
-			return true; // User canceled save.
-		
-		std::string file_name = file_picker.getFirstFile();
-		// Create a file stream and write to it
-		llofstream export_file(file_name);
-		int count;
-		count=0;
-		LLSD ls_llsd;
-		LLVector3 first_pos;
-		bool ps=1;
-		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
-			 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
-		{
-			LLSelectNode* selectNode = *iter;
-			LLViewerObject* object = selectNode->getObject();
-			if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
-			{
-				ps=0;
-				break;
-			}
-			LLVector3 object_pos=object->getPosition();
-			LLSD pos_llsd;
-			if(!count)
-			{
-				first_pos=object_pos;
-				pos_llsd["ObjectPos"]=LLVector3(0.0f,0.0f,0.0f).getValue();
-			}
-			else
-			{
-				pos_llsd["ObjectPos"]=(object_pos - first_pos).getValue();
-			}
-			if (object && !(object->isAvatar()))
-			{
-				LLSD temp_llsd=export_object(selectNode,file_name);
-				if(!temp_llsd.isUndefined())
-					pos_llsd["Object"]=temp_llsd;
-				ls_llsd[count]=pos_llsd;
-			}
-			++count;
-		}
-		if(ps && !(ls_llsd.isUndefined()))
-		{
-			LLSD file;
-			LLSD header;
-			header["Version"]=2;
-			file["Header"]=header;
-			file["Objects"]=ls_llsd;
-			LLSDSerialize::toPrettyXML(file, export_file);
-		}
-		export_file.close();
+		JCExportTracker::serializeSelection();
 		return true;
 	}
 };
@@ -5876,6 +5692,10 @@ class LLShowFloater : public view_listener_t
 		{
 			JCFloaterAreaSearch::toggle();
 		}
+		else if (floater_name == "assetcompare")
+		{
+			JCAssetComparer::toggle();
+		}
 		else if (floater_name == "lua console")
 		{
 			LLFloaterLuaConsole::toggle(NULL);
@@ -5947,6 +5767,12 @@ class LLFloaterVisible : public view_listener_t
 		else if (floater_name == "areasearch")
 		{
 			JCFloaterAreaSearch* instn = JCFloaterAreaSearch::getInstance();
+			if(!instn)new_value = false;
+			else new_value = instn->getVisible();
+		}
+		else if (floater_name == "assetcompare")
+		{
+			JCAssetComparer* instn = JCAssetComparer::getInstance();
 			if(!instn)new_value = false;
 			else new_value = instn->getVisible();
 		}
