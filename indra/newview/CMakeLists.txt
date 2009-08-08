@@ -95,6 +95,7 @@ set(viewer_SOURCE_FILES
 	jcobjectpropertylist.cpp
 	lggBeamMapFloater.cpp
 	lggBeamMaps.cpp
+	llfloaterassetbrowser.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -518,6 +519,7 @@ set(viewer_HEADER_FILES
 	importtracker.h
 	lggBeamMaps.h
 	lggBeamMapFloater.h
+	llfloaterassetbrowser.h
     llagent.h
     llagentaccess.h
     llagentdata.h

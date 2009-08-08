@@ -219,7 +219,7 @@
 #include "lltexlayer.h"
 #include "llfloateravatarlist.h"
 #include "jcfloater_animation_list.h"
-
+#include "llfloaterassetbrowser.h"
 #include "jcfloater_areasearch.h"
 
 #include "tsstuff.h"
@@ -8754,7 +8754,35 @@ class LLEmeraldDisable: public view_listener_t
 		return true;
 	}
 };
+class LLPhoxToggleAssetBrowser: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		//open the floater
+		LLFloaterAssetBrowser::show(0);
+		
+		bool vis = false;
+		if(LLFloaterAssetBrowser::getInstance())
+		{
+			vis = (bool)LLFloaterAssetBrowser::getInstance()->getVisible();
+		}
+		return true;
+	}
 
+};
+class LLPhoxCheckAssetBrowser: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		bool vis = false;
+		if(LLFloaterAssetBrowser::getInstance())
+		{
+			vis = (bool)LLFloaterAssetBrowser::getInstance()->getVisible();
+		}
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(vis);
+		return true;
+	}
+};
 /*
 class LLEmeraldCheckRadar: public view_listener_t
 {
@@ -9092,6 +9120,8 @@ void initialize_menus()
 	addMenu(new LLEmeraldDisable(), "Emerald.Disable");
 	addMenu(new LLToggleDebugMenus(), "ToggleDebugMenus");
 	addMenu(new EmeraldMarkAllDead(), "Emerald.ClearEffects");
+	addMenu(new LLPhoxToggleAssetBrowser(),"Phox.ToggleAssetBrowser");
+	addMenu(new LLPhoxCheckAssetBrowser(),"Phox.CheckAssetBrowser");
 
 	// World menu
 	addMenu(new LLWorldChat(), "World.Chat");
