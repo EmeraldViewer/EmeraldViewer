@@ -1,50 +1,6 @@
 <?xml version="1.0" ?>
 <llsd>
   <map>
-<key>zmm_deffov</key>
-  <map>
-    <key>Comment</key>
-    <string>The delta to spam you the script jump difference</string>
-    <key>Persist</key>
-    <integer>1</integer>
-    <key>Type</key>
-    <string>F32</string>
-    <key>Value</key>
-    <real>1.0</real>
-  </map>
-  <key>zmm_mlfov</key>
-  <map>
-    <key>Comment</key>
-    <string>1=norm, under1 zoom out, over1 zoom in</string>
-    <key>Persist</key>
-    <integer>1</integer>
-    <key>Type</key>
-    <string>F32</string>
-    <key>Value</key>
-    <real>1</real>
-  </map>
-  <key>zmm_isinml</key>
-  <map>
-    <key>Comment</key>
-    <string>fuckyouslandyourshittymethodofseeingifakeyisdownornot...</string>
-    <key>Persist</key>
-    <integer>0</integer>
-    <key>Type</key>
-    <string>Boolean</string>
-    <key>Value</key>
-    <integer>0</integer>
-  </map>
-<key>zmm_rightmousedown</key>
-  <map>
-    <key>Comment</key>
-    <string>fuckyouslandyourshittymethodofseeingifakeyisdownornot...</string>
-    <key>Persist</key>
-    <integer>0</integer>
-    <key>Type</key>
-    <string>Boolean</string>
-    <key>Value</key>
-    <integer>0</integer>
-  </map>
     <key>ColorllFunction</key>
     <map>
       <key>Comment</key>
