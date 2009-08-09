@@ -2085,6 +2085,11 @@ void deliver_otr_message(const std::string& utf8_text,
                          const LLUUID& other_participant_id,
                          EInstantMessage dialog)
 {
+//    llinfos
+//        << "$PLOTR$ message length:" << utf8_text.length()
+//        << " ["    << utf8_text.substr(0, 24)
+//        << "]...[" << utf8_text.substr(utf8_text.length()-10, utf8_text.length()-1)
+//        << "]"     << llendl;
     std::string name;
     gAgent.buildFullname(name);
 
@@ -2100,6 +2105,31 @@ void deliver_otr_message(const std::string& utf8_text,
     if ( dialog != IM_NOTHING_SPECIAL )
     {
         new_dialog = IM_SESSION_SEND;
+    }
+    if ((new_dialog == IM_NOTHING_SPECIAL) &&
+        (gSavedSettings.getBOOL("EmeraldOTRInTypingStop")))
+    {
+        OtrlMessageType mtype = otrl_proto_message_type(utf8_text.c_str());
+        switch (mtype)
+        {
+        case OTRL_MSGTYPE_UNKNOWN:
+            llwarns << "Sending unknown type of OTR message" << llendl;
+            // fall through
+        case OTRL_MSGTYPE_QUERY:
+        case OTRL_MSGTYPE_DH_COMMIT:
+        case OTRL_MSGTYPE_DH_KEY:
+        case OTRL_MSGTYPE_REVEALSIG:
+        case OTRL_MSGTYPE_SIGNATURE:
+        case OTRL_MSGTYPE_V1_KEYEXCH:
+        case OTRL_MSGTYPE_DATA:
+        case OTRL_MSGTYPE_TAGGEDPLAINTEXT:
+            new_dialog = IM_TYPING_STOP;
+            break;
+        case OTRL_MSGTYPE_NOTOTR:
+        case OTRL_MSGTYPE_ERROR:
+        default:
+            /* new_dialog = IM_NOTHING_SPECIAL */ ;
+        }
     }
     pack_instant_message(
         gMessageSystem,
@@ -3008,6 +3038,9 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
                         // deliver a whitespace tagged "typing" in a IM_TYPING_STOP packet
                         std::string my_name;
                         gAgent.buildFullname(my_name);
+                        const LLRelationship* info = NULL;
+                        info = LLAvatarTracker::instance().getBuddyInfo(mOtherParticipantUUID);
+                        U8 offline = (!info || info->isOnline()) ? IM_ONLINE : IM_OFFLINE;
                         pack_instant_message(
                             gMessageSystem,
                             gAgent.getID(),
@@ -3016,7 +3049,7 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
                             mOtherParticipantUUID,
                             my_name,
                             newmessage,
-                            IM_OFFLINE,
+                            offline,
                             IM_TYPING_STOP,
                             mSessionUUID);
                         gAgent.sendReliableMessage();

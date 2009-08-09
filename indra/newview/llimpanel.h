@@ -185,6 +185,10 @@ extern void otr_log_message_getstring_name(LLUUID session_id, const char *messag
 extern void otr_log_message_getstring(LLUUID session_id, const char *message_name);
 extern void otr_log_message(LLUUID session_id, const char *message);
 extern void show_otr_status(LLUUID session_id);
+extern void deliver_message(const std::string& utf8_text,
+                            const LLUUID& im_session_id,
+                            const LLUUID& other_participant_id,
+                            EInstantMessage dialog);
 extern void deliver_otr_message(const std::string& utf8_text,
                                 const LLUUID& im_session_id,
                                 const LLUUID& other_participant_id,

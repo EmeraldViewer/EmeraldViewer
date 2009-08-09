@@ -4316,6 +4316,17 @@
       <key>Value</key>
       <integer>2</integer>
     </map>
+    <key>EmeraldOTRInTypingStop</key>
+    <map>
+      <key>Comment</key>
+      <string>Setting this to true will make all encrypted OTR messages be sent in an IM_TYPING_STOP packet.  This is non-standard behavior, but prevents OTR encrypted IM from being saved and delivered as offline IM.  Though it currently works LL may decide to disable the feature at any time.  This is incompatible with previous versions of OTR.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>EmeraldVelocityDoubleClickTeleport</key>
     <map>
       <key>Comment</key>

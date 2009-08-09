@@ -1635,7 +1635,8 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
                     {
                         gIMMgr->addSession(name,IM_NOTHING_SPECIAL,from_id);
                     }
-                    deliver_otr_message(  // $TODO$ move the following message to some .xml file
+                    // NOT deliver_otr_message since those might go via typing_stop
+                    deliver_message(  // $TODO$ move the following message to some .xml file
                         "/me's settings require OTR encrypted instant messages. Your message was not displayed.",
                         session, from_id, IM_NOTHING_SPECIAL);
                     LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session);
@@ -1652,9 +1653,13 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		}
 		if (newmessage)
 		{
-			// message was processed by OTR.  Maybe decrypted, maybe just stripping off the white-space "I have OTR" tag
+            // message was processed by OTR.  Maybe decrypted, maybe just stripping off the
+            // white-space "I have OTR" tag
 			decrypted_msg = newmessage;  // use processed message
 			message = newmessage;        // use processed message
+            if (IM_TYPING_STOP == dialog) 
+                // display messages received in typing_stop packets
+                dialog = IM_NOTHING_SPECIAL;
 			otrl_message_free(newmessage);
 			ConnContext *context = otrl_context_find(
 				gOTR->get_userstate(), 

@@ -344,7 +344,7 @@ static int otrwui_max_message_size(
     void *opdata, ConnContext *context)
 {
     /* Find the maximum message size supported by this protocol. */
-    return (MAX_MSG_BUF_SIZE - 1);
+    return (MAX_MSG_BUF_SIZE - 24);
 }
 
 static const char *otrwui_account_name(
@@ -464,6 +464,24 @@ void OTR_Wrapper::init()
                 gDirUtilp->getExpandedFilename(
                     LL_PATH_PER_SL_ACCOUNT, OTR_PUBLIC_KEYS_FILE);
             otrl_privkey_read_fingerprints(gOTR->userstate, pubpath.c_str(), NULL, NULL);
+#if 0 // this will gen a key, if the user doesn't have one, at init() time
+            if (gOTR && gOTR->userstate)
+            {
+                OtrlPrivKey *r = gOTR->userstate->privkey_root;
+                OtrlPrivKey *k = gOTR->userstate->privkey_root;
+                while (k && (k != r))
+                {
+                    if (0 == strcmp(gOTR->get_protocolid(), k->protocol))
+                    {
+                        return;
+                    }
+                }
+                char my_uuid[UUID_STR_SIZE];
+                gAgent.getID().toString(&(my_uuid[0]));
+                otrl_privkey_generate(gOTR->userstate, privpath.c_str(),
+                                      my_uuid, gOTR->get_protocolid());
+            }
+#endif
         }
     }
 }
