@@ -33,7 +33,7 @@
 
 #include "llviewerprecompiledheaders.h"
 #include <iostream>
-#include <iomanip> // for setprecision
+//#include <iomanip> // for setprecision
 #include "llviewerjoystick.h"
 
 #include "llviewercontrol.h"

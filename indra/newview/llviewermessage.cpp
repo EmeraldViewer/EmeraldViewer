@@ -1553,6 +1553,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	msg->getU32Fast( _PREHASH_MessageBlock, _PREHASH_Timestamp, timestamp);
 	//msg->getData("MessageBlock", "Count",		&count);
 	msg->getStringFast(_PREHASH_MessageBlock, _PREHASH_FromAgentName, name);
+	if(name == "")name = "(empty)";
 	msg->getStringFast(_PREHASH_MessageBlock, _PREHASH_Message,		message);
 	msg->getU32Fast(_PREHASH_MessageBlock, _PREHASH_ParentEstateID, parent_estate_id);
 	msg->getUUIDFast(_PREHASH_MessageBlock, _PREHASH_RegionID, region_id);

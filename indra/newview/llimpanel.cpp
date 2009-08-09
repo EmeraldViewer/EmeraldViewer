@@ -3260,8 +3260,6 @@ void LLFloaterIMPanel::sendTypingState(BOOL typing)
 	// Don't want to send typing indicators to multiple people, potentially too
 	// much network traffic.  Only send in person-to-person IMs.
 	if (mDialog != IM_NOTHING_SPECIAL) return;
-	if (gSavedSettings.getBOOL("EmeraldSendTypingIndicators"))
-	{
 	std::string name;
 	gAgent.buildFullname(name);
 
@@ -3277,7 +3275,6 @@ void LLFloaterIMPanel::sendTypingState(BOOL typing)
 		(typing ? IM_TYPING_START : IM_TYPING_STOP),
 		mSessionUUID);
 	gAgent.sendReliableMessage();
-	}
 }
 
 void LLFloaterIMPanel::processIMTyping(const LLIMInfo* im_info, BOOL typing)
