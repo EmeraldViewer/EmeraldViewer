@@ -7029,10 +7029,17 @@ void LLAgent::processAgentInitialWearablesUpdate( LLMessageSystem* mesgsys, void
 		}
 
 		// now that we have the asset ids...request the wearable assets
+// [RLVa:KB] - Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+		LLInventoryFetchObserver::item_ref_t rlvItems;
+// [/RLVa:KB]
 		for( i = 0; i < WT_COUNT; i++ )
 		{
 			if( !gAgent.mWearableEntry[i].mItemID.isNull() )
 			{
+// [RLVa:KB] - Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+				if (rlv_handler_t::isEnabled())
+					rlvItems.push_back(gAgent.mWearableEntry[i].mItemID);
+// [/RLVa:KB]
 				gWearableList.getAsset( 
 					asset_id_array[i],
 					LLStringUtil::null,
@@ -7040,6 +7047,15 @@ void LLAgent::processAgentInitialWearablesUpdate( LLMessageSystem* mesgsys, void
 					LLAgent::onInitialWearableAssetArrived, (void*)(intptr_t)i );
 			}
 		}
+
+// [RLVa:KB] - Checked: 2009-08-08 (RLVa-1.0.1g) | Added: RLVa-1.0.1g
+		// TODO-RLVa: checking that we're in STATE_STARTED is probably not needed, but leave it until we can be absolutely sure
+		if ( (rlv_handler_t::isEnabled()) && (LLStartUp::getStartupState() == STATE_STARTED) )
+		{
+			RlvCurrentlyWorn f;
+			f.fetchItems(rlvItems);
+		}
+// [/RLVa:KB]
 	}
 }
 

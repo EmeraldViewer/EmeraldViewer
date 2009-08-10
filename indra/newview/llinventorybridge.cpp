@@ -4246,7 +4246,14 @@ void wear_attachments_on_avatar(const std::set<LLUUID>& item_ids, BOOL remove)
 		{
 			if ( (gInventory.isObjectDescendentOf(*it, gAgent.getInventoryRootID())) )
 			{
-				items.put(item);
+//				items.put(item);
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-06 (RLVa-1.0.0c) | Modified: RLVa-1.0.0c
+				if ( (!rlv_handler_t::isEnabled()) || (RlvSettings::getEnableWear()) ||
+					 (!gRlvHandler.hasLockedAttachment()) || (gRlvHandler.getAttachPoint(item, true) != NULL) )
+				{
+					items.put(item);
+				}
+// [/RLVa:KB]
 			}
 			else if ( (item->isComplete()) )
 			{
@@ -4307,8 +4314,8 @@ void wear_attachments_on_avatar(const LLInventoryModel::item_array_t& items, BOO
 			msg->addU8Fast(_PREHASH_TotalObjects, count );
 			//msg->addBOOLFast(_PREHASH_FirstDetachAll, remove );
 // [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c) | Added: RLVa-0.2.2a
-						// This really should just *always* be FALSE since TRUE can result in loss of the current asset state
-						msg->addBOOLFast(_PREHASH_FirstDetachAll, (remove && (!gRlvHandler.hasLockedAttachment()) ));
+			// This really should just *always* be FALSE since TRUE can result in loss of the current asset state
+			msg->addBOOLFast(_PREHASH_FirstDetachAll, (remove && (!gRlvHandler.hasLockedAttachment()) ));
 // [/RLVa:KB]
 		}
 
@@ -4318,10 +4325,10 @@ void wear_attachments_on_avatar(const LLInventoryModel::item_array_t& items, BOO
 		msg->addUUIDFast(_PREHASH_OwnerID, item->getPermissions().getOwner());
 		//msg->addU8Fast(_PREHASH_AttachmentPt, 0 );	// Wear at the previous or default attachment point
 // [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c) | Added: RLVa-0.2.2a
-					msg->addU8Fast(_PREHASH_AttachmentPt, 
-						( (!rlv_handler_t::isEnabled()) || (RlvSettings::getEnableWear()) || (!gRlvHandler.hasLockedAttachment()) )
-							? 0
-							: gRlvHandler.getAttachPointIndex(gRlvHandler.getAttachPoint(item, true)));
+		msg->addU8Fast(_PREHASH_AttachmentPt, 
+			( (!rlv_handler_t::isEnabled()) || (RlvSettings::getEnableWear()) || (!gRlvHandler.hasLockedAttachment()) )
+				? 0
+				: gRlvHandler.getAttachPointIndex(gRlvHandler.getAttachPoint(item, true)));
 // [/RLVa:KB]
 		pack_permissions_slam(msg, item->getFlags(), item->getPermissions());
 		msg->addStringFast(_PREHASH_Name, item->getName());

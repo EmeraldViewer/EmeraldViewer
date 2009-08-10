@@ -1944,7 +1944,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 // [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-10 (RLVa-1.0.0g)
 		else if ( (rlv_handler_t::isEnabled()) && (offline == IM_ONLINE) && ("@version" == message) )
 		{
-			gRlvHandler.sendBusyMessage(from_id, gRlvHandler.getVersionString(), session_id);
+			rlvSendBusyMessage(from_id, gRlvHandler.getVersionString(), session_id);
 			// We won't receive a typing stop message, so do that manually (see comment at the end of LLFloaterIMPanel::sendMsg)
 			LLPointer<LLIMInfo> im_info = new LLIMInfo(gMessageSystem);
 			gIMMgr->processIMTypingStop(im_info);
@@ -2047,7 +2047,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 			if ( (gRlvHandler.hasBehaviour(RLV_BHVR_RECVIM)) && (!gRlvHandler.isException(RLV_BHVR_RECVIM, from_id)) )
 			{
-				gRlvHandler.sendBusyMessage(from_id, rlv_handler_t::cstrMsgRecvIM, session_id);
+				rlvSendBusyMessage(from_id, rlv_handler_t::cstrMsgRecvIM, session_id);
 
 				message = message.substr(0, message_offset) + rlv_handler_t::cstrBlockedRecvIM;
 			}
@@ -2524,7 +2524,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 					if ( ( (gRlvHandler.hasBehaviour(RLV_BHVR_TPLURE)) && (!gRlvHandler.isException(RLV_BHVR_TPLURE, from_id)) ) || 
 						 ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (pAvatar) && (pAvatar->mIsSitting) ) )
 					{
-						gRlvHandler.sendBusyMessage(from_id, rlv_handler_t::cstrMsgTpLure);
+						rlvSendBusyMessage(from_id, rlv_handler_t::cstrMsgTpLure);
 						return;
 					}
 
@@ -2938,15 +2938,17 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		color.setVec(1.f,1.f,1.f,1.f);
 		msg->getStringFast(_PREHASH_ChatData, _PREHASH_Message, mesg);
 
-// [RLVa:KB] - Checked: 2009-07-09 (RLVa-1.0.0f) | Modified: RLVa-1.0.0f
-		if ( (rlv_handler_t::isEnabled()) && (chatter) &&
+// [RLVa:KB] - Checked: 2009-08-04 (RLVa-1.0.1d) | Modified: RLVa-1.0.1d
+		if ( (rlv_handler_t::isEnabled()) && 
 			 (CHAT_TYPE_START != chat.mChatType) && (CHAT_TYPE_STOP != chat.mChatType) && (CHAT_TYPE_OWNER != chat.mChatType) )
 		{
+			// NOTE: chatter can be NULL (may not have rezzed yet, or could be another avie's HUD attachment)
+			BOOL is_attachment = (chatter) ? chatter->isAttachment() : FALSE;
+
 			// Filtering "rules":
 			//   avatar  => filter all avie text (unless it's this avie or they're an exemption)
 			//   objects => filter everything except attachments this avie owns
-			if ( ( (CHAT_SOURCE_AGENT == chat.mSourceType) || (!is_owned_by_me) || (!chatter->isAttachment()) ) &&
-				 (from_id != gAgent.getID()) )
+			if ( ((CHAT_SOURCE_AGENT == chat.mSourceType) && (from_id != gAgent.getID())) || (!is_owned_by_me) || (!is_attachment) )
 			{
 				if (!rlvIsEmote(mesg))
 				{
@@ -2971,7 +2973,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 				} 
 				else
 				{
-					if ( (!is_owned_by_me) || (!chatter->isAttachment()) )
+					if ( (!is_owned_by_me) || (!is_attachment) )
 						gRlvHandler.filterNames(from_name);
 					gRlvHandler.filterNames(mesg);
 				}
@@ -3045,7 +3047,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 				verb = " " + LLTrans::getString("whisper") + " ";
 				break;
 			case CHAT_TYPE_OWNER:
-// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+// [RLVa:KB] - Checked: 2009-08-05 (RLVa-1.0.1e) | Modified: RLVa-1.0.1e
 				if ( (rlv_handler_t::isEnabled()) && (mesg.length() > 3) && (RLV_CMD_PREFIX == mesg[0]) )
 				{
 					mesg.erase(0, 1);
@@ -3058,16 +3060,16 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 					tokenizer tokens(mesg, sep);
 					for (tokenizer::iterator itToken = tokens.begin(); itToken != tokens.end(); ++itToken)
 					{
-						if ( (LLStartUp::getStartupState() >= STATE_MISC) && ((chatter) || (RlvRetainedCommand::isImmediate(*itToken))) )
+						if (LLStartUp::getStartupState() == STATE_STARTED)
 						{
-							if (gRlvHandler.processCommand(from_id, *itToken))
+							if (gRlvHandler.processCommand(from_id, *itToken, true))
 								pstr = &strExecuted;
 							else
 								pstr = &strFailed;
 						}
 						else
 						{
-							gRlvHandler.retainCommand(from_id, *itToken);
+							gRlvHandler.retainCommand(from_name, from_id, *itToken);
 							pstr = &strRetained;
 						}
 

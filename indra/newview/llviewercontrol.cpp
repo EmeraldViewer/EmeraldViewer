@@ -462,6 +462,14 @@ bool handleVoiceClientPrefsChanged(const LLSD& newvalue)
 	return true;
 }
 
+// [RLVa:KB] - Checked: 2009-07-29 (RLVa-1.0.1b) | Added: RLVa-1.0.1b
+bool handleEnableLegacyNamingChanged(const LLSD& newvalue)
+{
+	rlv_handler_t::fLegacyNaming = newvalue.asBoolean();
+	return true;
+}
+// [/RLVa:KB]
+
 ////////////////////////////////////////////////////////////////////////////
 
 void settings_setup_listeners()
@@ -608,6 +616,10 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("VoiceOutputAudioDevice")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("AudioLevelMic")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("LipSyncEnabled")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));	
+
+// [RLVa:KB] - Checked: 2009-07-29 (RLVa-1.0.1b) | Added: RLVa-1.0.1b
+	gSavedSettings.getControl(RLV_SETTING_ENABLELEGACYNAMING)->getSignal()->connect(boost::bind(&handleEnableLegacyNamingChanged, _1));	
+// [/RLVa:KB]
 }
 
 template <> eControlType get_control_type<U32>(const U32& in, LLSD& out) 

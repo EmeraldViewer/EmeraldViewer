@@ -6,6 +6,7 @@
 
 #include "llviewerprecompiledheaders.h"
 
+#include "llagent.h"
 #include "llframetimer.h"
 #include "llprimitive.h"
 #include "llviewerregion.h"

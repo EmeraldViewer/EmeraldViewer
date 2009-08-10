@@ -7,7 +7,7 @@
 #ifndef IMPORTTRACKER_H
 #define IMPORTTRACKER_H
 
-#include "llagent.h"
+//#include "llagent.h"
 
 using namespace std;
 
@@ -65,6 +65,6 @@ class ImportTracker
 
 extern ImportTracker gImportTracker;
 
-extern LLAgent gAgent;
+//extern LLAgent gAgent;
 
 #endif
