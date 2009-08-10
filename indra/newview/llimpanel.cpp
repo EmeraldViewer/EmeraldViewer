@@ -2797,11 +2797,20 @@ void LLFloaterIMPanel::handleOtrTlvs(OtrlTLV *tlvs)
             // We will not expect more messages, so prepare for next SMP
             context->smstate->nextExpected = OTRL_SMP_EXPECT1;
             // Report result to user
-            if (context->active_fingerprint &&
-                context->active_fingerprint->trust &&
-                *(context->active_fingerprint->trust))
+            if (context->smstate->sm_prog_state == OTRL_SMP_PROG_SUCCEEDED)
             {
-                if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_ok");
+                if (context->active_fingerprint &&
+                    context->active_fingerprint->trust &&
+                    *(context->active_fingerprint->trust))
+                {
+                    // they authed me OK, and I already authed them in the past
+                    if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_ok");
+                }
+                else
+                {
+                    // they authed me OK, but I haven't authed them yet
+                    if (mOtrSmpProgress) mOtrSmpProgress->setFinalStatus("otr_smp_prog_auth_ok_name_next");
+                }
             }
             else
             {
