@@ -1657,9 +1657,6 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
             // white-space "I have OTR" tag
 			decrypted_msg = newmessage;  // use processed message
 			message = newmessage;        // use processed message
-            if (IM_TYPING_STOP == dialog) 
-                // display messages received in typing_stop packets
-                dialog = IM_NOTHING_SPECIAL;
 			otrl_message_free(newmessage);
 			ConnContext *context = otrl_context_find(
 				gOTR->get_userstate(), 
@@ -1668,6 +1665,11 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 				gOTR->get_protocolid(),
 				0, NULL, NULL, NULL);
 			encrypted = (context && (OTRL_MSGSTATE_ENCRYPTED == context->msgstate));
+            if (IM_TYPING_STOP == dialog)
+            {
+                if ("typing" == message) return; // don't display whitespace tagged "typing" stop messages
+                dialog = IM_NOTHING_SPECIAL;     // display messages received in typing_stop packets
+            }
 		}
 	}
 
