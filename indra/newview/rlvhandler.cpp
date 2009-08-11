@@ -1145,7 +1145,7 @@ BOOL RlvHandler::processReplyCommand(const LLUUID& uuid, const RlvCommand& rlvCm
 						{
 							const std::string& strFolder = pFolders->get(idxFolder)->getName();
 							if ( (!strFolder.empty()) && (RLV_FOLDER_PREFIX_HIDDEN != strFolder[0]) &&
-								 (!isFoldedFolder(pFolders->get(idxFolder), true)) )
+								 (!isFoldedFolder(pFolders->get(idxFolder).get(), true)) )
 							{
 								if (!strReply.empty())
 									strReply.push_back(',');
