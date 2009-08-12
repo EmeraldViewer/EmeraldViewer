@@ -3049,7 +3049,6 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_colour, std::string& client
 {
 	LLColor4 colourBackup = avatar_name_colour;
 	LLUUID idx = avatar->getTE(0)->getID();
-	LLUUID ax = IMG_DEFAULT_AVATAR;
 	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()))
 	{
 		LLSD cllsd = LLVOAvatar::sClientResolutionList[idx.asString()];
@@ -3093,8 +3092,7 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_colour, std::string& client
 			avatar_name_colour += LLColor4::blue;//day oh
 			avatar_name_colour = avatar_name_colour * 0.5;
 			client = "Day Oh proxy";
-		}else if(idx == LLUUID("e52d21f7-3c8b-819f-a3db-65c432295dac") || idx == LLUUID("0f6723d2-5b23-6b58-08ab-308112b33786") ||
-			(avatar->getTE(0)->getID() == ax && avatar->getTE(4)->getID() != ax && avatar->getTE(3)->getID() == ax))
+		}else if(idx == LLUUID("e52d21f7-3c8b-819f-a3db-65c432295dac") || idx == LLUUID("0f6723d2-5b23-6b58-08ab-308112b33786"))
 		{				//to detect a tweaked cryolife o.o
 			avatar_name_colour += LLColor4::cyan;//cryolife
 			avatar_name_colour += LLColor4::cyan;
