@@ -6385,16 +6385,34 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 		if (rlv_handler_t::isEnabled())
 		{
-			static bool fFullyLoaded = false;
-			if ( (!fFullyLoaded) && (mFullyLoaded) && (STATE_STARTED == LLStartUp::getStartupState()) &&
-				 ( (0 == mPendingAttachment.size()) || 
-				   ((1 == mPendingAttachment.size()) && (mPendingAttachment[0] == viewer_object)) ) &&
-				 (mFullyLoadedTimer.getElapsedTimeF32() > 15.0f) )
+			static bool fRlvFullyLoaded = false;
+			static LLFrameTimer* pRlvFullyLoadedTimer = NULL;
+
+			// There's no way to know when we're done reattaching what was attached at log-off but this ugly evil bad hack tries anyway
+			if (!fRlvFullyLoaded)
 			{
-				fFullyLoaded = true;
+				if (pRlvFullyLoadedTimer)
+				{
+					if (pRlvFullyLoadedTimer->getElapsedTimeF32() > 30.0f)
+					{
+						fRlvFullyLoaded = true;
+						delete pRlvFullyLoadedTimer;
+						pRlvFullyLoadedTimer = NULL;
+					}
+					else
+					{
+						pRlvFullyLoadedTimer->reset();
+					}
+				}
+				else if ( (!pRlvFullyLoadedTimer) && 
+					      ( (0 == mPendingAttachment.size()) || 
+						    ((1 == mPendingAttachment.size()) && (mPendingAttachment[0] == viewer_object)) ) )
+				{
+					pRlvFullyLoadedTimer = new LLFrameTimer();
+				}
 			}
 
-			gRlvHandler.onAttach(attachment, fFullyLoaded);
+			gRlvHandler.onAttach(attachment, fRlvFullyLoaded);
 		}
 // [/RLVa:KB]
 
