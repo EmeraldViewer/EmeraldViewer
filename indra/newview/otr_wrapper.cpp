@@ -42,7 +42,7 @@ OTR_Wrapper::~OTR_Wrapper()
 
 #define otrwui_tracing 1 // $TODO$ use some debug compile flag?
 #if otrwui_tracing
-static void otrwui_trace(const char *msg)
+extern "C" void otrwui_trace(const char *msg)
 {
     llinfos << "$PLOTR$TRACE$" << msg << llendl;
 }
