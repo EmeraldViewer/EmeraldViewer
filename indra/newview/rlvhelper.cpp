@@ -486,6 +486,8 @@ RlvWLSnapshot* RlvWLSnapshot::takeSnapshot()
 
 // =========================================================================
 
+BOOL RlvSettings::fShowNameTags = FALSE;
+
 #ifdef RLV_EXTENSION_STARTLOCATION
 	// Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.1d
 	void RlvSettings::updateLoginLastLocation()
@@ -534,6 +536,24 @@ RlvWLSnapshot* RlvWLSnapshot::takeSnapshot()
 // =========================================================================
 // Message sending functions
 //
+
+// Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.1h
+void rlvForceDetach(LLViewerJointAttachment* pAttachPt)
+{
+	// Copy/paste from handle_detach_from_avatar()
+	LLViewerObject* attached_object = pAttachPt->getObject();
+	if (attached_object)
+	{
+		gMessageSystem->newMessage("ObjectDetach");
+		gMessageSystem->nextBlockFast(_PREHASH_AgentData);
+		gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+		gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+
+		gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
+		gMessageSystem->addU32Fast(_PREHASH_ObjectLocalID, attached_object->getLocalID());
+		gMessageSystem->sendReliable( gAgent.getRegionHost() );
+	}
+}
 
 void rlvSendBusyMessage(const LLUUID& idTo, const std::string& strMsg, const LLUUID& idSession)
 {

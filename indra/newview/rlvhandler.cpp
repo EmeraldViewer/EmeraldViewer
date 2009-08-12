@@ -260,6 +260,20 @@ bool RlvHandler::isDetachable(const LLInventoryItem* pItem) const
 	return ( (pItem) && (pAvatar) ) ? isDetachable(pAvatar->getWornAttachment(pItem->getUUID())) : true;
 }
 
+// Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.1h
+bool RlvHandler::isDetachableExcept(S32 idxAttachPt, LLViewerObject *pObj) const
+{
+	// Loop over every object that marked the specific attachment point undetachable (but ignore pObj and any of its children)
+	for (rlv_detach_map_t::const_iterator itAttach = m_Attachments.lower_bound(idxAttachPt), 
+		endAttach = m_Attachments.upper_bound(idxAttachPt); itAttach != endAttach; ++itAttach)
+	{
+		LLViewerObject* pTempObj = gObjectList.findObject(itAttach->second);
+		if ( (!pTempObj) || (pTempObj->getRootEdit()->getID() != pObj->getID()) )
+			return false;
+	}
+	return true;
+}
+
 // Checked: 2009-05-31 (RLVa-0.2.0e) | Modified: RLVa-0.2.0e
 bool RlvHandler::setDetachable(S32 idxAttachPt, const LLUUID& idRlvObj, bool fDetachable)
 {
@@ -1260,8 +1274,8 @@ void RlvHandler::initLookupTables()
 	}
 }
 
-// Checked: 2009-07-30 (RLVa-1.0.1c) | Modified: RLVa-1.0.1c
-void RlvHandler::onAttach(LLViewerJointAttachment* pAttachPt)
+// Checked: 2009-08-11 (RLVa-1.0.1h) | Modified: RLVa-1.0.1h
+void RlvHandler::onAttach(LLViewerJointAttachment* pAttachPt, bool fFullyLoaded)
 {
 	// Sanity check - LLVOAvatar::attachObject() should call us *after* calling LLViewerJointAttachment::addObject()
 	LLViewerObject* pObj = pAttachPt->getObject();
@@ -1272,12 +1286,29 @@ void RlvHandler::onAttach(LLViewerJointAttachment* pAttachPt)
 		return;
 	}
 
-	// If this is a locked object that got detached and that we're reattaching then remove it from the pending attach list
+	// Check if this attachment point has a pending "reattach-on-detach"
 	rlv_reattach_map_t::iterator itReattach = m_AttachPending.find(idxAttachPt);
-	if ( (itReattach != m_AttachPending.end()) && (itReattach->second == pAttachPt->getItemID()) )
+	if (itReattach != m_AttachPending.end())
 	{
-		RLV_INFOS << "Reattached " << pAttachPt->getItemID().asString() << " to " << idxAttachPt << LL_ENDL;
-		m_AttachPending.erase(itReattach);
+		if (itReattach->second == pAttachPt->getItemID())
+		{
+			RLV_INFOS << "Reattached " << pAttachPt->getItemID().asString() << " to " << idxAttachPt << LL_ENDL;
+			m_AttachPending.erase(itReattach);
+		}
+	}
+	else if ( (fFullyLoaded) && (!isDetachableExcept(idxAttachPt, pObj)) )
+	{
+		// We're fully loaded with no pending reattach on this attach point but it's "undetachable" -> force detach the new attachment
+
+		// Assertion: the only way the attachment point could be locked at this point is if some object locked it with @detach:attachpt=n
+		//   - previous attachments on this attachment point might have issued @detach=n but those were all cleaned up at detach
+		//   - the new attachment might have issued @detach=n but that won't actually lock down the attachment point until further down
+		// NOTE 1: "some object" may no longer exist if it was not an attachment and the GC hasn't cleaned it up yet (informative)
+		// NOTE 2: "some object" may refer to the new attachment - ie @detach:spine=n from object on spine (problematic, causes reattach)
+		//           -> solved by using isDetachableExcept(idxAttachPt, pObj) instead of isDetachable(idxAttachPt)
+
+		m_DetachPending.insert(std::pair<S32, LLUUID>(idxAttachPt, pObj->getID()));
+		rlvForceDetach(pAttachPt);
 	}
 
 	// Check if we already have an RlvObject instance for this object (rezzed prim attached from in-world, or an attachment that rezzed in)
@@ -1398,7 +1429,14 @@ void RlvHandler::onDetach(LLViewerJointAttachment* pAttachPt)
 	#endif // RLV_DEBUG
 
 	// If the attachment was locked then we should reattach it (unless we're already trying to reattach to this attachment point)
-	if ( (!isDetachable(idxAttachPt)) && (m_AttachPending.find(idxAttachPt) == m_AttachPending.end()) )
+	// (unless we forcefully detached it else in which case we do not want to reattach it)
+	rlv_reattach_map_t::iterator itDetach = m_DetachPending.find(idxAttachPt);
+	if (itDetach != m_DetachPending.end())
+	{
+		// RLVa-TODO: we should really be comparing item UUIDs but is it even possible to end up here and not have them match?
+		m_DetachPending.erase(itDetach);
+	}
+	else if ( (!isDetachable(idxAttachPt)) && (m_AttachPending.find(idxAttachPt) == m_AttachPending.end()) )
 	{
 		// In an ideal world we would simply set up an LLInventoryObserver but there's no specific "asset updated" changed flag *sighs*
 		// NOTE: attachments *always* know their "inventory item UUID" so we don't have to worry about fetched vs unfetched inventory
@@ -2423,8 +2461,12 @@ BOOL RlvHandler::setEnabled(BOOL fEnable)
 
 	if (fEnable)
 	{
-		fNoSetEnv = gSavedSettings.getBOOL(RLV_SETTING_NOSETENV);
-		fLegacyNaming = gSavedSettings.getBOOL(RLV_SETTING_ENABLELEGACYNAMING);
+		if (gSavedSettings.controlExists(RLV_SETTING_NOSETENV))
+			fNoSetEnv = gSavedSettings.getBOOL(RLV_SETTING_NOSETENV);
+		if (gSavedSettings.controlExists(RLV_SETTING_ENABLELEGACYNAMING))
+			fLegacyNaming = gSavedSettings.getBOOL(RLV_SETTING_ENABLELEGACYNAMING);
+		if (gSavedSettings.controlExists(RLV_SETTING_SHOWNAMETAGS))
+			RlvSettings::fShowNameTags = gSavedSettings.getBOOL(RLV_SETTING_SHOWNAMETAGS);
 
 		RlvCommand::initLookupTable();
 		gRlvHandler.addObserver(new RlvExtGetSet());

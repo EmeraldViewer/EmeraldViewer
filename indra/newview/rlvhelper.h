@@ -50,13 +50,13 @@
 // Version of the specifcation we support
 const S32 RLV_VERSION_MAJOR = 1;
 const S32 RLV_VERSION_MINOR = 20;
-const S32 RLV_VERSION_PATCH = 0;
+const S32 RLV_VERSION_PATCH = 1;
 
 // Implementation version
 const S32 RLVa_VERSION_MAJOR = 1;
 const S32 RLVa_VERSION_MINOR = 0;
 const S32 RLVa_VERSION_PATCH = 1;
-const S32 RLVa_VERSION_BUILD = 6;
+const S32 RLVa_VERSION_BUILD = 7;
 
 // The official viewer version we're patching against
 #define RLV_MAKE_TARGET(x, y, z)	((x << 16) | (y << 8) | z)
@@ -406,6 +406,7 @@ private:
 #define RLV_SETTING_HIDELOCKEDATTACH	"RLVaHideLockedAttachments"
 #define RLV_SETTING_HIDELOCKEDINVENTORY	"RLVaHideLockedInventory"
 #define RLV_SETTING_LOGINLASTLOCATION	"RLVaLoginLastLocation"
+#define RLV_SETTING_SHOWNAMETAGS		"RLVaShowNameTags"
 
 inline BOOL rlvGetSettingBOOL(const std::string& strSetting, BOOL fDefault)
 {
@@ -431,6 +432,32 @@ public:
 		static BOOL getLoginLastLocation()	{ return rlvGetPerUserSettingsBOOL(RLV_SETTING_LOGINLASTLOCATION, TRUE); }
 		static void updateLoginLastLocation();
 	#endif // RLV_EXTENSION_STARTLOCATION
+
+	static BOOL fShowNameTags;
+};
+
+// ============================================================================
+/*
+ * State keeping classes/structure
+ *
+ */
+
+struct RlvRedirInfo
+{
+	S16 nRedirChat;
+	S16 nRedirEmote;
+
+	RlvRedirInfo() : nRedirChat(0), nRedirEmote(0) {}
+	bool isActive() { return (nRedirChat + nRedirEmote) != 0; }
+};
+
+struct RlvReattachInfo
+{
+	LLUUID idItem;
+	bool   fInInventory;
+	bool   fAssetSaved;
+
+	RlvReattachInfo() : idItem(), fInInventory(false), fAssetSaved(false) {}
 };
 
 // ============================================================================
@@ -489,6 +516,7 @@ bool rlvIsEmote(const std::string& strUTF8Text);
 bool rlvIsValidChannel(S32 nChannel);
 bool rlvIsWearingItem(const LLInventoryItem* pItem);
 
+void rlvForceDetach(LLViewerJointAttachment* pAttachPt);
 void rlvSendBusyMessage(const LLUUID& idTo, const std::string& strMsg, const LLUUID& idSession = LLUUID::null);
 bool rlvSendChatReply(const std::string& strChannel, const std::string& strReply);
 bool rlvSendChatReply(S32 nChannel, const std::string& strReply);

@@ -462,10 +462,16 @@ bool handleVoiceClientPrefsChanged(const LLSD& newvalue)
 	return true;
 }
 
-// [RLVa:KB] - Checked: 2009-07-29 (RLVa-1.0.1b) | Added: RLVa-1.0.1b
-bool handleEnableLegacyNamingChanged(const LLSD& newvalue)
+// [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.1h
+bool rlvHandleEnableLegacyNamingChanged(const LLSD& newvalue)
 {
 	rlv_handler_t::fLegacyNaming = newvalue.asBoolean();
+	return true;
+}
+
+bool rlvHandleShowNameTagsChanged(const LLSD& newvalue)
+{
+	RlvSettings::fShowNameTags = newvalue.asBoolean();
 	return true;
 }
 // [/RLVa:KB]
@@ -617,8 +623,11 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("AudioLevelMic")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("LipSyncEnabled")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));	
 
-// [RLVa:KB] - Checked: 2009-07-29 (RLVa-1.0.1b) | Added: RLVa-1.0.1b
-	gSavedSettings.getControl(RLV_SETTING_ENABLELEGACYNAMING)->getSignal()->connect(boost::bind(&handleEnableLegacyNamingChanged, _1));	
+// [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.1h
+	if (gSavedSettings.controlExists(RLV_SETTING_ENABLELEGACYNAMING))
+		gSavedSettings.getControl(RLV_SETTING_ENABLELEGACYNAMING)->getSignal()->connect(boost::bind(&rlvHandleEnableLegacyNamingChanged, _1));
+	if (gSavedSettings.controlExists(RLV_SETTING_SHOWNAMETAGS))
+		gSavedSettings.getControl(RLV_SETTING_SHOWNAMETAGS)->getSignal()->connect(boost::bind(&rlvHandleShowNameTagsChanged, _1));
 // [/RLVa:KB]
 }
 

@@ -116,6 +116,10 @@
 
 #include "boost/lexical_cast.hpp"
 
+// [RLVa:KB]
+#include "llstartup.h"
+// [/RLVa:KB]
+ 
 using namespace LLVOAvatarDefines;
 //-----------------------------------------------------------------------------
 // Global constants
@@ -3216,16 +3220,16 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	const F32 NAME_SHOW_TIME = gSavedSettings.getF32("RenderNameShowTime");	// seconds
 	const F32 FADE_DURATION = gSavedSettings.getF32("RenderNameFadeDuration"); // seconds
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
-	BOOL fRlvShowNames = gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES);
+	bool fRlvShowNames = gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES);
 // [/RLVa:KB]
 	BOOL visible_avatar = isVisible() || mNeedsAnimUpdate;
 	BOOL visible_chat = gSavedSettings.getBOOL("UseChatBubbles") && (mChats.size() || mTyping);
 	BOOL render_name =	visible_chat ||
 						(visible_avatar &&
-						((sRenderName == RENDER_NAME_ALWAYS) ||
-// [RLVa:KB] - Comment out the line above (and uncomment the line below) to hide avie name tags under @shownmames=n
-						//((sRenderName == RENDER_NAME_ALWAYS && !fRlvShowNames) ||
+// [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.0h
+						( (!fRlvShowNames) || (RlvSettings::fShowNameTags) ) &&
 // [/RLVa:KB]
+						((sRenderName == RENDER_NAME_ALWAYS) ||
 						(sRenderName == RENDER_NAME_FADE && time_visible < NAME_SHOW_TIME)));
 	// If it's your own avatar, don't draw in mouselook, and don't
 	// draw if we're specifically hiding our own name.
@@ -6381,7 +6385,16 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 		if (rlv_handler_t::isEnabled())
 		{
-			gRlvHandler.onAttach(attachment);
+			static bool fFullyLoaded = false;
+			if ( (!fFullyLoaded) && (mFullyLoaded) && (STATE_STARTED == LLStartUp::getStartupState()) &&
+				 ( (0 == mPendingAttachment.size()) || 
+				   ((1 == mPendingAttachment.size()) && (mPendingAttachment[0] == viewer_object)) ) &&
+				 (mFullyLoadedTimer.getElapsedTimeF32() > 15.0f) )
+			{
+				fFullyLoaded = true;
+			}
+
+			gRlvHandler.onAttach(attachment, fFullyLoaded);
 		}
 // [/RLVa:KB]
 

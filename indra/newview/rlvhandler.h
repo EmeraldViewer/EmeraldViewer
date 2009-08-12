@@ -24,6 +24,7 @@ typedef std::map<LLUUID, RlvObject> rlv_object_map_t;
 typedef std::multimap<S32, LLUUID> rlv_detach_map_t;
 typedef std::map<S32, LLUUID> rlv_reattach_map_t;
 typedef std::multimap<LLUUID, ERlvBehaviour> rlv_exception_map_t;
+typedef std::map<S32, RlvRedirInfo> rlv_redir_map_t;
 
 class RlvHandler
 {
@@ -69,10 +70,12 @@ public:
 	// Returns TRUE if there is at least 1 undetachable HUD attachment
 	bool hasLockedHUD() const;
 
-	// Returns TRUE if the attachment on the specified attachment point is detachable
+	// Returns TRUE if the specified attachment point is detachable
 	bool isDetachable(S32 idxAttachPt) const { return (idxAttachPt) && (m_Attachments.find(idxAttachPt) == m_Attachments.end()); }
 	bool isDetachable(const LLInventoryItem* pItem) const;
 	bool isDetachable(LLViewerObject* pObj) const;
+	// Returns TRUE if the specified attachment point is set undetachable by anything other than pObj (or one of its children)
+	bool isDetachableExcept(S32 idxAttachPt, LLViewerObject* pObj) const;
 	// Marks the specified attachment point as (un)detachable (return value indicates success ; used by unit tests)
 	bool setDetachable(S32 idxAttachPt, const LLUUID& idRlvObj, bool fDetachable);
 	bool setDetachable(LLViewerObject* pObj, const LLUUID& idRlvObj, bool fDetachable);
@@ -184,7 +187,7 @@ public:
 	void notifyBehaviourObservers(const RlvCommand& rlvCmd, bool fInternal);
 
 	// Externally invoked event handlers
-	void onAttach(LLViewerJointAttachment* pAttachPt);						// LLVOAvatar::attachObject()
+	void onAttach(LLViewerJointAttachment* pAttachPt, bool fFullyLoaded);	// LLVOAvatar::attachObject()
 	void onDetach(LLViewerJointAttachment* pAttachPt);						// LLVOAvatar::detachObject()
 	bool onGC();															// RlvGCTimer::tick()
 	void onSavedAssetIntoInventory(const LLUUID& idItem);					// LLInventoryModel::processSaveAssetIntoInventory()
@@ -230,6 +233,8 @@ protected:
 
 	rlv_retained_list_t  m_Retained;
 	rlv_reattach_map_t   m_AttachPending;
+	rlv_reattach_map_t   m_DetachPending;
+	rlv_redir_map_t      m_Redirections;
 	RlvGCTimer*          m_pGCTimer;
 	RlvWLSnapshot*       m_pWLSnapshot;
 
