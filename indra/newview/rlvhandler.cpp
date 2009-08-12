@@ -538,7 +538,7 @@ BOOL RlvHandler::processAddCommand(const LLUUID& uuid, const RlvCommand& rlvCmd)
 	{
 		case RLV_BHVR_DETACH:				// @detach[:<option>]=n		- Checked: 2009-08-04 (RLVa-1.0.1d) | Modified: RLVa-1.0.1d
 			{
-				LLViewerObject* pObj = NULL; S32 idxAttachPt = NULL;
+				LLViewerObject* pObj = NULL; S32 idxAttachPt = 0;
 				if (strOption.empty())													// @detach=n
 				{
 					// If the object rezzed before we received @detach=n from it then we can just do our thing here
