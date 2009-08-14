@@ -323,5 +323,33 @@ Höhe des Avatars zu manipulieren ohne den Shape zu ändern.
       <check_box label="Ausgewählten Prims hervorheben" name="EmBuildPrefsRenderHighlight_toggle"/>
       <check_box label="Zeige Achsenpfeile an der Root Prim Position" tool_tip="Standardmässig werden die Pfeile am Mittelpunkt des Linksets angezeigt. Wenn aktiviert werden sie am Mittelpunkt des Root Prims angezeigt." name="EmBuildPrefsActualRoot_toggle"/>
     </panel>
-  </tab_container>
+    <panel label="Utility Stream" name="Utility Stream">
+			<check_box label="Aktiviere Greenlife Utility Stream" tool_tip="Aktiviere Greenlife Utility Stream (GUS)" name="GUS Enable"/>
+			<panel name="gus_panel">
+			<spinner label="Channel" name="Channel" control_name="EmeraldGUSChannel"/>
+			<check_box label="Aktiviere FastEvents" tool_tip="Aktiviere Greenlife Utility Stream FastEvents (GUS-FE)" name="GUS-FE Enable"/>
+			<spinner label="GUS Rate" name="Wiederholungsrate"/>
+			<spinner label="GUS-FE Rate" name="Fast Event Wiederholungsrate"/>
+			</panel>
+			<!-- GUS FEATURES: THESE ARE AS COLUMNS; ADDITIONAL ROWS PER GUS / GUS-FE COLUMNS!	-->
+			<!-- GUS COLUMN -->
+			<panel name="gus_feature_column">
+			<text name="rofltxt1">
+			GUS Variablen:
+			</text>
+			<check_box label="Augapfel Rotation" tool_tip="Sendet Augapfel Rotations Daten; nützlich für Prim-Augen bei einigen Avataren..." name="Eyeball Rotation"/>
+			</panel>
+			<!-- GUS-FE COLUMN -->
+			<panel name="gus-fe_feature_column">
+			<text name="rofltxt2">
+			GUS-FE Variablen:
+			</text>
+			<check_box label="Augenlid Status" tool_tip="Sende Augenlid Status; nützlich für Prim-Augen bei einigen Avataren..." name="Eyelid State"/>
+			</panel>
+			<text name="rofltxt3">
+					Experimentell! Greenlife Utility Stream sendet Informationen von Emerald in den Simulator
+damit Scripte darauf zugreifen können.
+			</text>
+		</panel>
+	</tab_container>
 </panel>
