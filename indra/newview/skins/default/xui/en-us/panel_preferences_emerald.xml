@@ -8,8 +8,10 @@
 		     label="TP/Login" left="1" mouse_opaque="true" name="Teleport/Login" width="517">
 <button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_TeleportLogin" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
       <check_box bottom="-30" enabled="true"
+
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Double-click Teleport" left="10" mouse_opaque="true"
+
            name="double_click_tp_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleport" />
       <check_box bottom_delta="-0" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
@@ -19,6 +21,7 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Velocity Interpolate Double-click Teleports" left_delta="-150" mouse_opaque="true"
            name="login_screen_toggle1" radio_style="false" width="270" control_name="EmeraldVelocityDoubleClickTeleport" />
+
       <check_box bottom_delta="-20" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Rotate Camera behind avatar after Double-click Teleports" left_delta="0" mouse_opaque="true"
@@ -90,6 +93,8 @@
              tool_tip="Revert Production Grid Voice Server"
              left="10"
              bottom="-40"
+
+
              width="100"
              height="20"
              font="SansSerifSmall"
@@ -131,8 +136,10 @@
 		     label="Shields" left="1" mouse_opaque="true" name="Shields" width="418">
 <button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Shields" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
       <check_box bottom="-30" enabled="true"
+
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Clothing Layer Protection" left="10" mouse_opaque="true"
+
            name="clothing_protect_toggle" radio_style="false" width="270" control_name="EmeraldClothingLayerProtection" />
       <panel
              name="antispam_options"
@@ -217,8 +224,25 @@ Recommended Settings are:
 	   label="IM" left="1" mouse_opaque="true" name="Misc" width="418">
 <button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_IM" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
       <!--[$PLOTR$]-->
+      <radio_group bottom="-85" draw_border="false" enabled="true" follows="left|top" height="80" left="300" mouse_opaque="true"
       <radio_group bottom="-85" draw_border="false" enabled="true" follows="left|top" height="80" left="290" mouse_opaque="true"
 		   name="EmeraldUseOTR" width="160">
+        <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="0" width="98"
+                    tool_tip="Require use of OTR in IMs">
+          Require use of OTR in IMs
+        </radio_item>
+        <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="1" width="98"
+                    tool_tip="Request OTR if available.">
+          Request OTR if available
+        </radio_item>
+        <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="2" width="98"
+                    tool_tip="Accept OTR requests.">
+          Accept OTR requests
+        </radio_item>
+        <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0" mouse_opaque="true" name="3" width="98"
+                    tool_tip="Decline use of OTR.">
+          Decline use of OTR
+        </radio_item>
         <radio_item type="string" length="1" bottom_delta="-10" enabled="true" height="16" left_delta="0"
 		    name="0" width="98" mouse_opaque="true"
                     tool_tip="Require use of OTR in IMs"
@@ -236,6 +260,7 @@ Recommended Settings are:
                     tool_tip="Decline use of OTR."
 		    >Decline use of OTR</radio_item>
       </radio_group>
+      <button bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="20" left="300" name="otr_help_btn" width="98" label="What is OTR?"/>
       <button follows="left|top" font="SansSerifSmall" bottom_delta="0" right="490" height="20" width="80" 
 	      name="otr_help_btn" label="What is OTR?"/>
       <check_box follows="left|top" left="290" bottom_delta="-20" enabled="true"
@@ -246,6 +271,7 @@ Recommended Settings are:
 		 label="Use typing_stop for OTR"/>
       <view_border bevel_style="none" border_thickness="1" bottom_delta="4" follows="top|left" height="100" left_delta="-25" name="OTRBorder" width="0" />
       <!--[/$PLOTR$]-->
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="4" follows="top|left" height="100" left_delta="-30" name="OTRBorder" width="0" />
       <check_box bottom="-25" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Announce incoming instant messages" left="10" mouse_opaque="true"
@@ -282,6 +308,7 @@ Recommended Settings are:
            bottom_delta="-10" drop_shadow_visible="true" enabled="true" follows="left|top"
            font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="-50"
            mouse_opaque="false" name="text_box1" v_pad="0" width="440">
+
         Response Text: (Use #f for recipient's first name, #l for last name, #t for timestamp):
       </text>
       <text_editor type="string" length="1" bottom_delta="-85" embedded_items="false" enabled="true" follows="left|top"
@@ -327,9 +354,11 @@ Recommended Settings are:
       <panel
             name="avatar_options"
             left="5"
+
             width="310"
             height="75"
             bottom="-80"
+
             border="true"
             mouse_opaque="true"
             bevel_style="in"
@@ -429,6 +458,7 @@ Recommended Settings are:
            label="CmdLine" left="1" mouse_opaque="true" name="CmdLine" width="418">
 <button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_CmdLine" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
       <text bottom="-20" follows="left|top" font="SansSerifSmall" height="16" left="5" name="loltxt1" width="512">
+
         ("cmd" in the usage and examples refers to the text in the textbox)
 Leave any command blank to deactivate it.
       </text>
@@ -437,6 +467,7 @@ Leave any command blank to deactivate it.
            label="Enable usage of chat bar as a command line" left_delta="0" mouse_opaque="true"
            name="chat_cmd_toggle" radio_style="false" width="270" control_name="EmeraldCmdLine" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="10" name="loltxt2" width="512">
+
         Teleport to a position within the region
 (usage: cmd x y z) (ex: cmd 128 192 50)
       </text>
@@ -445,6 +476,7 @@ Leave any command blank to deactivate it.
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLinePos" control_name="EmeraldCmdLinePos" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt3" width="512">
+
         Teleport to terrain ground level
 (usage: cmd) (ex: cmd)
       </text>
@@ -453,6 +485,7 @@ Leave any command blank to deactivate it.
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineGround" control_name="EmeraldCmdLineGround" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt4" width="512">
+
         Teleport to a particular height
 (usage: cmd z) (ex: cmd 100)
       </text>
@@ -461,6 +494,7 @@ Leave any command blank to deactivate it.
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineHeight" control_name="EmeraldCmdLineHeight" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt5" width="512">
+
         Teleport home
 (usage: cmd) (ex: cmd)
       </text>
@@ -471,6 +505,9 @@ Leave any command blank to deactivate it.
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt6" width="512">
         Rez a platform (diam. optional, 0-30m)
 (usage: cmd diameter) (ex: cmd 25)
+
+
+
       </text>
       <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
@@ -496,6 +533,7 @@ Leave any command blank to deactivate it.
           auto_resize="false"
           tool_tip="How big do you want the platform to appear to be?" />
       <text bottom_delta="-15" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt7" width="512">
+
         Teleport to a region by name
 (usage: cmd simname) (ex: cmd Ahern)
       </text>
@@ -509,6 +547,7 @@ Leave any command blank to deactivate it.
            name="toggle" radio_style="false" width="270" control_name="EmeraldMapToKeepPos" />
 <view_border bevel_style="none" border_thickness="1" bottom_delta="0" follows="top|left" height="310" left="230" name="EmDivisor" width="0" />
 	<text bottom_delta="290" follows="left|top" font="SansSerifSmall" height="16" left_delta="10" name="loltxt8" width="512">
+
         Calculate expressions
 (usage: cmd expressions) (ex:cmd SIN(2+2))
       </text>
@@ -517,6 +556,7 @@ Leave any command blank to deactivate it.
             max_length="256" mouse_opaque="true"
             tool_tip="" name="EmeraldCmdLineCalc" control_name="EmeraldCmdLineCalc" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt9" width="512">
+
         Change Draw Distance
 (usage: cmd meters) (ex:cmd 256)
       </text>
@@ -525,6 +565,7 @@ Leave any command blank to deactivate it.
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineDrawDistance" control_name="EmeraldCmdLineDrawDistance" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt10" width="512">
+
         Teleport to your camera position
 (usage: cmd) (ex:cmd)
       </text>
@@ -533,6 +574,7 @@ Leave any command blank to deactivate it.
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdTeleportToCam" control_name="EmeraldCmdTeleportToCam" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt11" width="512">
+
         Retrieve the avatar name from a key
 (usage: cmd key) (ex:cmd avatar-key)
       </text>
@@ -541,6 +583,7 @@ Leave any command blank to deactivate it.
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineKeyToName" control_name="EmeraldCmdLineKeyToName" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt12" width="512">
+
         Offer a teleport to your location
 (usage: cmd key) (ex:cmd avatar-key)
       </text>
@@ -549,6 +592,7 @@ Leave any command blank to deactivate it.
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineOfferTp" control_name="EmeraldCmdLineOfferTp" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt13" width="512">
+
         Teleport to an avatar
 (usage: cmd name) (ex:cmd First Last)
       </text>
@@ -563,9 +607,11 @@ Leave any command blank to deactivate it.
       <panel
              name="antispam_options"
              left="5"
+
              width="150"
              height="75"
              bottom="-90"
+
              border="true"
              mouse_opaque="true"
              bevel_style="in"
@@ -590,6 +636,8 @@ Leave any command blank to deactivate it.
 			     left_delta="0" max_val="5.0" min_val="-5.0" mouse_opaque="true"
 			     name="Z Modifier" width="128" control_name="EmeraldAvatarZModifier" />
       <text bottom_delta="50" follows="left|top" font="SansSerifSmall" height="16" left_delta="150" name="loltxt14" width="512">
+
+
         Use this to manipulate, to a degree, your avatar bounding
 box. This can be used to distort orbiters, or to raise
 you up or down without altering your shape.
@@ -637,6 +685,7 @@ you up or down without altering your shape.
              bottom="-25" drop_shadow_visible="true" enabled="true" follows="left|top"
              font="SansSerifSmall" h_pad="0" halign="left" height="10" left="12"
              mouse_opaque="false" name="text_box2" v_pad="0" width="200">
+
         Use the New Objects settings from:
       </text>
       <radio_group bottom="-30" draw_border="false" enabled="false" follows="left|top" height="20" left="200" mouse_opaque="true"
@@ -652,18 +701,21 @@ you up or down without altering your shape.
              bottom_delta="-30" drop_shadow_visible="true" enabled="true" follows="left|top"
              font="SansSerifSmall" h_pad="0" halign="left" height="10" left="30"
              mouse_opaque="false" name="text_box3" v_pad="0" width="150">
+
         Object Size
       </text>
       <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
              bottom_delta="0" drop_shadow_visible="true" enabled="true" follows="left|top"
              font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="130"
              mouse_opaque="false" name="text_box4" v_pad="0" width="150">
+
         Settings
       </text>
       <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
              bottom_delta="0" drop_shadow_visible="true" enabled="true" follows="left|top"
              font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="150"
              mouse_opaque="false" name="text_box5" v_pad="0" width="150">
+
         Texture
       </text>
       <view_border bevel_style="none" border_thickness="1" bottom_delta="-98" follows="top|left" height="90" left="5" name="SizeBorder" width="120" />
@@ -763,6 +815,7 @@ you up or down without altering your shape.
              bottom_delta="90" drop_shadow_visible="true" enabled="true" follows="left|top"
              font="SansSerifSmall" h_pad="0" halign="left" height="10" left_delta="30"
              mouse_opaque="false" name="text_box6" v_pad="0" width="150">
+
         Pivot Point
       </text>
       <spinner bottom_delta="-25" decimal_digits="5" follows="left|top" height="16"
@@ -792,5 +845,107 @@ you up or down without altering your shape.
            name="EmBuildPrefsActualRoot_toggle" control_name="EmeraldBuildPrefs_ActualRoot" radio_style="false" width="270" />
     </panel>
 
-  </tab_container>
+		<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
+			label="Utility Stream" left="1" mouse_opaque="true" name="Utility Stream" width="418">
+			<check_box bottom_delta="-30" enabled="true"
+					follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+					label="Enable Greenlife Utility Stream" left_delta="10" mouse_opaque="true"
+					tool_tip="Enable Greenlife Utility Stream (GUS)"
+					name="GUS Enable" radio_style="false" width="128" control_name="EmeraldGUSEnabled" />
+			<panel
+			name="gus_panel"
+			left_delta="0"
+			width="280"
+			height="45"
+			bottom="-90"
+			border="true"
+			mouse_opaque="true"
+			bevel_style="in"
+			background_visible="true"
+			background_opaque="true"
+			follows="top|left"
+			bg_opaque_color="0,0,0,0.1"
+			bg_alpha_color="blue"
+			can_resize="false"
+			>
+			<spinner bottom_delta="-20" decimal_digits="0" follows="left|top" height="16"
+					increment="1" label="Channel" label_width="65"
+					left_delta="5" max_val="99999" min_val="-9999" mouse_opaque="true"
+					name="Channel" width="128" control_name="EmeraldGUSChannel" />
+			<check_box bottom_delta="0" enabled="true"
+					follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+					label="Enable FastEvents" left_delta="138" mouse_opaque="true"
+					tool_tip="Enable Greenlife Utility Stream FastEvents (GUS-FE)"
+					name="GUS-FE Enable" radio_style="false" width="128" control_name="EmeraldGUSFastEventsEnabled" />
+			<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
+					increment="0.5" label="GUS Rate" label_width="65"
+					left_delta="-138" max_val="10.00" min_val="0.50" mouse_opaque="true"
+					name="Refresh Rate" width="128" control_name="EmeraldGUSRefresh" />
+			<spinner bottom_delta="0" decimal_digits="5" follows="left|top" height="16"
+					increment="0.5" label="GUS-FE Rate" label_width="65"
+					left_delta="138" max_val="20.00" min_val="1.00" mouse_opaque="true"
+					name="Fast Event Refresh Rate" width="128" control_name="EmeraldGUSFastEventsRefresh" />
+			</panel>
+			<!-- 
+					GUS FEATURES:
+					THESE ARE AS COLUMNS; ADDITIONAL ROWS PER GUS / GUS-FE COLUMNS!
+			-->
+			<!-- GUS COLUMN -->
+			<panel
+			name="gus_feature_column"
+			left_delta="0"
+			width="134"
+			height="45"
+			bottom_delta="-60"
+			border="true"
+			mouse_opaque="true"
+			bevel_style="in"
+			background_visible="true"
+			background_opaque="true"
+			follows="top|left"
+			bg_opaque_color="0,0,0,0.1"
+			bg_alpha_color="blue"
+			can_resize="false"
+			>
+			<text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="5" name="rofltxt" width="512">
+			GUS Variables:
+			</text>
+			<check_box bottom_delta="-20" enabled="true"
+					follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+					label="Eyeball Rotation" left_delta="5" mouse_opaque="true"
+					tool_tip="Enable streaming of the avatar mesh eyeball rotation; useful for prim-eyes for certain avatars..."
+					name="Eyeball Rotation" radio_style="false" width="128" control_name="EmeraldGUSEyeRot" />
+			</panel>
+			<!-- GUS-FE COLUMN -->
+			<panel
+			name="gus-fe_feature_column"
+			left_delta="146"
+			width="134"
+			height="45"
+			bottom_delta="0"
+			border="true"
+			mouse_opaque="true"
+			bevel_style="in"
+			background_visible="true"
+			background_opaque="true"
+			follows="top|left"
+			bg_opaque_color="0,0,0,0.1"
+			bg_alpha_color="blue"
+			can_resize="false"
+			>
+			<text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="5" name="rofltxt" width="512">
+			GUS-FE Variables:
+			</text>
+			<check_box bottom_delta="-20" enabled="true"
+					follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+					label="Eyelid State" left_delta="5" mouse_opaque="true"
+					tool_tip="Enable streaming of the avatar mesh eyelid state; useful for prim-eyes for certain avatars..."
+					name="Eyelid State" radio_style="false" width="128" control_name="EmeraldGUSEyelidState" />
+			</panel>
+			<text bottom_delta="-40" follows="left|top" font="SansSerifSmall" height="16" left_delta="-146" name="rofltxt" width="512">
+					EXPERIMENTAL: The Greenlife Utility Stream is used for streaming information
+from the Emerald viewer into the simulator for access via scripts.
+			</text>
+		</panel>
+	</tab_container>
 </panel>

@@ -70,6 +70,11 @@ private:
 	//static void onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data);
 	//static void onCommitAvatarEffectsChange(LLUICtrl* caller, void* user_data);
 	//static void onCommitAutoResponse(LLUICtrl* caller, void* user_data);
+	static void onUpdateGUSEnabled(LLUICtrl* ctrl, void* userdata);
+	static void onUpdateGUSChannel(LLUICtrl* ctrl, void* userdata);
+	static void onUpdateGUSRate(LLUICtrl* ctrl, void* userdata);
+	static void onUpdateGUSFeatures(LLUICtrl* ctrl, void* userdata);
+	static void onUpdateGUS(LLUICtrl* ctrl, void* userdata);
 
 private:
 	std::string mSkin;
