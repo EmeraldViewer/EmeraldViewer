@@ -328,8 +328,8 @@ Höhe des Avatars zu manipulieren ohne den Shape zu ändern.
 			<panel name="gus_panel">
 			<spinner label="Channel" name="Channel" control_name="EmeraldGUSChannel"/>
 			<check_box label="Aktiviere FastEvents" tool_tip="Aktiviere Greenlife Utility Stream FastEvents (GUS-FE)" name="GUS-FE Enable"/>
-			<spinner label="GUS Rate" name="Wiederholungsrate"/>
-			<spinner label="GUS-FE Rate" name="Fast Event Wiederholungsrate"/>
+			<spinner label="GUS Rate" name="Refresh Rate"/>
+			<spinner label="GUS-FE Rate" name="Fast Event Refresh Rate"/>
 			</panel>
 			<!-- GUS FEATURES: THESE ARE AS COLUMNS; ADDITIONAL ROWS PER GUS / GUS-FE COLUMNS!	-->
 			<!-- GUS COLUMN -->
