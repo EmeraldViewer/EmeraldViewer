@@ -492,6 +492,7 @@ set(viewer_SOURCE_FILES
     otr_wrapper.cpp
     otr_floater_smp_dialog.cpp
     otr_floater_smp_progress.cpp
+    greenlife_utility_stream.cpp
     )
 
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
@@ -929,6 +930,7 @@ set(viewer_HEADER_FILES
     otr_wrapper.h
     otr_floater_smp_dialog.h
     otr_floater_smp_progress.h
+    greenlife_utility_stream.h
     )
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)

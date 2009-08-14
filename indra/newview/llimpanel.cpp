@@ -2080,7 +2080,10 @@ void deliver_message(const std::string& utf8_text,
 }
 
 #if USE_OTR       // [$PLOTR$]
-void deliver_otr_message(const std::string& utf8_text,
+static bool g_otr_force_typing_stop = false; // ugly hack...
+// sometimes we must send messages, but don't know if they are offline
+
+void otr_deliver_message(const std::string& utf8_text,
                          const LLUUID& im_session_id,
                          const LLUUID& other_participant_id,
                          EInstantMessage dialog)
@@ -2107,7 +2110,8 @@ void deliver_otr_message(const std::string& utf8_text,
         new_dialog = IM_SESSION_SEND;
     }
     if ((new_dialog == IM_NOTHING_SPECIAL) &&
-        (gSavedSettings.getBOOL("EmeraldOTRInTypingStop")))
+        (g_otr_force_typing_stop ||
+         (gSavedSettings.getBOOL("EmeraldOTRInTypingStop"))))
     {
         OtrlMessageType mtype = otrl_proto_message_type(utf8_text.c_str());
         switch (mtype)
@@ -2280,6 +2284,7 @@ void LLFloaterIMPanel::doOtrStop(bool pretend_they_did)
         gAgent.getID().toString(&(my_uuid[0]));
         mOtherParticipantUUID.toString(&(their_uuid[0]));
         llinfos << "$PLOTR$ otr menu stop 2 their_uuid:" << mOtherParticipantUUID << llendl;
+        g_otr_force_typing_stop = true; // ugly hack
         otrl_message_disconnect(
             gOTR->get_userstate(), 
             gOTR->get_uistate(), 
@@ -2287,6 +2292,7 @@ void LLFloaterIMPanel::doOtrStop(bool pretend_they_did)
             my_uuid,
             gOTR->get_protocolid(),
             their_uuid);
+        g_otr_force_typing_stop = false;
         if (pretend_they_did)
         {
             otrLogMessageGetstringName("otr_prog_they_stop");
@@ -2571,7 +2577,7 @@ void otr_authenticate_key(LLUUID session_id, const char *trust)
     }
 }
 
-void show_otr_status(LLUUID session_id)
+void otr_show_status(LLUUID session_id)
 {
 	LLFloaterIMPanel* floater = gIMMgr->findFloaterBySession(session_id);
     if (floater) floater->showOtrStatus();

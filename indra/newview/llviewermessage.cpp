@@ -1582,7 +1582,13 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 
 	std::string decrypted_msg;
 	bool encrypted = gIMMgr->decryptMessage(session_id, from_id, message, decrypted_msg);
-#if USE_OTR // [$PLOTR]
+#if USE_OTR // [$PLOTR$]
+//     if ((CHAT_SOURCE_SYSTEM == chat.mSourceType) &&
+//         ((std::string::npos != message.find("not online")) ||
+//          (std::string::npos != message.find("stored and delivered later"))))
+//     {
+//         llinfos << "$PLOTR$ Looks like " << from_id << " went offline." << llendl;
+//     }
 	U32 otrpref = gSavedSettings.getU32("EmeraldUseOTR");
     // otrpref: 0 == Require use of OTR in IMs, 1 == Request OTR if available, 2 == Accept OTR requests, 3 == Decline use of OTR
 	if ((otrpref != 3) && !is_muted && (chat.mSourceType == CHAT_SOURCE_AGENT))
@@ -1648,7 +1654,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
                 // an internal OTR protocol message was recieved, don't show anything to the user
                 llinfos << "$PLOTR$ [OTR PROTOCOL MESSAGE (" << message << ")]" << llendl;
             }
-            show_otr_status(session_id);
+            otr_show_status(session_id);
 			return;
 		}
 		if (newmessage)

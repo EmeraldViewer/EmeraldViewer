@@ -4342,34 +4342,26 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
-    <key>EmeraldSendTypingIndicators</key>
     <key>EmeraldUseOTR</key>
     <map>
       <key>Comment</key>
-      <string>Let other clients see when you are typing in IMs</string>
       <string>Setting this to 0 will require the use of OTR in every IM, 1 will try OTR when available, 2 will accept incoming OTR requests, and 3 will deny OTR usage</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
-      <string>Boolean</string>
       <string>U32</string>
       <key>Value</key>
-      <integer>1</integer>
       <integer>2</integer>
     </map>
-    <key>EmeraldUseOTR</key>
     <key>EmeraldOTRInTypingStop</key>
     <map>
       <key>Comment</key>
-      <string>Setting this to 0 will require the use of OTR in every IM, 1 will try OTR when available, 2 will accept incoming OTR requests, and 3 will deny OTR usage</string>
       <string>Setting this to true will make all encrypted OTR messages be sent in an IM_TYPING_STOP packet.  This is non-standard behavior, but prevents OTR encrypted IM from being saved and delivered as offline IM.  Though it currently works LL may decide to disable the feature at any time.  This is incompatible with previous versions of OTR.</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
-      <string>U32</string>
       <string>Boolean</string>
       <key>Value</key>
-      <integer>2</integer>
       <integer>0</integer>
     </map>
     <key>EmeraldVelocityDoubleClickTeleport</key>
@@ -4696,7 +4688,6 @@
         <integer>0</integer>
       </array>
     </map>
-    <key>OtrFloaterSmpRect</key>
     <key>OtrFloaterSmpDialogRect</key>
     <map>
       <key>Comment</key>
@@ -13703,5 +13694,4 @@
       <integer>0</integer>
     </map>
   </map>
-</llsd>
 </llsd>

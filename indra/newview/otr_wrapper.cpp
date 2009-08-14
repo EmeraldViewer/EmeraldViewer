@@ -146,7 +146,7 @@ static int otrwui_is_logged_in(
 	const LLRelationship* info = NULL;
 	info = LLAvatarTracker::instance().getBuddyInfo(recipient_uuid);
     int result;
-    if (!info)                  result = -1;
+    if (!info)                  result = 1; // hack, should be -1.  but we'll pretend non-friends are always online
     else if (!info->isOnline()) result = 0;
     else                        result = 1;
 #if otrwui_tracing
@@ -179,7 +179,7 @@ static void otrwui_inject_message(
     {
         LLUUID sessionUUID = *((LLUUID*)opdata);
         LLUUID otherUUID(recipient);
-        deliver_otr_message(message, sessionUUID, otherUUID, IM_NOTHING_SPECIAL);
+        otr_deliver_message(message, sessionUUID, otherUUID, IM_NOTHING_SPECIAL);
     }
 }
 
@@ -289,7 +289,7 @@ static void otrwui_gone_secure(
     {
         otr_log_message_getstring_name(session_id, "otr_log_start_unverified");
     }
-    show_otr_status(session_id);
+    otr_show_status(session_id);
 }
 
 static void otrwui_gone_insecure(
@@ -304,7 +304,7 @@ static void otrwui_gone_insecure(
     }
     LLUUID session_id = *((LLUUID*)opdata);
     otr_log_message_getstring(session_id, "otr_log_gone_insecure");
-    show_otr_status(session_id);
+    otr_show_status(session_id);
 }
 
 static void otrwui_still_secure(
@@ -329,7 +329,7 @@ static void otrwui_still_secure(
     {
         otr_log_message_getstring_name(session_id, "otr_log_still_unverified");
     }
-    show_otr_status(session_id);
+    otr_show_status(session_id);
 }
 
 static void otrwui_log_message(
