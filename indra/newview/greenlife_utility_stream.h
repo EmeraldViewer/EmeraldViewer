@@ -46,7 +46,6 @@
 
 class GUS
 {
-	friend class GUS;
 	public:
 		GUS();
 		GUS(GUS&);
