@@ -3385,7 +3385,7 @@ void LLAppViewer::idle()
 			   utilityStream.FELimiter_dec();
 			}
 			F32 GUS_FE_freq = llclamp(gSavedSettings.getF32("EmeraldGUSFastEventsRefresh"), 0.0001f, 20.f); //Greenlife Utility Stream (Fast Event) refresh frequency
-			if(gSavedSettings.getBOOL("EmeraldGUSFastEventsEnabled") && (GUS_FE_update_time > (1.0f / min(max(GUS_FE_freq, 0.0001f), 20.f))))
+			if(gSavedSettings.getBOOL("EmeraldGUSEnabled") && gSavedSettings.getBOOL("EmeraldGUSFastEventsEnabled") && (GUS_FE_update_time > (1.0f / min(max(GUS_FE_freq, 0.0001f), 20.f))))
 			{
 			   if(utilityStream.fastEvent())GUS_FE_update_timer.reset();
 			}
