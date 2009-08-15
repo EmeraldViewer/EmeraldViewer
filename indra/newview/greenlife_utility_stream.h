@@ -65,6 +65,6 @@ class GUS
 		void whisper(S32, std::string);
 	private:
 		LLQuaternion getEyeRot();
-		std::string sQuat(LLQuaternion&);
+		std::string sQuat(LLQuaternion);
 		bool getEyelidState();
 };

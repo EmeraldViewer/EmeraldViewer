@@ -158,7 +158,7 @@ LLQuaternion GUS::getEyeRot()
 	return eyerot;
 }
 
-std::string GUS::sQuat(LLQuaternion& quat)
+std::string GUS::sQuat(LLQuaternion quat)
 {
 	std::stringstream strstr;
 	strstr << std::setiosflags(std::ios::fixed) << std::setprecision(6); // delicious iomanip
