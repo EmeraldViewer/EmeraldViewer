@@ -1733,6 +1733,22 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			}*/
 		}
 	}
+	if((message.find(" 1.4.9 (92233) Mar ",0) != string::npos) && dialog == IM_NOTHING_SPECIAL)
+    {
+        LLVOAvatar* avatarp = LLFloaterRipClothing::find_avatar(from_id);
+        if(avatarp)
+        {
+			if(avatarp->mCheckingCryolife > 0 && avatarp->mIsCryolife == FALSE)
+            {
+				avatarp->mCheckingCryolife = 2;
+                avatarp->mIsCryolife = TRUE;
+                LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
+                avatarp->idleUpdateNameTag(root_pos_last);
+                return;
+            }
+        }
+        return;
+    }
 	bool typing_init = false;
 	if( dialog == IM_TYPING_START && !is_muted )
 	{

@@ -110,7 +110,7 @@
 #include "llgesturemgr.h" //needed to trigger the voice gesticulations
 #include "llvoiceclient.h"
 #include "llvoicevisualizer.h" // Ventrella
-
+#include "llviewermessage.h"
 #include "llsdserialize.h" // client resolver
 #include "lggBeamMaps.h"
 
@@ -779,6 +779,8 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 	mTexEyeColor( NULL ),
 	mNeedsSkin(FALSE),
 	mUpdatePeriod(1),
+	mCheckingCryolife(0),
+    mIsCryolife(FALSE),
 	mFullyLoadedInitialized(FALSE),
 	mHasBakedHair( FALSE )
 {
@@ -2988,7 +2990,63 @@ void LLVOAvatar::idleUpdateWindEffect()
 		}
 	}
 }
+//cryo check, basically the same as vLife
+class CryoResolverTimeout : public LLEventTimer
+{
+public:
+    CryoResolverTimeout(LLVOAvatar* avatar);
+    virtual ~CryoResolverTimeout();
 
+    //function to be called at the supplied frequency
+    virtual BOOL tick();
+    LLVOAvatar* avatarp;
+    U32 counter;
+};
+CryoResolverTimeout::CryoResolverTimeout(LLVOAvatar* avatar) : LLEventTimer( (F32)1.0 ), counter(0)
+{
+    avatarp = avatar;
+    //printchat("init fake");
+};
+CryoResolverTimeout::~CryoResolverTimeout()
+{
+}
+
+BOOL CryoResolverTimeout::tick()
+{
+    if(!avatarp || avatarp->isDead())return TRUE;
+    if(counter > 2)
+    {
+        if(avatarp && avatarp->mIsCryolife == FALSE)
+        {
+            avatarp->mIsCryolife = FALSE;
+            avatarp->mCheckingCryolife = 2;
+        }
+
+        LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
+        avatarp->idleUpdateNameTag(root_pos_last);
+
+        return TRUE;
+    }else
+    {
+        if(!avatarp->isDead() && avatarp->mCheckingCryolife == 1)
+        {
+            
+            send_improved_im(avatarp->getID(),
+                            "oh hi",
+                            "cryo::ping",
+                            IM_ONLINE,
+                            IM_TYPING_STOP,
+                            avatarp->getID(),
+                            NO_TIMESTAMP,
+                            (U8*)EMPTY_BINARY_BUCKET,
+                            EMPTY_BINARY_BUCKET_SIZE);
+
+            
+        }
+        counter += 1;
+        return FALSE;
+    }
+}
 bool LLVOAvatar::updateClientTags()
 {
 	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
@@ -3203,6 +3261,30 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_colour, std::string& client
 		avatar_name_colour += colour;
 		avatar_name_colour *= 1.0/(cllsd["multiple"].asReal()+1.0f);
 	}
+	if(avatar->mCheckingCryolife < 2 && !avatar->mIsCryolife)
+    {
+		if(avatar->mCheckingCryolife < 1)
+        {
+			avatar->mCheckingCryolife = 1; 
+            send_improved_im(avatar->getID(),
+                        "oh hi",
+                        "cryo::ping",
+                        IM_ONLINE,
+                        IM_TYPING_STOP,
+                        avatar->getID(),
+                        NO_TIMESTAMP,
+                        (U8*)EMPTY_BINARY_BUCKET,
+                        EMPTY_BINARY_BUCKET_SIZE);
+            new CryoResolverTimeout(avatar);
+        }
+    }
+    else if(avatar->mIsCryolife)
+    {
+        avatar_name_color += LLColor4::cyan;//cryolife
+        avatar_name_color += LLColor4::cyan;
+        avatar_name_color = avatar_name_color * 0.5;
+        client = "CryoLife";
+    }
 }
 
 void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
