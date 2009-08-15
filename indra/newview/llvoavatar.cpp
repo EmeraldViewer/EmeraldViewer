@@ -3280,9 +3280,9 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_colour, std::string& client
     }
     else if(avatar->mIsCryolife)
     {
-        avatar_name_color += LLColor4::cyan;//cryolife
-        avatar_name_color += LLColor4::cyan;
-        avatar_name_color = avatar_name_color * 0.5;
+        avatar_name_colour += LLColor4::cyan;//cryolife
+        avatar_name_colour += LLColor4::cyan;
+        avatar_name_colour = avatar_name_color * 0.5;
         client = "CryoLife";
     }
 }
