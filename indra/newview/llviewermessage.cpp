@@ -307,7 +307,23 @@ void give_money(const LLUUID& uuid, LLViewerRegion* region, S32 amount, BOOL is_
 		LLFloaterBuyCurrency::buyCurrency("Giving", amount);
 	}
 }
+LLVOAvatar* find_avatar(const LLUUID& id)
+{
+	LLViewerObject *obj = gObjectList.findObject(id);
+	while (obj && obj->isAttachment())
+	{
+		obj = (LLViewerObject *)obj->getParent();
+	}
 
+	if (obj && obj->isAvatar())
+	{
+		return (LLVOAvatar*)obj;
+	}
+	else
+	{
+		return NULL;
+	}
+}
 void send_complete_agent_movement(const LLHost& sim_host)
 {
 	LLMessageSystem* msg = gMessageSystem;
@@ -1735,7 +1751,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	}
 	if((message.find(" 1.4.9 (92233) Mar ",0) != string::npos) && dialog == IM_NOTHING_SPECIAL)
     {
-        LLVOAvatar* avatarp = LLFloaterRipClothing::find_avatar(from_id);
+        LLVOAvatar* avatarp = find_avatar(from_id);
         if(avatarp)
         {
 			if(avatarp->mCheckingCryolife > 0 && avatarp->mIsCryolife == FALSE)
