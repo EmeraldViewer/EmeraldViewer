@@ -38,13 +38,24 @@ def get_version(filename):
     vals['minor'] = m.group(1)
     m = re.search('const S32 LL_VERSION_PATCH = (\d+);', data)
     vals['patch'] = m.group(1)
-    vals['build'] = svnInfo(os.popen("svn info"))
+    vals['build'] = None
+    try:
+	stdin = os.popen("svn info")
+	vals['build'] = svnInfo(stdin)
+	print "svn:", vals['build']
+    except ValueError, IOError:
+	pass
     if not vals['build']:
-	vals['build'] = svnInfo(os.popen("git svn info"))
+	try:
+	    stdin = os.popen("git svn info")
+	    vals['build'] = svnInfo(stdin)
+	    print "git", vals['build']
+	except ValueError, IOError:
+	    pass
     if not vals['build']:
 	m = re.search('const S32 LL_VERSION_BUILD = (\d+);', data)
 	vals['build'] = m.group(1)
-    vals['build'] = 5
+	print "grep:", vals['build']
 
     return "%(major)s.%(minor)s.%(patch)s.%(build)s" % vals
 
