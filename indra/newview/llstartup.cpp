@@ -947,7 +947,11 @@ bool idle_startup()
 
 		//guna make a beams directior here too /lgg		
 		std::string lgg_beams_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beams", ""));
-		LLFile::mkdir(lgg_beams_path_name.c_str());		
+		LLFile::mkdir(lgg_beams_path_name.c_str());	
+
+		//guna make a ircgroups directior here too /lgg		
+		std::string lgg_ircgroups_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "IRCGroups", ""));
+		LLFile::mkdir(lgg_ircgroups_path_name.c_str());	
 
 
 		if (show_connect_box)

@@ -1,0 +1,120 @@
+/* Copyright (c) 2009
+ *
+ * LordGregGreg Back. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are permitted provided that the following
+ * conditions are met:
+ *
+ *   1. Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *   2. Redistributions in binary form must reproduce the above
+ *      copyright notice, this list of conditions and the following
+ *      disclaimer in the documentation and/or other materials provided
+ *      with the distribution.
+ *   3. Neither the name Modular Systems Ltd nor the names of its contributors
+ *      may be used to endorse or promote products derived from this
+ *      software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+#ifndef IRC_THREAD_IRC22
+#define IRC_THREAD_IRC22
+
+
+#include "llthread.h"
+#include "lggIrcData.h"
+#include "llviewerprecompiledheaders.h"
+#include "IRC.h"
+
+class MsgListener : public LLThread
+{
+public:
+	MsgListener(IRC * conn2, std::string chan2, LLUUID mid2);
+	~MsgListener();	
+	/*virtual*/ void run(void);
+	
+protected:
+	std::string chan;
+	IRC * conn;
+	LLUUID mid;
+
+};
+
+
+
+class lggIrcThread
+{
+public:
+	lggIrcThread(lggIrcData data);
+	~lggIrcThread();
+	
+	
+	MsgListener * listener;
+
+	void run(void);
+	void join();
+	void stopRun(void);
+	void setData(lggIrcData dat);
+	lggIrcData getData() const;
+	void msg(std::string message); 
+	void msg(std::string message, std::string name);
+	void msg(std::string message, LLColor4 color);
+	void msg(std::string message, std::string name, LLColor4 color);
+	void sendChat(std::string chat);
+	void updateNames();
+	int ircresponce(char* params, irc_reply_data* hostd, void* conn);
+	int PrivMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int NoticeMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int channelJoinedResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::JoinMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::PartMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::QuitMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::NickMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	std::string getChannel();
+	LLUUID getMID();
+	static lggIrcThread* findInstance(IRC* conn);
+	friend bool operator==(const lggIrcThread &a, const lggIrcThread &b);		// Return a == b
+	friend bool operator!=(const lggIrcThread &a, const lggIrcThread &b);		// Return a == b
+	friend bool operator<(const lggIrcThread &a, const lggIrcThread &b);		// Return a < b	
+	friend bool operator>(const lggIrcThread &a, const lggIrcThread &b);
+
+protected:
+	lggIrcData mData; // User data associated with this thread
+	IRC * conn;
+	BOOL dataGotten;
+private:
+	static std::map<IRC*,lggIrcThread*> sInstances;
+	static std::map<MsgListener*,lggIrcThread*> msInstances;
+
+};
+
+inline bool operator==(const lggIrcThread &a, const lggIrcThread &b)
+{
+	return (  a.getData().id == b.getData().id);
+}
+
+inline bool operator!=(const lggIrcThread &a, const lggIrcThread &b)
+{
+	return ( !(a==b) );
+}
+inline bool operator<(const lggIrcThread &a, const lggIrcThread &b)
+{
+	return (  a.getData().name < b.getData().name);
+}
+inline bool operator>(const lggIrcThread &a, const lggIrcThread &b)
+{
+	return (  a.getData().name > b.getData().name);
+}
+#endif

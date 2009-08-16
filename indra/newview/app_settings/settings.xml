@@ -3704,7 +3704,151 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
-	<key>EmeraldCardSpamEnabled</key>
+    <key>EmeraldIRC_ColorChannel</key>
+    <map>
+      <key>Comment</key>
+      <string>IRC_ColorChannel</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>0.8</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorAction</key>
+    <map>
+      <key>Comment</key>
+      <string>EmeraldIRC_ColorAction</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.8</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorPrivate</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>0.8</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorNotice</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>0.9</real>
+        <real>0.9</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorJoin</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.9</real>
+        <real>0.9</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorQuit</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.5</real>
+        <real>0.5</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorKick</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.4</real>
+        <real>0.4</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorNick</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>0.7</real>
+        <real>0.9</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorSystem</key>
+    <map>
+      <key>Comment</key>
+      <string>Color of new objects textures</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>0.7</real>
+        <real>1.0</real>
+        <real>0.7</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldCardSpamEnabled</key>
     <map>
       <key>Comment</key>
       <string>Enables CallingCard Spam Prevention</string>
@@ -4044,6 +4188,150 @@
       <string>Boolean</string>
       <key>Value</key>
       <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ColorChannel</key>
+    <map>
+      <key>Comment</key>
+      <string>Colors for the IRC interface</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorAction</key>
+    <map>
+      <key>Comment</key>
+      <string>Colors for the IRC interface</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorPrivate</key>
+    <map>
+      <key>Comment</key>
+      <string>Colors for the IRC interface</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorNotice</key>
+    <map>
+      <key>Comment</key>
+      <string>Colors for the IRC interface</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorJoin</key>
+    <map>
+      <key>Comment</key>
+      <string>Colors for the IRC interface</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorQuit</key>
+    <map>
+      <key>Comment</key>
+      <string>Colors for the IRC interface</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorKick</key>
+    <map>
+      <key>Comment</key>
+      <string>Colors for the IRC interface</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorNick</key>
+    <map>
+      <key>Comment</key>
+      <string>Colors for the IRC interface</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
+    </map>
+    <key>EmeraldIRC_ColorSystem</key>
+    <map>
+      <key>Comment</key>
+      <string>Colors for the IRC interface</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Color4</string>
+      <key>Value</key>
+      <array>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+        <real>1.0</real>
+      </array>
     </map>
     <key>EmeraldKeepUnpackedCacheFiles</key>
     <map>

@@ -91,13 +91,19 @@ set(viewer_SOURCE_FILES
 	importtracker.cpp
 	exporttracker.cpp
 	chatbar_as_cmdline.cpp
+	IRC.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
 	jc_asset_comparer.cpp
 	jcobjectpropertylist.cpp
 	lggBeamMapFloater.cpp
+	lggIrcData.cpp
+	lggIrcGroupHandler.cpp
+	lggFloaterIrcEdit.cpp
+	lggFloaterIrc.cpp
 	lggBeamMaps.cpp
 	llfloaterassetbrowser.cpp
+	lggIrcThread.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -516,14 +522,19 @@ set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
     chatbar_as_cmdline.h
-	jcfloater_animation_list.h
-	jcfloater_areasearch.h
-	jc_asset_comparer.h
-	jcobjectpropertylist.h
-	importtracker.h
+    importtracker.h
+    IRC.h
+    jcfloater_animation_list.h
+    jcfloater_areasearch.h
+    jcobjectpropertylist.h
 	exporttracker.h
-	lggBeamMaps.h
-	lggBeamMapFloater.h
+    lggBeamMaps.h
+    lggBeamMapFloater.h
+    lggFloaterIrcEdit.h
+    lggFloaterIrc.h
+    lggIrcGroupHandler.h
+    lggIrcThread.h
+    lggIrcData.h
 	llfloaterassetbrowser.h
     llagent.h
     llagentaccess.h

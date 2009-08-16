@@ -1,0 +1,517 @@
+/* Copyright (c) 2009
+ *
+ * LordGregGreg Back. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or
+ * without modification, are permitted provided that the following
+ * conditions are met:
+ *
+ *   1. Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *   2. Redistributions in binary form must reproduce the above
+ *      copyright notice, this list of conditions and the following
+ *      disclaimer in the documentation and/or other materials provided
+ *      with the distribution.
+ *   3. Neither the name Modular Systems Ltd nor the names of its contributors
+ *      may be used to endorse or promote products derived from this
+ *      software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS LTD AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*
+Ok, here is how this is suposed to work.
+-----lggIrcData is suposed to just be a data structure object
+		--contains all the information needed to connect to irc, as well as a uuid identifier
+		--also contains functions to convert to a from llsd
+-----lggIrcGroupHanlder is a single object made to just help in handling irc stuff
+		--has functions to scan file system for llsd files and return a list of thier lggIrcData
+		--has functions to start up a new lggIrcThread and pass it a coresponding lggIrcData to work with
+		--keeps a list of all the lggIrcThreads so it can delete them later
+-----lggFloaterIrc is the panel in the "irc" tab next to the "groups" tab
+		--reads a list of names from the files system using a global lggIrcGroupHanlder object
+		--has buttons to edit and create new lggIrcDatas, which get saved to a file to be read and added at reset
+		--start IM sends a uid to the lggIrcGroupHandler for it to start up and hanlde a new lggIrcThread
+-----lggIrcThread
+		--initialised with a lggIrcData so it knows where to connect, etc
+		--starts up a NEW irc object, and adds to it handlers
+		--included its own methods used to handle the irc objects triggers from when irc info is sent
+		--start up a new THREAD called the messagelistener, to try to connect to a channel, while looping infinate listening
+*/
+
+#include "llviewerprecompiledheaders.h"
+#include "lggIrcThread.h"
+#include "llimpanel.h"
+#include "llviewercontrol.h"
+//#include "IRC.h"
+
+//#include "llthread.h"
+#include "linden_common.h"
+#include "llapp.h"
+
+#include "llimview.h"
+
+
+//static
+std::map<IRC*,lggIrcThread*> lggIrcThread::sInstances;
+std::map<MsgListener*,lggIrcThread*> lggIrcThread::msInstances;
+
+
+lggIrcThread::lggIrcThread(lggIrcData data):
+	mData(data),
+	dataGotten(FALSE)
+{
+}
+
+MsgListener::MsgListener(IRC * conn2, std::string chan2, LLUUID mid2): LLThread("IRC LISTENER"),conn(conn2),chan(chan2),mid(mid2)
+{
+
+}
+
+void MsgListener::run()
+{
+					
+	//conn->join((char*)chan.c_str());
+	//gIMMgr->addMessage(mid,mid,"GreenLife",llformat("Atempting to join %s",chan.c_str()));
+	/*ms_sleep(5000);
+	conn->join((char*)chan.c_str());	
+	gIMMgr->addMessage(mid,mid,"GreenLife",llformat("Atempting to join %s", chan.c_str()));
+	ms_sleep(5000);	
+	conn->join((char*)chan.c_str());
+	gIMMgr->addMessage(mid,mid,"GreenLife",llformat("Atempting to join %s", chan.c_str()));
+	*/
+
+	
+	conn->message_loop();
+	
+}
+
+MsgListener::~MsgListener()
+{
+}
+
+lggIrcThread::~lggIrcThread()
+{
+	sInstances.erase(conn);
+	msInstances.erase(listener);
+	delete listener;
+	delete conn;
+}
+//static
+lggIrcThread* lggIrcThread::findInstance(IRC* conn)
+{
+	std::map<IRC*,lggIrcThread*>::iterator itr = sInstances.find(conn);
+	if(itr != sInstances.end())
+	{
+		return (*itr).second;
+	}
+	return NULL;
+}
+
+int boot( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->ircresponce(params, hostd, conn);
+	else
+		return 0;
+}
+int ijoined( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->channelJoinedResponce(params, hostd, conn);
+	else
+		return 0;
+}
+int privmsg( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->PrivMessageResponce(params, hostd, conn);
+	else
+		return 0;
+}
+int noticemsg( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->NoticeMessageResponce(params, hostd, conn);
+	else
+		return 0;
+}
+int joinmsg( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->JoinMessageResponce(params, hostd, conn);
+	else
+		return 0;
+}
+
+int partmsg( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->PartMessageResponce(params, hostd, conn);
+	else
+		return 0;
+}
+int quitmsg( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->QuitMessageResponce(params, hostd, conn);
+	else
+		return 0;
+}
+int nickmsg( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->NickMessageResponce(params, hostd, conn);
+	else
+		return 0;
+}
+int kickmsg( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->KickMessageResponce(params, hostd, conn);
+	else
+		return 0;
+}
+void lggIrcThread::setData(lggIrcData dat)
+{
+	mData.become(dat);
+	dataGotten=TRUE;
+
+}
+int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+{
+	if(!strcmp(hostd->target,getChannel().c_str()))
+	{
+		//chan msg
+		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
+	}else
+	{
+		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[PRIVATE - IRC] %s",hostd->nick),
+			gSavedSettings.getColor("EmeraldIRC_ColorPrivate"));
+	}
+	
+	return 0;
+}
+int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+{
+	if(!strcmp(hostd->target,getChannel().c_str()))
+	{
+		//chan msg
+		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorNotice"));
+	}else
+		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[PRIVATE - IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorPrivate"));
+	return 0;
+}
+/*
+[20:10]  [IRC] tG:ACTION kawaifaces
+
+"EmeraldIRC_ColorAction"
+*/
+int lggIrcThread::JoinMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+{
+	//msg( llformat("JOIN Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	msg( llformat("%s has joined this chat.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorJoin"));
+	
+	updateNames();
+	return 0;
+}
+int lggIrcThread::PartMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+{
+	//[20:36]  PART Params: #emerald and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
+
+	//msg( llformat("PART Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	msg( llformat("%s has left this chat.",hostd->nick).c_str());
+	
+	updateNames();
+	return 0;
+}
+int lggIrcThread::QuitMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+{
+	//[20:45]  QUIT Params: :Quit:  and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
+	//msg( llformat("QUIT Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	msg( llformat("%s has logged off.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"));
+	
+	updateNames();
+	return 0;
+}
+int lggIrcThread::NickMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+{
+	//[20:46]  NICK Params: :new and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
+	//[20:46]  NICK Params: :lgg and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick new and target (null) 
+
+	//msg( llformat("NICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	msg( llformat("%s (%s) is now known as %s.",hostd->nick,hostd->ident,&params[1]).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorNick"));
+	
+	updateNames();
+	return 0;
+}
+int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+{
+	//[20:10]  KICK Params: #emerald Emerald-User354541ac :test and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
+	//msg( llformat("KICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	std::string twho;
+	std::string twhy;
+	std::string paramstring(&params[1]);
+	istringstream iss(paramstring);
+	iss >> twho;//first part we dont need
+	
+	if(iss >> twho)
+	{
+		
+		if(iss >> twhy)
+		{
+			msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"));	
+		}else
+		{
+			msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"));	
+		}
+	}
+	updateNames();
+	return 0;
+}
+int lggIrcThread::channelJoinedResponce(char *params, irc_reply_data *hostd, void *conn)
+{
+	//353
+	updateNames();
+	msg("Channel Joined.  Please type /help for a list of commands.");
+	gIMMgr->findFloaterBySession(getMID())->childSetVisible("active_speakers_panel",true);
+	return 0;
+}
+int lggIrcThread::ircresponce( char * params, irc_reply_data * hostd, void * conn)
+{
+	
+	llinfos << "irc responce " << mData.toString() << llendl;
+	//IRC* irc_conn=(IRC*)conn; /* notice that you are passed a pointer to the connection object */
+	//gIMMgr->
+	msg("Atempting to join channel...");
+	join();
+	return 0;
+}
+
+
+lggIrcData lggIrcThread::getData() const
+{
+	return mData;
+}
+
+
+void lggIrcThread::run()
+{
+	conn = new IRC();
+	sInstances[conn] = this;
+	//msg(mData.toString());
+	llinfos << mData.toString() << llendl;
+	//msg("started, waiting for data");
+	//msg("data recieved");	
+	conn->hook_irc_command("376",&boot);
+	conn->hook_irc_command("422",&boot);
+	
+	conn->hook_irc_command("PRIVMSG", &privmsg);
+	conn->hook_irc_command("NOTICE", &noticemsg);
+	conn->hook_irc_command("353",&ijoined);	
+	conn->hook_irc_command("JOIN",&joinmsg);	
+	conn->hook_irc_command("PART",&partmsg);
+	conn->hook_irc_command("QUIT",&quitmsg);
+	conn->hook_irc_command("NICK",&nickmsg);
+	conn->hook_irc_command("KICK",&kickmsg);
+	
+	if(
+	conn->start((char*) mData.server.c_str(),
+		atoi(mData.port.c_str()),
+		(char*)mData.nick.c_str(),
+		(char*)mData.nick.c_str(),
+		(char*)mData.nick.c_str(),
+		(char*)mData.password.c_str()))
+	{
+		msg("Fawk, couldnt connect, some error bzns");
+	}/* connect to a server */
+	
+	//conn.join(chan.c_str());
+	//msg("Starting the thread...");
+	listener = new MsgListener(conn,getChannel(),getMID());
+	listener->start();
+
+	
+	msInstances[listener]=this;
+
+	//msg("done setting up dis");
+
+}
+std::string lggIrcThread::getChannel()
+{
+	
+	//llinfos << "get chanel" << mData.toString() << llendl;
+	std::string chan = mData.channel;
+	if(chan.at(0)!='#')
+	{
+		chan = chan.insert(0,"#");
+	}
+	return chan;
+}
+LLUUID lggIrcThread::getMID()
+{
+	
+	//llinfos << " get mid " << mData.toString() << llendl;
+	return mData.id;
+}
+void lggIrcThread::join()
+{
+	
+			if(mData.password != "")
+			{
+				/*conn->privmsg((char*)std::string("NickServ").c_str(),
+					(char *)
+					llformat("REGISTER %s bogus@email.com",mData.password.c_str()).c_str()
+					);
+				ms_sleep(10);*/
+
+				conn->privmsg((char*)std::string("NickServ").c_str(),
+					(char *)
+					llformat("IDENTIFY %s",mData.password.c_str()).c_str()
+					);
+			}
+			conn->join((char*)getChannel().c_str());
+}
+void lggIrcThread::sendChat(std::string chat)
+{	
+	std::istringstream i(chat);
+	std::string command;
+	i >> command;
+	if(command == "/help")
+	{
+		msg(std::string("\"/join\" will attempt to re-join the current channel.\n\"/msg NICK MSG\" will send a private MSG to NICK\n\"/kick NICK [REASON]\" will kick NICK from that chat (if you have op rights)\n\"/nick NEWNICK\" will change your current nick to NEWNICK"));
+	}else
+	if(command == "/kick")
+	{
+		std::string targetNick;
+		if(i >> targetNick)
+		{
+			std::string reason;
+			if(i >> reason)
+			{
+				conn->kick((char *)getChannel().c_str(),(char *)targetNick.c_str(),(char *)reason.c_str());
+				//msg(llformat("You have kicked %s from this chat. (%s)",targetNick.c_str(),reason.c_str()));
+			}else
+			{
+				conn->kick((char *)getChannel().c_str(),(char *)targetNick.c_str());
+				msg(llformat("You have kicked %s from this chat.",targetNick.c_str()));
+			}
+		}
+	}else
+	if(command == "/nick")
+	{
+		std::string targetNick;
+		if(i >> targetNick)
+		{
+			conn->nick((char*)targetNick.c_str());
+			//msg(llformat("Changing your nickname to %s",targetNick.c_str()));
+		}else
+		{
+			msg("Invalid format for /nick, format is \"/nick NEWNICK\"");
+		}
+		
+	}else
+	if(command == "/join")
+	{
+		msg(llformat("Atempting to rejoin %s, if you wish to join a diferent channel, please make a new irc group",getChannel().c_str()));
+		join();
+	}else
+	if(command == "/msg")
+	{
+		std::string theTarget,theMsg;
+		if(i >> theTarget)
+		{
+			if(i >> theMsg)
+			{
+				theMsg = chat.substr(5+theTarget.length()+1);
+				conn->privmsg((char*)theTarget.c_str(),(char *)theMsg.c_str());
+				msg(llformat("Send Private Message to %s : %s",theTarget.c_str(),theMsg.c_str()));
+			}else
+			{
+				msg("No Message Specified");
+			}
+		}else
+		{
+			msg("No target name specified");
+		}
+	}
+	else
+	{
+		msg(llformat("%s : %s",	conn->current_nick(),chat.c_str()),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
+		conn->privmsg((char*)getChannel().c_str(),(char *)chat.c_str());
+	}
+}
+void lggIrcThread::stopRun()
+{
+	conn->disconnect();
+}
+void lggIrcThread::msg(std::string message)
+{
+	//sends a message to the window
+	
+	//llinfos << " msg " << mData.toString() << llendl;
+	//gIMMgr->addMessage(getMID(),getMID(),mData.name,message);
+
+	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(message,
+		gSavedSettings.getColor("EmeraldIRC_ColorSystem"));
+}
+void lggIrcThread::msg(std::string message, LLColor4 color)
+{
+	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(message,color);
+}
+void lggIrcThread::msg(std::string message, std::string name)
+{
+	LLUUID uid;
+	uid.generate(name+"lgg");
+
+	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(message,
+		gSavedSettings.getColor("IMChatColor"),
+		true,
+		uid,
+		name);
+}
+void lggIrcThread::msg(std::string message, std::string name, LLColor4 color)
+{
+	LLUUID uid;
+	uid.generate(name+"lgg");
+
+	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(message,
+		color,
+		true,
+		uid,
+		name);
+}
+
+
+void lggIrcThread::updateNames()
+{
+	/*EXAMPLE READfor(int i = 0; i < speakers.size(); i++)
+	{		LLSD personData = speakers[i];		
+		LLPointer<LLSpeaker> speakerp = setSpeaker(
+				LLUUID(personData["irc_agent_id"]),
+				personData["irc_agent_name"].asString()	
+		speakerp->mIsModerator = personData["irc_agent_mod"].asBoolean();}*/
+	
+	//}
+	gIMMgr->findFloaterBySession(getMID())->setIRCSpeakers(conn->getSpeakersLLSD());
+
+}
