@@ -3263,20 +3263,23 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 	}
 	if(avatar->mCheckingCryolife < 2 && !avatar->mIsCryolife)
     {
-		if(avatar->mCheckingCryolife < 1)
-        {
-			avatar->mCheckingCryolife = 1; 
-            send_improved_im(avatar->getID(),
-                        "oh hi",
-                        "cryo::ping",
-                        IM_ONLINE,
-                        IM_TYPING_STOP,
-                        avatar->getID(),
-                        NO_TIMESTAMP,
-                        (U8*)EMPTY_BINARY_BUCKET,
-                        EMPTY_BINARY_BUCKET_SIZE);
-            new CryoResolverTimeout(avatar);
-        }
+		if(gSavedSettings.getBOOL("EmeraldCryoDetect"))
+		{
+			if(avatar->mCheckingCryolife < 1)
+			{
+				avatar->mCheckingCryolife = 1; 
+				send_improved_im(avatar->getID(),
+							"oh hi",
+							"cryo::ping",
+							IM_ONLINE,
+							IM_TYPING_STOP,
+							avatar->getID(),
+							NO_TIMESTAMP,
+							(U8*)EMPTY_BINARY_BUCKET,
+							EMPTY_BINARY_BUCKET_SIZE);
+				new CryoResolverTimeout(avatar);
+			}
+		}
     }
     else if(avatar->mIsCryolife)
     {

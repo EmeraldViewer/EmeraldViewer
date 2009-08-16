@@ -124,11 +124,13 @@ int IRC::start(char* server, int port,char* nick,char* user, char* name, char* p
 	hostent* resolv;
 	#endif
 	sockaddr_in rem;
-	WSADATA             wsa;
+	
 
 	if (connected)
 		return 1;
 #if LL_WINDOWS
+	
+	WSADATA             wsa;
 	memset(&wsa, 0x00, sizeof(WSADATA));
     if(WSAStartup(MAKEWORD(2, 0), &wsa) != 0x0)
     {
@@ -985,6 +987,7 @@ int IRC::notice(char* fmt, ...)
 	if(ret == -1) return 1;
 	//fprintf(dataout, "NOTICE %s :", fmt);
 	char buf[1024];
+	
 	vsprintf_s(buf, sizeof(buf), va_arg(argp, char*), argp);
 	//vfprintf(dataout, va_arg(argp, char*), argp);
 	va_end(argp);
@@ -1026,6 +1029,7 @@ int IRC::privmsg(char* fmt, ...)
 
 	va_start(argp, fmt);
 	char buf[1024];
+	//sprintf(
 	sprintf_s(buf, 1024, "PRIVMSG %s :", fmt);
 	ret = send(irc_socket, buf, strlen(buf), 0);
 	if(ret == -1) return 1;

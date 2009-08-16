@@ -198,6 +198,9 @@ BOOL LLPanelEmerald::postBuild()
 		
 	//childSetCommitCallback("material",onComboBoxCommit);
 	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
+	getChild<LLButton>("EmeraldPrefs_Stealth")->setClickedCallback(onStealth, this);
+	getChild<LLButton>("EmeraldPrefs_FullFeatures")->setClickedCallback(onNoStealth, this);
+	
 	getChild<LLButton>("custom_beam_btn")->setClickedCallback(onCustomBeam, this);
 	getChild<LLButton>("refresh_beams")->setClickedCallback(onRefresh,this);
 	getChild<LLButton>("delete_beam")->setClickedCallback(onBeamDelete,this);
@@ -364,6 +367,59 @@ void LLPanelEmerald::onCustomBeam(void* data)
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
 	LggBeamMap::show(true);
 
+}
+void LLPanelEmerald::onStealth(void* data)
+{
+	//LLPanelEmerald* self =(LLPanelEmerald*)data;
+	LLNotifications::instance().add("EmeraldStealth", LLSD(),LLSD(), callbackEmeraldStealth);
+	
+
+}
+void LLPanelEmerald::callbackEmeraldStealth(const LLSD &notification, const LLSD &response)
+{
+	//gSavedSettings.setWarning("EmeraldOTR", FALSE);
+	S32 option = LLNotification::getSelectedOption(notification, response);
+	if ( option == 0 )
+	{
+		//gSavedSettings.setU32("EmeraldUseOTR",(U32)1);
+	}
+	else if ( option == 1 )
+	{
+		gSavedSettings.setU32("EmeraldUseOTR",(U32)0);
+		gSavedSettings.setBOOL("EmeraldRainbowBeam",false);
+		gSavedSettings.setString("EmeraldBeamShape","===OFF===");
+		gSavedSettings.setBOOL("EmeraldCryoDetect",false);
+		gSavedSettings.setBOOL("EmeraldGUSEnabled",false);
+		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",false);
+		gSavedSettings.setBOOL("EmeraldParticleChat",false);
+		gSavedSettings.setBOOL("EmeraldRadarChatKeys",false);
+	}
+}
+void LLPanelEmerald::onNoStealth(void* data)
+{
+	//LLPanelEmerald* self =(LLPanelEmerald*)data;
+	
+	LLNotifications::instance().add("EmeraldNoStealth", LLSD(),LLSD(), callbackEmeraldNoStealth);
+	
+
+}
+
+void LLPanelEmerald::callbackEmeraldNoStealth(const LLSD &notification, const LLSD &response)
+{
+	//gSavedSettings.setWarning("EmeraldOTR", FALSE);
+	S32 option = LLNotification::getSelectedOption(notification, response);
+	if ( option == 0 )
+	{
+	}
+	else if ( option == 1 )
+	{
+		gSavedSettings.setU32("EmeraldUseOTR",(U32)2);
+		gSavedSettings.setBOOL("EmeraldRainbowBeam",true);
+		gSavedSettings.setString("EmeraldBeamShape","Emerald");
+		gSavedSettings.setBOOL("EmeraldCryoDetect",true);
+		gSavedSettings.setBOOL("EmeraldGUSEnabled",true);
+		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",true);
+	}
 }
 void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
 {

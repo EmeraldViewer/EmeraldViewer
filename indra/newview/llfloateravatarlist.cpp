@@ -21,6 +21,7 @@
 #include "lluictrlfactory.h"
 #include "llviewerwindow.h"
 #include "llscrolllistctrl.h"
+#include "llviewercontrol.h"
 
 #include "llvoavatar.h"
 #include "llimview.h"
@@ -1221,6 +1222,27 @@ void LLFloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 	if(owner_id == gAgent.getID() && sound_id == LLUUID("76c78607-93f9-f55a-5238-e19b1a181389"))
 	{
 		//lgg we need to auto turn on settings for ppl now that we know they has the thingy
+		if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
+		{
+			LLFloaterAvatarList* self = getInstance();
+			if(self) self->clearAnnouncements();
+		}else
+		{
+			LLNotifications::instance().add("EmeraldRadarChat", LLSD(),LLSD(), callbackEmeraldChat);
+	
+		}
+	}
+}
+void LLFloaterAvatarList::callbackEmeraldChat(const LLSD &notification, const LLSD &response)
+{
+	//gSavedSettings.setWarning("EmeraldOTR", FALSE);
+	S32 option = LLNotification::getSelectedOption(notification, response);
+	if ( option == 0 )
+	{
+		gSavedSettings.setWarning("EmeraldRadarChat",FALSE);
+	}
+	else if ( option == 1 )
+	{
 		gSavedSettings.setBOOL("EmeraldRadarChatKeys",true);
 		gSavedSettings.setBOOL("EmeraldRadarChatAlerts",true);
 		gSavedSettings.setBOOL("EmeraldAvatarListKeepOpen",true);
