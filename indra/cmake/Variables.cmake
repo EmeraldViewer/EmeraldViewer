@@ -14,6 +14,7 @@
 #   VIEWER - viewer and other viewer-side components
 #   SERVER - simulator and other server-side bits
 
+include(Python)
 
 # Relative and absolute paths to subtrees.
 
@@ -33,6 +34,7 @@ set(VIEWER_DIR ${CMAKE_SOURCE_DIR}/${VIEWER_PREFIX})
 
 set(LIBS_PREBUILT_DIR ${CMAKE_SOURCE_DIR}/../libraries CACHE PATH
     "Location of prebuilt libraries.")
+
 
 if (EXISTS ${CMAKE_SOURCE_DIR}/Server.cmake)
   # We use this as a marker that you can try to use the proprietary libraries.
@@ -87,6 +89,12 @@ set(GRID agni CACHE STRING "Target Grid")
 set(VIEWER ON CACHE BOOL "Build Second Life viewer.")
 set(VIEWER_CHANNEL "Emerald" CACHE STRING "Viewer Channel Name")
 set(VIEWER_LOGIN_CHANNEL ${VIEWER_CHANNEL} CACHE STRING "Fake login channel for A/B Testing")
+
+execute_process(
+      COMMAND ${PYTHON_EXECUTABLE} ${SCRIPTS_DIR}/svnversion.py
+      OUTPUT_VARIABLE SVN_VERSION
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
 
 set(STANDALONE OFF CACHE BOOL "Do not use Linden-supplied prebuilt libraries.")
 

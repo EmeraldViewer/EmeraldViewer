@@ -36,7 +36,12 @@
 const S32 LL_VERSION_MAJOR = 1;
 const S32 LL_VERSION_MINOR = 23;
 const S32 LL_VERSION_PATCH = 4;
-const S32 LL_VERSION_BUILD = 1;
+#ifndef EMERALD_SVN_VERSION
+const S32 LL_VERSION_BUILD = 420;
+// because or 42! \o/
+#else
+const S32 LL_VERSION_BUILD = EMERALD_SVN_VERSION;
+#endif
 
 const char * const LL_CHANNEL = "GreenLife Emerald Viewer";
 

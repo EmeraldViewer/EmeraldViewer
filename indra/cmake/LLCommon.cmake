@@ -1,5 +1,7 @@
 # -*- cmake -*-
 
+add_definitions(-DEMERALD_SVN_VERSION=${SVN_VERSION})
+
 include(APR)
 include(Boost)
 include(EXPAT)
