@@ -17,7 +17,7 @@ import errno, os, re
 def svnInfo(file):
     pattern = re.compile("Last Changed Rev: (\w+)")
     for line in file:
-	print >> sys.stderr, "build...: \"%s\"" % (line)
+	#print >> sys.stderr, "build...: \"%s\"" % (line)
 	match = pattern.search(line)
 	if(match):
 	    file.close()
@@ -26,7 +26,7 @@ def svnInfo(file):
     return None
 
 def get_version(filename):
-    print >> sys.stderr, "cwd...: \"%s\"" % ( os.getcwd() )
+    #print >> sys.stderr, "cwd...: \"%s\"" % ( os.getcwd() )
     fp = open(filename)
     data = fp.read()
     fp.close()
