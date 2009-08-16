@@ -3117,8 +3117,13 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 		client = cllsd["name"].asString();
 		LLColor4 colour;
 		colour.setValue(cllsd["color"]);
-		avatar_name_color += colour;
-		avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
+		if(cllsd["multiple"].asReal() != 0)
+		{
+			avatar_name_color += colour;
+			avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
+		}
+		else
+			avatar_name_color = colour;
 	}else
 	{
 		//legacy code
@@ -3135,8 +3140,7 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 			client = "VLife";
 		}else if(idx == LLUUID("f5feab57-bde5-2074-97af-517290213eaa"))
 		{
-			avatar_name_color += LLColor4::grey4;//ONYX OMG HAX
-			avatar_name_color = avatar_name_color * 0.5;
+			avatar_name_color = LLColor4::grey4 * 1.2;//ONYX OMG HAX
 			client = "Onyx";
 		}else if(idx == LLUUID("adcbe893-7643-fd12-f61c-0b39717e2e32"))
 		{
