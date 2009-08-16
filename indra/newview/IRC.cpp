@@ -1001,11 +1001,7 @@ int IRC::notice(char* fmt, ...)
 	if(ret == -1) return 1;
 	//fprintf(dataout, "NOTICE %s :", fmt);
 	char buf[1024];
-<<<<<<< HEAD:indra/newview/IRC.cpp
-	
-=======
 #if LL_WINDOWS
->>>>>>> Fixed compile for linux with IRC, and added stuff to show the branch.:indra/newview/IRC.cpp
 	vsprintf_s(buf, sizeof(buf), va_arg(argp, char*), argp);
 #else
 	vsnprintf(buf, sizeof(buf), va_arg(argp, char*), argp);
