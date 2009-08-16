@@ -1235,7 +1235,7 @@ void LLIMSpeakerMgr::setIrcSpeakers(const LLSD& speakers)
 			personData["irc_mode"].asString().c_str() << "=mode----" <<	llendl;
 			*/
 
-		LLUUID agent_id = LLUUID(personData["irc_agent_id"]);
+		LLUUID agent_id = LLUUID((const LLUUID&)personData["irc_agent_id"]);
 		LLPointer<LLSpeaker> speakerp = findSpeaker(agent_id);
 		if(speakerp.isNull())
 		{

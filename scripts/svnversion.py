@@ -16,10 +16,10 @@ def svnInfo(file):
     
 def get_version():
     """Figure out svn version..."""
-    rev = svnInfo(os.popen("svn info"))
+    rev = svnInfo(os.popen("git svn info"))
     if rev:
 	return rev
-    rev = svnInfo(os.popen("git svn info"))
+    rev = svnInfo(os.popen("svn info"))
     return rev
 
 if __name__ == "__main__":

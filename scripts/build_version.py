@@ -17,6 +17,7 @@ import errno, os, re
 def svnInfo(file):
     pattern = re.compile("Last Changed Rev: (\w+)")
     for line in file:
+	print >> sys.stderr, "build...: \"%s\"" % (line)
 	match = pattern.search(line)
 	if(match):
 	    file.close()
@@ -25,6 +26,7 @@ def svnInfo(file):
     return None
 
 def get_version(filename):
+    print >> sys.stderr, "cwd...: \"%s\"" % ( os.getcwd() )
     fp = open(filename)
     data = fp.read()
     fp.close()
@@ -42,6 +44,7 @@ def get_version(filename):
     if not vals['build']:
 	m = re.search('const S32 LL_VERSION_BUILD = (\d+);', data)
 	vals['build'] = m.group(1)
+    vals['build'] = 5
 
     return "%(major)s.%(minor)s.%(patch)s.%(build)s" % vals
 

@@ -52,6 +52,10 @@
 
 using namespace std;
 
+#if not LL_WINDOWS
+#define sprintf_s snprintf
+#endif
+
 IRC::IRC()
 {
 	hooks=0;
@@ -125,7 +129,6 @@ int IRC::start(char* server, int port,char* nick,char* user, char* name, char* p
 	#endif
 	sockaddr_in rem;
 	
-
 	if (connected)
 		return 1;
 #if LL_WINDOWS
@@ -137,7 +140,6 @@ int IRC::start(char* server, int port,char* nick,char* user, char* name, char* p
         warn("Socket Initialization Error. Program aborted\n");
 		return false;
     }
-#endif
 
 	irc_socket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (irc_socket==INVALID_SOCKET)
@@ -145,16 +147,28 @@ int IRC::start(char* server, int port,char* nick,char* user, char* name, char* p
 		warn("Invalid sockets");
 		return 1;
 	}
+#else
+	irc_socket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (irc_socket==-1)
+	{
+		warn("Invalid sockets");
+		return 1;
+	}
+#endif
 	resolv=gethostbyname(server);
 	/*
 		gets(in);
 		IPHostEntry* hostInfo = Dns::GetHostByName(in);
 		printf(hostInfo);
 		*/
-	printf("Host Name(%s) Resolved To: %X \n",server,resolv);
+	printf("Host Name(%s) Resolved To: %p \n",server,resolv);
 	if (!resolv)
 	{
+#ifdef WIN32
 		closesocket(irc_socket);
+#else
+		close(irc_socket);
+#endif
 		return 1;
 	}
 	memcpy(&rem.sin_addr, resolv->h_addr, 4);
@@ -240,7 +254,7 @@ void IRC::disconnect()
 	}
 }
 
-int IRC::quit(char* quit_message)
+int IRC::quit(const char* quit_message)
 {
 	if (connected)
 	{
@@ -987,8 +1001,15 @@ int IRC::notice(char* fmt, ...)
 	if(ret == -1) return 1;
 	//fprintf(dataout, "NOTICE %s :", fmt);
 	char buf[1024];
+<<<<<<< HEAD:indra/newview/IRC.cpp
 	
+=======
+#if LL_WINDOWS
+>>>>>>> Fixed compile for linux with IRC, and added stuff to show the branch.:indra/newview/IRC.cpp
 	vsprintf_s(buf, sizeof(buf), va_arg(argp, char*), argp);
+#else
+	vsnprintf(buf, sizeof(buf), va_arg(argp, char*), argp);
+#endif
 	//vfprintf(dataout, va_arg(argp, char*), argp);
 	va_end(argp);
 	ret = send(irc_socket, buf, strlen(buf), 0);
@@ -1034,7 +1055,11 @@ int IRC::privmsg(char* fmt, ...)
 	ret = send(irc_socket, buf, strlen(buf), 0);
 	if(ret == -1) return 1;
 
+#if LL_WINDOWS
 	vsprintf_s(buf, sizeof(buf), va_arg(argp, char*), argp);
+#else
+	vsnprintf(buf, sizeof(buf), va_arg(argp, char*), argp);
+#endif
 	//vfprintf(dataout, va_arg(argp, char*), argp);
 	va_end(argp);
 	ret = send(irc_socket, buf, strlen(buf), 0);
@@ -1155,7 +1180,7 @@ int IRC::mode(char* modes)
 	return 0;
 }
 
-int IRC::nick(char* newnick)
+int IRC::nick(const char* newnick)
 {
 	if (!connected)
 		return 1;

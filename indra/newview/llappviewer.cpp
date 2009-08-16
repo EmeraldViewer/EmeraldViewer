@@ -2069,6 +2069,12 @@ bool LLAppViewer::initConfiguration()
 #else
 	gWindowTitle = gSecondLife + std::string(" ") + gArgs;
 #endif
+	//gWindowTitle += std::string(" ") + EMERALD_BRANCH;
+	gWindowTitle += llformat(" %d.%d.%d.%d",
+		LL_VERSION_MAJOR,
+		LL_VERSION_MINOR,
+		LL_VERSION_PATCH,
+		LL_VERSION_BUILD);
 	LLStringUtil::truncate(gWindowTitle, 255);
 
 	//RN: if we received a URL, hand it off to the existing instance.
