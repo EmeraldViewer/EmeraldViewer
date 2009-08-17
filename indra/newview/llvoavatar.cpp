@@ -3022,8 +3022,8 @@ BOOL CryoResolverTimeout::tick()
             avatarp->mCheckingCryolife = 2;
         }
 
-        LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
-        avatarp->idleUpdateNameTag(root_pos_last);
+        //LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
+        //avatarp->idleUpdateNameTag(root_pos_last);
 
         return TRUE;
     }else
