@@ -52,7 +52,8 @@
 
 using namespace std;
 
-#if !LL_WINDOWS
+#if LL_WINDOWS
+#else
 #define sprintf_s snprintf
 #endif
 
