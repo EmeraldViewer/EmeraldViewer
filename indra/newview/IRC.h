@@ -22,7 +22,8 @@
 	email:	iainsheppard@yahoo.co.uk
 	IRC:	#magpie @ irc.quakenet.org
 */
-#pragma once
+#ifndef IRC_IRC
+#define IRC_IRC
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -141,3 +142,4 @@ private:
 	irc_command_hook* hooks;
 };
 
+#endif

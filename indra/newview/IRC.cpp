@@ -34,7 +34,7 @@
 
 #include <sstream>
 
-#ifdef WIN32
+#ifdef LL_WINDOWS
 #include <windows.h>
 #else
 #include <stdlib.h>
@@ -123,7 +123,7 @@ void IRC::delete_irc_command_hook(irc_command_hook* cmd_hook)
 int IRC::start(char* server, int port,char* nick,char* user, char* name, char* pass)
 {
 
-	#ifdef WIN32
+	#ifdef LL_WINDOWS
 	HOSTENT* resolv;
 	#else
 	hostent* resolv;
@@ -165,7 +165,7 @@ int IRC::start(char* server, int port,char* nick,char* user, char* name, char* p
 	printf("Host Name(%s) Resolved To: %p \n",server,resolv);
 	if (!resolv)
 	{
-#ifdef WIN32
+#ifdef LL_WINDOWS
 		closesocket(irc_socket);
 #else
 		close(irc_socket);
@@ -194,7 +194,7 @@ _sendmsg("USERHOST " & $nick)
 
 	if (connect(irc_socket, (const sockaddr*)&rem, sizeof(rem))==SOCKET_ERROR)
 	{
-		#ifdef WIN32
+		#ifdef LL_WINDOWS
 		printf("Failed to connect: %d\n", WSAGetLastError());
 		#endif
 		closesocket(irc_socket);
@@ -248,7 +248,7 @@ void IRC::disconnect()
 		printf("Disconnected from server.\n");
 		connected=false;
 		quit("Leaving");
-		#ifdef WIN32
+		#ifdef LL_WINDOWS
 		shutdown(irc_socket, 2);
 		#endif
 		closesocket(irc_socket);
