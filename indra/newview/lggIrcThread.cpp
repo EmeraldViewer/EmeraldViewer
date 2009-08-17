@@ -43,10 +43,10 @@ Ok, here is how this is suposed to work.
 		--has buttons to edit and create new lggIrcDatas, which get saved to a file to be read and added at reset
 		--start IM sends a uid to the lggIrcGroupHandler for it to start up and hanlde a new lggIrcThread
 -----lggIrcThread
-		--initialised with a lggIrcData so it knows where to connect, etc
+		--initialized with a lggIrcData so it knows where to connect, etc
 		--starts up a NEW irc object, and adds to it handlers
 		--included its own methods used to handle the irc objects triggers from when irc info is sent
-		--start up a new THREAD called the messagelistener, to try to connect to a channel, while looping infinate listening
+		--start up a new THREAD called the message listener, to try to connect to a channel, while looping infinite listening
 */
 
 #include "llviewerprecompiledheaders.h"
@@ -60,6 +60,7 @@ Ok, here is how this is suposed to work.
 #include "llapp.h"
 
 #include "llimview.h"
+#include <crtdbg.h>
 
 
 //static
@@ -191,6 +192,14 @@ int kickmsg( char * params, irc_reply_data * hostd, void * conn)
 	else
 		return 0;
 }
+int modemsg( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->ModeMessageResponce(params, hostd, conn);
+	else
+		return 0;
+}
 void lggIrcThread::setData(lggIrcData dat)
 {
 	mData.become(dat);
@@ -199,6 +208,13 @@ void lggIrcThread::setData(lggIrcData dat)
 }
 int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
+	/*F actions!
+	if(std::string(&params[1]).find_first_of("ACTION")==std::string::npos)
+	{
+	actionDisp(std::string(hostd->nick),std::string(&params[1]));
+	return 0;
+	}*/
+
 	if(!strcmp(hostd->target,getChannel().c_str()))
 	{
 		//chan msg
@@ -213,6 +229,12 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 }
 int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
+	/*F actions!
+	if(std::string(&params[1]).find_first_of("ACTION")==std::string::npos)
+	{
+		actionDisp(std::string(hostd->nick),std::string(&params[1]));
+		return 0;
+	}*/
 	if(!strcmp(hostd->target,getChannel().c_str()))
 	{
 		//chan msg
@@ -264,6 +286,17 @@ int lggIrcThread::NickMessageResponce( char * params, irc_reply_data * hostd, vo
 	updateNames();
 	return 0;
 }
+int lggIrcThread::ModeMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+{
+	//[20:46]  NICK Params: :new and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
+	//[20:46]  NICK Params: :lgg and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick new and target (null) 
+
+	//msg( llformat("NICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	msg( llformat("%s (%s) sets mode on %s. (%s)",hostd->nick,hostd->ident,&params[0],hostd->target).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorNick"));
+	
+	updateNames();
+	return 0;
+}
 int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
 	//[20:10]  KICK Params: #emerald Emerald-User354541ac :test and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
@@ -299,10 +332,10 @@ int lggIrcThread::channelJoinedResponce(char *params, irc_reply_data *hostd, voi
 int lggIrcThread::ircresponce( char * params, irc_reply_data * hostd, void * conn)
 {
 	
-	llinfos << "irc responce " << mData.toString() << llendl;
+	llinfos << "irc response " << mData.toString() << llendl;
 	//IRC* irc_conn=(IRC*)conn; /* notice that you are passed a pointer to the connection object */
 	//gIMMgr->
-	msg("Atempting to join channel...");
+	msg("Attempting to join channel...");
 	join();
 	return 0;
 }
@@ -333,6 +366,7 @@ void lggIrcThread::run()
 	conn->hook_irc_command("QUIT",&quitmsg);
 	conn->hook_irc_command("NICK",&nickmsg);
 	conn->hook_irc_command("KICK",&kickmsg);
+	conn->hook_irc_command("MODE",&modemsg);
 	
 	if(
 	conn->start((char*) mData.server.c_str(),
@@ -432,9 +466,22 @@ void lggIrcThread::sendChat(std::string chat)
 	}else
 	if(command == "/join")
 	{
-		msg(llformat("Atempting to rejoin %s, if you wish to join a diferent channel, please make a new irc group",getChannel().c_str()));
+		msg(llformat("Attempting to rejoin %s, if you wish to join a different channel, please make a new irc group",getChannel().c_str()));
 		join();
 	}else
+	if(command == "/me")
+	{
+		/*char s =(char)0x001;
+		chat = s + "ACTION " + chat.substr(3) + s;
+		llinfos << "chat action is ::"  << chat.c_str() << llendl;
+		actionDisp(std::string(conn->current_nick()),std::string(chat));
+		*/
+		chat = "(("+chat.substr(4)+"))";//hax
+		conn->privmsg((char*)getChannel().c_str(),(char *)chat.c_str());
+		msg(llformat("%s : %s",	conn->current_nick(),chat.c_str()),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
+
+
+	}
 	if(command == "/msg")
 	{
 		std::string theTarget,theMsg;
@@ -453,6 +500,9 @@ void lggIrcThread::sendChat(std::string chat)
 		{
 			msg("No target name specified");
 		}
+	}else if(command.substr(0,1)=="/")
+	{
+		conn->raw((char *)std::string(chat.substr(1)+"\r\n").c_str());
 	}
 	else
 	{
@@ -464,6 +514,14 @@ void lggIrcThread::stopRun()
 {
 	conn->disconnect();
 }
+void lggIrcThread::actionDisp(std::string name, std::string msg)
+{
+
+	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(
+		name +  " " + msg.substr(7)
+		),
+		gSavedSettings.getColor("EmeraldIRC_ColorAction"));
+}
 void lggIrcThread::msg(std::string message)
 {
 	//sends a message to the window
@@ -471,19 +529,19 @@ void lggIrcThread::msg(std::string message)
 	//llinfos << " msg " << mData.toString() << llendl;
 	//gIMMgr->addMessage(getMID(),getMID(),mData.name,message);
 
-	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(message,
+	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(message),
 		gSavedSettings.getColor("EmeraldIRC_ColorSystem"));
 }
 void lggIrcThread::msg(std::string message, LLColor4 color)
 {
-	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(message,color);
+	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(message),color);
 }
 void lggIrcThread::msg(std::string message, std::string name)
 {
 	LLUUID uid;
 	uid.generate(name+"lgg");
 
-	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(message,
+	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(message),
 		gSavedSettings.getColor("IMChatColor"),
 		true,
 		uid,
@@ -494,13 +552,59 @@ void lggIrcThread::msg(std::string message, std::string name, LLColor4 color)
 	LLUUID uid;
 	uid.generate(name+"lgg");
 
-	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(message,
+	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(message),
 		color,
 		true,
 		uid,
 		name);
 }
+std::string lggIrcThread::stripColorCodes(std::string input)
+{
+	const char * source = input.c_str();
+	std::string returning;	
+	const char *p;
 
+	
+		for ( p = source; *p; p++ )
+		{
+			switch (*p)
+			{
+			
+			case 0x03:	// set color
+				if ( isdigit (p[1]) )
+				{
+					// Parse 
+					p++;
+
+					if ( isdigit (p[1]) )
+					{
+						p++;
+					}
+
+					if ( p[1] == ',' && isdigit (p[2]) )
+					{
+						p += 2;
+
+						if ( isdigit (p[1]) )
+						{
+							p++;
+						}
+					}
+
+				}
+				break;
+
+			default:
+					returning+=p[0];
+				
+				break;
+		
+			}
+		}
+
+	return returning;
+
+}
 
 void lggIrcThread::updateNames()
 {

@@ -67,6 +67,7 @@ public:
 	void stopRun(void);
 	void setData(lggIrcData dat);
 	lggIrcData getData() const;
+	void actionDisp(std::string name, std::string msg);
 	void msg(std::string message); 
 	void msg(std::string message, std::string name);
 	void msg(std::string message, LLColor4 color);
@@ -77,11 +78,13 @@ public:
 	int PrivMessageResponce( char * params, irc_reply_data * hostd, void * conn);
 	int NoticeMessageResponce( char * params, irc_reply_data * hostd, void * conn);
 	int channelJoinedResponce( char * params, irc_reply_data * hostd, void * conn);
-	int JoinMessageResponce( char * params, irc_reply_data * hostd, void * conn);
-	int PartMessageResponce( char * params, irc_reply_data * hostd, void * conn);
-	int QuitMessageResponce( char * params, irc_reply_data * hostd, void * conn);
-	int NickMessageResponce( char * params, irc_reply_data * hostd, void * conn);
-	int KickMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::JoinMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::PartMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::QuitMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::NickMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::ModeMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+	std::string stripColorCodes(std::string input);
 	std::string getChannel();
 	LLUUID getMID();
 	static lggIrcThread* findInstance(IRC* conn);
