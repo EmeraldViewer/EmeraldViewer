@@ -65,7 +65,7 @@ void JCExportTracker::init()
 		sInstance = new JCExportTracker();
 	}
 	status = IDLE;
-	level = PROPERTIES;//DEFAULT;
+	level = DEFAULT;
 	propertyqueries = 0;
 	totalprims = 0;
 	data = LLSD();
@@ -341,12 +341,12 @@ void JCExportTracker::processObjectProperties(LLMessageSystem* msg, void** user_
 {
 	if(level < PROPERTIES)
 	{
-		cmdline_printchat("level < PROPERTIES");
+		//cmdline_printchat("level < PROPERTIES");
 		return;
 	}
 	if(status == IDLE)
 	{
-		cmdline_printchat("status == IDLE");
+		//cmdline_printchat("status == IDLE");
 		return;
 	}
 	S32 i;
