@@ -2495,6 +2495,21 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 				chat.mFromID = from_id ^ gAgent.getSessionID();
 			}
 
+				std::string tempname = name;
+		
+				size_t found = tempname.find(" ");
+				while(found != string::npos)
+				{
+					tempname.replace(found, 1, "");
+					found = tempname.find(" ");
+				}
+
+				if (tempname.length() < 1)
+				{
+					name = "no name";
+					chat.mFromName = name;
+				}
+
 			std::ostringstream link;
 			link << "secondlife:///app/objectim/" << session_id
 					<< LLURI::mapToQueryString(query_string);
@@ -2962,6 +2977,21 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
     && !owner_id.isNull()
     && owner_id != gAgent.getID())
     {
+		std::string tempname = from_name;
+		
+		size_t found = tempname.find(" ");
+		while(found != string::npos)
+		{
+			tempname.replace(found, 1, "");
+			found = tempname.find(" ");
+		}
+		
+		if (tempname.length() < 1)
+		{
+			from_name = "no name";
+			chat.mFromName = from_name;
+		}
+
 //        std::string ownername;
 //        if(gCacheName->getFullName(owner_id,ownername))
 //            from_name += (" (" + ownername + ")");
