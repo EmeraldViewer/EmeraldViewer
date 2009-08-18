@@ -113,7 +113,7 @@ public:
 	int nick(const char* newnick);
 	int quit(const char* quit_message);
 	int raw(char* data);
-	void hook_irc_command(char* cmd_name, int (*function_ptr)(char*, irc_reply_data*, void*));
+	void hook_irc_command(const char* cmd_name, int (*function_ptr)(char*, irc_reply_data*, void*));
 	int message_loop();
 	int is_op(char* channel, char* nick);
 	int is_voice(char* channel, char* nick);
@@ -124,7 +124,7 @@ private:
 	/*void call_the_hook(irc_command_hook* hook, char* irc_command, char*params, irc_host_data* hostd);*/
 	void parse_irc_reply(char* data);
 	void split_to_replies(char* data);
-	void insert_irc_command_hook(irc_command_hook* hook, char* cmd_name, int (*function_ptr)(char*, irc_reply_data*, void*));
+	void insert_irc_command_hook(irc_command_hook* hook, const char* cmd_name, int (*function_ptr)(char*, irc_reply_data*, void*));
 	void delete_irc_command_hook(irc_command_hook* cmd_hook);
 #if LL_WINDOWS
 	SOCKET irc_socket;

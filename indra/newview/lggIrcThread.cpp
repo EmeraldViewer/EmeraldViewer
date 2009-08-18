@@ -60,7 +60,9 @@ Ok, here is how this is suposed to work.
 #include "llapp.h"
 
 #include "llimview.h"
+#if LL_WINDOWS
 #include <crtdbg.h>
+#endif
 
 
 //static

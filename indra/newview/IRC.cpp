@@ -74,7 +74,7 @@ IRC::~IRC()
 		delete_irc_command_hook(hooks);
 }
 
-void IRC::insert_irc_command_hook(irc_command_hook* hook, char* cmd_name, int (*function_ptr)(char*, irc_reply_data*, void*))
+void IRC::insert_irc_command_hook(irc_command_hook* hook, const char* cmd_name, int (*function_ptr)(char*, irc_reply_data*, void*))
 {
 	if (hook->function)
 	{
@@ -95,7 +95,7 @@ void IRC::insert_irc_command_hook(irc_command_hook* hook, char* cmd_name, int (*
 	}
 }
 
-void IRC::hook_irc_command(char* cmd_name, int (*function_ptr)(char*, irc_reply_data*, void*))
+void IRC::hook_irc_command(const char* cmd_name, int (*function_ptr)(char*, irc_reply_data*, void*))
 {
 	if (!hooks)
 	{
