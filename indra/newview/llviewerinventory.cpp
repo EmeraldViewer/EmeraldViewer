@@ -74,12 +74,6 @@ LLViewerInventoryItem::LLViewerInventoryItem(const LLUUID& uuid,
 					name, desc, sale_info, flags, creation_date_utc),
 	mIsComplete(TRUE)
 {
-	LLUUID creator = mPermissions.getCreator();
-	std::string ignored;
-	if(creator.notNull())
-	{
-		gCacheName->getFullName(creator, ignored);
-	}
 }
 
 LLViewerInventoryItem::LLViewerInventoryItem(const LLUUID& item_id,
@@ -252,12 +246,6 @@ BOOL LLViewerInventoryItem::unpackMessage(
 	LLMessageSystem* msg, const char* block, S32 block_num)
 {
 	BOOL rv = LLInventoryItem::unpackMessage(msg, block, block_num);
-	LLUUID creator = mPermissions.getCreator();
-	std::string ignored;
-	if(creator.notNull())
-	{
-		gCacheName->getFullName(creator, ignored);
-	}
 	mIsComplete = TRUE;
 	return rv;
 }
@@ -289,12 +277,6 @@ void LLViewerInventoryItem::packMessage(LLMessageSystem* msg) const
 BOOL LLViewerInventoryItem::importFile(LLFILE* fp)
 {
 	BOOL rv = LLInventoryItem::importFile(fp);
-	LLUUID creator = mPermissions.getCreator();
-	std::string ignored;
-	if(creator.notNull())
-	{
-		gCacheName->getFullName(creator, ignored);
-	}
 	mIsComplete = TRUE;
 	return rv;
 }
@@ -311,12 +293,6 @@ bool LLViewerInventoryItem::importFileLocal(LLFILE* fp)
 {
 	// TODO: convert all functions that return BOOL to return bool
 	bool rv = (LLInventoryItem::importFile(fp) ? true : false);
-	LLUUID creator = mPermissions.getCreator();
-	std::string ignored;
-	if(creator.notNull())
-	{
-		gCacheName->getFullName(creator, ignored);
-	}
 	mIsComplete = false;
 	return rv;
 }
