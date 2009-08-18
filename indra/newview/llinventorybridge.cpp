@@ -3692,7 +3692,7 @@ void LLLSLTextBridge::performAction(LLFolderView* folder, LLInventoryModel* mode
 					root = root + path;
 					cmdline_printchat(root);
 				}
-				root = root + item->getName() + "." + LLAssetType::lookupHumanReadable(item->getType());
+				root = root + item->getName() + "." + LLAssetType::lookup(item->getType());
 				cmdline_printchat(root);
 
 				JCAssetInfo* info = new JCAssetInfo;
