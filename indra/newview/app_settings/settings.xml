@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <llsd>
   <map>
-    <key>ColorllFunction</key>
+<key>ColorllFunction</key>
     <map>
       <key>Comment</key>
       <string>Color for llFunction builtins in the script editor.</string>
@@ -75,7 +75,18 @@
         <real>0.15</real>
       </array>
     </map>
-    <key>RestrainedLife</key>
+<key>InventorySearchType</key>
+    <map>
+      <key>Comment</key>
+      <string>Controls what type of inventory search we perform.</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>U32</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+<key>RestrainedLife</key>
     <map>
       <key>Comment</key>
       <string>Toggles the RestrainedLife features (BDSM lockable toys support). Needs a restart of the viewer.</string>
