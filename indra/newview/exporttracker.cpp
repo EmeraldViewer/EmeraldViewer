@@ -38,6 +38,7 @@
 #include "llsdserialize.h"
 #include "lldirpicker.h"
 #include "llfilepicker.h"
+#include "llviewerregion.h"
 
 JCExportTracker* JCExportTracker::sInstance;
 LLDynamicArray<LLSD*> JCExportTracker::primitives;
@@ -65,7 +66,7 @@ void JCExportTracker::init()
 		sInstance = new JCExportTracker();
 	}
 	status = IDLE;
-	level = DEFAULT;
+	level = PROPERTIES;//DEFAULT;
 	propertyqueries = 0;
 	totalprims = 0;
 	data = LLSD();
@@ -176,8 +177,8 @@ LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 			prim_llsd["position"] = object->getPosition().getValue();
 			prim_llsd["rotation"] = ll_sd_from_quaternion(object->getRotation());
 		}
-		prim_llsd["name"] = "";//node->mName;
-		prim_llsd["description"] = "";//node->mDescription;
+		//prim_llsd["name"] = "";//node->mName;
+		//prim_llsd["description"] = "";//node->mDescription;
 		// Transforms
 		prim_llsd["scale"] = object->getScale().getValue();
 		// Flags
@@ -316,27 +317,16 @@ void JCExportTracker::finalize(LLSD data)
 	LLSDSerialize::toPrettyXML(file, export_file);
 	// Open the file save dialog
 	export_file.close();
+
+	init();
 }
 void cmdline_printchat(std::string message);
 //LLSD* chkdata(LLUUID id, LLSD* data)
 //{
 //	if(primitives
 //}
-LLSD* JCExportTracker::getprim(LLUUID id)
-{
-	std::string idstr = id.asString();
-	LLDynamicArray<LLSD*>::iterator iter;
-	for(iter = primitives.begin(); iter != primitives.end(); ++iter)
-	{
-		LLSD* prim = *iter;
-		if(prim->has("id"))
-		{
-			if((*prim)["id"].asString() == idstr)return prim;
-		}
-	}
-	cmdline_printchat("no match for"+idstr);
-	return NULL;
-}
+
+BOOL hacked;
 void JCExportTracker::processObjectProperties(LLMessageSystem* msg, void** user_data)
 {
 	if(level < PROPERTIES)
@@ -355,106 +345,224 @@ void JCExportTracker::processObjectProperties(LLMessageSystem* msg, void** user_
 	{
 		LLUUID id;
 		msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_ObjectID, id, i);
-		LLSD* prim = getprim(id);
-		if(prim)
+
+		for(LLSD::array_iterator array_itr = data.beginArray();
+			array_itr != data.endArray();
+			++array_itr)
 		{
-			cmdline_printchat("matched "+id.asString());
-			LLUUID creator_id;
-			LLUUID owner_id;
-			LLUUID group_id;
-			LLUUID last_owner_id;
-			U64 creation_date;
-			LLUUID extra_id;
-			U32 base_mask, owner_mask, group_mask, everyone_mask, next_owner_mask;
-			LLSaleInfo sale_info;
-			LLCategory category;
-			LLAggregatePermissions ag_perms;
-			LLAggregatePermissions ag_texture_perms;
-			LLAggregatePermissions ag_texture_perms_owner;
-			
-			msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_CreatorID, creator_id, i);
-			msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_OwnerID, owner_id, i);
-			msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_GroupID, group_id, i);
-			msg->getU64Fast(_PREHASH_ObjectData, _PREHASH_CreationDate, creation_date, i);
-			msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_BaseMask, base_mask, i);
-			msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_OwnerMask, owner_mask, i);
-			msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_GroupMask, group_mask, i);
-			msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_EveryoneMask, everyone_mask, i);
-			msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_NextOwnerMask, next_owner_mask, i);
-			sale_info.unpackMultiMessage(msg, _PREHASH_ObjectData, i);
-
-			ag_perms.unpackMessage(msg, _PREHASH_ObjectData, _PREHASH_AggregatePerms, i);
-			ag_texture_perms.unpackMessage(msg, _PREHASH_ObjectData, _PREHASH_AggregatePermTextures, i);
-			ag_texture_perms_owner.unpackMessage(msg, _PREHASH_ObjectData, _PREHASH_AggregatePermTexturesOwner, i);
-			category.unpackMultiMessage(msg, _PREHASH_ObjectData, i);
-
-			S16 inv_serial = 0;
-			msg->getS16Fast(_PREHASH_ObjectData, _PREHASH_InventorySerial, inv_serial, i);
-
-			LLUUID item_id;
-			msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_ItemID, item_id, i);
-			LLUUID folder_id;
-			msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_FolderID, folder_id, i);
-			LLUUID from_task_id;
-			msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_FromTaskID, from_task_id, i);
-
-			msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_LastOwnerID, last_owner_id, i);
-
-			std::string name;
-			msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Name, name, i);
-			std::string desc;
-			msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Description, desc, i);
-
-			std::string touch_name;
-			msg->getStringFast(_PREHASH_ObjectData, _PREHASH_TouchName, touch_name, i);
-			std::string sit_name;
-			msg->getStringFast(_PREHASH_ObjectData, _PREHASH_SitName, sit_name, i);
-
-			//unpack TE IDs
-			std::vector<LLUUID> texture_ids;
-			S32 size = msg->getSizeFast(_PREHASH_ObjectData, i, _PREHASH_TextureID);
-			if (size > 0)
+			if((*array_itr).has("Object"))
 			{
-				S8 packed_buffer[SELECT_MAX_TES * UUID_BYTES];
-				msg->getBinaryDataFast(_PREHASH_ObjectData, _PREHASH_TextureID, packed_buffer, 0, i, SELECT_MAX_TES * UUID_BYTES);
-
-				for (S32 buf_offset = 0; buf_offset < size; buf_offset += UUID_BYTES)
+				//cmdline_printchat("has object entry?");
+				LLSD linkset_llsd = (*array_itr)["Object"];
+				for(LLSD::array_iterator link_itr = linkset_llsd.beginArray();
+					link_itr != linkset_llsd.endArray();
+					++link_itr)
 				{
-					LLUUID tid;
-					memcpy(tid.mData, packed_buffer + buf_offset, UUID_BYTES);		/* Flawfinder: ignore */
-					texture_ids.push_back(tid);
+					if((*link_itr).has("id"))
+					{
+						//cmdline_printchat("lol, has ID");
+						if((*link_itr)["id"].asString() == id.asString())
+						{
+							cmdline_printchat("Recieved information for prim "+id.asString());
+							LLUUID creator_id;
+							LLUUID owner_id;
+							LLUUID group_id;
+							LLUUID last_owner_id;
+							U64 creation_date;
+							LLUUID extra_id;
+							U32 base_mask, owner_mask, group_mask, everyone_mask, next_owner_mask;
+							LLSaleInfo sale_info;
+							LLCategory category;
+							LLAggregatePermissions ag_perms;
+							LLAggregatePermissions ag_texture_perms;
+							LLAggregatePermissions ag_texture_perms_owner;
+							
+							msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_CreatorID, creator_id, i);
+							msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_OwnerID, owner_id, i);
+							msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_GroupID, group_id, i);
+							msg->getU64Fast(_PREHASH_ObjectData, _PREHASH_CreationDate, creation_date, i);
+							msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_BaseMask, base_mask, i);
+							msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_OwnerMask, owner_mask, i);
+							msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_GroupMask, group_mask, i);
+							msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_EveryoneMask, everyone_mask, i);
+							msg->getU32Fast(_PREHASH_ObjectData, _PREHASH_NextOwnerMask, next_owner_mask, i);
+							sale_info.unpackMultiMessage(msg, _PREHASH_ObjectData, i);
+
+							ag_perms.unpackMessage(msg, _PREHASH_ObjectData, _PREHASH_AggregatePerms, i);
+							ag_texture_perms.unpackMessage(msg, _PREHASH_ObjectData, _PREHASH_AggregatePermTextures, i);
+							ag_texture_perms_owner.unpackMessage(msg, _PREHASH_ObjectData, _PREHASH_AggregatePermTexturesOwner, i);
+							category.unpackMultiMessage(msg, _PREHASH_ObjectData, i);
+
+							S16 inv_serial = 0;
+							msg->getS16Fast(_PREHASH_ObjectData, _PREHASH_InventorySerial, inv_serial, i);
+
+							LLUUID item_id;
+							msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_ItemID, item_id, i);
+							LLUUID folder_id;
+							msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_FolderID, folder_id, i);
+							LLUUID from_task_id;
+							msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_FromTaskID, from_task_id, i);
+
+							msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_LastOwnerID, last_owner_id, i);
+
+							std::string name;
+							msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Name, name, i);
+							std::string desc;
+							msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Description, desc, i);
+
+							std::string touch_name;
+							msg->getStringFast(_PREHASH_ObjectData, _PREHASH_TouchName, touch_name, i);
+							std::string sit_name;
+							msg->getStringFast(_PREHASH_ObjectData, _PREHASH_SitName, sit_name, i);
+
+							//unpack TE IDs
+							std::vector<LLUUID> texture_ids;
+							S32 size = msg->getSizeFast(_PREHASH_ObjectData, i, _PREHASH_TextureID);
+							if (size > 0)
+							{
+								S8 packed_buffer[SELECT_MAX_TES * UUID_BYTES];
+								msg->getBinaryDataFast(_PREHASH_ObjectData, _PREHASH_TextureID, packed_buffer, 0, i, SELECT_MAX_TES * UUID_BYTES);
+
+								for (S32 buf_offset = 0; buf_offset < size; buf_offset += UUID_BYTES)
+								{
+									LLUUID tid;
+									memcpy(tid.mData, packed_buffer + buf_offset, UUID_BYTES);		/* Flawfinder: ignore */
+									texture_ids.push_back(tid);
+								}
+							}
+							(*link_itr)["creator_id"] = creator_id.asString();
+							(*link_itr)["owner_id"] = owner_id.asString();
+							(*link_itr)["group_id"] = group_id.asString();
+							(*link_itr)["last_owner_id"] = last_owner_id.asString();
+							(*link_itr)["creation_date"] = llformat("%d",creation_date);
+							(*link_itr)["extra_id"] = extra_id.asString();
+							(*link_itr)["base_mask"] = llformat("%d",base_mask);
+							(*link_itr)["owner_mask"] = llformat("%d",owner_mask);
+							(*link_itr)["group_mask"] = llformat("%d",group_mask);
+							(*link_itr)["everyone_mask"] = llformat("%d",everyone_mask);
+							(*link_itr)["next_owner_mask"] = llformat("%d",next_owner_mask);
+							(*link_itr)["sale_info"] = sale_info.asLLSD();
+
+							(*link_itr)["inv_serial"] = (S32)inv_serial;
+							(*link_itr)["item_id"] = item_id.asString();
+							(*link_itr)["folder_id"] = folder_id.asString();
+							(*link_itr)["from_task_id"] = from_task_id.asString();
+							(*link_itr)["name"] = name;
+							(*link_itr)["description"] = desc;
+							(*link_itr)["touch_name"] = touch_name;
+							(*link_itr)["sit_name"] = sit_name;
+
+							propertyqueries -= 1;
+							cmdline_printchat(llformat("%d server queries left",propertyqueries));
+							if(propertyqueries == 0)
+							{
+								cmdline_printchat("Full property export completed.");
+								finalize(data);
+							}
+						}
+					}
 				}
-			}
-			(*prim)["creator_id"] = creator_id.asString();
-			(*prim)["owner_id"] = owner_id.asString();
-			(*prim)["group_id"] = group_id.asString();
-			(*prim)["last_owner_id"] = last_owner_id.asString();
-			(*prim)["creation_date"] = llformat("%d",creation_date);
-			(*prim)["extra_id"] = extra_id.asString();
-			(*prim)["base_mask"] = llformat("%d",base_mask);
-			(*prim)["owner_mask"] = llformat("%d",owner_mask);
-			(*prim)["group_mask"] = llformat("%d",group_mask);
-			(*prim)["everyone_mask"] = llformat("%d",everyone_mask);
-			(*prim)["next_owner_mask"] = llformat("%d",next_owner_mask);
-			(*prim)["sale_info"] = sale_info.asLLSD();
-
-			(*prim)["inv_serial"] = (S32)inv_serial;
-			(*prim)["item_id"] = item_id.asString();
-			(*prim)["folder_id"] = folder_id.asString();
-			(*prim)["from_task_id"] = from_task_id.asString();
-			(*prim)["name"] = name;
-			(*prim)["description"] = desc;
-			(*prim)["touch_name"] = touch_name;
-			(*prim)["sit_name"] = sit_name;
-
-			propertyqueries -= 1;
-			cmdline_printchat(llformat("%d queries left",propertyqueries));
-			if(propertyqueries == 0)
-			{
-				cmdline_printchat("done nigga");
-				finalize(data);
+				(*array_itr)["Object"] = linkset_llsd;
 			}
 		}
 	}
 }
 
+struct JCAssetInfo
+{
+	std::string path;
+};
+
+void cmdline_printchat(std::string message);
+void JCAssetExportCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
+{
+	cmdline_printchat("dled");
+	JCAssetInfo* info = (JCAssetInfo*)userdata;
+	U8 size = vfs->getSize(uuid, type);
+	U8* buffer = new U8[size];
+	vfs->getData(uuid, type, buffer, 0, size);
+	U8*	DataBuffer;
+	S32	DataBufferSize;
+	DataBufferSize = vfs->getSize(uuid, type);
+	DataBuffer = new U8[DataBufferSize];
+	vfs->getData(uuid, type, DataBuffer, 0, DataBufferSize);
+	LLAPRFile infile ;
+	infile.open(info->path.c_str(), LL_APR_WB);
+	apr_file_t *fp = infile.getFileHandle();
+	if(fp)infile.write(DataBuffer, DataBufferSize);
+		
+	//apr_file_close(fp);
+	infile.close();
+
+	delete info;
+}
+
+bool JCExportTracker::mirror(LLViewerInventoryItem* item, LLViewerObject* container)
+{
+	if(item)
+	{
+		//cmdline_printchat("item");
+		//LLUUID asset_id = item->getAssetUUID();
+		//if(asset_id.notNull())
+		{
+			//cmdline_printchat("asset_id.notNull()");
+			LLDynamicArray<std::string> tree;
+			LLViewerInventoryCategory* cat = gInventory.getCategory(item->getParentUUID());
+			while(cat)
+			{
+				tree.insert(tree.begin(),cat->getName());
+				cat = gInventory.getCategory(cat->getParentUUID());
+			}
+			if(container)
+			{
+				//tree.insert(tree.begin(),objectname i guess fuck);
+				//wat
+			}
+			std::string root = gSavedSettings.getString("EmeraldInvMirrorLocation");
+			if(!LLFile::isdir(root))
+			{
+				cmdline_printchat("Error: mirror root is nonexistant");
+				return FALSE;
+			}
+			std::string path = gDirUtilp->getDirDelimiter();
+			root = root + path;
+			for (LLDynamicArray<std::string>::iterator it = tree.begin();
+			it != tree.end();
+			++it)
+			{
+				std::string folder = *it;
+				root = root + folder;
+				if(!LLFile::isdir(root))
+				{
+					LLFile::mkdir(root);
+				}
+				root = root + path;
+				cmdline_printchat(root);
+			}
+			root = root + item->getName() + "." + LLAssetType::lookup(item->getType());
+			cmdline_printchat(root);
+
+			JCAssetInfo* info = new JCAssetInfo;
+			info->path = root;
+			
+			//LLHost host = container != NULL ? container->getRegion()->getHost() : LLHost::invalid;
+
+			gAssetStorage->getInvItemAsset(container != NULL ? container->getRegion()->getHost() : LLHost::invalid,
+			gAgent.getID(),
+			gAgent.getSessionID(),
+			item->getPermissions().getOwner(),
+			container != NULL ? container->getID() : LLUUID::null,
+			item->getUUID(),
+			item->getAssetUUID(),
+			item->getType(),
+			JCAssetExportCallback,
+			info,
+			TRUE);
+
+			return TRUE;
+
+			//gAssetStorage->getAssetData(asset_id, item->getType(), JCAssetExportCallback, info,1);
+		}
+	}
+	return FALSE;
+}

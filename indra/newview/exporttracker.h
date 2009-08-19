@@ -51,6 +51,8 @@ public:
 	static bool serializeSelection();
 	static void finalize(LLSD data);
 
+	static bool mirror(LLViewerInventoryItem* item, LLViewerObject* container = NULL);
+
 private:
 	static LLSD subserialize(LLViewerObject* linkset);
 

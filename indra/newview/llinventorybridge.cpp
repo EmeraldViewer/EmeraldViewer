@@ -87,6 +87,8 @@
 #include "llselectmgr.h"
 #include "llfloateropenobject.h"
 
+#include "exporttracker.h"
+
 // Helpers
 // bug in busy count inc/dec right now, logic is complex... do we really need it?
 void inc_busy_count()
@@ -3620,35 +3622,6 @@ LLUIImagePtr LLLSLTextBridge::getIcon() const
 	return get_item_icon(LLAssetType::AT_SCRIPT, LLInventoryType::IT_LSL, 0, FALSE);
 }
 
-struct JCAssetInfo
-{
-	std::string path;
-};
-
-void cmdline_printchat(std::string message);
-void JCAssetExportCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
-{
-	cmdline_printchat("dled");
-	JCAssetInfo* info = (JCAssetInfo*)userdata;
-	U8 size = vfs->getSize(uuid, type);
-	U8* buffer = new U8[size];
-	vfs->getData(uuid, type, buffer, 0, size);
-	U8*	DataBuffer;
-	S32	DataBufferSize;
-	DataBufferSize = vfs->getSize(uuid, type);
-	DataBuffer = new U8[DataBufferSize];
-	vfs->getData(uuid, type, DataBuffer, 0, DataBufferSize);
-	LLAPRFile infile ;
-	infile.open(info->path.c_str(), LL_APR_WB);
-	apr_file_t *fp = infile.getFileHandle();
-	if(fp)infile.write(DataBuffer, DataBufferSize);
-		
-	//apr_file_close(fp);
-	infile.close();
-
-	delete info;
-}
-
 void LLLSLTextBridge::performAction(LLFolderView* folder, LLInventoryModel* model, std::string action)
 {
 	cmdline_printchat(action);
@@ -3657,62 +3630,7 @@ void LLLSLTextBridge::performAction(LLFolderView* folder, LLInventoryModel* mode
 		//cmdline_printchat("export?");
 		//lol
 		LLViewerInventoryItem* item = getItem();
-		if(item)
-		{
-			//cmdline_printchat("item");
-			//LLUUID asset_id = item->getAssetUUID();
-			//if(asset_id.notNull())
-			{
-				//cmdline_printchat("asset_id.notNull()");
-				LLDynamicArray<std::string> tree;
-				LLViewerInventoryCategory* cat = gInventory.getCategory(item->getParentUUID());
-				while(cat)
-				{
-					tree.insert(tree.begin(),cat->getName());
-					cat = gInventory.getCategory(cat->getParentUUID());
-				}
-				std::string root = gSavedSettings.getString("EmeraldInvMirrorLocation");
-				if(!LLFile::isdir(root))
-				{
-					cmdline_printchat("Error: mirror root is nonexistant");
-					return;
-				}
-				std::string path = gDirUtilp->getDirDelimiter();
-				root = root + path;
-				for (LLDynamicArray<std::string>::iterator it = tree.begin();
-				it != tree.end();
-					++it)
-				{
-					std::string folder = *it;
-					root = root + folder;
-					if(!LLFile::isdir(root))
-					{
-						LLFile::mkdir(root.c_str());
-					}
-					root = root + path;
-					cmdline_printchat(root);
-				}
-				root = root + item->getName() + "." + LLAssetType::lookup(item->getType());
-				cmdline_printchat(root);
-
-				JCAssetInfo* info = new JCAssetInfo;
-				info->path = root;
-
-				gAssetStorage->getInvItemAsset(LLHost::invalid,
-										gAgent.getID(),
-										gAgent.getSessionID(),
-										item->getPermissions().getOwner(),
-										LLUUID::null,
-										item->getUUID(),
-										item->getAssetUUID(),
-										item->getType(),
-										JCAssetExportCallback,
-										info,
-										TRUE);
-
-				//gAssetStorage->getAssetData(asset_id, item->getType(), JCAssetExportCallback, info,1);
-			}
-		}
+		JCExportTracker::mirror(item);
 	}
 	else LLItemBridge::performAction(folder, model, action);
 }
