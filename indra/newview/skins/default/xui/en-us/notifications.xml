@@ -6656,6 +6656,17 @@ the related entries are at the bottom of the file.
 Utility Stream
 
   </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Inventory"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+Inventory
+
+  </notification>
 
 </notifications>
 

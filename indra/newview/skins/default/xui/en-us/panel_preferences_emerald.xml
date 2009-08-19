@@ -955,9 +955,10 @@ from the Emerald viewer into the simulator for access via scripts.
 			</text>
 		</panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Inventory" left="1" mouse_opaque="true" name="Inventory" width="418">
-      <check_box bottom_delta="-25" enabled="true"
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Inventory" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
+      <check_box bottom="-25" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
-           label="Enable Mirroring" left_delta="10" mouse_opaque="true"
+           label="Enable Mirroring" left="10" mouse_opaque="true"
            name="fdgfd" control_name="EmeraldEnableInvMirror" radio_style="false" width="270" />
       <text type="string" bottom_delta="-10"
              follows="left|top" font="SansSerifSmall" halign="left"
@@ -991,6 +992,10 @@ from the Emerald viewer into the simulator for access via scripts.
       <check_box bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall"
            height="16" initial_value="false" label="Mirror Scripts" left_delta="18"
            mouse_opaque="true" name="check_script" control_name="EmeraldInvMirrorScripts" width="126" />
+      <check_box bottom_delta="-30" enabled="true" follows="left|top" font="SansSerifSmall"
+           height="16" label="Auto open Inventory window" left="5"
+           mouse_opaque="true" name="popup_inventory" control_name="ShowInInventory" width="126"
+           tool_tip="Pop up the Inventory window when a new item is received." />
     </panel>
 
 
