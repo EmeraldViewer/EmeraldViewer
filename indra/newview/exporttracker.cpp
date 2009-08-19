@@ -358,7 +358,7 @@ void JCExportTracker::processObjectProperties(LLMessageSystem* msg, void** user_
 					link_itr != linkset_llsd.endArray();
 					++link_itr)
 				{
-					if((*link_itr).has("id"))
+					if((*link_itr) && (*link_itr).has("id"))
 					{
 						//cmdline_printchat("lol, has ID");
 						if((*link_itr)["id"].asString() == id.asString())
@@ -454,16 +454,16 @@ void JCExportTracker::processObjectProperties(LLMessageSystem* msg, void** user_
 
 							propertyqueries -= 1;
 							cmdline_printchat(llformat("%d server queries left",propertyqueries));
-							if(propertyqueries == 0)
-							{
-								cmdline_printchat("Full property export completed.");
-								finalize(data);
-							}
 						}
 					}
 				}
 				(*array_itr)["Object"] = linkset_llsd;
 			}
+		}
+		if(propertyqueries == 0)
+		{
+			cmdline_printchat("Full property export completed.");
+			finalize(data);
 		}
 	}
 }
