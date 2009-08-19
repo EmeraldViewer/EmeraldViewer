@@ -33,7 +33,7 @@
 #include "llagent.h"
 
 
-class JCExportTracker
+class JCExportTracker : public LLVOInventoryListener
 {
 public:
 	JCExportTracker();
@@ -45,29 +45,42 @@ private:
 	static LLSD* getprim(LLUUID id);
 public:
 	static void processObjectProperties(LLMessageSystem* msg, void** user_data);
+	void inventoryChanged(LLViewerObject* obj,
+								 InventoryObjectList* inv,
+								 S32 serial_num,
+								 void* data);
+
+
 	static JCExportTracker* getInstance(){ init(); return sInstance; }
 
 	static bool serialize(LLDynamicArray<LLViewerObject*> objects);
 	static bool serializeSelection();
 	static void finalize(LLSD data);
 
-	static bool mirror(LLViewerInventoryItem* item, LLViewerObject* container = NULL);
+	static BOOL mirror(LLInventoryObject* item, LLViewerObject* container = NULL, std::string root = "");
 
 private:
 	static LLSD subserialize(LLViewerObject* linkset);
 
-	enum ExportState { IDLE, CLIENTSIDE, SERVERSIDE };
+	enum ExportState { IDLE, EXPORTING };
 
 	static U32 status;
 
-	enum ExportLevel { DEFAULT, PROPERTIES, INVENTORY };
+	//enum ExportLevel { DEFAULT, PROPERTIES, INVENTORY };
 
-	static U32 level;
+	static BOOL export_properties;
+	static BOOL export_inventory;
+	static BOOL export_textures;
+
+	//static U32 level;
 
 	static U32 propertyqueries;
+	static U32 invqueries;
 	static U32 totalprims;
 	static LLSD data;
-	static LLDynamicArray<LLSD*> primitives;
+
+	static std::string destination;
+	static std::string asset_dir;
 };
 
 
