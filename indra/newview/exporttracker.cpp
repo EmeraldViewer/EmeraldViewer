@@ -43,6 +43,7 @@
 #include "llviewerregion.h"
 #include "llwindow.h"
 #include "lltransfersourceasset.h"
+#include "llviewernetwork.h"
 
 JCExportTracker* JCExportTracker::sInstance;
 LLSD JCExportTracker::data;
@@ -351,8 +352,12 @@ void JCExportTracker::finalize(LLSD data)
 {
 	LLSD file;
 	LLSD header;
-	header["Version"] = 2;//for now
+	header["Version"] = 2;
 	file["Header"] = header;
+	std::vector<std::string> uris;
+	LLViewerLogin::getInstance()->getLoginURIs(uris);
+	//LLStringUtil::toLower(uris[0]);
+	file["Grid"] = uris[0];
 	file["Objects"] = data;
 
 	// Create a file stream and write to it
@@ -555,7 +560,7 @@ void JCExportTracker::inventoryChanged(LLViewerObject* obj,
 							for( ;	it != end;	++it)
 							{
 								LLInventoryObject* asset = (*it);
-								if(asset->getType() != LLAssetType::AT_CATEGORY && asset->getType() > LLAssetType::AT_NONE && is_asset_id_knowable(asset->getType()))
+								if(asset->getType() != LLAssetType::AT_CATEGORY && asset->getType() > LLAssetType::AT_NONE)// && is_asset_id_knowable(asset->getType()))
 								{
 									LLSD inv_item;
 									inv_item["name"] = asset->getName();
