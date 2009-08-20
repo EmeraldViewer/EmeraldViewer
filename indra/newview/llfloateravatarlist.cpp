@@ -58,6 +58,7 @@
  * @brief How long to keep showing an activity, in seconds
  */
 const F32 ACTIVITY_TIMEOUT = 1.0f;
+const F32 ACTIVITY_TIMEOUT_TYPING = 30.0f;
 
 
 /**
@@ -316,14 +317,23 @@ void LLAvatarListEntry::setActivity(ACTIVITY_TYPE activity)
 
 ACTIVITY_TYPE LLAvatarListEntry::getActivity()
 {
-	if ( mActivityTimer.getElapsedTimeF32() > ACTIVITY_TIMEOUT )
+	if (mActivityType == ACTIVITY_TYPING)
 	{
-		mActivityType = ACTIVITY_NONE;
+		if ( mActivityTimer.getElapsedTimeF32() > ACTIVITY_TIMEOUT_TYPING )
+		{
+			mActivityType = ACTIVITY_NONE;
+		}
 	}
-	
+	else
+	{
+		if ( mActivityTimer.getElapsedTimeF32() > ACTIVITY_TIMEOUT )
+		{
+			mActivityType = ACTIVITY_NONE;
+		}
+	}
 	return mActivityType;
 }
-
+	
 void LLAvatarListEntry::toggleMark()
 {
 	mMarked = !mMarked;
