@@ -134,7 +134,7 @@ void JCAssetExportCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType ty
 			
 		//apr_file_close(fp);
 		infile.close();
-	}
+	}else cmdline_printchat("Failed to save file "+info->path+" ("+info->name+")");
 
 	delete info;
 }
@@ -272,7 +272,11 @@ LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 				JCAssetInfo* info = new JCAssetInfo;
 				info->path = path + asset_id.asString() + ".jp2";
 				info->name = "Prim Texture";
-				gAssetStorage->getAssetData(asset_id, LLAssetType::AT_TEXTURE, JCAssetExportCallback, info,1);
+				//gAssetStorage->getAssetData(asset_id, LLAssetType::AT_TEXTURE, JCAssetExportCallback, info,1);
+				//gImageList.getImage(asset_id, MIPMAP_TRUE, FALSE)->setBoostLevel(LLViewerImage::BOOST_MAX_LEVEL);
+				//mImage->setLoadedCallback( LLPreviewTexture::onFileLoadedForSave, 
+				//				0, TRUE, FALSE, new LLUUID( mItemUUID ) );
+				cmdline_printchat("DLing "+asset_id.asString());
 			}
 		}
 
@@ -705,7 +709,7 @@ BOOL JCExportTracker::mirror(LLInventoryObject* item, LLViewerObject* container,
 			LLUUID::null,
 			container != NULL ? container->getID() : LLUUID::null,
 			item->getUUID(),
-			LLUUID::null,
+			gAgent.getID(),
 			item->getType(),
 			JCAssetExportCallback,
 			info,
