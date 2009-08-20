@@ -1,6 +1,17 @@
 <?xml version="1.0" ?>
 <llsd>
   <map>
+    <key>InventorySearchType</key>
+    <map>
+      <key>Comment</key>
+      <string>Controls what type of inventory search we perform.</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>U32</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>ColorllFunction</key>
     <map>
       <key>Comment</key>
