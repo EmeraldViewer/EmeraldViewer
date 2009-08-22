@@ -2290,7 +2290,7 @@ void LLFloaterIMPanel::doOtrStart()
                     &extrafragment);
             }
             if (newmessage) otrl_message_free(newmessage);
-            otrLogMessageGetstringName("otr_prog_I_start");
+            //otrLogMessageGetstringName("otr_prog_I_start");
         }
         else
         {
@@ -2328,7 +2328,7 @@ void LLFloaterIMPanel::doOtrStop(bool pretend_they_did)
         }
         else
         {
-            otrLogMessageGetstringName("otr_prog_I_stop");
+            //otrLogMessageGetstringName("otr_prog_I_stop");
         }
         showOtrStatus();
     }
