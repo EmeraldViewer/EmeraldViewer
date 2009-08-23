@@ -1756,7 +1756,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		LLVOAvatar* avatarp = find_avatar(from_id);
 		if(avatarp)
 		{
-			if(avatarp->mCheckingCryolife > 0 && avatarp->mIsCryolife == FALSE)
+			if(avatarp->mCheckingCryolife < 2 && avatarp->mIsCryolife == FALSE)
 			{
 				boost::regex re(
 					".* \\d*\\.{1}\\d*\\.{1}\\d* \\({1}\\d*\\){1} .{3,5} \\d* \\d* \\d*:\\d*:\\d* \\({1}.*\\){1}.*"
