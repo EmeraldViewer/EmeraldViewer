@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <panel label="Emerald" name="Emerald panel">
-  <tab_container label="o.o" name="tab">
+  <tab_container label="Emerald Einst." name="tabs">
+  <tab_container label="Seite 1" name="tab">
     <panel label="TP/Login" name="Teleport/Login">
     <button label="?" name="EmeraldHelp_TeleportLogin" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <check_box label="Doppelklick Teleport" name="double_click_tp_toggle"/>
@@ -42,6 +43,8 @@
     </panel>
     <panel label="Schutz" name="Shields">
     <button label="?" name="EmeraldHelp_Shields" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+    <button label="Stealth Modus" tool_tip="Hier klicken um den Stealth Modus zu aktivieren. Niemand sieht mehr das sie Emerald benutzen"/>
+    <button label="Alle Extras Modus" name="EmeraldPrefs_FullFeatures" tool_tip="Hier klicken um alle Extras zu aktivieren. Andere können feststellen das sie Emerald benutzen"/>
       <check_box label="Aktuelle Kleidung schützen" name="clothing_protect_toggle"/>
       <panel name="antispam_options">
         <check_box label="Dialog Spam Schutz"  name="dialog_spam_prevention"/>
@@ -100,16 +103,16 @@ Empfohlene Eisntellungen:
         </radio_item>
       </radio_group>
       <button name="otr_help_btn" label="Was ist OTR?"/>
-      <check_box name="EmeraldOTRInTypingStop-toggle" tool_tip="Sendet OTR verschlüsselte Nachrichten als IM_TYPING_STOP Datenpakete. Inkompatibel mit äteren OTR Versionen." label="Benutze IM_TYPING_STOP für OTR"/>
-      <view_border name="OTRBorder"/>
+      <check_box name="EmeraldOTRInTypingStop-toggle" tool_tip="Sende alle OTR verschlüsselte Nachrichten als IM_TYPING_STOP Packete.  Inkompatible mit älteren OTR Versionen." label="Benutze typing_stop für OTR"/>
+      <view_border name="OTRBorder"/>      
       <!--[/$PLOTR$]-->
       <check_box label="Eingehende IM vorankündigen" name="EmeraldInstantMessageAnnounceIncoming"/>
       <check_box label="Automatisch in das IM Fenster wechseln" name="EmeraldInstantMessageAnnounceStealFocus"/>
       <check_box label="Automatische Antwort an Nicht-Freunde" name="EmeraldInstantMessageResponseFriends"/>
       <check_box label="Automatische Antwort an Stumgeschaltete" name="EmeraldInstantMessageResponseMuted" />
       <check_box label="Automatische Antwort an jeden" name="EmeraldInstantMessageResponseAnyone"/>
-      <check_box label="IM die eine automatische Antwort erhalten hat nicht anzeigen" name="EmeraldInstantMessageShowResponded"/>
       <check_box label="Automatische Antwort sobald jemand anfängt eine IM zu schreiben" name="EmeraldInstantMessageShowOnTyping"/>
+      <check_box label="IM die eine automatische Antwort erhalten hat nicht anzeigen" name="EmeraldInstantMessageShowResponded"/>      
       <check_box label="Automatische Antwort bei jeder Nachricht und nicht nur bei der ersten" name="EmeraldInstantMessageResponseRepeat"/>
       <text name="text_box1">
         Automatische Antwort: (Benutze #f für den Vornamen, #l für Nachnamen, #t für Uhrzeit)
@@ -152,10 +155,6 @@ Empfohlene Eisntellungen:
     </panel>
     <panel label="Befehlszeile" name="CmdLine">
     <button label="?" name="EmeraldHelp_CmdLine" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
-      <text name="loltxt1">
-        ("Befehl" in den Anweisungen und Beispielen bezieht sich auf den Text im Eingabefeld darunter)
-        Leeres Eingabefeld deaktiviert die jeweilige Funktion
-      </text>
       <check_box label="Chatleiste funktioniert als Befehlszeile" name="chat_cmd_toggle"/>
       <text name="loltxt2">
         Teleport innerhalb der Region
@@ -323,33 +322,81 @@ Höhe des Avatars zu manipulieren ohne den Shape zu ändern.
       <check_box label="Ausgewählten Prims hervorheben" name="EmBuildPrefsRenderHighlight_toggle"/>
       <check_box label="Zeige Achsenpfeile an der Root Prim Position" tool_tip="Standardmässig werden die Pfeile am Mittelpunkt des Linksets angezeigt. Wenn aktiviert werden sie am Mittelpunkt des Root Prims angezeigt." name="EmBuildPrefsActualRoot_toggle"/>
     </panel>
+    </tab_container>
+
+
+
+
+
+  <tab_container label="Seite 2" name="tab2">
+    <panel label="IRC" name="IRC">
+<button label="?" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+      <text name="IRC-colors">
+        Farben die für die Anzeige von IRC Nachrichten verwendet werden:
+      </text>
+      <color_swatch label="Channel" name="colorswatch" tool_tip="Click to open Color Picker"/>
+      <color_swatch label="Action" name="colorswatch" tool_tip="Click to open Color Picker"/>
+      <color_swatch label="Private" name="colorswatch" tool_tip="Click to open Color Picker"/>
+      <color_swatch label="Notice" name="colorswatch" tool_tip="Click to open Color Picker"/>
+      <color_swatch label="Join" name="colorswatch" tool_tip="Click to open Color Picker"/>
+      <color_swatch label="Quit" name="colorswatch" tool_tip="Click to open Color Picker"/>
+      <color_swatch label="Kick" name="colorswatch" tool_tip="Click to open Color Picker"/>
+      <color_swatch label="Nick" name="colorswatch" tool_tip="Click to open Color Picker"/>
+      <color_swatch label="System" name="colorswatch" tool_tip="Click to open Color Picker"/>
+    </panel>
     <panel label="Utility Stream" name="Utility Stream">
+    <button label="?" name="EmeraldHelp_UtilityStream" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
 			<check_box label="Aktiviere Greenlife Utility Stream" tool_tip="Aktiviere Greenlife Utility Stream (GUS)" name="GUS Enable"/>
 			<panel name="gus_panel">
-			<spinner label="Channel" name="Channel" control_name="EmeraldGUSChannel"/>
+			<spinner label="Channel" name="Channel" width="128"/>
 			<check_box label="Aktiviere FastEvents" tool_tip="Aktiviere Greenlife Utility Stream FastEvents (GUS-FE)" name="GUS-FE Enable"/>
 			<spinner label="GUS Rate" name="Refresh Rate"/>
 			<spinner label="GUS-FE Rate" name="Fast Event Refresh Rate"/>
 			</panel>
-			<!-- GUS FEATURES: THESE ARE AS COLUMNS; ADDITIONAL ROWS PER GUS / GUS-FE COLUMNS!	-->
+			<!-- 
+					GUS FEATURES:
+					THESE ARE AS COLUMNS; ADDITIONAL ROWS PER GUS / GUS-FE COLUMNS!
+			-->
 			<!-- GUS COLUMN -->
 			<panel name="gus_feature_column">
 			<text name="rofltxt1">
 			GUS Variablen:
 			</text>
-			<check_box label="Augapfel Rotation" tool_tip="Sendet Augapfel Rotations Daten; nützlich für Prim-Augen bei einigen Avataren..." name="Eyeball Rotation"/>
+			<check_box label="Augapfel Rotation" tool_tip="Aktiviere senden der Augapfel Rotation, nützlich für Avatare mit Prim Augen." name="Eyeball Rotation"/>
 			</panel>
 			<!-- GUS-FE COLUMN -->
 			<panel name="gus-fe_feature_column">
 			<text name="rofltxt2">
 			GUS-FE Variablen:
 			</text>
-			<check_box label="Augenlid Status" tool_tip="Sende Augenlid Status; nützlich für Prim-Augen bei einigen Avataren..." name="Eyelid State"/>
+			<check_box label="Augenlid Status" tool_tip="Aktiviere senden des Augenlid Status, nützlich für Avatare mit Prim Augen." name="Eyelid State"/>
 			</panel>
 			<text name="rofltxt3">
-					Experimentell! Greenlife Utility Stream sendet Informationen von Emerald in den Simulator
-damit Scripte darauf zugreifen können.
+					EXPERIMENTAL: Greenlife Utility Stream sendet Daten vom Viewer in den
+Simulator damit man per Script darauf zugreifen kann.
 			</text>
 		</panel>
-	</tab_container>
+    <panel label="Inventar" name="Inventory">
+    <button label="?" name="EmeraldHelp_Inventory" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+      <check_box label="Aktiviere Spiegeln" name="fdgfd"/>
+      <text name="lolyou">
+        Speicherort:
+      </text>
+      <button label="Speichern" label_selected="Set" name="set_mirror"/>
+      <line_editor name="mirror_location"/>
+      <icon name="icon_gesture"/>
+      <check_box label="Gesten spiegeln" name="check_gesture"/>
+      <icon name="icon_notecard"/>
+      <check_box label="Notizen spiegeln" name="check_notecard"/>
+      <icon name="icon_script"/>
+      <check_box label="Scripte spiegeln" name="check_script"/>
+      <check_box label="Inventar Fenster automatisch öffnen" name="popup_inventory" tool_tip="Inventar automatisch öffnen bei neuen Objekten"/>
+    </panel>
+
+
+
+
+
+  </tab_container>
+  </tab_container>
 </panel>

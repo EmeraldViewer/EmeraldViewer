@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<floater name="EmeraldIRC_info" title="IRC Settings">
+      <text name="EmIRC_tag">Settings Tag:</text>
+      <line_editor name="EmeraldIRC_tag"/>
+      <text name="EmIRC_nick">Nick:</text>
+      <line_editor name="EmeraldIRC_nick"/>
+      <text name="EmIRC_password">Nick Password:</text>
+      <line_editor name="EmeraldIRC_password"/>
+      <text name="EmIRC_server">Server:</text>
+      <line_editor name="EmeraldIRC_server"/>
+      <line_editor label="Port" name="EmeraldIRC_port"/>
+      <text name="EmIRC_channel">Channel:</text>
+      <line_editor name="EmeraldIRC_channel"/>
+	<button label="Speichern" name="EmeraldIRC_save"/>
+	<button label="Abbrechen" name="EmeraldIRC_cancel"/>
+</floater> 
