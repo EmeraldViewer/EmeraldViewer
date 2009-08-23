@@ -473,14 +473,22 @@ void lggIrcThread::sendChat(std::string chat)
 	}else
 	if(command == "/me")
 	{
-		/*char s =(char)0x001;
-		chat = s + "ACTION " + chat.substr(3) + s;
+		//char s =(char)0x020;
+		//chat = s;
+        //chat = chat + "ACTION ";
+        //chat = chat + chat.substr(3);
+        //chat = chat + s;
+        // WARNING: Liandra made ugly ANSI C hax here. >_>
+        char buf[1024];
+        snprintf( buf, 1023, "%cACTION %s%c", (char)1, chat.substr(3).c_str(), (char)1 );
 		llinfos << "chat action is ::"  << chat.c_str() << llendl;
-		actionDisp(std::string(conn->current_nick()),std::string(chat));
-		*/
-		chat = "(("+chat.substr(4)+"))";//hax
-		conn->privmsg((char*)getChannel().c_str(),(char *)chat.c_str());
-		msg(llformat("%s : %s",	conn->current_nick(),chat.c_str()),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
+		//actionDisp(std::string(conn->current_nick()),std::string(chat));
+		actionDisp(std::string(conn->current_nick()),buf);
+		
+		//chat = "(("+chat.substr(4)+"))";//hax
+		//conn->privmsg((char*)getChannel().c_str(),(char *)chat.c_str());
+		conn->privmsg((char*)getChannel().c_str(),buf);
+		//msg(llformat("%s : %s",	conn->current_nick(),buf),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
 
 
 	}
@@ -518,9 +526,8 @@ void lggIrcThread::stopRun()
 }
 void lggIrcThread::actionDisp(std::string name, std::string msg)
 {
-
 	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(
-		name +  " " + msg.substr(7)
+		name + msg.substr(8)
 		),
 		gSavedSettings.getColor("EmeraldIRC_ColorAction"));
 }
