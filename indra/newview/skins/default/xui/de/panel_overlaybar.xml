@@ -12,5 +12,11 @@
 				</layout_panel>
 			</layout_stack>
 		</layout_panel>
+    <layout_panel name="AdvSettings_container">
+			<panel name="Adv_Settings"/>
+		</layout_panel>
+		<layout_panel name="AdvSettings_container_exp">
+			<panel name="Adv_Settings"/>
+		</layout_panel>
 	</layout_stack>
 </panel>
