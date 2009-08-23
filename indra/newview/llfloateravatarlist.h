@@ -382,6 +382,8 @@ public:
 	 * @brief Returns the name of the avatar
 	 */
 	std::string getName();
+	time_t getTime();
+	void resetTime();
 
 	void setName(std::string name);
 
@@ -413,6 +415,11 @@ public:
 	 */
 	void setActivity(ACTIVITY_TYPE activity);
 
+
+	void setAlert();
+
+	BOOL getAlert();
+
 	/**
 	 * @brief Returns the activity type
 	 */
@@ -440,8 +447,10 @@ private:
 
 	LLUUID mID;
 	std::string mName;
+	time_t mTime;
 	LLVector3d mPosition;
 	LLVector3d mDrawPosition;
+	BOOL mAlert;
 	BOOL mMarked;
 	BOOL mFocused;
 	BOOL mIsLinden;
@@ -571,6 +580,7 @@ private:
 		LIST_AGE,
 		LIST_PAYMENT,
 		LIST_ACTIVITY,
+		LIST_TIME,
 		LIST_CLIENT
 	};
 
@@ -609,6 +619,9 @@ private:
 	static void onClickTeleportOffer(void *userdata);
 	static void onClickTrack(void *userdata);
 	static void onClickMark(void *userdata);
+
+	static void onClickAgeAlert(LLUICtrl* ctrl,void *userdata);
+	static void onClickAgeAlertDays(LLUICtrl* ctrl,void *userdata);
 
 	static void onClickPrevInList(void *userdata);
 	static void onClickNextInList(void *userdata);

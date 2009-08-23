@@ -122,7 +122,8 @@ typedef enum e_radar_alert_type
 {
 	ALERT_TYPE_SIM = 0,
 	ALERT_TYPE_DRAW = 1,
-	ALERT_TYPE_CHATRANGE = 2
+	ALERT_TYPE_CHATRANGE = 2,
+	ALERT_TYPE_AGE = 3
 } ERadarAlertType;
 void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool entering)
 {
@@ -156,6 +157,13 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 				chat.mText = name+" has "+(entering ? "entered" : "left")+" chat range.";// ("+key.asString()+")";
 			}
 			break;
+		case ALERT_TYPE_AGE:
+			if(gSavedSettings.getBOOL("EmeraldAvatarAgeAlert"))
+			{
+				make_ui_sound("EmeraldAvatarAgeAlertSoundUUID");
+				chat.mText = name+" has triggered your avatar age alert.";
+			}
+			break;
 		}
 		if(chat.mText != "")
 		{
@@ -166,7 +174,7 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 }
 
 LLAvatarListEntry::LLAvatarListEntry(const LLUUID& id, const std::string &name, const LLVector3d &position, BOOL isLinden) :
-		mID(id), mName(name), mPosition(position), mDrawPosition(), mMarked(FALSE), mFocused(FALSE), mIsLinden(isLinden), mActivityType(ACTIVITY_NEW), mAccountTitle(""),
+		mID(id), mName(name), mTime(time(NULL)), mPosition(position), mDrawPosition(), mAlert(FALSE), mMarked(FALSE), mFocused(FALSE), mIsLinden(isLinden), mActivityType(ACTIVITY_NEW), mAccountTitle(""),
 			mUpdateTimer(), mActivityTimer(), mFrame(gFrameCount), mInSimFrame(U32_MAX), mInDrawFrame(U32_MAX), mInChatFrame(U32_MAX)
 {
 }
@@ -175,6 +183,7 @@ void LLAvatarListEntry::setPosition(LLVector3d position, bool this_sim, bool dra
 {
 	if ( mActivityType == ACTIVITY_DEAD )
 	{
+		resetTime();
 		setActivity(ACTIVITY_NEW);
 	}
 
@@ -272,6 +281,16 @@ std::string LLAvatarListEntry::getName()
 	return mName;
 }
 
+time_t LLAvatarListEntry::getTime()
+{
+	return mTime;
+}
+
+void LLAvatarListEntry::resetTime()
+{
+	mTime = time(NULL);
+}
+
 LLUUID LLAvatarListEntry::getID()
 {
 	return mID;
@@ -334,6 +353,16 @@ ACTIVITY_TYPE LLAvatarListEntry::getActivity()
 	return mActivityType;
 }
 	
+void LLAvatarListEntry::setAlert()
+{
+	mAlert = TRUE;
+}
+
+BOOL LLAvatarListEntry::getAlert()
+{
+	return mAlert;
+}
+
 void LLAvatarListEntry::toggleMark()
 {
 	mMarked = !mMarked;
@@ -490,6 +519,13 @@ BOOL LLFloaterAvatarList::postBuild()
 	childSetAction("ar_btn", onClickAR, this);
 	childSetAction("teleport_btn", onClickTeleport, this);
 	childSetAction("estate_eject_btn", onClickEjectFromEstate, this);
+
+	childSetCommitCallback("agealert", onClickAgeAlert,this);
+	childSetValue("agealert",gSavedSettings.getBOOL("EmeraldAvatarAgeAlert"));
+
+	childSetCommitCallback("AgeAlertDays",onClickAgeAlertDays,this);
+	childSetValue("AgeAlertDays",gSavedSettings.getF32("EmeraldAvatarAgeAlertDays"));
+
 
 	// *FIXME: Uncomment once onClickRefresh has been restored
 	//setDefaultBtn("refresh_btn");
@@ -844,6 +880,12 @@ void LLFloaterAvatarList::refreshAvatarList()
 		
 		if ( avinfo_status == DATA_RETRIEVED )
 		{
+			if ((avinfo.getAge() < gSavedSettings.getF32("EmeraldAvatarAgeAlertDays")) && !ent->getAlert())
+			{
+				ent->setAlert();
+				chat_avatar_status(ent->getName().c_str(),av_id,ALERT_TYPE_AGE, true);
+			}
+
 			element["columns"][LIST_AGE]["column"] = "age";
 			element["columns"][LIST_AGE]["type"] = "text";
 			element["columns"][LIST_AGE]["value"] = avinfo.getAge();
@@ -974,6 +1016,16 @@ void LLFloaterAvatarList::refreshAvatarList()
 
 		//element["columns"][LIST_PAYMENT]["column"] = "payment_data";
 		//element["columns"][LIST_PAYMENT]["type"] = "text";
+
+		S32 seentime = (S32)difftime( time(NULL) , ent->getTime() );
+		S32 hours = (S32)(seentime / (60*60));
+		S32 mins = (S32)((seentime - hours*(60*60)) / 60);
+		S32 secs = (S32)((seentime - hours*(60*60) - mins*60));
+
+		element["columns"][LIST_TIME]["column"] = "time";
+		element["columns"][LIST_TIME]["type"] = "text";
+		element["columns"][LIST_TIME]["color"] = gColors.getColor("DefaultListText").getValue();
+		element["columns"][LIST_TIME]["value"] = llformat("%d:%02d:%02d", hours,mins,secs);
 
 		element["columns"][LIST_CLIENT]["column"] = "client";
 		element["columns"][LIST_CLIENT]["type"] = "text";
@@ -1322,6 +1374,19 @@ LLAvatarListEntry * LLFloaterAvatarList::getAvatarEntry(LLUUID avatar)
 
 	//return &mAvatars[avatar];
 }
+
+void LLFloaterAvatarList::onClickAgeAlert(LLUICtrl* ctrl,void *userdata)
+{
+	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+	gSavedSettings.setBOOL("EmeraldAvatarAgeAlert", avlist->childGetValue("agealert"));
+}
+
+void LLFloaterAvatarList::onClickAgeAlertDays(LLUICtrl* ctrl,void *userdata)
+{
+	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+	gSavedSettings.setF32("EmeraldAvatarAgeAlertDays", avlist->childGetValue("AgeAlertDays").asInteger());
+}
+
 
 //static
 void LLFloaterAvatarList::onClickMark(void *userdata)
