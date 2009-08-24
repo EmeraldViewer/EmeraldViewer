@@ -1037,6 +1037,10 @@ void LLPanelLogin::onSelectServer(LLUICtrl*, void*)
 
 void LLPanelLogin::onServerComboLostFocus(LLFocusableElement* fe, void*)
 {
+	if (!sInstance)
+	{
+		return;
+	}
 	LLComboBox* combo = sInstance->getChild<LLComboBox>("server_combo");
 	if(fe == combo)
 	{

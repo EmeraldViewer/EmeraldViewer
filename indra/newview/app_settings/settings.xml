@@ -4321,6 +4321,28 @@
       <key>Value</key>
       <real>40</real>
     </map>
+    <key>Emeraldnumscriptdiff</key>
+    <map>
+      <key>Comment</key>
+      <string>The delta to spam you the script jump difference</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>100.0</real>
+    </map>
+    <key>Emeraldnumscripts</key>
+    <map>
+      <key>Comment</key>
+      <string>temp..</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>0.0</real>
+    </map>
     <key>EmeraldParticleChat</key>
     <map>
       <key>Comment</key>

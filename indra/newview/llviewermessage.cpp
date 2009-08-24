@@ -4424,6 +4424,20 @@ void process_sim_stats(LLMessageSystem *msg, void **user_data)
 			LLViewerStats::getInstance()->mSimChildAgents.addValue(stat_value);
 			break;
 		case LL_SIM_STAT_NUMSCRIPTSACTIVE:
+			if(abs(stat_value-gSavedSettings.getF32("Emeraldnumscripts"))>gSavedSettings.getF32("Emeraldnumscriptdiff"))
+			{
+				LLChat chat;
+				std::stringstream os;
+				os << (U32)gSavedSettings.getF32("Emeraldnumscripts");
+				std::stringstream ns;
+				ns << (U32)stat_value;
+				std::stringstream diff;
+				S32 tdiff = (stat_value-gSavedSettings.getF32("Emeraldnumscripts"));
+				diff << tdiff;
+				chat.mText = "Total scripts jumped from " + os.str() + " to " + ns.str() + "("+diff.str()+")";
+				LLFloaterChat::addChatHistory(chat, FALSE);
+			}
+			gSavedSettings.setF32("Emeraldnumscripts",stat_value);
 			LLViewerStats::getInstance()->mSimActiveScripts.addValue(stat_value);
 			break;
 		case LL_SIM_STAT_SCRIPT_EPS:

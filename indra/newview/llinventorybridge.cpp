@@ -2656,7 +2656,7 @@ void LLLandmarkBridge::performAction(LLFolderView* folder, LLInventoryModel* mod
 			// because you'll probably arrive at a telehub instead
 			if( gFloaterWorldMap )
 			{
-				gFloaterWorldMap->trackLandmark( item->getAssetUUID() );
+				gFloaterWorldMap->trackLandmark(item->getUUID());  // remember this must be the item UUID, not the asset UUID
 			}
 		}
 	}
@@ -2704,6 +2704,7 @@ static bool open_landmark_callback(const LLSD& notification, const LLSD& respons
 	S32 option = LLNotification::getSelectedOption(notification, response);
 
 	LLUUID asset_id = notification["payload"]["asset_id"].asUUID();
+	LLUUID item_id = notification["payload"]["item_id"].asUUID();
 	if (option == 0)
 	{
 		// HACK: This is to demonstrate teleport on double click for landmarks
@@ -2713,7 +2714,7 @@ static bool open_landmark_callback(const LLSD& notification, const LLSD& respons
 		// because you'll probably arrive at a telehub instead
 		if( gFloaterWorldMap )
 		{
-			gFloaterWorldMap->trackLandmark( asset_id );
+			gFloaterWorldMap->trackLandmark( item_id ); // remember this is the item UUID not the asset UUID
 		}
 	}
 
@@ -2732,6 +2733,7 @@ void LLLandmarkBridge::openItem()
 		// open_landmark(item, std::string("  ") + getPrefix() + item->getName(), FALSE);
 		LLSD payload;
 		payload["asset_id"] = item->getAssetUUID();
+		payload["item_id"] = item->getUUID();
 		LLNotifications::instance().add("TeleportFromLandmark", LLSD(), payload);
 	}
 }
