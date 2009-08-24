@@ -142,6 +142,7 @@
 #include "llfloateravatarlist.h"
 
 #include <boost/tokenizer.hpp>
+#include <boost/regex.hpp> // Boost Reg Expresions
 
 #if LL_WINDOWS // For Windows specific error handler
 #include "llwindebug.h"	// For the invalid message handler
