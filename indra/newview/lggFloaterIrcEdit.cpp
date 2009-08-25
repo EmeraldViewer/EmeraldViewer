@@ -56,6 +56,7 @@ class lggFloaterIrcEdit;
 class lggFloaterIrcEdit : public LLFloater, public LLFloaterSingleton<lggFloaterIrcEdit>
 {
 public:
+	lggPanelIRC* caller;
 	lggFloaterIrcEdit(const LLSD& seed);
 	virtual ~lggFloaterIrcEdit();
 	
@@ -74,7 +75,7 @@ public:
 	
 private:
 	static void onBackgroundChange(LLUICtrl* ctrl, void* userdata);
-	void* caller;
+	
 };
 //void lggFloaderIrcEdit::showInstance(lggIrcData dat)
 //{
@@ -112,7 +113,7 @@ BOOL lggFloaterIrcEdit::postBuild(void)
 }
 void lggFloaterIrcEdit::update(lggIrcData dat, void* data)
 {
-	caller = data;
+	caller = (lggPanelIRC*)data;
 	childSetValue("EmeraldIRC_nick",dat.nick);
 	childSetValue("EmeraldIRC_server",dat.server);
 	childSetValue("EmeraldIRC_password",dat.password);
@@ -150,6 +151,11 @@ void lggFloaterIrcEdit::onClickSave(void* data)
 	//lggPanelIRC* instance = (lggPanelIRC*)caller;	if(instance)	instance.refresh();
 	
 	//gSavedSettings.setString("EmeraldBeamShape",gDirUtilp->getBaseFileName(filename,true));
+	if(self->caller)
+	{
+		self->caller->reset();
+	}
+	
 	self->close();
 }
 
@@ -164,6 +170,7 @@ void LggIrcFloaterStarter::show(lggIrcData dat,void* data)
 	
 	lggFloaterIrcEdit* floater = lggFloaterIrcEdit::showInstance();
 	floater->update(dat, data);
+	
 	//beam_floater->update();
 }
 

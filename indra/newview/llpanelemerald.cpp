@@ -382,10 +382,6 @@ void LLPanelEmerald::callbackEmeraldStealth(const LLSD &notification, const LLSD
 	S32 option = LLNotification::getSelectedOption(notification, response);
 	if ( option == 0 )
 	{
-		//gSavedSettings.setU32("EmeraldUseOTR",(U32)1);
-	}
-	else if ( option == 1 )
-	{
 		gSavedSettings.setU32("EmeraldUseOTR",(U32)0);
 		gSavedSettings.setBOOL("EmeraldRainbowBeam",false);
 		gSavedSettings.setString("EmeraldBeamShape","===OFF===");
@@ -410,9 +406,6 @@ void LLPanelEmerald::callbackEmeraldNoStealth(const LLSD &notification, const LL
 	//gSavedSettings.setWarning("EmeraldOTR", FALSE);
 	S32 option = LLNotification::getSelectedOption(notification, response);
 	if ( option == 0 )
-	{
-	}
-	else if ( option == 1 )
 	{
 		gSavedSettings.setU32("EmeraldUseOTR",(U32)2);
 		gSavedSettings.setBOOL("EmeraldRainbowBeam",true);

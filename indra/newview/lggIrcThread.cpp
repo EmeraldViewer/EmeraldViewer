@@ -83,7 +83,7 @@ MsgListener::MsgListener(IRC * conn2, std::string chan2, LLUUID mid2): LLThread(
 
 void MsgListener::run()
 {
-					
+	
 	//conn->join((char*)chan.c_str());
 	//gIMMgr->addMessage(mid,mid,"GreenLife",llformat("Atempting to join %s",chan.c_str()));
 	/*ms_sleep(5000);
@@ -96,15 +96,20 @@ void MsgListener::run()
 
 	
 	conn->message_loop();
-	
+}
+void MsgListener::shutdown()
+{
+
+
 }
 
 MsgListener::~MsgListener()
 {
+	
 }
 
 lggIrcThread::~lggIrcThread()
-{
+{	
 	sInstances.erase(conn);
 	msInstances.erase(listener);
 	delete listener;
@@ -204,7 +209,7 @@ int modemsg( char * params, irc_reply_data * hostd, void * conn)
 }
 void lggIrcThread::setData(lggIrcData dat)
 {
-	mData.become(dat);
+	mData =dat;
 	dataGotten=TRUE;
 
 }
@@ -522,7 +527,11 @@ void lggIrcThread::sendChat(std::string chat)
 }
 void lggIrcThread::stopRun()
 {
+	
 	conn->disconnect();
+	listener->shutdown();
+
+
 }
 void lggIrcThread::actionDisp(std::string name, std::string msg)
 {
