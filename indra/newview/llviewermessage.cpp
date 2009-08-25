@@ -4424,6 +4424,8 @@ void process_sim_stats(LLMessageSystem *msg, void **user_data)
 			LLViewerStats::getInstance()->mSimChildAgents.addValue(stat_value);
 			break;
 		case LL_SIM_STAT_NUMSCRIPTSACTIVE:
+			if (gSavedSettings.getBOOL("EmeraldDisplayTotalScriptJumps"))
+			{
 			if(abs(stat_value-gSavedSettings.getF32("Emeraldnumscripts"))>gSavedSettings.getF32("Emeraldnumscriptdiff"))
 			{
 				LLChat chat;
@@ -4438,6 +4440,7 @@ void process_sim_stats(LLMessageSystem *msg, void **user_data)
 				LLFloaterChat::addChatHistory(chat, FALSE);
 			}
 			gSavedSettings.setF32("Emeraldnumscripts",stat_value);
+			}
 			LLViewerStats::getInstance()->mSimActiveScripts.addValue(stat_value);
 			break;
 		case LL_SIM_STAT_SCRIPT_EPS:
