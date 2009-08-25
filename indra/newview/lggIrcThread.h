@@ -43,6 +43,7 @@ public:
 	MsgListener(IRC * conn2, std::string chan2, LLUUID mid2);
 	~MsgListener();	
 	/*virtual*/ void run(void);
+	/*virtual*/ void shutdown(void);
 	
 protected:
 	std::string chan;
