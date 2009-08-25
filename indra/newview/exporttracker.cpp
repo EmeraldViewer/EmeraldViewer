@@ -1,6 +1,6 @@
 /* Copyright (c) 2009
  *
- * Modular Systems Ltd. All rights reserved.
+ * Modular Systems All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
@@ -45,6 +45,11 @@
 #include "lltransfersourceasset.h"
 #include "llviewernetwork.h"
 #include "llcurl.h"
+#include "llviewerimagelist.h"
+
+#include "llimagej2c.h"
+
+#include "llviewertexteditor.h"
 
 JCExportTracker* JCExportTracker::sInstance;
 LLSD JCExportTracker::data;
@@ -57,6 +62,7 @@ BOOL JCExportTracker::export_textures;
 U32 JCExportTracker::status;
 std::string JCExportTracker::destination;
 std::string JCExportTracker::asset_dir;
+std::set<LLUUID> JCExportTracker::requested_textures;
 
 
 JCExportTracker::JCExportTracker()
@@ -83,6 +89,7 @@ void JCExportTracker::init()
 	data = LLSD();
 	destination = "";
 	asset_dir = "";
+	requested_textures.clear();
 	export_properties = gSavedSettings.getBOOL("EmeraldExportProperties");
 	export_inventory = gSavedSettings.getBOOL("EmeraldExportInventory");
 	export_textures = gSavedSettings.getBOOL("EmeraldExportTextures");
@@ -113,31 +120,6 @@ struct JCAssetInfo
 	std::string name;
 };
 
-void JCAssetExportCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
-{
-	JCAssetInfo* info = (JCAssetInfo*)userdata;
-	if(result == LL_ERR_NOERR)
-	{
-		cmdline_printchat("Saved file "+info->path+" ("+info->name+")");
-		U8 size = vfs->getSize(uuid, type);
-		U8* buffer = new U8[size];
-		vfs->getData(uuid, type, buffer, 0, size);
-		U8*	DataBuffer;
-		S32	DataBufferSize;
-		DataBufferSize = vfs->getSize(uuid, type);
-		DataBuffer = new U8[DataBufferSize];
-		vfs->getData(uuid, type, DataBuffer, 0, DataBufferSize);
-		LLAPRFile infile ;
-		infile.open(info->path.c_str(), LL_APR_WB);
-		apr_file_t *fp = infile.getFileHandle();
-		if(fp)infile.write(DataBuffer, DataBufferSize);
-			
-		//apr_file_close(fp);
-		infile.close();
-	}else cmdline_printchat("Failed to save file "+info->path+" ("+info->name+")");
-
-	delete info;
-}
 
 LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 {
@@ -270,13 +252,18 @@ LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 			{
 				LLUUID asset_id = object->getTE(i)->getID();
 				JCAssetInfo* info = new JCAssetInfo;
-				info->path = path + asset_id.asString() + ".jp2";
+				info->path = path + asset_id.asString() + ".j2c";
 				info->name = "Prim Texture";
 				//gAssetStorage->getAssetData(asset_id, LLAssetType::AT_TEXTURE, JCAssetExportCallback, info,1);
-				//gImageList.getImage(asset_id, MIPMAP_TRUE, FALSE)->setBoostLevel(LLViewerImage::BOOST_MAX_LEVEL);
-				//mImage->setLoadedCallback( LLPreviewTexture::onFileLoadedForSave, 
-				//				0, TRUE, FALSE, new LLUUID( mItemUUID ) );
-				cmdline_printchat("DLing "+asset_id.asString());
+				if(requested_textures.count(asset_id) == 0)
+				{
+					requested_textures.insert(asset_id);
+					LLViewerImage* img = gImageList.getImage(asset_id, MIPMAP_TRUE, FALSE);
+					img->setBoostLevel(LLViewerImage::BOOST_MAX_LEVEL);
+					img->setLoadedCallback( JCExportTracker::onFileLoadedForSave, 
+									0, TRUE, FALSE, info );
+					cmdline_printchat("Requesting texture "+asset_id.asString());
+				}
 			}
 		}
 
@@ -304,6 +291,39 @@ LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 		llsd[object_index - 1] = prim_llsd;
 	}
 	return llsd;
+}
+
+void JCExportTracker::onFileLoadedForSave(BOOL success, 
+											LLViewerImage *src_vi,
+											LLImageRaw* src, 
+											LLImageRaw* aux_src, 
+											S32 discard_level,
+											BOOL final,
+											void* userdata)
+{
+	JCAssetInfo* info = (JCAssetInfo*)userdata;
+	if(final)
+	{
+		if( success )
+		{
+			LLPointer<LLImageJ2C> image_j2c = new LLImageJ2C();
+			if(!image_j2c->encode(src,0.0))
+			{
+				//errorencode
+				cmdline_printchat("Failed to encode "+info->path);
+			}else if(!image_j2c->save( info->path ))
+			{
+				cmdline_printchat("Failed to write "+info->path);
+				//errorwrite
+			}else
+			{
+				cmdline_printchat("Saved texture "+info->path);
+				//success
+			}
+		}
+		delete info;
+	}
+
 }
 
 bool JCExportTracker::serializeSelection()
@@ -419,6 +439,16 @@ void JCExportTracker::finalize(LLSD data)
 	export_file.close();
 
 	init();
+}
+
+void JCExportTracker::completechk()
+{
+	if(propertyqueries == 0 && invqueries == 0)
+	{
+		cmdline_printchat("Full property export completed.");
+		cmdline_printchat("(Content downloads may require more time, but the tracker is free for another export.)");
+		finalize(data);
+	}
 }
 
 //LLSD* chkdata(LLUUID id, LLSD* data)
@@ -558,13 +588,29 @@ void JCExportTracker::processObjectProperties(LLMessageSystem* msg, void** user_
 				(*array_itr)["Object"] = linkset_llsd;
 			}
 		}
-		if(propertyqueries == 0 && invqueries == 0)
-		{
-			cmdline_printchat("Full property export completed.");
-			cmdline_printchat("(Content downloads may require more time, but the tracker is free for another export.)");
-			finalize(data);
-		}
+		completechk();
 	}
+}
+
+BOOL couldDL(LLAssetType::EType type)
+{
+	switch(type)
+	{//things we could plausibly DL anyway atm
+	case LLAssetType::AT_TEXTURE:
+	case LLAssetType::AT_SCRIPT:
+	case LLAssetType::AT_CLOTHING:
+	case LLAssetType::AT_NOTECARD:
+	case LLAssetType::AT_LSL_TEXT:
+	case LLAssetType::AT_TEXTURE_TGA:
+	case LLAssetType::AT_BODYPART:
+	case LLAssetType::AT_GESTURE:
+		return TRUE;
+		break;
+	default:
+		return FALSE;
+		break;
+	}
+	return FALSE;
 }
 
 void JCExportTracker::inventoryChanged(LLViewerObject* obj,
@@ -612,18 +658,25 @@ void JCExportTracker::inventoryChanged(LLViewerObject* obj,
 							for( ;	it != end;	++it)
 							{
 								LLInventoryObject* asset = (*it);
-								if(asset->getType() != LLAssetType::AT_CATEGORY && asset->getType() > LLAssetType::AT_NONE)// && is_asset_id_knowable(asset->getType()))
+								if(asset)
 								{
-									LLSD inv_item;
-									inv_item["name"] = asset->getName();
-									inv_item["type"] = LLAssetType::lookup(asset->getType());
-									cmdline_printchat("requesting asset for "+asset->getName());
-									//inv_item["desc"] = asset->getDescription();//god help us all
-									inv_item["item_id"] = asset->getUUID().asString();
-									JCExportTracker::mirror(asset, obj, asset_dir, asset->getUUID().asString());//loltest
-									//unacceptable
-									inventory[num] = inv_item;
-									num += 1;
+									LLPermissions perm(((LLInventoryItem*)((LLInventoryObject*)(*it)))->getPermissions());
+									if(couldDL(asset->getType())
+									&& perm.allowCopyBy(gAgent.getID())
+									&& perm.allowModifyBy(gAgent.getID())
+									&& perm.allowTransferTo(LLUUID::null))// && is_asset_id_knowable(asset->getType()))
+									{
+										LLSD inv_item;
+										inv_item["name"] = asset->getName();
+										inv_item["type"] = LLAssetType::lookup(asset->getType());
+										cmdline_printchat("requesting asset for "+asset->getName());
+										inv_item["desc"] = ((LLInventoryItem*)((LLInventoryObject*)(*it)))->getDescription();//god help us all
+										inv_item["item_id"] = asset->getUUID().asString();
+										JCExportTracker::mirror(asset, obj, asset_dir, asset->getUUID().asString());//loltest
+										//unacceptable
+										inventory[num] = inv_item;
+										num += 1;
+									}
 								}
 							}
 							(*link_itr)["inventory"] = inventory;
@@ -641,11 +694,44 @@ void JCExportTracker::inventoryChanged(LLViewerObject* obj,
 	}
 	obj->removeInventoryListener(sInstance);
 
-	if(propertyqueries == 0 && invqueries == 0)
+	completechk();
+}
+
+void JCAssetExportCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
+{
+	JCAssetInfo* info = (JCAssetInfo*)userdata;
+	if(result == LL_ERR_NOERR)
 	{
-		cmdline_printchat("Full property & inventory export completed.");
-		finalize(data);
-	}
+		cmdline_printchat("Saved file "+info->path+" ("+info->name+")");
+		S32 size = vfs->getSize(uuid, type);
+		U8* buffer = new U8[size];
+		vfs->getData(uuid, type, buffer, 0, size);
+
+		if(type == LLAssetType::AT_NOTECARD)
+		{
+			LLViewerTextEditor* edit = new LLViewerTextEditor("",LLRect(0,0,0,0),S32_MAX,"");
+			if(edit->importBuffer((char*)buffer, (S32)size))
+			{
+				cmdline_printchat("Decoded notecard");
+				std::string card = edit->getText();
+				//delete edit;
+				edit->die();
+				delete buffer;
+				buffer = new U8[card.size()];
+				size = card.size();
+				strcpy((char*)buffer,card.c_str());
+			}else cmdline_printchat("Failed to decode notecard");
+		}
+		LLAPRFile infile;
+		infile.open(info->path.c_str(), LL_APR_WB);
+		apr_file_t *fp = infile.getFileHandle();
+		if(fp)infile.write(buffer, size);
+		infile.close();
+
+		//delete buffer;
+	}else cmdline_printchat("Failed to save file "+info->path+" ("+info->name+")");
+
+	delete info;
 }
 
 BOOL JCExportTracker::mirror(LLInventoryObject* item, LLViewerObject* container, std::string root, std::string iname)
@@ -655,6 +741,10 @@ BOOL JCExportTracker::mirror(LLInventoryObject* item, LLViewerObject* container,
 		//cmdline_printchat("item");
 		//LLUUID asset_id = item->getAssetUUID();
 		//if(asset_id.notNull())
+		LLPermissions perm(((LLInventoryItem*)item)->getPermissions());
+		if(perm.allowCopyBy(gAgent.getID())
+		&& perm.allowModifyBy(gAgent.getID())
+		&& perm.allowTransferTo(LLUUID::null))
 		{
 			//cmdline_printchat("asset_id.notNull()");
 			LLDynamicArray<std::string> tree;
@@ -706,10 +796,10 @@ BOOL JCExportTracker::mirror(LLInventoryObject* item, LLViewerObject* container,
 			gAssetStorage->getInvItemAsset(container != NULL ? container->getRegion()->getHost() : LLHost::invalid,
 			gAgent.getID(),
 			gAgent.getSessionID(),
-			LLUUID::null,
+			perm.getOwner(),
 			container != NULL ? container->getID() : LLUUID::null,
 			item->getUUID(),
-			gAgent.getID(),
+			LLUUID::null,
 			item->getType(),
 			JCAssetExportCallback,
 			info,

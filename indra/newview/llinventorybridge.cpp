@@ -746,7 +746,7 @@ LLInvFVBridge* LLInvFVBridge::createBridge(LLAssetType::EType asset_type,
 void cmdline_printchat(std::string message);
 void LLItemBridge::performAction(LLFolderView* folder, LLInventoryModel* model, std::string action)
 {
-	cmdline_printchat("item="+action);
+	//cmdline_printchat("item="+action);
 	if ("open" == action)
 	{
 		openItem();
@@ -923,8 +923,8 @@ std::string LLItemBridge::getLabelSuffix() const
 	{
 		LLPermissions perm = item->getPermissions();
 		// it's a bit confusing to put nocopy/nomod/etc on calling cards.
-		if(LLAssetType::AT_CALLINGCARD != item->getType()
-		   && perm.getOwner() == gAgent.getID())
+		if(/*LLAssetType::AT_CALLINGCARD != item->getType()
+		   && */perm.getOwner() == gAgent.getID())
 		{
 			BOOL copy = item->getPermissions().allowCopyBy(gAgent.getID());
 			BOOL mod = item->getPermissions().allowModifyBy(gAgent.getID());

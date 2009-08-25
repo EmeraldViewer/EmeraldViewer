@@ -1,6 +1,6 @@
 /* Copyright (c) 2009
  *
- * Modular Systems Ltd. All rights reserved.
+ * Modular Systems All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
@@ -43,12 +43,21 @@ private:
 	static JCExportTracker* sInstance;
 	static void init();
 	static LLSD* getprim(LLUUID id);
+	static void completechk();
 public:
 	static void processObjectProperties(LLMessageSystem* msg, void** user_data);
 	void inventoryChanged(LLViewerObject* obj,
 								 InventoryObjectList* inv,
 								 S32 serial_num,
 								 void* data);
+	static void			onFileLoadedForSave( 
+							BOOL success,
+							LLViewerImage *src_vi,
+							LLImageRaw* src, 
+							LLImageRaw* aux_src,
+							S32 discard_level, 
+							BOOL final,
+							void* userdata );
 
 
 	static JCExportTracker* getInstance(){ init(); return sInstance; }
@@ -81,6 +90,7 @@ private:
 
 	static std::string destination;
 	static std::string asset_dir;
+	static std::set<LLUUID> requested_textures;
 };
 
 
