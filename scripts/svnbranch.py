@@ -19,8 +19,6 @@ def svnInfo(file):
 	if(urlMatch and repMatch):
 	    tmp = urlMatch.group(1).replace(repMatch.group(1), "")
 	    tmp = tmp.strip("/")
-	    if tmp == "trunk":
-		tmp = ""
 	    file.close()
 	    return tmp
     file.close()
