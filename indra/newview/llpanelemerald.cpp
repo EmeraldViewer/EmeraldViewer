@@ -243,6 +243,7 @@ BOOL LLPanelEmerald::postBuild()
 	initHelpBtn("EmeraldHelp_Voice",			"EmeraldHelp_Voice");
 	initHelpBtn("EmeraldHelp_Shields",			"EmeraldHelp_Shields");
 	initHelpBtn("EmeraldHelp_IM",				"EmeraldHelp_IM");
+	initHelpBtn("EmeraldHelp_Chat",				"EmeraldHelp_Chat");
 	initHelpBtn("EmeraldHelp_Misc",				"EmeraldHelp_Misc");
 	initHelpBtn("EmeraldHelp_CmdLine",			"EmeraldHelp_CmdLine");
 	initHelpBtn("EmeraldHelp_Avatar",			"EmeraldHelp_Avatar");

@@ -319,64 +319,14 @@ Recommended Settings are:
       </text>
       <check_box bottom_delta="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Show money changes in local chat" left_delta="0" mouse_opaque="true"
-           name="EmMoneyChat-toggle" radio_style="false" width="270" control_name="EmeraldShowMoneyChangeInChat" />
-      <check_box bottom_delta="-20" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Vertical IM tabs (requires restart)" left_delta="0" mouse_opaque="true"
            name="vertical-imtabs-toggle" radio_style="false" width="270" control_name="EmeraldVerticalIMTabs" />
     </panel>
-
-    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
-           label="Misc" left="1" mouse_opaque="true" name="AvatarEffects" width="418">
-<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Misc" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
-      <panel
-            name="avatar_options"
-            left="5"
-
-            width="310"
-            height="75"
-            bottom="-80"
-
-            border="true"
-            mouse_opaque="true"
-            bevel_style="in"
-            background_visible="true"
-            background_opaque="true"
-            follows="top|left"
-            bg_opaque_color="0,0,0,0.1"
-            bg_alpha_color="red"
-            can_resize="false"
-	>
-      </panel>
-      <check_box bottom_delta="50" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Enable Always Fly" left_delta="0" mouse_opaque="true"
-           name="alwaysflytoggle" radio_style="false" width="270" control_name="EmeraldAlwaysFly" />
-      <check_box bottom_delta="-25" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Enable Ctrl-Alt-P to become visually phantom" left_delta="0" mouse_opaque="true"
-           name="allowphantomtoggle" radio_style="false" width="270" control_name="EmeraldAllowPhantomToggle" />
-      <check_box bottom_delta="-25" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Enable Ctrl-Alt-S to ground sit anywhere" left_delta="0" mouse_opaque="true"
-           name="allowsittoggle" radio_style="false" width="270" control_name="EmeraldAllowSitToggle" />
-      <panel
-               name="scanner_options"
-               left_delta="0"
-               width="310"
-               height="90"
-               bottom_delta="-100"
-               border="true"
-               mouse_opaque="true"
-               bevel_style="in"
-               background_visible="true"
-               background_opaque="true"
-               follows="top|left"
-               bg_opaque_color="0,0,0,0.1"
-               bg_alpha_color="blue"
-               can_resize="false"
-		>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Chat" left="1" mouse_opaque="true" name="Chat" width="418">
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Chat" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
+      <panel name="scanner_options" left="5" width="310" height="90" bottom_delta="-70" border="true" mouse_opaque="true"
+               bevel_style="in" background_visible="true" background_opaque="true" follows="top|left" bg_opaque_color="0,0,0,0.1"
+               bg_alpha_color="blue" can_resize="false" >
       </panel>
       <check_box bottom_delta="65" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
@@ -394,30 +344,19 @@ Recommended Settings are:
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Display on avatars entering / exiting chat range" left_delta="0" mouse_opaque="true"
            name="radar_chat_chatrange_toggle" radio_style="false" width="270" control_name="EmeraldRadarAlertChatRange" />
-      <spinner bottom_delta="-30" decimal_digits="0" follows="left|top" height="16"
-			     increment="1" label="Agent Updates per second:" label_width="150"
-			     left_delta="5" max_val="50" min_val="0" mouse_opaque="true"
-			     name="EmAgentUpdatesValue" width="200" control_name="EmeraldAgentUpdatesPerSecond"
-				tool_tip="Allows you to manually adjust the amount of updates you send per second. DEFAULT 10/s" />
-      <check_box bottom_delta="-20" enabled="true"
+
+      <check_box bottom_delta="-40" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Wear objects in inventory via double-click" left_delta="-25" mouse_opaque="true"
-           name="wear-inv-toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickWearInventoryObjects" />
-      <check_box bottom_delta="-20" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Block sitting on objects via left-click" left_delta="0" mouse_opaque="true"
-           name="sit-click-toggle" radio_style="false" width="270" control_name="EmeraldBlockClickSit" />
-      <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Show agent name for LookAt beacons" left_delta="0" mouse_opaque="true" name="EmShowLookAtNames-toggle" control_name="EmeraldShowLookAtNames" radio_style="false" width="270" />
+           label="Display Total Script Count changes:" left_delta="-25" mouse_opaque="true"
+           name="totalscriptjumps" radio_style="false" width="270" control_name="EmeraldDisplayTotalScriptJumps" />
+      <spinner bottom_delta="0" decimal_digits="0" follows="left|top" height="16"
+			     increment="1" label="" label_width="0" digits="4"
+			     left_delta="205" max_val="9999" min_val="1" mouse_opaque="true"
+			     name="ScriptJumpCount" width="50" control_name="Emeraldnumscriptdiff" tool_tip="Treshold for the script jump message [Default: 100]" />
       <check_box bottom_delta="-20" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-         label="Hear typing sound when people type" left_delta="0" mouse_opaque="true"
+         label="Hear typing sound when people type" left_delta="-205" mouse_opaque="true"
          name="typing-sound-toggle" radio_style="false" width="270" control_name="PlayTypingSound" />
-      <check_box bottom_delta="-20" enabled="true"
-         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-         label="ESC key to resets camera position" left_delta="0" mouse_opaque="true"
-         name="EmResetCamOnEscape-toggle" radio_style="false" width="270" control_name="EmeraldResetCamOnEscape"
-		tool_tip="Setting this value to False prevents the camera from resetting when escape is pressed from within Camera mode (Ctrl+1)." />
       <check_box bottom_delta="-20" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
          label="Auto complete OOC comments." left_delta="0" mouse_opaque="true"
@@ -429,13 +368,52 @@ Recommended Settings are:
          name="AllowMUpose-toggle" radio_style="false" width="270" control_name="EmeraldAllowMUpose"
 		tool_tip="Allow MU* pose style in chat and IM (with ':' as a synonymous to '/me ')" />
       <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Show money changes in local chat" left_delta="0" mouse_opaque="true"
+           name="EmMoneyChat-toggle" radio_style="false" width="270" control_name="EmeraldShowMoneyChangeInChat" />
+
+
+</panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
+           label="Misc" left="1" mouse_opaque="true" name="AvatarEffects" width="418">
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Misc" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
+<button bottom="-40" follows="left|top" font="SansSerifSmall" height="20" label="Shadows ON" name="Emerald_ShadowsON" tool_tip="Turn on the rendering of dynamic shadows cast by objects inworld. Result may vary, and the having it on may affect the framerate negatively." right="400" width="100" />
+<button bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="20" label="Shadows OFF" name="Emerald_ShadowsOFF" tool_tip="Turn off the rendering of dynamic shadows." left_delta="0" width="100" />
+      <check_box bottom="-30" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable Always Fly" left="5" mouse_opaque="true"
+           name="alwaysflytoggle" radio_style="false" width="270" control_name="EmeraldAlwaysFly" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable Ctrl-Alt-P to become visually phantom" left_delta="0" mouse_opaque="true"
+           name="allowphantomtoggle" radio_style="false" width="270" control_name="EmeraldAllowPhantomToggle" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Enable Ctrl-Alt-S to ground sit anywhere" left_delta="0" mouse_opaque="true"
+           name="allowsittoggle" radio_style="false" width="270" control_name="EmeraldAllowSitToggle" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Block sitting on objects via left-click" left_delta="0" mouse_opaque="true"
+           name="sit-click-toggle" radio_style="false" width="270" control_name="EmeraldBlockClickSit" />
+      <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Show agent name for LookAt beacons" left_delta="0" mouse_opaque="true" name="EmShowLookAtNames-toggle" control_name="EmeraldShowLookAtNames" radio_style="false" width="270" />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+         label="ESC key to resets camera position" left_delta="0" mouse_opaque="true"
+         name="EmResetCamOnEscape-toggle" radio_style="false" width="270" control_name="EmeraldResetCamOnEscape"
+		tool_tip="Setting this value to False prevents the camera from resetting when escape is pressed from within Camera mode (Ctrl+1)." />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16"
+         label="Enable Minimap Rotation" left_delta="0" mouse_opaque="true"
+         name="MinimapRotate" radio_style="false" width="270" control_name="MinimapRotate" />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16"
+         label="Show the Search Bar" left_delta="0" mouse_opaque="true"
+         name="rlv-toggle" radio_style="false" width="270" control_name="ShowSearchBar" />
+      <check_box bottom_delta="-40" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
          label="Enable Restrained Life [RLV] features" left_delta="0" mouse_opaque="true"
          name="rlv-toggle" radio_style="false" width="270" control_name="RestrainedLife" />
-      <check_box bottom_delta="140" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Display Total Script Count changes" left_delta="245" mouse_opaque="true"
-           name="totalscriptjumps" radio_style="false" width="270" control_name="EmeraldDisplayTotalScriptJumps" />
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="CmdLine" left="1" mouse_opaque="true" name="CmdLine" width="418">
@@ -577,7 +555,7 @@ Recommended Settings are:
 
              width="150"
              height="75"
-             bottom="-90"
+             bottom="-80"
 
              border="true"
              mouse_opaque="true"
@@ -593,21 +571,29 @@ Recommended Settings are:
       <spinner bottom_delta="50" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.05" label="X Modifier" label_width="65"
 			     left_delta="5" max_val="0.15" min_val="-0.15" mouse_opaque="true"
-			     name="X Modifier" width="128" control_name="EmeraldAvatarXModifier" />
+			     name="X Modifier" width="128" control_name="EmeraldAvatarXModifier" tool_tip="Use this to manipulate, to a degree, your avatar bounding box. This can be used to distort orbiters, or to raise you up or down without altering your shape." />
       <spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.05" label="Y Modifier" label_width="65"
 			     left_delta="0" max_val="0.20" min_val="-0.20" mouse_opaque="true"
-			     name="Y Modifier" width="128" control_name="EmeraldAvatarYModifier" />
+			     name="Y Modifier" width="128" control_name="EmeraldAvatarYModifier" tool_tip="Use this to manipulate, to a degree, your avatar bounding box. This can be used to distort orbiters, or to raise you up or down without altering your shape." />
       <spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16"
 			     increment="0.1" label="Z Modifier" label_width="65"
 			     left_delta="0" max_val="5.0" min_val="-5.0" mouse_opaque="true"
-			     name="Z Modifier" width="128" control_name="EmeraldAvatarZModifier" />
-      <text bottom_delta="50" follows="left|top" font="SansSerifSmall" height="16" left_delta="150" name="loltxt14" width="512">
-        Use this to manipulate, to a degree, your avatar bounding
-box. This can be used to distort orbiters, or to raise
-you up or down without altering your shape.
-      </text>
-      <text font="SansSerifSmall" name="BeamPrefs" follows="left|top" left="7" bottom_delta="-100">
+			     name="Z Modifier" width="128" control_name="EmeraldAvatarZModifier" tool_tip="Use this to manipulate, to a degree, your avatar bounding box. This can be used to distort orbiters, or to raise you up or down without altering your shape." />
+<spinner bottom_delta="45" decimal_digits="0" follows="left|top" height="16"
+			     increment="1" label="Agent Updates per second:" label_width="150"
+			     left_delta="160" max_val="50" min_val="0" mouse_opaque="true"
+			     name="EmAgentUpdatesValue" width="200" control_name="EmeraldAgentUpdatesPerSecond"
+				tool_tip="Allows you to manually adjust the amount of updates you send per second. DEFAULT 10/s" />
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16"
+           label="Render Avatar Invisible" left_delta="0" mouse_opaque="true"
+           name="RenderAvInvisible" radio_style="false" width="270" control_name="RenderAvatarInvisible" />
+
+
+
+
+      <text font="SansSerifSmall" name="BeamPrefs" follows="left|top" left="7" bottom="-150">
         Selection beam particle effects
       </text>
       <view_border bevel_style="none" border_thickness="1" bottom_delta="-5" follows="top|left" height="0" left="5" name="EmDivisor" width="480" />
@@ -640,7 +626,7 @@ you up or down without altering your shape.
      increment="0.1" initial_val="1" label="Scale:"
      label_width="35" max_val="4" min_val="0.1" mouse_opaque="true"
      show_text="true" width="150" auto_resize="false" tool_tip="Change the scale of the shape used for the Emerald Shaped Beam"/>
-      <button name="delete_beam" label="Delete" halign="center" tool_tip="Remove this beam" left="435" bottom="-160" width="55" height="20" font="SansSerifSmall" follows="left|top"/>
+      <button name="delete_beam" label="Delete" halign="center" tool_tip="Remove this beam" left="435" bottom="-180" width="55" height="20" font="SansSerifSmall" follows="left|top"/>
       <button name="custom_beam_btn" label="Create New" tool_tip="Customize the beam shape" left_delta="-15" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
       <button name="refresh_beams" label="Refresh List" tool_tip="Refresh the beam list" left_delta="0" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
     </panel>
@@ -1000,8 +986,12 @@ from the Emerald viewer into the simulator for access via scripts.
            height="16" label="Auto open Inventory window" left="5"
            mouse_opaque="true" name="popup_inventory" control_name="ShowInInventory" width="126"
            tool_tip="Pop up the Inventory window when a new item is received." />
-    </panel>
+      <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Wear objects in inventory via double-click" left_delta="0" mouse_opaque="true"
+           name="wear-inv-toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickWearInventoryObjects" />
 
+    </panel>
 
 
 

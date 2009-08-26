@@ -6594,6 +6594,17 @@ IM
   <notification
    icon="alertmodal.tga"
    label="Emerald Help"
+   name="EmeraldHelp_Chat"
+   type="alertmodal">
+Help text will go here, please update notifications.xml
+the related entries are at the bottom of the file.
+
+Chat
+
+  </notification>
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
    name="EmeraldHelp_Misc"
    type="alertmodal">
 Help text will go here, please update notifications.xml
