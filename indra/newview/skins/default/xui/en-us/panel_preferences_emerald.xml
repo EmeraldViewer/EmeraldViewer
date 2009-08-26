@@ -405,7 +405,7 @@ Recommended Settings are:
       <check_box bottom_delta="-20" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16"
          label="Enable Minimap Rotation" left_delta="0" mouse_opaque="true"
-         name="MinimapRotate" radio_style="false" width="270" control_name="MinimapRotate" />
+         name="MinimapRotate" radio_style="false" width="270" control_name="MiniMapRotate" />
       <check_box bottom_delta="-20" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16"
          label="Show the Search Bar" left_delta="0" mouse_opaque="true"
