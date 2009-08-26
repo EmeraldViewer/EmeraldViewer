@@ -1888,19 +1888,19 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 				timestamp = timestamp.substr(0, timestamp.find('\n'));
 				//Handle Replacements
 				size_t found = autoresponse.find(fname_wildcard);
-				while(found != string::npos)
+				while(found != std::string::npos)
 				{
 					autoresponse.replace(found, 2, f_name);
 					found = autoresponse.find(fname_wildcard);
 				}
 				found = autoresponse.find(lname_wildcard);
-				while(found != string::npos)
+				while(found != std::string::npos)
 				{
 					autoresponse.replace(found, 2, l_name);
 					found = autoresponse.find(lname_wildcard);
 				}
 				found = autoresponse.find(time_wildcard);
-				while(found != string::npos)
+				while(found != std::string::npos)
 				{
 					autoresponse.replace(found, 2, timestamp);
 					found = autoresponse.find(time_wildcard);
@@ -2511,7 +2511,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 				std::string tempname = name;
 		
 				size_t found = tempname.find(" ");
-				while(found != string::npos)
+				while(found != std::string::npos)
 				{
 					tempname.replace(found, 1, "");
 					found = tempname.find(" ");
@@ -2993,7 +2993,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		std::string tempname = from_name;
 		
 		size_t found = tempname.find(" ");
-		while(found != string::npos)
+		while(found != std::string::npos)
 		{
 			tempname.replace(found, 1, "");
 			found = tempname.find(" ");

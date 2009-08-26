@@ -83,6 +83,8 @@
 #include "lluictrlfactory.h"
 #include "llviewermenu.h"
 
+#include <iosfwd>
+
 // Statics
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
 BOOL LLPanelAvatar::sAllowFirstLife = FALSE;
@@ -1917,7 +1919,7 @@ void LLPanelAvatar::processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 		timeinfo->tm_year = year - 1900;
 		timeinfo->tm_mday = day;
 		time_t birth = mktime(timeinfo);
-		stringstream NumberString;
+		std::stringstream NumberString;
 		NumberString << (difftime(now,birth) / (60*60*24));
 		born_on += " (";
 		born_on += NumberString.str();

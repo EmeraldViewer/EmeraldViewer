@@ -558,6 +558,7 @@ void JCExportTracker::processObjectProperties(LLMessageSystem* msg, void** user_
 									texture_ids.push_back(tid);
 								}
 							}
+							(*link_itr)["properties"] = (S32)1;
 							(*link_itr)["creator_id"] = creator_id.asString();
 							(*link_itr)["owner_id"] = owner_id.asString();
 							(*link_itr)["group_id"] = group_id.asString();
@@ -729,7 +730,7 @@ void JCAssetExportCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType ty
 		infile.close();
 
 		//delete buffer;
-	}else cmdline_printchat("Failed to save file "+info->path+" ("+info->name+")");
+	}else cmdline_printchat("Failed to save file "+info->path+" ("+info->name+") : "+std::string(LLAssetStorage::getErrorString(result)));
 
 	delete info;
 }
@@ -782,8 +783,11 @@ BOOL JCExportTracker::mirror(LLInventoryObject* item, LLViewerObject* container,
 				root = root + path;
 				cmdline_printchat(root);
 			}
-			if(iname == "")iname = item->getName();
-			iname = curl_escape(iname.c_str(), iname.size());
+			if(iname == "")
+			{
+				iname = item->getName();
+				iname = curl_escape(iname.c_str(), iname.size());
+			}
 			root = root + iname + "." + LLAssetType::lookup(item->getType());
 			cmdline_printchat(root);
 
