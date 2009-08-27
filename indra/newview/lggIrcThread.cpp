@@ -215,16 +215,16 @@ void lggIrcThread::setData(lggIrcData dat)
 }
 int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
-	/*F actions!
-	if(std::string(&params[1]).find_first_of("ACTION")==std::string::npos)
-	{
-	actionDisp(std::string(hostd->nick),std::string(&params[1]));
-	return 0;
-	}*/
+	
 
 	if(!strcmp(hostd->target,getChannel().c_str()))
 	{
 		//chan msg
+		if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
+		{
+			actionDisp(std::string(hostd->nick),std::string(&params[1]));
+			return 0;
+		}
 		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
 	}else
 	{
@@ -471,34 +471,17 @@ void lggIrcThread::sendChat(std::string chat)
 			msg("Invalid format for /nick, format is \"/nick NEWNICK\"");
 		}
 		
-	}else
-	if(command == "/join")
+	}else	if(command == "/join")
 	{
 		msg(llformat("Attempting to rejoin %s, if you wish to join a different channel, please make a new irc group",getChannel().c_str()));
 		join();
-	}else
-	if(command == "/me")
+	}else	if(command == "/me")
 	{
-		//char s =(char)0x020;
-		//chat = s;
-        //chat = chat + "ACTION ";
-        //chat = chat + chat.substr(3);
-        //chat = chat + s;
-        // WARNING: Liandra made ugly ANSI C hax here. >_>
-        char buf[1024];
-        snprintf( buf, 1023, "%cACTION %s%c", (char)1, chat.substr(3).c_str(), (char)1 );
-		llinfos << "chat action is ::"  << chat.c_str() << llendl;
-		//actionDisp(std::string(conn->current_nick()),std::string(chat));
-		actionDisp(std::string(conn->current_nick()),buf);
-		
-		//chat = "(("+chat.substr(4)+"))";//hax
-		//conn->privmsg((char*)getChannel().c_str(),(char *)chat.c_str());
-		conn->privmsg((char*)getChannel().c_str(),buf);
-		//msg(llformat("%s : %s",	conn->current_nick(),buf),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
-
-
-	}
-	if(command == "/msg")
+		// WARNING: Liandra made ugly ANSI C hax here. >_>
+        std::string toSend = llformat("%cACTION %s%c", (char)1, chat.substr(3).c_str(), (char)1 );
+		actionDisp(std::string(conn->current_nick()),toSend);
+		conn->privmsg((char*)getChannel().c_str(),(char*)toSend.c_str());
+	}else if(command == "/msg")
 	{
 		std::string theTarget,theMsg;
 		if(i >> theTarget)
@@ -587,15 +570,22 @@ void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 				llformat("%s",name.c_str()),IM_PRIVATE_IRC,uid);
 			//"[PRIVATE - IRC] %s"
 		}
+		if(msg.find_first_of("ACTION")!=std::string::npos)
+		{
+			actionDisp(name,msg);
+			return;
+		}else
+		{
 
-		gIMMgr->findFloaterBySession(computed_session_id)->addHistoryLine(
-			
-			llformat(": %s",msg.c_str()),
-			gSavedSettings.getColor("EmeraldIRC_ColorPrivate"),
-			true,
-			uid,
-			llformat("%s",name.c_str())
-			);
+		
+			gIMMgr->findFloaterBySession(computed_session_id)->addHistoryLine(
+				llformat(": %s",msg.c_str()),
+				gSavedSettings.getColor("EmeraldIRC_ColorPrivate"),
+				true,
+				uid,
+				llformat("%s",name.c_str())
+				);
+		}
 	}else
 	{
 		lggIrcThread::msg(llformat(": %s",msg.c_str()),
@@ -644,14 +634,31 @@ void lggIrcThread::sendPrivateImToID(std::string msg, LLUUID id)
 		uid.generate(name+"lgg"+getChannel());
 		if ( id ==uid)
 		{
-			conn->privmsg((char*)name.c_str(),(char*)msg.c_str());
 			LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
-			
-			gIMMgr->findFloaterBySession(computed_session_id)->addHistoryLine(
-
+			std::istringstream i(msg);
+			std::string command;
+			i >> command;
+			if(command == "/help")
+			{
+				lggIrcThread::msg(std::string("\"/join\" will attempt to re-join the current channel.\n\"/msg NICK MSG\" will send a private MSG to NICK\n\"/kick NICK [REASON]\" will kick NICK from that chat (if you have op rights)\n\"/nick NEWNICK\" will change your current nick to NEWNICK"));
+			}
+			if(command == "/me")
+			{
+				std::string toSend = llformat("%cACTION %s%c", (char)1, msg.substr(3).c_str(), (char)1 );
+				gIMMgr->findFloaterBySession(computed_session_id)->addHistoryLine(
+					llformat("[IRC]%s %s",conn->current_nick(),msg.substr(3).c_str()),
+					gSavedSettings.getColor("EmeraldIRC_ColorPrivate")
+					);
+				conn->privmsg((char*)name.c_str(),(char*)toSend.c_str());
+			}else
+			{			
+				conn->privmsg((char*)name.c_str(),(char*)msg.c_str());
+				
+				gIMMgr->findFloaterBySession(computed_session_id)->addHistoryLine(
 				llformat("[IRC]%s: %s",conn->current_nick(),msg.c_str()),
 				gSavedSettings.getColor("EmeraldIRC_ColorPrivate")
 				);
+			}
 
 			return;
 		}
