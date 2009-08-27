@@ -473,7 +473,7 @@ public:
 	// viewed. This method will ask the viewed object itself.
 	const std::string& getName( void ) const;
 
-	const std::string& getSearchableLabel( void ) const;
+	const std::string& getSearchableLabel( U32 search_type ) const;
 
 	// This method returns the label displayed on the view. This
 	// method was primarily added to allow sorting on the folder
