@@ -60,9 +60,12 @@ public:
 	lggIrcThread(lggIrcData data);
 	~lggIrcThread();
 	
-	
 	MsgListener * listener;
+	
 
+	std::vector<LLUUID> getParticipants();
+	void displayPrivateIm(std::string msg, std::string name);
+	void sendPrivateImToID(std::string msg, LLUUID id);
 	void run(void);
 	void join();
 	void stopRun(void);

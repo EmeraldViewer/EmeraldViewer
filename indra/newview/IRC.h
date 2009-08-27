@@ -95,6 +95,8 @@ public:
 
 	IRCMiscInfo info;
 
+	std::vector<LLUUID> participants;
+
 	IRC();
 	~IRC();
 	int start(char* server, int port,char* nick,char* user, char* name, char* pass);

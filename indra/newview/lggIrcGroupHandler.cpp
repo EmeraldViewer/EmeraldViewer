@@ -251,3 +251,21 @@ lggIrcThread* lggIrcGroupHandler::getThreadByID(LLUUID id)
 	}
 	return NULL;
 }
+bool lggIrcGroupHandler::trySendPrivateImToID(std::string msg, LLUUID id)
+{
+	for(std::list<lggIrcThread*>::iterator it = activeThreads.begin(); it != activeThreads.end(); it++)
+	{
+		lggIrcThread* ita = *it;		
+		std::vector<LLUUID> parts = ita->getParticipants();
+		for(int innerItter = 0; innerItter < (int)parts.size(); innerItter++)
+		{
+			if(parts[innerItter] == id)
+			{
+				ita->sendPrivateImToID(msg,id);
+				return true;
+
+			}
+		}
+	}
+	return false;
+}

@@ -56,6 +56,7 @@ class lggIrcGroupHandler
 		void endDownIRCListener(LLUUID id);
 		lggIrcThread* getThreadByID(LLUUID id);
 		void sendIrcChatByID(LLUUID id, std::string msg);
+		bool trySendPrivateImToID(std::string msg, LLUUID id);
 
 		
 };

@@ -1210,6 +1210,16 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 		
 		mVoiceChannel = new LLVoiceChannelP2P(mSessionUUID, mSessionLabel, mOtherParticipantUUID);
 		break;
+	case IM_PRIVATE_IRC:
+		xml_filename = "floater_instant_message.xml";
+
+		mTextIMPossible = TRUE;
+		mProfileButtonEnabled = TRUE;
+		mCallBackEnabled = FALSE;
+
+		mVoiceChannel = new LLVoiceChannelP2P(mSessionUUID, mSessionLabel, mOtherParticipantUUID);
+		break;
+
 	default:
 		llwarns << "Unknown session type" << llendl;
 		xml_filename = "floater_instant_message.xml";
@@ -1359,7 +1369,7 @@ BOOL LLFloaterIMPanel::postBuild()
 		{
 			childSetEnabled("profile_btn", FALSE);
 		}
-		if(IM_SESSION_IRC_START == mDialog)
+		if(IM_SESSION_IRC_START == mDialog || IM_PRIVATE_IRC == mDialog)
 		{
 			childSetVisible("profile_btn", FALSE);
 			childSetVisible("profile_callee_btn", FALSE);
@@ -1479,7 +1489,7 @@ void LLFloaterIMPanel::draw()
 					  && mCallBackEnabled;
 
 	// hide/show start call and end call buttons
-	if(mDialog!=IM_SESSION_IRC_START)
+	if(mDialog!=IM_SESSION_IRC_START && mDialog!=IM_PRIVATE_IRC)
 	{
 		childSetVisible("end_call_btn", LLVoiceClient::voiceEnabled() && mVoiceChannel->getState() >= LLVoiceChannel::STATE_CALL_STARTED);
 		childSetVisible("start_call_btn", LLVoiceClient::voiceEnabled() && mVoiceChannel->getState() < LLVoiceChannel::STATE_CALL_STARTED);
@@ -2062,7 +2072,6 @@ void deliver_message(const std::string& utf8_text,
 		U8 new_dialog = dialog;
 		if ( dialog == IM_SESSION_IRC_START)
 		{
-			//LGG TODO
 			glggIrcGroupHandler.sendIrcChatByID(im_session_id,utf8_text);
 			return;
 		}
@@ -3156,7 +3165,19 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 
                         std::string send = utf8_text.substr(pos, pos + next_split);
                         pos += next_split;
-					
+						
+						if ( mDialog == IM_PRIVATE_IRC || mDialog == IM_NOTHING_SPECIAL)
+						{
+							if(glggIrcGroupHandler.trySendPrivateImToID(utf8_text,mOtherParticipantUUID))
+							{
+								childSetVisible("profile_btn", FALSE);
+								childSetVisible("profile_callee_btn", FALSE);
+								childSetVisible("start_call_btn",FALSE);
+								childSetVisible("password",FALSE);
+								mDialog = IM_PRIVATE_IRC;
+								
+							}
+						}else
                         // *FIXME: Queue messages if IM is not IM_NOTHING_SPECIAL
                         deliver_message(encrypt(send),
                                         mSessionUUID,

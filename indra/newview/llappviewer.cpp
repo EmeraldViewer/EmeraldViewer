@@ -3365,8 +3365,7 @@ void LLAppViewer::idle()
 	    {
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();
-		    //TODO lgg - ok, this is it!  check setting on this thing and only do it if allowd
-			
+		    
 			//if(!gSavedSettings.getBOOL("phantomRightNow"))
 			if(!gAgent.getPhantom())
 			{

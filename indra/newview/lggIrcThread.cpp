@@ -228,8 +228,8 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
 	}else
 	{
-		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[PRIVATE - IRC] %s",hostd->nick),
-			gSavedSettings.getColor("EmeraldIRC_ColorPrivate"));
+
+		displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
 	}
 	
 	return 0;
@@ -247,9 +247,10 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 		//chan msg
 		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorNotice"));
 	}else
-		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[PRIVATE - IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorPrivate"));
+		displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
 	return 0;
 }
+
 /*
 [20:10]  [IRC] tG:ACTION kawaifaces
 
@@ -521,13 +522,24 @@ void lggIrcThread::sendChat(std::string chat)
 	}
 	else
 	{
-		msg(llformat("%s : %s",	conn->current_nick(),chat.c_str()),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
+		msg(llformat("%s: %s",	conn->current_nick(),chat.c_str()),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
 		conn->privmsg((char*)getChannel().c_str(),(char *)chat.c_str());
 	}
 }
 void lggIrcThread::stopRun()
 {
-	
+	// close other IRC windows
+	for(int i = 0; i < (int)conn->participants.size() ; i++)
+	{
+
+		LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,conn->participants[i]);
+		if(!gIMMgr->hasSession(computed_session_id))
+		{
+			
+			//gIMMgr->findFloaterBySession(computed_session_id);
+		}
+	}
+
 	conn->disconnect();
 	listener->shutdown();
 
@@ -554,10 +566,51 @@ void lggIrcThread::msg(std::string message, LLColor4 color)
 {
 	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(message),color);
 }
+void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
+{
+	LLUUID uid;
+	uid.generate(name+"lgg"+getChannel());
+	BOOL found = false;
+	for(int i = 0; i < (int) conn->participants.size();i++)
+	{
+		if(conn->participants[i] == uid)found=true;
+	}
+	if(found)
+	{
+
+	
+		LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
+		if(!gIMMgr->hasSession(computed_session_id))
+		{
+			make_ui_sound("UISndNewIncomingIMSession");
+			gIMMgr->addSession(
+				llformat("%s",name.c_str()),IM_PRIVATE_IRC,uid);
+			//"[PRIVATE - IRC] %s"
+		}
+
+		gIMMgr->findFloaterBySession(computed_session_id)->addHistoryLine(
+			
+			llformat(": %s",msg.c_str()),
+			gSavedSettings.getColor("EmeraldIRC_ColorPrivate"),
+			true,
+			uid,
+			llformat("%s",name.c_str())
+			);
+	}else
+	{
+		lggIrcThread::msg(llformat(": %s",msg.c_str()),
+			llformat("[PRIVATE - IRC] %s",name.c_str()),
+
+			gSavedSettings.getColor("EmeraldIRC_ColorPrivate"));
+	}
+	
+
+
+}
 void lggIrcThread::msg(std::string message, std::string name)
 {
 	LLUUID uid;
-	uid.generate(name+"lgg");
+	uid.generate(name+"lgg"+getChannel());
 
 	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(message),
 		gSavedSettings.getColor("IMChatColor"),
@@ -568,13 +621,44 @@ void lggIrcThread::msg(std::string message, std::string name)
 void lggIrcThread::msg(std::string message, std::string name, LLColor4 color)
 {
 	LLUUID uid;
-	uid.generate(name+"lgg");
+	uid.generate(name+"lgg"+getChannel());
 
 	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(message),
 		color,
 		true,
 		uid,
 		name);
+}
+std::vector<LLUUID> lggIrcThread::getParticipants()
+{
+	return conn->participants;
+}
+void lggIrcThread::sendPrivateImToID(std::string msg, LLUUID id)
+{
+	LLUUID uid;
+	LLSD speakers = conn->getSpeakersLLSD();
+	for(int i = 0; i < speakers.size(); i++)
+	{
+		LLSD personData = speakers[i];	
+		std::string name = personData["irc_agent_name"].asString();
+		uid.generate(name+"lgg"+getChannel());
+		if ( id ==uid)
+		{
+			conn->privmsg((char*)name.c_str(),(char*)msg.c_str());
+			LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
+			
+			gIMMgr->findFloaterBySession(computed_session_id)->addHistoryLine(
+
+				llformat("[IRC]%s: %s",conn->current_nick(),msg.c_str()),
+				gSavedSettings.getColor("EmeraldIRC_ColorPrivate")
+				);
+
+			return;
+		}
+	}
+	return;
+
+	
 }
 std::string lggIrcThread::stripColorCodes(std::string input)
 {
@@ -626,14 +710,5 @@ std::string lggIrcThread::stripColorCodes(std::string input)
 
 void lggIrcThread::updateNames()
 {
-	/*EXAMPLE READfor(int i = 0; i < speakers.size(); i++)
-	{		LLSD personData = speakers[i];		
-		LLPointer<LLSpeaker> speakerp = setSpeaker(
-				LLUUID(personData["irc_agent_id"]),
-				personData["irc_agent_name"].asString()	
-		speakerp->mIsModerator = personData["irc_agent_mod"].asBoolean();}*/
-	
-	//}
 	gIMMgr->findFloaterBySession(getMID())->setIRCSpeakers(conn->getSpeakersLLSD());
-
 }
