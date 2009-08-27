@@ -217,10 +217,12 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 {
 	
 
+	gIMMgr->notifyNewIM();
 	if(!strcmp(hostd->target,getChannel().c_str()))
 	{
 		//chan msg
-		if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
+		if(strstr(&params[1],"ACTION"))
+		//if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
 		{
 			actionDisp(std::string(hostd->nick),std::string(&params[1]));
 			return 0;
@@ -236,6 +238,8 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 }
 int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
+
+	gIMMgr->notifyNewIM();
 	/*F actions!
 	if(std::string(&params[1]).find_first_of("ACTION")==std::string::npos)
 	{
@@ -244,6 +248,12 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 	}*/
 	if(!strcmp(hostd->target,getChannel().c_str()))
 	{
+		if(strstr(&params[1],"ACTION"))
+			//if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
+		{
+			actionDisp(std::string(hostd->nick),std::string(&params[1]));
+			return 0;
+		}
 		//chan msg
 		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorNotice"));
 	}else
@@ -531,7 +541,7 @@ void lggIrcThread::stopRun()
 void lggIrcThread::actionDisp(std::string name, std::string msg)
 {
 	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(
-		name + msg.substr(8)
+		name +" "+ msg.substr(8)
 		),
 		gSavedSettings.getColor("EmeraldIRC_ColorAction"));
 }
@@ -570,7 +580,7 @@ void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 				llformat("%s",name.c_str()),IM_PRIVATE_IRC,uid);
 			//"[PRIVATE - IRC] %s"
 		}
-		if(msg.find_first_of("ACTION")!=std::string::npos)
+		if(strstr(msg.c_str(),"ACTION"))
 		{
 			actionDisp(name,msg);
 			return;
@@ -625,6 +635,7 @@ std::vector<LLUUID> lggIrcThread::getParticipants()
 }
 void lggIrcThread::sendPrivateImToID(std::string msg, LLUUID id)
 {
+	
 	LLUUID uid;
 	LLSD speakers = conn->getSpeakersLLSD();
 	for(int i = 0; i < speakers.size(); i++)
