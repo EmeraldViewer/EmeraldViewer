@@ -195,7 +195,7 @@
 			</menu_item_check>
 		</menu>
     <menu bottom_delta="64" drop_shadow="true" height="49"
-		     label="Search" left="0" mouse_opaque="false" name="Sort" opaque="true"
+		     label="Search" left="0" mouse_opaque="false" name="Search" opaque="true"
 		     tear_off="true" width="118">
       <menu_item_check bottom_delta="-18" control_name="Inventory.SearchByName" height="18"
 			     label="By Name" left="0" mouse_opaque="true" name="By Name" width="118">
