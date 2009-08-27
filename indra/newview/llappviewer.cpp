@@ -3361,7 +3361,7 @@ void LLAppViewer::idle()
 		//Name Short - Added to adjust agent updates.
 		//theGenius Indigo - Name, don't try to divide by zero here...seriously, what were you smoking?
 		F32 AgentUpdateFrequency = gSavedSettings.getF32("EmeraldAgentUpdatesPerSecond");
-		if (flags_changed || (agent_update_time > (1.0f / std::max(AgentUpdateFrequency, 0.0001f))))
+		if (flags_changed || (agent_update_time > (1.0f / llmax(AgentUpdateFrequency, 0.0001f))))
 	    {
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();
@@ -3379,7 +3379,7 @@ void LLAppViewer::idle()
 		{
 			//theGenius Indigo - Joystick data is streamed inworld on a specific channel
 			F32 JoystickStreamFrequency = gSavedSettings.getF32("JoystickStreamRefresh"); //Joystick data stream refresh frequency
-			if(gSavedSettings.getBOOL("JoystickStreamEnabled") && (JSstream_update_time > (1.0f / std::max(JoystickStreamFrequency, 0.0001f))))
+			if(gSavedSettings.getBOOL("JoystickStreamEnabled") && (JSstream_update_time > (1.0f / llmax(JoystickStreamFrequency, 0.0001f))))
 			{
 				LLViewerJoystick::getInstance()->cansend(); //Allow data to be sent on the next joystick scan
 				JSstream_update_timer.reset();
@@ -3391,7 +3391,7 @@ void LLAppViewer::idle()
 			   utilityStream.FELimiter_dec();
 			}
 			F32 GUS_FE_freq = llclamp(gSavedSettings.getF32("EmeraldGUSFastEventsRefresh"), 0.0001f, 20.f); //Greenlife Utility Stream (Fast Event) refresh frequency
-			if(gSavedSettings.getBOOL("EmeraldGUSEnabled") && gSavedSettings.getBOOL("EmeraldGUSFastEventsEnabled") && (GUS_FE_update_time > (1.0f / std::min(std::max(GUS_FE_freq, 0.0001f), 20.f))))
+			if(gSavedSettings.getBOOL("EmeraldGUSEnabled") && gSavedSettings.getBOOL("EmeraldGUSFastEventsEnabled") && (GUS_FE_update_time > (1.0f / llmin(llmax(GUS_FE_freq, 0.0001f), 20.f))))
 			{
 			   if(utilityStream.fastEvent())GUS_FE_update_timer.reset();
 			}
