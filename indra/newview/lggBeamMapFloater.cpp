@@ -47,7 +47,9 @@
 #include "llcolorswatch.h"
 #include "lggBeamMaps.h"
 
+
 #include "llsdserialize.h"
+#include "llpanelemerald.h"
 class lggPoint;
 class lggBeamMapFloater;
 
@@ -64,6 +66,9 @@ public:
 	BOOL handleMouseDown(S32 x,S32 y,MASK mask);
 	void update();
 	BOOL handleRightMouseDown(S32 x,S32 y,MASK mask);
+	
+	void setData(void* data);
+	LLPanelEmerald * empanel;
 
 	void draw();
 	void clearPoints();
@@ -173,6 +178,11 @@ BOOL lggBeamMapFloater::handleMouseDown(S32 x,S32 y,MASK mask)
 	
 	return LLFloater::handleMouseDown(x,y,mask);
 }
+void lggBeamMapFloater::setData(void* data)
+{
+	empanel = (LLPanelEmerald*)data;
+
+}
 BOOL lggBeamMapFloater::handleRightMouseDown(S32 x,S32 y,MASK mask)
 {
 	std::vector<lggPoint> newDots;
@@ -252,6 +262,12 @@ void lggBeamMapFloater::onClickSave(void* data)
 	LLSDSerialize::toPrettyXML(main, export_file);
 	export_file.close();
 	gSavedSettings.setString("EmeraldBeamShape",gDirUtilp->getBaseFileName(filename,true));
+
+	if(self->empanel)
+	{
+
+		self->empanel->refresh();
+	}
 	
 }
 
@@ -301,10 +317,15 @@ void lggBeamMapFloater::onClickLoad(void* data)
 	
 }
 
-void LggBeamMap::show(BOOL showin)
+void LggBeamMap::show(BOOL showin, void * data)
 {
 	//lggBeamMapFloater* beam_floater = 
 	if(showin)
-	lggBeamMapFloater::showInstance();
+	{
+
+	
+		lggBeamMapFloater* beam_floater = lggBeamMapFloater::showInstance();
+		beam_floater->setData(data);
+	}
 	//beam_floater->update();
 }

@@ -32,5 +32,5 @@
 class LggBeamMap
 {
 	public:
-	static void show( BOOL showw );
+	static void show( BOOL showw , void* data);
 };

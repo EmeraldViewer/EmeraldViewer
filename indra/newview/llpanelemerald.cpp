@@ -367,7 +367,7 @@ void LLPanelEmerald::onClickVoiceRevertProd(void* data)
 void LLPanelEmerald::onCustomBeam(void* data)
 {
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
-	LggBeamMap::show(true);
+	LggBeamMap::show(true, data);
 
 }
 void LLPanelEmerald::onStealth(void* data)
