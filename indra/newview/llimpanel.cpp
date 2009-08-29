@@ -1351,6 +1351,7 @@ BOOL LLFloaterIMPanel::postBuild()
 		childSetAction("profile_callee_btn", onClickProfile, this);
 		childSetAction("profile_tele_btn", onClickTeleport, this);
 		childSetAction("group_info_btn", onClickGroupInfo, this);
+		childSetAction("history_btn", onClickHistory, this);
 
 		childSetAction("start_call_btn", onClickStartCall, this);
 		childSetAction("end_call_btn", onClickEndCall, this);
@@ -1921,6 +1922,23 @@ void LLFloaterIMPanel::onClickTeleport( void* userdata )
 		//LLFloaterAvatarInfo::showFromDirectory(self->getOtherParticipantID());
 	}
 }
+
+// static
+void LLFloaterIMPanel::onClickHistory( void* userdata )
+{
+	LLFloaterIMPanel* self = (LLFloaterIMPanel*) userdata;
+	
+	if (self->mOtherParticipantUUID.notNull())
+	{
+		char command[256];
+		std::string fullname;
+		gCacheName->getFullName(self->mOtherParticipantUUID, fullname);
+		sprintf(command, "\"%s\\%s.txt\"", gDirUtilp->getPerAccountChatLogsDir().c_str(),fullname.c_str());
+		gViewerWindow->getWindow()->ShellEx(command);
+
+		llinfos << command << llendl;
+		}
+	}
 
 // static
 void LLFloaterIMPanel::onClickGroupInfo( void* userdata )
