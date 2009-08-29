@@ -222,6 +222,7 @@
 #include "llfloaterassetbrowser.h"
 #include "jcfloater_areasearch.h"
 #include "jc_asset_comparer.h"
+#include "jc_layer_editor.h"
 
 #include "exporttracker.h"
 
@@ -5764,6 +5765,9 @@ class LLShowFloater : public view_listener_t
 		else if (floater_name == "assetcompare")
 		{
 			JCAssetComparer::toggle();
+		}else if (floater_name == "clothinglayer")
+		{
+			JCLayerEditor::toggle();
 		}
 		else if (floater_name == "lua console")
 		{
@@ -5842,6 +5846,12 @@ class LLFloaterVisible : public view_listener_t
 		else if (floater_name == "assetcompare")
 		{
 			JCAssetComparer* instn = JCAssetComparer::getInstance();
+			if(!instn)new_value = false;
+			else new_value = instn->getVisible();
+		}
+		else if (floater_name == "clothinglayer")
+		{
+			JCLayerEditor* instn = JCLayerEditor::getInstance();
 			if(!instn)new_value = false;
 			else new_value = instn->getVisible();
 		}

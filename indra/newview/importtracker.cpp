@@ -18,6 +18,8 @@
 #include "llassetuploadresponders.h"
 #include "lleconomy.h"
 
+#include "llfloaterperms.h"
+
 
 #include "llviewertexteditor.h"
 
@@ -28,6 +30,7 @@ extern LLAgent gAgent;
 void ImportTracker::importer(std::string file,  void (*callback)(LLViewerObject*))
 {
 	mDownCallback = callback;
+	asset_insertions = 0;
 
 	llifstream importer(file);
 	LLSD data;
@@ -75,10 +78,44 @@ void ImportTracker::expectRez()
 
 void ImportTracker::clear()
 {
+	if(linkset.isDefined())lastrootid = linkset[0]["LocalID"].asInteger();
 	localids.clear();
 	linkset.clear();
 	state = IDLE;
+	finish();
 }
+void cmdline_printchat(std::string message);
+LLViewerObject* find(U32 local)
+{
+	S32 i;
+	S32 total = gObjectList.getNumObjects();
+
+	for (i = 0; i < total; i++)
+	{
+		LLViewerObject *objectp = gObjectList.getObject(i);
+		if (objectp)
+		{
+			if(objectp->getLocalID() == local)return objectp;
+		}
+	}
+	return NULL;
+}
+void ImportTracker::finish()
+{
+	if(asset_insertions == 0)
+	{
+		if(lastrootid != 0)
+		{
+			if(mDownCallback)
+			{
+				LLViewerObject* objectp = find(lastrootid);
+				mDownCallback(objectp);
+			}
+			cmdline_printchat("import completed");
+		}
+	}
+}
+
 void ImportTracker::cleargroups()
 {
 	linksetgroups.clear();
@@ -213,22 +250,6 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 		break;
 	}
 }
-void cmdline_printchat(std::string message);
-LLViewerObject* find(U32 local)
-{
-	S32 i;
-	S32 total = gObjectList.getNumObjects();
-
-	for (i = 0; i < total; i++)
-	{
-		LLViewerObject *objectp = gObjectList.getObject(i);
-		if (objectp)
-		{
-			if(objectp->getLocalID() == local)return objectp;
-		}
-	}
-	return NULL;
-}
 struct InventoryImportInfo
 {
 	U32 localid;
@@ -241,6 +262,7 @@ struct InventoryImportInfo
 	std::string description;
 	bool compiled;
 	std::string filename;
+	U32 perms;
 };
 
 void insert(LLViewerInventoryItem* item, LLViewerObject* objectp, InventoryImportInfo* data)
@@ -260,6 +282,10 @@ void insert(LLViewerInventoryItem* item, LLViewerObject* objectp, InventoryImpor
 	}
 	delete data;
 	gImportTracker.asset_insertions -= 1;
+	if(gImportTracker.asset_insertions == 0)
+	{
+		gImportTracker.finish();
+	}
 }
 
 class JCImportTransferCallback : public LLInventoryCallback
@@ -304,7 +330,7 @@ public:
 		create_inventory_item(gAgent.getID(), gAgent.getSessionID(),
 			gInventory.findCategoryUUIDForType(LLAssetType::AT_TRASH), data->tid, data->name,
 			data->description, data->type, LLInventoryType::defaultForAssetType(data->type), data->wear_type,
-			PERM_MOVE | PERM_TRANSFER,
+			LLFloaterPerms::getNextOwnerPerms(),
 			cb);
 		
 	}
@@ -403,7 +429,20 @@ public:
 					std::string url = gAgent.getRegion()->getCapability("UpdateScriptAgent");
 					LLSD body;
 					body["item_id"] = inv_item;
-					body["target"] = /*(mono == TRUE) ? */"mono"/* : "lsl2"*/;
+					S32 size = gVFS->getSize(data->assetid, data->type);
+					U8* buffer = new U8[size];
+					gVFS->getData(data->assetid, data->type, buffer, 0, size);
+					std::string script((char*)buffer);
+					BOOL domono = TRUE;
+					if(script.find("//mono\n") != -1)
+					{
+						domono = TRUE;
+					}else if(script.find("//lsl2\n") != -1)
+					{
+						domono = FALSE;
+					}
+					delete buffer;
+					body["target"] = (domono == TRUE) ? "mono" : "lsl2";
 					cmdline_printchat("posting content as " + data->assetid.asString());
 					LLHTTPClient::post(url, body, new JCPostInvUploadResponder(body, data->assetid, data->type,inv_item,data));
 				}
@@ -431,7 +470,7 @@ void JCImportInventorycallback(const LLUUID& uuid, void* user_data, S32 result, 
 		create_inventory_item(gAgent.getID(), gAgent.getSessionID(),
 			gInventory.findCategoryUUIDForType(LLAssetType::AT_TRASH), data->tid, data->name,
 			data->description, data->type, LLInventoryType::defaultForAssetType(data->type), data->wear_type,
-			PERM_MOVE | PERM_TRANSFER,
+			LLFloaterPerms::getNextOwnerPerms(),
 			cb);
 	}else cmdline_printchat("err: "+std::string(LLAssetStorage::getErrorString(result)));
 }
@@ -579,7 +618,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 						create_inventory_item(gAgent.getID(), gAgent.getSessionID(),
 							gInventory.findCategoryUUIDForType(LLAssetType::AT_TRASH), data->tid, data->name,
 							data->description, data->type, LLInventoryType::defaultForAssetType(data->type), data->wear_type,
-							PERM_MOVE | PERM_TRANSFER,
+							LLFloaterPerms::getNextOwnerPerms(),
 							cb);
 					}
 					break;
@@ -591,7 +630,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 						create_inventory_item(gAgent.getID(), gAgent.getSessionID(),
 							gInventory.findCategoryUUIDForType(LLAssetType::AT_TRASH), data->tid, data->name,
 							data->description, data->type, LLInventoryType::defaultForAssetType(data->type), data->wear_type,
-							PERM_MOVE | PERM_TRANSFER,
+							LLFloaterPerms::getNextOwnerPerms(),
 							cb);
 					}
 					break;

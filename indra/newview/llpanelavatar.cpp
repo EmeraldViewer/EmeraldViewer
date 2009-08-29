@@ -83,6 +83,8 @@
 #include "lluictrlfactory.h"
 #include "llviewermenu.h"
 
+#include "jc_lslviewerbridge.h"
+
 #include <iosfwd>
 
 // Statics
@@ -1323,6 +1325,38 @@ void LLPanelAvatar::setAvatar(LLViewerObject *avatarp)
 	setAvatarID(avatarp->getID(), name, ONLINE_STATUS_YES);
 }
 
+class JCProfileCallback : public JCBridgeCallback
+{
+public:
+	JCProfileCallback(LLPanelAvatarSecondLife* panel)
+	{
+		panelp = panel;
+	}
+
+	void fire(LLSD data)
+	{
+		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
+		if(panelp)
+		{
+			BOOL status = atoi(data[0].asString().c_str());
+			panelp->childSetVisible("online_yes", TRUE);
+			if(status)
+			{
+				panelp->childSetColor("online_yes",LLColor4::green);
+				panelp->childSetValue("online_yes","Currently Online");
+			}else
+			{
+				panelp->childSetColor("online_yes",LLColor4::red);
+				panelp->childSetValue("online_yes","Currently Offline");
+			}
+		}
+		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
+	}
+
+private:
+	LLPanelAvatarSecondLife* panelp;
+};
+
 void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 {
 	// Online status NO could be because they are hidden
@@ -1335,6 +1369,8 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 	}
 
 	mPanelSecondLife->childSetVisible("online_yes", (online_status == ONLINE_STATUS_YES));
+
+	JCLSLBridge::bridgetolsl("online_status|"+mAvatarID.asString(), new JCProfileCallback(mPanelSecondLife));
 
 	// Since setOnlineStatus gets called after setAvatarID
 	// need to make sure that "Offer Teleport" doesn't get set

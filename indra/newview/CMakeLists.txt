@@ -92,6 +92,8 @@ set(viewer_SOURCE_FILES
 	exporttracker.cpp
 	chatbar_as_cmdline.cpp
 	IRC.cpp
+	jc_lslviewerbridge.cpp
+	jc_layer_editor.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
 	jc_asset_comparer.cpp
@@ -525,6 +527,8 @@ set(viewer_HEADER_FILES
     chatbar_as_cmdline.h
     importtracker.h
     IRC.h
+	jc_lslviewerbridge.h
+	jc_layer_editor.h
     jcfloater_animation_list.h
     jcfloater_areasearch.h
     jcobjectpropertylist.h

@@ -190,6 +190,7 @@
 #include "jcfloater_areasearch.h"
 #include "exporttracker.h"
 #include "llfloaterteleporthistory.h"
+#include "jc_lslviewerbridge.h"
 
 #if LL_LIBXUL_ENABLED
 #include "llmozlib.h"
@@ -320,6 +321,7 @@ void pass_process_sound_trigger(LLMessageSystem* msg,void**)
 {
 	process_sound_trigger(msg,0);
 	LLFloaterAvatarList::processSoundTrigger(msg,0);
+	JCLSLBridge::processSoundTrigger(msg,0);
 }
 static std::vector<std::string> sAuthUris;
 static S32 sAuthUriNum = -1;
@@ -396,6 +398,8 @@ bool idle_startup()
 		//
 		// Initialize stuff that doesn't need data from simulators
 		//
+
+		new JCLSLBridge();
 
 // [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.1d
 		if ( (gSavedSettings.controlExists(RLV_SETTING_MAIN)) && (gSavedSettings.getBOOL(RLV_SETTING_MAIN)) )

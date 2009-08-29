@@ -590,6 +590,11 @@ Recommended Settings are:
            label="Render Avatar Invisible" left_delta="0" mouse_opaque="true"
            name="RenderAvInvisible" radio_style="false" width="270" control_name="RenderAvatarInvisible" />
 
+      <check_box bottom_delta="-40" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16"
+           label="Emerald Clothing Mode" left_delta="0" mouse_opaque="true"
+           name="WATTTT" radio_style="false" width="270" control_name="EmeraldClothingMode" />
+
 
 
 

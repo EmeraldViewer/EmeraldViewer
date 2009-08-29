@@ -3013,39 +3013,43 @@ CryoResolverTimeout::~CryoResolverTimeout()
 
 BOOL CryoResolverTimeout::tick()
 {
-    if(!avatarp || avatarp->isDead())return TRUE;
-    if(counter > 2)
-    {
-        if(avatarp && avatarp->mIsCryolife == FALSE)
-        {
-            avatarp->mIsCryolife = FALSE;
-            avatarp->mCheckingCryolife = 2;
-        }
+	if(avatarp)
+	{
+		if(!avatarp || avatarp->isDead())return TRUE;
+		if(counter > 2)
+		{
+			if(avatarp && avatarp->mIsCryolife == FALSE)
+			{
+				avatarp->mIsCryolife = FALSE;
+				avatarp->mCheckingCryolife = 2;
+			}
 
-        //LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
-        //avatarp->idleUpdateNameTag(root_pos_last);
+			//LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
+			//avatarp->idleUpdateNameTag(root_pos_last);
 
-        return TRUE;
-    }else
-    {
-        if(!avatarp->isDead() && avatarp->mCheckingCryolife == 1)
-        {
-            
-            send_improved_im(avatarp->getID(),
-                            "oh hi",
-                            "cryo::ping",
-                            IM_ONLINE,
-                            IM_TYPING_STOP,
-                            avatarp->getID(),
-                            NO_TIMESTAMP,
-                            (U8*)EMPTY_BINARY_BUCKET,
-                            EMPTY_BINARY_BUCKET_SIZE);
+			return TRUE;
+		}else
+		{
+			if(!avatarp->isDead() && avatarp->mCheckingCryolife == 1)
+			{
+	            
+				send_improved_im(avatarp->getID(),
+								"oh hi",
+								"cryo::ping",
+								IM_ONLINE,
+								IM_TYPING_STOP,
+								avatarp->getID(),
+								NO_TIMESTAMP,
+								(U8*)EMPTY_BINARY_BUCKET,
+								EMPTY_BINARY_BUCKET_SIZE);
 
-            
-        }
-        counter += 1;
-        return FALSE;
-    }
+	            
+			}
+			counter += 1;
+			return FALSE;
+		}
+	}
+	return TRUE;
 }
 bool LLVOAvatar::updateClientTags()
 {

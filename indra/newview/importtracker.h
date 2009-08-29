@@ -9,7 +9,7 @@
 
 #include "llviewerobject.h"
 
-using namespace std;
+
 
 class ImportTracker
 {
@@ -32,6 +32,7 @@ class ImportTracker
 		void import(LLSD &ls_data);
 		void expectRez();
 		void clear();
+		void finish();
 		void cleanUp();
 		void get_update(S32 newid, BOOL justCreated = false, BOOL createSelected = false);
 		
@@ -69,6 +70,8 @@ class ImportTracker
 		std::string filepath;
 		std::string asset_dir;
 		void	(*mDownCallback)(LLViewerObject*);
+
+		U32 lastrootid;
 };
 
 extern ImportTracker gImportTracker;
