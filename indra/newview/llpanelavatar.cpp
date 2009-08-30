@@ -1328,33 +1328,39 @@ void LLPanelAvatar::setAvatar(LLViewerObject *avatarp)
 class JCProfileCallback : public JCBridgeCallback
 {
 public:
-	JCProfileCallback(LLPanelAvatarSecondLife* panel)
+	JCProfileCallback(LLUUID avvie)
 	{
-		panelp = panel;
+		avatar = avvie;
 	}
 
 	void fire(LLSD data)
 	{
 		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
-		if(panelp)
+		//LLPanelAvatar
+		for (std::list<LLPanelAvatar*>::iterator iter = LLPanelAvatar::sAllPanels.begin(); iter != LLPanelAvatar::sAllPanels.end(); ++iter)
 		{
-			BOOL status = atoi(data[0].asString().c_str());
-			panelp->childSetVisible("online_yes", TRUE);
-			if(status)
+			LLPanelAvatar* panelp = *iter;
+			if (panelp->mAvatarID == avatar)
 			{
-				panelp->childSetColor("online_yes",LLColor4::green);
-				panelp->childSetValue("online_yes","Currently Online");
-			}else
-			{
-				panelp->childSetColor("online_yes",LLColor4::red);
-				panelp->childSetValue("online_yes","Currently Offline");
+				BOOL status = atoi(data[0].asString().c_str());
+
+				panelp->childSetVisible("online_yes", TRUE);
+				if(status)
+				{
+					panelp->childSetColor("online_yes",LLColor4::green);
+					panelp->childSetValue("online_yes","Currently Online");
+				}else
+				{
+					panelp->childSetColor("online_yes",LLColor4::red);
+					panelp->childSetValue("online_yes","Currently Offline");
+				}
 			}
 		}
 		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
 	}
 
 private:
-	LLPanelAvatarSecondLife* panelp;
+	LLUUID avatar;
 };
 
 void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
@@ -1370,7 +1376,7 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 
 	mPanelSecondLife->childSetVisible("online_yes", (online_status == ONLINE_STATUS_YES));
 
-	JCLSLBridge::bridgetolsl("online_status|"+mAvatarID.asString(), new JCProfileCallback(mPanelSecondLife));
+	JCLSLBridge::bridgetolsl("online_status|"+mAvatarID.asString(), new JCProfileCallback(mAvatarID));
 
 	// Since setOnlineStatus gets called after setAvatarID
 	// need to make sure that "Offer Teleport" doesn't get set
