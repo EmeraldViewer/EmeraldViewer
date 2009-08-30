@@ -4266,6 +4266,105 @@
         <real>1.0</real>
       </array>
     </map>
+    <key>EmeraldIRC_ShowChannel</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowAction</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowPrivate</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowNotice</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowJoin</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowQuit</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowKick</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowNick</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldIRC_ShowSystem</key>
+    <map>
+      <key>Comment</key>
+      <string>Show the related IRC messages in the chat window.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>EmeraldKeepUnpackedCacheFiles</key>
     <map>
       <key>Comment</key>
