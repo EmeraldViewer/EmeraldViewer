@@ -371,7 +371,22 @@ Recommended Settings are:
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Show money changes in local chat" left_delta="0" mouse_opaque="true"
            name="EmMoneyChat-toggle" radio_style="false" width="270" control_name="EmeraldShowMoneyChangeInChat" />
-
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Add seconds to the timestamps in logs" left_delta="0" mouse_opaque="true"
+           name="EmeraldAddSecondsInLog-toggle" radio_style="false" width="270" control_name="EmeraldAddSecondsInLog" />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Add seconds to the timestamps in chat history" left_delta="0" mouse_opaque="true"
+           name="EmeraldAddSecondsInHistory-toggle" radio_style="false" width="270" control_name="EmeraldAddSecondsInHistory" />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="When 'Receive group notices' is disabled, disable group chat aswell" left_delta="0" mouse_opaque="true"
+           name="EmeraldMuteGroupWhenNoticesDisabled-toggle" radio_style="false" width="270" control_name="EmeraldMuteGroupWhenNoticesDisabled" />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Disable ALL group chats" left_delta="0" mouse_opaque="true"
+           name="EmeraldMuteAllGroups-toggle" radio_style="false" width="270" control_name="EmeraldMuteAllGroups" />
 
 </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"

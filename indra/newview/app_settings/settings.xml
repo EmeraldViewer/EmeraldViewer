@@ -3347,6 +3347,28 @@
         <real>1.0</real>
       </array>
     </map>
+  <key>EmeraldAddSecondsInLog</key>
+    <map>
+      <key>Comment</key>
+      <string>Add the seconds to the timestamp in the logs</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+  <key>EmeraldAddSecondsInHistory</key>
+    <map>
+      <key>Comment</key>
+      <string>Add the seconds to the timestamp in all the chat windows</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
 	<key>EmeraldAgentUpdatesPerSecond</key>
     <map>
       <key>Comment</key>
@@ -4430,6 +4452,28 @@
       <string>F32</string>
       <key>Value</key>
       <real>40</real>
+    </map>
+    <key>EmeraldMuteGroupWhenNoticesDisabled</key>
+    <map>
+      <key>Comment</key>
+      <string>When "Receive group notices" is disabled, mute also the group chat. (Muting means that it won't open new windows.)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+   </map>
+    <key>EmeraldMuteAllGroups</key>
+    <map>
+      <key>Comment</key>
+      <string>Mute all groups at a time. (Muting means that it won't open new windows.)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
     </map>
     <key>EmeraldDisplayTotalScriptJumps</key>
     <map>
