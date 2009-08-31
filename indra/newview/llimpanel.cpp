@@ -3184,18 +3184,22 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
                         std::string send = utf8_text.substr(pos, pos + next_split);
                         pos += next_split;
 						
-						if ( mDialog == IM_PRIVATE_IRC || mDialog == IM_NOTHING_SPECIAL)
+						
+						
+						if(
+							( mDialog == IM_PRIVATE_IRC || mDialog == IM_NOTHING_SPECIAL) &&
+							(glggIrcGroupHandler.trySendPrivateImToID(utf8_text,mOtherParticipantUUID)
+							)
+						)
 						{
-							if(glggIrcGroupHandler.trySendPrivateImToID(utf8_text,mOtherParticipantUUID))
-							{
-								childSetVisible("profile_btn", FALSE);
-								childSetVisible("profile_callee_btn", FALSE);
-								childSetVisible("start_call_btn",FALSE);
-								childSetVisible("password",FALSE);
-								mDialog = IM_PRIVATE_IRC;
+							childSetVisible("profile_btn", FALSE);
+							childSetVisible("profile_callee_btn", FALSE);
+							childSetVisible("start_call_btn",FALSE);
+							childSetVisible("password",FALSE);
+							mDialog = IM_PRIVATE_IRC;
 								
-							}
-						}else
+						}
+						else
                         // *FIXME: Queue messages if IM is not IM_NOTHING_SPECIAL
                         deliver_message(encrypt(send),
                                         mSessionUUID,
