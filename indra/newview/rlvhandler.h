@@ -4,7 +4,7 @@
 #include "llagentconstants.h"
 #include "llappviewer.h"
 #include "llformat.h"
-#include "llversionviewer.h"
+//#include "llversionviewer.h"
 #include "llviewerjointattachment.h"
 #include "llviewerobject.h"
 #include "llwearable.h"
@@ -320,9 +320,9 @@ inline std::string RlvHandler::getSharedPath(const LLUUID& idFolder) const
 // Checked: 2009-06-07 (RLVa-0.2.1c)
 inline std::string RlvHandler::getVersionString()  const
 {
-	return llformat("RestrainedLife viewer v%d.%d.%d (%s %d.%d.%d.%d - RLVa %d.%d.%d)",
+	return llformat("RestrainedLife viewer v%d.%d.%d (%s - RLVa %d.%d.%d)",
 		RLV_VERSION_MAJOR, RLV_VERSION_MINOR, RLV_VERSION_PATCH,
-		LLAppViewer::instance()->getSecondLifeTitle().c_str(), LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD,
+		LLAppViewer::instance()->getSecondLifeTitle().c_str(), 
 		RLVa_VERSION_MAJOR, RLVa_VERSION_MINOR, RLVa_VERSION_PATCH);
 }
 

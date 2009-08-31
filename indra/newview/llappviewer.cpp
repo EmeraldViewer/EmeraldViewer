@@ -643,7 +643,8 @@ bool LLAppViewer::init()
 
 	// Build a string representing the current version number.
     gCurrentVersion = llformat("%s %d.%d.%d.%d", 
-        LL_CHANNEL, 
+
+		LL_CHANNEL, 
         LL_VERSION_MAJOR, 
         LL_VERSION_MINOR, 
         LL_VERSION_PATCH, 
@@ -1766,7 +1767,7 @@ bool LLAppViewer::initConfiguration()
 	gSavedSettings.setString("VersionChannelName", LL_CHANNEL);
 
 #ifndef	LL_RELEASE_FOR_DOWNLOAD
-        gSavedSettings.setBOOL("ShowConsoleWindow", TRUE);
+        //gSavedSettings.setBOOL("ShowConsoleWindow", TRUE);
         gSavedSettings.setBOOL("AllowMultipleViewers", TRUE);
 #endif
 
