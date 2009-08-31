@@ -1457,7 +1457,23 @@ void LLFloaterAvatarList::onDoubleClick(void *userdata)
  	LLScrollListItem *item =   self->mAvatarList->getFirstSelected();
 	LLUUID agent_id = item->getUUID();
 
-	gAgent.lookAtObject(agent_id, CAMERA_POSITION_OBJECT);
+	//gAgent.lookAtObject(agent_id, CAMERA_POSITION_OBJECT);
+	lookAtAvatar(agent_id);
+}
+
+void LLFloaterAvatarList::lookAtAvatar(LLUUID &uuid)
+{ // twisted laws
+    LLViewerObject* voavatar = gObjectList.findObject(uuid);
+    if(voavatar && voavatar->isAvatar())
+    {
+        gAgent.setFocusOnAvatar(FALSE, FALSE);
+        gAgent.changeCameraToThirdPerson();
+        gAgent.setFocusGlobal(voavatar->getPositionGlobal(),uuid);
+        gAgent.setCameraPosAndFocusGlobal(voavatar->getPositionGlobal() 
+                + LLVector3d(2.5,0.5,0.75) * voavatar->getRotation(), 
+                                                voavatar->getPositionGlobal(), 
+                                                uuid );
+    }
 }
 
 void LLFloaterAvatarList::removeFocusFromAll()

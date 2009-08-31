@@ -630,6 +630,7 @@ private:
 	static void onClickGetKey(void *userdata);
 
 	static void onDoubleClick(void *userdata);
+	static void lookAtAvatar(LLUUID &uuid);
 
 	static void onClickFreeze(void *userdata);
 	static void onClickEject(void *userdata);
