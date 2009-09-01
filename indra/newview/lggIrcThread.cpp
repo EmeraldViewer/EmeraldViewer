@@ -218,20 +218,29 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 	
 
 	gIMMgr->notifyNewIM();
-	if(!strcmp(hostd->target,getChannel().c_str()))
-	{
-		//chan msg
-		if(strstr(&params[1],"ACTION"))
-		//if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
-		{
-			actionDisp(std::string(hostd->nick),std::string(&params[1]));
-			return 0;
-		}
-		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
-	}else
+	if(hostd && params)
 	{
 
-		displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
+		if(hostd->target && hostd->nick)
+		{
+
+		
+			if(!strcmp(hostd->target,getChannel().c_str()))
+			{
+				//chan msg
+				if(strstr(&params[1],"ACTION"))
+				//if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
+				{
+					actionDisp(std::string(hostd->nick),std::string(&params[1]));
+					return 0;
+				}
+				msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
+			}else
+			{
+
+				displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
+			}
+		}
 	}
 	
 	return 0;
@@ -240,32 +249,28 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 {
 
 	gIMMgr->notifyNewIM();
-	/*F actions!
-	if(std::string(&params[1]).find_first_of("ACTION")==std::string::npos)
+	if(hostd && params)
 	{
-		actionDisp(std::string(hostd->nick),std::string(&params[1]));
-		return 0;
-	}*/
-	if(!strcmp(hostd->target,getChannel().c_str()))
-	{
-		if(strstr(&params[1],"ACTION"))
-			//if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
+
+		if(hostd->target && hostd->nick)
 		{
-			actionDisp(std::string(hostd->nick),std::string(&params[1]));
-			return 0;
+			if(!strcmp(hostd->target,getChannel().c_str()))
+			{
+				if(strstr(&params[1],"ACTION"))
+					//if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
+				{
+					actionDisp(std::string(hostd->nick),std::string(&params[1]));
+					return 0;
+				}
+				//chan msg
+				msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorNotice"));
+			}else
+				displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
 		}
-		//chan msg
-		msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorNotice"));
-	}else
-		displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
+	}
 	return 0;
 }
 
-/*
-[20:10]  [IRC] tG:ACTION kawaifaces
-
-"EmeraldIRC_ColorAction"
-*/
 int lggIrcThread::JoinMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
 	//msg( llformat("JOIN Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
