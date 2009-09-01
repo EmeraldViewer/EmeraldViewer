@@ -6005,6 +6005,28 @@ Grant this request?
 
   <notification
    icon="notify.tga"
+   name="ScriptTextBoxDialog"
+   type="notify">
+    [FIRST] [LAST]&apos;s &apos;[TITLE]&apos;
+    [MESSAGE]
+    <form name="form">
+      <input name="message" type="text">
+        [DEFAULT]
+      </input>
+      <button
+       index="0"
+       name="OK"
+       text="OK"/>
+      <button
+       index="-1"
+       name="Ignore"
+       text="Ignore"/>
+    </form>
+  </notification>
+  
+
+  <notification
+   icon="notify.tga"
    name="FirstBalanceIncrease"
    type="notify">
 You just received L$[AMOUNT].
