@@ -104,7 +104,11 @@ bool LLNotifyBox::onNotification(const LLSD& notify)
 		}
 		else
 		{
-			bool is_script_dialog = (notification->getName() == "ScriptDialog" || notification->getName() == "ScriptDialogGroup");
+			bool is_script_dialog = (
+				notification->getName() == "ScriptDialog" || 
+				notification->getName() == "ScriptTextBoxDialog" || 
+				notification->getName() == "ScriptDialogGroup" || 
+				notification->getName() == "ScriptTextBoxDialogGroup");
 			LLNotifyBox* notify_box = new LLNotifyBox(
 				notification,
 				is_script_dialog); //layout_script_dialog);
@@ -145,7 +149,6 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 	// clicking on a button does not steal current focus
 	std::string edit_text_name;
 	std::string edit_text_contents;
-	bool is_textbox = false;
 
 	// class init
 	if (!sFont)
@@ -177,9 +180,11 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 	LLNotificationFormPtr form(notification->getForm());
 
 	mNumOptions = form->getNumElements();
+
+	bool is_textbox = form->getElement("message").isDefined();
 		  
 	LLRect rect = mIsTip ? getNotifyTipRect(mMessage)
-		: getNotifyRect(form->getElement("message").isDefined() ? 10 : mNumOptions, layout_script_dialog, mIsCaution);
+		: getNotifyRect(is_textbox ? 10 : mNumOptions, layout_script_dialog, mIsCaution);
 	setRect(rect);
 	setFollows(mIsTip ? (FOLLOWS_BOTTOM|FOLLOWS_RIGHT) : (FOLLOWS_TOP|FOLLOWS_RIGHT));
 	setBackgroundVisible(FALSE);
@@ -241,7 +246,7 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 	else
 	{
 
-		const S32 BTN_TOP = BOTTOM_PAD + (((mNumOptions-1+2)/3)) * (BTN_HEIGHT+VPAD);
+		const S32 BTN_TOP = BOTTOM_PAD + ((((is_textbox ? 12 : mNumOptions)-1+2)/3)) * (BTN_HEIGHT+VPAD);
 
 		// Tokenization on \n is handled by LLTextBox
 
@@ -327,7 +332,7 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 			x,
 			BOTTOM_PAD + button_rows * (BTN_HEIGHT + VPAD),
 			3 * 80 + 4 * HPAD,
-			(button_rows + 2) * (BTN_HEIGHT + VPAD) + BTN_HEIGHT);
+			(button_rows) * (BTN_HEIGHT + VPAD) + BTN_HEIGHT);
 
 			mUserInputBox =
 			new LLTextEditor(edit_text_name,

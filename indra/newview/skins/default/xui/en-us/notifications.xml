@@ -6014,13 +6014,13 @@ Grant this request?
         [DEFAULT]
       </input>
       <button
-       index="0"
-       name="OK"
-       text="OK"/>
-      <button
        index="-1"
        name="Ignore"
        text="Ignore"/>
+      <button
+       index="0"
+       name="Send"
+       text="Send"/>
     </form>
   </notification>
   
