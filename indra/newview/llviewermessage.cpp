@@ -2839,9 +2839,9 @@ void process_offer_callingcard(LLMessageSystem* msg, void**)
 		{
 			if(!c_spam.getStarted())
 			{
-				c_spam.reset();
+				c_spam.start();
 			}
-			if(blacklisted_agents.find(source_id) == 0)
+			if(blacklisted_agents.find(source_id) != -1)
 			{
 				return;
 			}

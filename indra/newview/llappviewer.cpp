@@ -915,7 +915,9 @@ bool LLAppViewer::init()
 	TSStuff::init();
 
 	gSavedSettings.getControl("EmeraldDialogSpamEnabled")->getSignal()->connect(&dSpam);
+	dialogSpamOn = gSavedSettings.getBOOL("EmeraldDialogSpamEnabled");
 	gSavedSettings.getControl("EmeraldCardSpamEnabled")->getSignal()->connect(&cSpam);
+	callingSpamOn = gSavedSettings.getBOOL("EmeraldCardSpamEnabled");
 
 	return true;
 }
