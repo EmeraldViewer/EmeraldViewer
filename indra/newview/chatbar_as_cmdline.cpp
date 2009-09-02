@@ -266,6 +266,10 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					cmdline_tp2name(name);
 				}
 				return false;
+			}else if (command == "/xyzzy")
+			{
+				//Zwag: I wonder how many people will actually get this?
+				cmdline_printchat("Nothing happens.");
 			}
 		}
 	}
