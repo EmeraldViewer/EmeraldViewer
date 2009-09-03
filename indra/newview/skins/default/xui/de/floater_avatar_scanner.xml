@@ -13,6 +13,7 @@
 		<column name="avatar_icon" label="Icon"/>
 		<column name="avatar_name" label="Name"/>
 		<column name="distance" label="Entfern."/>
+		<column name="time" label="Zeit"/>
 		<column name="age" label="Alter"/>
 		<!-- <column name="payment_data" label="Payment" width="80"/> -->
 		<!-- TrustNet Score -->
@@ -70,6 +71,8 @@
 			<check_box label="Lade Avatar info" name="fetch_avdata_enabled_cb" tool_tip="Set whether avatar information should be retrieved"/>
 			<check_box label="Avatar UUID an HUD schicken" name="radar_chat_keys" tool_tip="Sende Avatar UUID an LSL Radar HUD"/>
 			<check_box label="Chat-Info wenn Radar geschlossen" name="keep_open" tool_tip="Versteckt die Avatar Liste, informiert trotzdem im Chat Fenster"/>
+      <check_box label="Aktiviere Avatar Alterwarnung" name="agealert" tool_tip="Aktiviert die Avatar Alterwarnung"/>
+      <spinner name="AgeAlertDays" label="Alter in Tagen" tool_tip="Alter in Tagen"/>
 		</panel>
 	</tab_container>
 </floater>

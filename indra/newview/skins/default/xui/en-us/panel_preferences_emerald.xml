@@ -426,7 +426,7 @@ Recommended Settings are:
       <check_box bottom_delta="-20" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16"
          label="Show the Search Bar" left_delta="0" mouse_opaque="true"
-         name="rlv-toggle" radio_style="false" width="270" control_name="ShowSearchBar" />
+         name="Search_bar-toggle" radio_style="false" width="270" control_name="ShowSearchBar" />
       <check_box bottom_delta="-40" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
          label="Enable Restrained Life [RLV] features" left_delta="0" mouse_opaque="true"

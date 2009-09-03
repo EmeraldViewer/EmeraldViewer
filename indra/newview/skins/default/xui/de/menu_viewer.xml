@@ -243,6 +243,7 @@
     <menu_item_check label="Animations Liste" name="Animation List"/>
 		<menu_item_check label="Objekt Suche" name="Area Search"/>
     <menu_item_check label="Asset vergleichen" name="Asset Comparer"/>
+    <menu_item_check label="Kleidungs Layer" name="Clothing Layers"/>
 		<menu_item_check label="Avatar Liste" name="Avatar List"/>
 		<menu_item_check label="Teleport Verlauf" name="Teleport History"/>
 		<menu_item_check label="Lua Konsole" name="Lua Console"/>

@@ -2817,6 +2817,17 @@ Anfrage gestatten?
 			<button name="Ignore" text="Ignorieren"/>
 		</form>
 	</notification>
+  <notification name="ScriptTextBoxDialog">
+    [FIRST] [LAST]&apos;s &apos;[TITLE]&apos;
+    [MESSAGE]
+    <form name="form">
+      <input name="message" type="text">
+        [DEFAULT]
+      </input>
+      <button name="Ignore" text="Ignorieren"/>
+      <button name="Send" text="Abschicken"/>
+    </form>
+  </notification>
 	<notification name="FirstBalanceIncrease">
 		Sie haben gerade [AMOUNT] L$ erhalten.
 Objekte und andere Benutzer können Ihnen L$ geben.
@@ -3098,6 +3109,13 @@ Sollte das Problem fortbestehen, finden Sie weitere Hilfestellung unter: http://
   the related entries are at the bottom of the file.
 
   IM
+
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_Chat">
+  Help text will go here, please update notifications.xml
+  the related entries are at the bottom of the file.
+
+  Chat
 
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_Misc">

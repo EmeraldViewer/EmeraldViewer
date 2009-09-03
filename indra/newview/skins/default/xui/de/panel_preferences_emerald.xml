@@ -28,7 +28,7 @@
       <check_box label="Logout Fortschrittsanzeige abschalten" name="logout_screen_toggle" />
       <spinner label="Login Ladeverzögerung" name="Login Precaching Delay" tool_tip="Wartezeit beim Login"/>
     </panel>
-    <panel label="Voice" left="1" name="Voice">
+    <panel label="Voice" name="Voice">
     <button label="?" name="EmeraldHelp_Voice" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <button name="revert_production_voice_btn" label="Zurücksetzen" tool_tip="Auf Maingrid Standard zurücksetzen"/>
       <text name="disp_0">
@@ -84,6 +84,7 @@ Empfohlene Eisntellungen:
       <check_box label="LLMapDestination verbieten" name="EmBlockMapTps-toggle"/>
       <check_box label="Viewer Effekte Übertragen" name="EmBroadcastEffects-toggle"/>
       <check_box label="Kamera und Auswahl Ziel Übertragen" name="EmBroadcastPointers-toggle"/>
+      <check_box label="Aktiviere aktive Cry0Life Erkennung" name="EmCryo-toggle"/>
     </panel>
     <panel label="IM" name="Misc">
     <button label="?" name="EmeraldHelp_IM" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -111,7 +112,7 @@ Empfohlene Eisntellungen:
       <check_box label="Automatische Antwort an Nicht-Freunde" name="EmeraldInstantMessageResponseFriends"/>
       <check_box label="Automatische Antwort an Stumgeschaltete" name="EmeraldInstantMessageResponseMuted" />
       <check_box label="Automatische Antwort an jeden" name="EmeraldInstantMessageResponseAnyone"/>
-      <check_box label="Automatische Antwort sobald jemand anfängt eine IM zu schreiben" name="EmeraldInstantMessageShowOnTyping"/>
+      <check_box label="sobald jemand anfängt zu schreiben" name="EmeraldInstantMessageShowOnTyping"/>
       <check_box label="IM die eine automatische Antwort erhalten hat nicht anzeigen" name="EmeraldInstantMessageShowResponded"/>      
       <check_box label="Automatische Antwort bei jeder Nachricht und nicht nur bei der ersten" name="EmeraldInstantMessageResponseRepeat"/>
       <text name="text_box1">
@@ -127,31 +128,40 @@ Empfohlene Eisntellungen:
       <text name="im_give_disp_rect_txt">
         Aktuelles Objekt: ITEM
       </text>
-      <check_box label="L$ Veränderung im Chat anzeigen" name="EmMoneyChat-toggle"/>
       <check_box label="Vertikale IM Reiter (benötigt Neustart)" name="vertical-imtabs-toggle"/>
     </panel>
-    <panel label="Verschiedenes" name="AvatarEffects">
-    <button label="?" name="EmeraldHelp_Misc" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
-      <panel name="avatar_options">
-      </panel>
-      <check_box label="Fliegen immer erlauben" name="alwaysflytoggle"/>
-      <check_box label="Aktiviere STRG-Alt-P für phantom" name="allowphantomtoggle"/>
-      <check_box label="Aktiviere STRG-Alt-S um überall auf den Boden zu sitzen" name="allowsittoggle"/>
+    <panel label="Chat" name="Chat">
+    <button label="?" name="EmeraldHelp_Chat" tool_tip="Click here for help regarding the settings in this page."/>
       <panel name="scanner_options">
       </panel>
       <check_box label="Radar Infos im Chat anzeigen" name="radar_chat_toggle"/>
       <check_box label="Info wenn Avatar Region betritt/verlässt" name="radar_chat_sim_toggle"/>
       <check_box label="Info wenn Avatar Sichtweite betritt/verlässt" name="radar_chat_draw_toggle"/>
       <check_box label="Info wenn Avatar Chatreichweite betritt/verlässt" name="radar_chat_chatrange_toggle"/>
-      <spinner label="Agent updates pro Sekunde:" name="EmAgentUpdatesValue" tool_tip="Gibt an wieviel Updates pro Sekunde gesendet werden sollen. Standard 10/s" />
-      <check_box label="Aktviere Inventarobjekt anziehen per Doppelklick" name="wear-inv-toggle"/>
-      <check_box label="Blockiere automatisches sitzen bei Linksklick" name="sit-click-toggle"/>
-      <check_box label="Zeige Avatarname bei Blickziel Markierung" name="EmShowLookAtNames-toggle"/>
+      <check_box label="Info bei Sim Script Anzahl Änderung" name="totalscriptjumps"/>
+      <spinner label="" name="ScriptJumpCount" tool_tip="Wert für Sim Script Anzahl Änderung Info [Standard: 100]"/>
       <check_box label="Tippsound abspielen wenn jemand schreibt" name="typing-sound-toggle"/>
-      <check_box label="Escape setzt Kamera zurück auf Standard im Kameramodus (STRG-1)" name="EmResetCamOnEscape-toggle" tool_tip="Deaktivieren verhindert das sich die Kamera zurücksetzt wenn Escape gedrückt wurde ."/>
       <check_box label="OOC automatisch schliessen ." name="AutoCloseOOC-toggle" tool_tip="Schliesst automatisch OOC Text mit )) ab"/>
       <check_box label="Erlaube MU* Befehl" name="AllowMUpose-toggle" tool_tip="Erlaubt MU* Befehl in Chat and IM (':' funktioniert wie '/me ')"/>
-      <check_box label="Aktiviere Restrained Life [RLV] Funktionen(benötigt Neustart)" name="rlv-toggle"/>
+      <check_box label="L$ Veränderung im Chat anzeigen" name="EmMoneyChat-toggle"/>
+      <check_box label="Log Zeitstempel mit Sekunden" name="EmeraldAddSecondsInLog-toggle"/>
+      <check_box label="Chat Verlauf Zeitstempel mit Sekunden" name="EmeraldAddSecondsInHistory-toggle"/>
+      <check_box label="Wenn 'Gruppenmitteilungen erhalten' deaktiviert ist, Gruppen Chat auch deaktivieren" name="EmeraldMuteGroupWhenNoticesDisabled-toggle"/>
+      <check_box label="Deaktiviere alle Gruppen Chats" name="EmeraldMuteAllGroups-toggle"/>
+      </panel>
+      <panel label="Verschiedenes" name="AvatarEffects">
+        <button label="?" name="EmeraldHelp_Misc" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+        <button label="Schatten AN" name="Emerald_ShadowsON" tool_tip="Aktiviert das Anzeigen von dynamischen Schatten. Das Ergebnis kann unterschiedlich ausfallen und die Leistung negativ beeinflussen."/>
+        <button label="Schatten AUS" name="Emerald_ShadowsOFF" tool_tip="Deaktiviert die Anzeige von dynamische Schatten."/>
+        <check_box label="Fliegen immer erlauben" name="alwaysflytoggle"/>
+        <check_box label="Aktiviere STRG-Alt-P für phantom" name="allowphantomtoggle"/>
+        <check_box label="Aktiviere STRG-Alt-S um überall auf den Boden zu sitzen" name="allowsittoggle"/>
+        <check_box label="Blockiere automatisches sitzen bei Linksklick" name="sit-click-toggle"/>
+        <check_box label="Zeige Avatarname bei Blickziel Markierung" name="EmShowLookAtNames-toggle"/>
+        <check_box label="Escape setzt Kamera zurück auf Standard im Kameramodus (STRG-1)" name="EmResetCamOnEscape-toggle" tool_tip="Deaktivieren verhindert das sich die Kamera zurücksetzt wenn Escape gedrückt wurde ."/>
+        <check_box label="Aktiviere Minimap Rotation" name="MinimapRotate"/>
+        <check_box label="Suchleiste anzeigen" name="Search_bar-toggle"/>
+        <check_box label="Aktiviere Restrained Life [RLV] Funktionen(benötigt Neustart)" name="rlv-toggle"/>      
     </panel>
     <panel label="Befehlszeile" name="CmdLine">
     <button label="?" name="EmeraldHelp_CmdLine" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -218,14 +228,12 @@ Empfohlene Eisntellungen:
     </panel>
     <panel label="Avatar" name="wat!">
     <button label="?" name="EmeraldHelp_Avatar" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
-      <spinner label="X" name="X Modifier"/>
-      <spinner label="Y" name="Y Modifier"/>
-      <spinner label="Z" name="Z Modifier"/>
-      <text name="loltxt14">
-        Manipuliert die Bounding Box bis zu einem gewissen Grad.
-Kann benutzt werden um Orbiter zu verwirren oder die
-Höhe des Avatars zu manipulieren ohne den Shape zu ändern.
-      </text>
+      <spinner label="X" name="X Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
+      <spinner label="Y" name="Y Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
+      <spinner label="Z" name="Z Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
+      <spinner label="Agent updates pro Sekunde:" name="EmAgentUpdatesValue" tool_tip="Gibt an wieviel Updates pro Sekunde gesendet werden sollen. Standard 10/s" />
+      <check_box label="Avatar unsichtbar rendern" name="RenderAvInvisible"/>
+      <check_box label="Emerald Kleidungs Modus" name="WATTTT"/>
 <text name="BeamPrefs">
 		Auswahlpartikeleffekt
 	</text>
@@ -343,6 +351,15 @@ Höhe des Avatars zu manipulieren ohne den Shape zu ändern.
       <color_swatch label="Kick" name="colorswatch" tool_tip="Click to open Color Picker"/>
       <color_swatch label="Nick" name="colorswatch" tool_tip="Click to open Color Picker"/>
       <color_swatch label="System" name="colorswatch" tool_tip="Click to open Color Picker"/>
+      <check_box label="" tool_tip="Show this messages in the window?"/>
+      <check_box label="" tool_tip="Show this messages in the window?"/>
+      <check_box label="" tool_tip="Show this messages in the window?"/>
+      <check_box label="" tool_tip="Show this messages in the window?"/>
+      <check_box label="" tool_tip="Show this messages in the window?"/>
+      <check_box label="" tool_tip="Show this messages in the window?"/>
+      <check_box label="" tool_tip="Show this messages in the window?"/>
+      <check_box label="" tool_tip="Show this messages in the window?"/>
+      <check_box label="" tool_tip="Show this messages in the window?"/>
     </panel>
     <panel label="Utility Stream" name="Utility Stream">
     <button label="?" name="EmeraldHelp_UtilityStream" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -391,6 +408,7 @@ Simulator damit man per Script darauf zugreifen kann.
       <icon name="icon_script"/>
       <check_box label="Scripte spiegeln" name="check_script"/>
       <check_box label="Inventar Fenster automatisch öffnen" name="popup_inventory" tool_tip="Inventar automatisch öffnen bei neuen Objekten"/>
+      <check_box label="Aktviere Inventarobjekt anziehen per Doppelklick" name="wear-inv-toggle"/>
     </panel>
 
 

@@ -11,6 +11,9 @@
       <line_editor label="Port" name="EmeraldIRC_port"/>
       <text name="EmIRC_channel">Channel:</text>
       <line_editor name="EmeraldIRC_channel"/>
+      <text name="EmIRC_ChanPassword" width="100">Channel Password:</text>
+      <line_editor name="EmeraldIRC_ChanPassword"/>
+      <check_box label="Automatisch Verbinden beim Login" name="EmeraldIRC_AutoConnect"/>
 	<button label="Speichern" name="EmeraldIRC_save"/>
 	<button label="Abbrechen" name="EmeraldIRC_cancel"/>
 </floater> 
