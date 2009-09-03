@@ -863,23 +863,23 @@ Recommended Settings are:
            height="50" label="System" left_delta="55" mouse_opaque="true"
            name="colorswatch" tool_tip="Click to open Color Picker" width="50" control_name="EmeraldIRC_ColorSystem" />
       <check_box bottom_delta="12" left="35" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowChannel" tool_tip="Show this messages in the window?" />
+           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowChannel" tool_tip="Show this messages in the window?" name="EmIRC_ShowChannel" />
       <check_box bottom_delta="0" left_delta="55" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowAction" tool_tip="Show this messages in the window?" />
+           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowAction" tool_tip="Show this messages in the window?" name="EmIRC_ShowAction" />
       <check_box bottom_delta="0" left_delta="55" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowPrivate" tool_tip="Show this messages in the window?" />
+           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowPrivate" tool_tip="Show this messages in the window?" name="EmIRC_ShowPrivate" />
       <check_box bottom_delta="0" left_delta="55" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowNotice" tool_tip="Show this messages in the window?" />
+           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowNotice" tool_tip="Show this messages in the window?" name="EmIRC_ShowNotice" />
       <check_box bottom_delta="0" left_delta="55" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowJoin" tool_tip="Show this messages in the window?" />
+           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowJoin" tool_tip="Show this messages in the window?" name="EmIRC_ShowJoin" />
       <check_box bottom_delta="0" left_delta="55" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowQuit" tool_tip="Show this messages in the window?" />
+           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowQuit" tool_tip="Show this messages in the window?" name="EmIRC_ShowQuit" />
       <check_box bottom_delta="0" left_delta="55" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowKick" tool_tip="Show this messages in the window?" />
+           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowKick" tool_tip="Show this messages in the window?" name="EmIRC_ShowKick" />
       <check_box bottom_delta="0" left_delta="55" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowNick" tool_tip="Show this messages in the window?" />
+           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowNick" tool_tip="Show this messages in the window?" name="EmIRC_ShowNick" />
       <check_box bottom_delta="0" left_delta="55" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowSystem" tool_tip="Show this messages in the window?" />
+           label="" mouse_opaque="true" control_name="EmeraldIRC_ShowSystem" tool_tip="Show this messages in the window?" name="EmIRC_ShowSystem" />
 
     </panel>
 		<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
