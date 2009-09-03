@@ -351,15 +351,15 @@ Empfohlene Eisntellungen:
       <color_swatch label="Kick" name="colorswatch" tool_tip="Click to open Color Picker"/>
       <color_swatch label="Nick" name="colorswatch" tool_tip="Click to open Color Picker"/>
       <color_swatch label="System" name="colorswatch" tool_tip="Click to open Color Picker"/>
-      <check_box label="" tool_tip="Show this messages in the window?"/>
-      <check_box label="" tool_tip="Show this messages in the window?"/>
-      <check_box label="" tool_tip="Show this messages in the window?"/>
-      <check_box label="" tool_tip="Show this messages in the window?"/>
-      <check_box label="" tool_tip="Show this messages in the window?"/>
-      <check_box label="" tool_tip="Show this messages in the window?"/>
-      <check_box label="" tool_tip="Show this messages in the window?"/>
-      <check_box label="" tool_tip="Show this messages in the window?"/>
-      <check_box label="" tool_tip="Show this messages in the window?"/>
+      <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowChannel"/>
+      <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowAction"/>
+      <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowPrivate"/>
+      <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowNotice"/>
+      <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowJoin"/>
+      <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowQuit"/>
+      <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowKick"/>
+      <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowNick"/>
+      <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowSystem"/>
     </panel>
     <panel label="Utility Stream" name="Utility Stream">
     <button label="?" name="EmeraldHelp_UtilityStream" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
