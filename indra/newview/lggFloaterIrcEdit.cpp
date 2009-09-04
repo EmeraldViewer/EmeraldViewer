@@ -75,6 +75,8 @@ public:
 	
 private:
 	static void onBackgroundChange(LLUICtrl* ctrl, void* userdata);
+	static void onClickHelp(void* data);
+	void initHelpBtn(const std::string& name, const std::string& xml_alert);
 	
 };
 //void lggFloaderIrcEdit::showInstance(lggIrcData dat)
@@ -102,12 +104,23 @@ lggFloaterIrcEdit::lggFloaterIrcEdit(const LLSD& seed)
 	}
 
 }
-
+void lggFloaterIrcEdit::initHelpBtn(const std::string& name, const std::string& xml_alert)
+{
+	childSetAction(name, onClickHelp, new std::string(xml_alert));
+}
+void lggFloaterIrcEdit::onClickHelp(void* data)
+{
+	std::string* xml_alert = (std::string*)data;
+	LLNotifications::instance().add(*xml_alert);
+}
 BOOL lggFloaterIrcEdit::postBuild(void)
 {
 	//setCanMinimize(false);
 	childSetAction("EmeraldIRC_save",onClickSave,this);
 	childSetAction("EmeraldIRC_cancel",onClickCancel,this);
+
+	initHelpBtn("EmeraldIRC_Help",	"EmeraldHelp_IRCSettings");
+
 	
 	return true;
 }

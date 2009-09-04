@@ -77,7 +77,15 @@ void lggPanelIRC::reset()
 	init_irc_list(getChild<LLScrollListCtrl>("EmeraldIRC_list"));
 	enableButtons();
 }
-
+void lggPanelIRC::initHelpBtn(const std::string& name, const std::string& xml_alert)
+{
+	childSetAction(name, onClickHelp, new std::string(xml_alert));
+}
+void lggPanelIRC::onClickHelp(void* data)
+{
+	std::string* xml_alert = (std::string*)data;
+	LLNotifications::instance().add(*xml_alert);
+}
 BOOL lggPanelIRC::postBuild()
 {
 	childSetCommitCallback("EmeraldIRC_list", onIrcList, this);
@@ -97,6 +105,8 @@ BOOL lggPanelIRC::postBuild()
 
 	childSetDoubleClickCallback("EmeraldIRC_list", onBtnIM);
 	childSetUserData("EmeraldIRC_list", this);
+
+	initHelpBtn("EmeraldIRC_Help",	"EmeraldHelp_IRCSettings");
 
 	reset();
 

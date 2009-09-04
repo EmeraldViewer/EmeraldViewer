@@ -20,4 +20,6 @@
 	     label="Remove" name="EmeraldIRC_remove" width="80" />
   <button bottom_delta="-25" follows="top|right" font="SansSerif" height="22"
 	     label="Refresh" name="EmeraldIRC_refresh" width="80" />
+  <button bottom_delta="-25" follows="top|right" font="SansSerif" height="22"
+	     label="Help" name="EmeraldIRC_Help" width="80" />
 </panel>

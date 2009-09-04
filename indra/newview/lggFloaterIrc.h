@@ -68,12 +68,14 @@ protected:
 	static void onBtnIM(void* userdata);
 	static void onBtnRemove(void* userdata);
 	static void onDoubleClickGroup(void* userdata);
+	static void onClickHelp(void* data);
 
 	void newirc();
 	void editirc();
 	void startirc();
 	void startIM();
 	void removeirc();
+	void initHelpBtn(const std::string& name, const std::string& xml_alert);
 
 	
 };

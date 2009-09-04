@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<floater border="false" can_close="true" can_minimize="true" bottom="400" left="300"
-     can_resize="false" height="330" name="EmeraldIRC_info" title="IRC Settings" width="325">
+<floater border="false" can_close="true" can_minimize="true" bottom="400" left="300" can_resize="false" height="330" name="EmeraldIRC_info" title="IRC Settings" width="325">
+<button bottom="-45" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldIRC_Help" tool_tip="Click here for help regarding the settings in this page." right="315" width="18" />
       <text bottom="-50" follows="left|top" font="SansSerifSmall" height="20" left="15" name="EmIRC_tag" width="100">Settings Tag:</text>
       <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="25" left_delta="100" max_length="256" mouse_opaque="true" name="EmeraldIRC_tag" width="150" />
       <text bottom_delta="-40" follows="left|top" font="SansSerifSmall" height="20" left_delta="-100" name="EmIRC_nick" width="100">Nick:</text>
