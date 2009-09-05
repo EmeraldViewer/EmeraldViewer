@@ -52,6 +52,7 @@ class lggIrcGroupHandler
 		lggIrcData	getIrcGroupInfoByID(LLUUID id); 
 		void deleteIrcGroup(std::string filename);		
 		void deleteIrcGroupByID(LLUUID id);
+		void startUpAutoRunIRC();
 		void startUpIRCListener(lggIrcData dat);
 		void endDownIRCListener(LLUUID id);
 		lggIrcThread* getThreadByID(LLUUID id);

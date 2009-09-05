@@ -203,6 +203,7 @@
 
 #if COMPILE_OTR          // [$PLOTR$]
 #include "otr_wrapper.h"
+#include "lggIrcGroupHandler.h"
 #endif // COMPILE_OTR    // [/$PLOTR$]
 
 //
@@ -2374,6 +2375,7 @@ bool idle_startup()
 		msg->setHandlerFuncFast(_PREHASH_AttachedSound,				process_attached_sound);
 		msg->setHandlerFuncFast(_PREHASH_AttachedSoundGainChange,	process_attached_sound_gain_change);
 
+
 		LL_DEBUGS("AppInit") << "Initialization complete" << LL_ENDL;
 
 		gRenderStartTime.reset();
@@ -2592,6 +2594,10 @@ bool idle_startup()
 		// We're not away from keyboard, even though login might have taken
 		// a while. JC
 		gAgent.clearAFK();
+
+		//lgg starting up auto connect irc things here
+		//but that crashed.. so i duno
+		glggIrcGroupHandler.startUpAutoRunIRC();
 
 		// Have the agent start watching the friends list so we can update proxies
 		gAgent.observeFriends();

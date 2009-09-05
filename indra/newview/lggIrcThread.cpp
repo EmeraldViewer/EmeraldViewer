@@ -216,7 +216,7 @@ void lggIrcThread::setData(lggIrcData dat)
 int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
 	
-
+	
 	gIMMgr->notifyNewIM();
 	if(hostd && params)
 	{
@@ -234,10 +234,11 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 					actionDisp(std::string(hostd->nick),std::string(&params[1]));
 					return 0;
 				}
+				if(gSavedSettings.getBOOL("EmeraldIRC_ShowChannel"))
 				msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
 			}else
 			{
-
+				
 				displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
 			}
 		}
@@ -263,6 +264,7 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 					return 0;
 				}
 				//chan msg
+				if(gSavedSettings.getBOOL("EmeraldIRC_ShowNotice"))
 				msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("[IRC] %s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorNotice"));
 			}else
 				displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
@@ -274,6 +276,7 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 int lggIrcThread::JoinMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
 	//msg( llformat("JOIN Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	if(gSavedSettings.getBOOL("EmeraldIRC_ShowJoin"))
 	msg( llformat("%s has joined this chat.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorJoin"));
 	
 	updateNames();
@@ -284,6 +287,7 @@ int lggIrcThread::PartMessageResponce( char * params, irc_reply_data * hostd, vo
 	//[20:36]  PART Params: #emerald and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
 
 	//msg( llformat("PART Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	if(gSavedSettings.getBOOL("EmeraldIRC_ShowQuit"))
 	msg( llformat("%s has left this chat.",hostd->nick).c_str());
 	
 	updateNames();
@@ -293,6 +297,7 @@ int lggIrcThread::QuitMessageResponce( char * params, irc_reply_data * hostd, vo
 {
 	//[20:45]  QUIT Params: :Quit:  and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
 	//msg( llformat("QUIT Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	if(gSavedSettings.getBOOL("EmeraldIRC_ShowQuit"))
 	msg( llformat("%s has logged off.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"));
 	
 	updateNames();
@@ -304,6 +309,7 @@ int lggIrcThread::NickMessageResponce( char * params, irc_reply_data * hostd, vo
 	//[20:46]  NICK Params: :lgg and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick new and target (null) 
 
 	//msg( llformat("NICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	if(gSavedSettings.getBOOL("EmeraldIRC_ShowNick"))
 	msg( llformat("%s (%s) is now known as %s.",hostd->nick,hostd->ident,&params[1]).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorNick"));
 	
 	updateNames();
@@ -315,6 +321,7 @@ int lggIrcThread::ModeMessageResponce( char * params, irc_reply_data * hostd, vo
 	//[20:46]  NICK Params: :lgg and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick new and target (null) 
 
 	//msg( llformat("NICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
+	if(gSavedSettings.getBOOL("EmeraldIRC_ShowNick"))
 	msg( llformat("%s (%s) sets mode on %s. (%s)",hostd->nick,hostd->ident,&params[0],hostd->target).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorNick"));
 	
 	updateNames();
@@ -330,6 +337,7 @@ int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, vo
 	istringstream iss(paramstring);
 	iss >> twho;//first part we dont need
 	
+	if(gSavedSettings.getBOOL("EmeraldIRC_ShowKick"))
 	if(iss >> twho)
 	{
 		
@@ -347,9 +355,16 @@ int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, vo
 int lggIrcThread::channelJoinedResponce(char *params, irc_reply_data *hostd, void *conn)
 {
 	//353
+
+	//msg(mData.toString());
+	llinfos << "Chanel joined" << llendl;
 	updateNames();
+
 	msg("Channel Joined.  Please type /help for a list of commands.");
 	gIMMgr->findFloaterBySession(getMID())->childSetVisible("active_speakers_panel",true);
+
+	//msg(mData.toString());
+	llinfos << "Chan join end" << llendl;
 	return 0;
 }
 int lggIrcThread::ircresponce( char * params, irc_reply_data * hostd, void * conn)
@@ -446,7 +461,13 @@ void lggIrcThread::join()
 					llformat("IDENTIFY %s",mData.nickPassword.c_str()).c_str()
 					);
 			}
+
+			//msg(mData.toString());
+			llinfos << "joining.." << llendl;
 			conn->join((char*)getChannel().c_str(),(char*)mData.channelPassword.c_str());
+
+			//msg(mData.toString());
+			llinfos << "join sent" << llendl;
 }
 void lggIrcThread::sendChat(std::string chat)
 {	
@@ -545,6 +566,7 @@ void lggIrcThread::stopRun()
 }
 void lggIrcThread::actionDisp(std::string name, std::string msg)
 {
+	if(gSavedSettings.getBOOL("EmeraldIRC_ShowAction"))
 	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(
 		name +" "+ msg.substr(8)
 		),
@@ -556,7 +578,7 @@ void lggIrcThread::msg(std::string message)
 	
 	//llinfos << " msg " << mData.toString() << llendl;
 	//gIMMgr->addMessage(getMID(),getMID(),mData.name,message);
-
+	if(gSavedSettings.getBOOL("EmeraldIRC_ShowSystem"))
 	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(message),
 		gSavedSettings.getColor("EmeraldIRC_ColorSystem"));
 }
@@ -566,6 +588,8 @@ void lggIrcThread::msg(std::string message, LLColor4 color)
 }
 void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 {
+
+	if(!gSavedSettings.getBOOL("EmeraldIRC_ShowPrivate"))return;
 	LLUUID uid;
 	uid.generate(name+"lgg"+getChannel());
 	BOOL found = false;

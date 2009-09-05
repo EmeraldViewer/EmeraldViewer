@@ -136,7 +136,7 @@ void lggFloaterIrcEdit::update(lggIrcData dat, void* data)
 	childSetValue("EmeraldIRC_tag",dat.name);
 	childSetValue("EmeraldIRC_port",dat.port);
 
-	childSetValue("EmeraldIRC_AutoConnect",true);
+	childSetValue("EmeraldIRC_AutoConnect",dat.autoLogin);
 
 }
 void lggFloaterIrcEdit::onClickSave(void* data)

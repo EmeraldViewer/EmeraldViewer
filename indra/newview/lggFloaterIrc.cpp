@@ -198,22 +198,12 @@ void lggPanelIRC::startirc()
 	if (irc_list && (irc_id = irc_list->getCurrentID()).notNull())
 	{
 		llinfos << " starting irc buttons.." << llendl;
-		gIMMgr->setFloaterOpen(TRUE);
 		lggIrcData idat = glggIrcGroupHandler.getIrcGroupInfoByID(irc_list->getCurrentID());
 		//delete indat; TODO CLEANUP 
 		llinfos << " got idat... it is.." << llendl;
 		llinfos << idat.toString() << llendl;//FFFFFFFFFFFFFFFFFFFFFFFFFFFffff
-		gIMMgr->addSession(idat.name,IM_SESSION_IRC_START,idat.id);
-		llinfos << " add session..." << llendl;
-		make_ui_sound("UISndStartIM");
-		LLSD args;
-		gIMMgr->addMessage(idat.id,idat.id,std::string("GreenLife"),
-		//gIMMgr->addSystemMessage(idat.id,
-		llformat("IRC Session Initiated on server: %s:%s \nYour nick is %s and you are on the channel: %s\nWARNING: THIS IS A IRC CHAT WINDOW, Chat can not be verified by Linden Labs or Modular Systems, people may or may not have the same nick name as their second life avatar, or may not even be human at all"
-		, idat.server.c_str(), idat.port.c_str(),idat.nick.c_str(),idat.channel.c_str()));
 		glggIrcGroupHandler.startUpIRCListener(idat);
-		llinfos << " added msg.." << llendl;
-		//,args); 
+		
 		
 	}
 }

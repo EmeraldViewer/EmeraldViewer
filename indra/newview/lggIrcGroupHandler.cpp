@@ -35,6 +35,7 @@
 #include "llfile.h"
 #include "llagent.h"
 #include "llsdserialize.h"
+#include "llimview.h"
 //#include "lggIrcThread.h"
 using namespace std;
 
@@ -100,7 +101,42 @@ void lggIrcGroupHandler::deleteIrcGroup(std::string filename)
 	}
 	
 }
+void lggIrcGroupHandler::startUpAutoRunIRC()
+{
 
+	std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "IRCGroups", ""));
+	lggIrcData toReturn;
+	std::string name;
+	bool found = true;			
+	while(found) 
+	{
+		found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
+		if(found)
+		{
+
+			toReturn = getIrcGroupInfo(name.erase(name.length()-4));
+			if(toReturn.autoLogin)
+			{
+				startUpIRCListener(toReturn);
+			}
+		}
+	}
+	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "IRCGroups", ""));
+	found = true;			
+	while(found) 
+	{
+		found = gDirUtilp->getNextFileInDir(path_name2, "*.xml", name, false);
+		if(found)
+		{
+			toReturn = getIrcGroupInfo(name.erase(name.length()-4));
+			if(toReturn.autoLogin)
+			{
+				startUpIRCListener(toReturn);
+			}
+		}
+	}
+
+}
 void lggIrcGroupHandler::deleteIrcGroupByID(LLUUID id)
 {
 	std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "IRCGroups", ""));
@@ -215,9 +251,19 @@ void lggIrcGroupHandler::startUpIRCListener(lggIrcData dat)
 			return;//duplicates r bad yo
 		}
 	}
-
+	gIMMgr->setFloaterOpen(TRUE);
+	
+	gIMMgr->addSession(dat.name,IM_SESSION_IRC_START,dat.id);
+	llinfos << " add session..." << llendl;
+	make_ui_sound("UISndStartIM");
+	LLSD args;
+	gIMMgr->addMessage(dat.id,dat.id,std::string("GreenLife"),
+		//gIMMgr->addSystemMessage(idat.id,
+		llformat("IRC Session Initiated on server: %s:%s \nYour nick is %s and you are on the channel: %s\nWARNING: THIS IS A IRC CHAT WINDOW, Chat can not be verified by Linden Labs or Modular Systems, people may or may not have the same nick name as their second life avatar, or may not even be human at all"
+		, dat.server.c_str(), dat.port.c_str(),dat.nick.c_str(),dat.channel.c_str()));
+	
 	lggIrcThread* mThreadIRC = new lggIrcThread(dat);
-	llinfos << "Starting irc threada" << dat.toString() << llendl;
+	llinfos << "Starting irc thread" << dat.toString() << llendl;
 	//mThreadIRC = new lggIrcThread();
 	mThreadIRC->run();
 	activeThreads.push_back(mThreadIRC);
