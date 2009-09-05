@@ -43,7 +43,10 @@ class lggIrcData
 		std::string iport,
 		std::string inick,
 		std::string ichannel,
-		std::string ipassword,
+		std::string iNickPassword,
+		std::string iChannelpassword,
+		std::string iServerPassword,
+		BOOL iautoLogin,
 		LLUUID iid);
 		lggIrcData();
 
@@ -53,14 +56,16 @@ class lggIrcData
 		std::string port;
 		std::string nick;
 		std::string channel;
-		std::string password;
+		std::string serverPassword;
+		std::string nickPassword;
+		std::string channelPassword;
+		BOOL autoLogin;
 		LLUUID id;
 	public:
 		LLSD toLLSD();
 		static lggIrcData fromLLSD(LLSD inputData);
 		//static lggIrcData newDefault();
 		std::string toString();
-		void become(lggIrcData input);
 		// List sorted by name.
 		friend bool operator==(const lggIrcData &a, const lggIrcData &b);		// Return a == b
 		friend bool operator<(const lggIrcData &a, const lggIrcData &b);		// Return a < b	

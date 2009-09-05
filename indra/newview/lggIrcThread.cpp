@@ -397,7 +397,7 @@ void lggIrcThread::run()
 		(char*)mData.nick.c_str(),
 		(char*)mData.nick.c_str(),
 		(char*)mData.nick.c_str(),
-		(char*)mData.password.c_str()))
+		(char*)mData.serverPassword.c_str()))
 	{
 		msg("Fawk, couldnt connect, some error bzns");
 	}/* connect to a server */
@@ -433,7 +433,7 @@ LLUUID lggIrcThread::getMID()
 void lggIrcThread::join()
 {
 	
-			if(mData.password != "")
+			if(mData.nickPassword != "")
 			{
 				/*conn->privmsg((char*)std::string("NickServ").c_str(),
 					(char *)
@@ -443,10 +443,10 @@ void lggIrcThread::join()
 
 				conn->privmsg((char*)std::string("NickServ").c_str(),
 					(char *)
-					llformat("IDENTIFY %s",mData.password.c_str()).c_str()
+					llformat("IDENTIFY %s",mData.nickPassword.c_str()).c_str()
 					);
 			}
-			conn->join((char*)getChannel().c_str());
+			conn->join((char*)getChannel().c_str(),(char*)mData.channelPassword.c_str());
 }
 void lggIrcThread::sendChat(std::string chat)
 {	

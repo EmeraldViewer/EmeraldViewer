@@ -106,7 +106,7 @@ public:
 	int privmsg(char* fmt, ...);
 	int notice(char* target, char* message);
 	int notice(char* fmt, ...);
-	int join(char* channel);
+	int join(char* channel, char* channelPass);
 	int part(char* channel);
 	int kick(char* channel, char* nick);
 	int kick(char* channel, char* nick, char* message);

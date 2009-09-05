@@ -38,21 +38,23 @@
 
 lggIrcData lggIrcData::fromLLSD(LLSD inputData)
 {
-	llinfos << "lggIrcData::fromLLSD\n" << "\n"	<< inputData["ircserver"].asString() << "\n"
-	<< inputData["ircname"].asString() << "\n"
-	<< inputData["ircport"].asString() << "\n"
-	<< inputData["ircnick"].asString() << "\n"
-	<< inputData["ircchannel"].asString() << "\n"
-	<< inputData["ircpassword"].asString() << "\n"
-	<< LLUUID(inputData["ircid"].asString()) << llendl;
-	return lggIrcData(
-	inputData["ircserver"].asString(),
-	inputData["ircname"].asString(),
-	inputData["ircport"].asString(),
-	inputData["ircnick"].asString(),
-	inputData["ircchannel"].asString(),
-	inputData["ircpassword"].asString(),
-	LLUUID(inputData["ircid"].asString()));
+	
+	lggIrcData toReturn;
+	if(inputData.has("ircserver")) toReturn.server = inputData["ircserver"].asString();
+	if(inputData.has("ircname")) toReturn.name = inputData["ircname"].asString();
+	if(inputData.has("ircport")) toReturn.port = inputData["ircport"].asString();
+	if(inputData.has("ircnick")) toReturn.nick = inputData["ircnick"].asString();
+	if(inputData.has("ircchannel")) toReturn.channel = inputData["ircchannel"].asString();
+	if(inputData.has("ircnickpassword")) toReturn.nickPassword = inputData["ircnickpassword"].asString();
+	if(inputData.has("ircchannelpassword")) toReturn.channelPassword = inputData["ircchannelpassword"].asString();
+	if(inputData.has("ircserverpassword")) toReturn.serverPassword = inputData["ircserverpassword"].asString();
+	if(inputData.has("ircautologin")) toReturn.autoLogin = inputData["ircautologin"].asBoolean();
+	if(inputData.has("ircid")) toReturn.id = LLUUID(inputData["ircid"].asString());
+	//support for legacy format
+	if(inputData.has("ircpassword")) toReturn.nickPassword = inputData["ircpassword"].asString();
+
+	return toReturn;
+
 
 }
 LLSD lggIrcData::toLLSD()
@@ -62,8 +64,11 @@ LLSD lggIrcData::toLLSD()
 	out["ircport"]=port;
 	out["ircid"]=id.asString();
 	out["ircnick"]=nick;
-	out["ircpassword"]=password;
+	out["ircnickpassword"]=nickPassword;
 	out["ircserver"]=server;
+	out["ircserverpassword"]=serverPassword;
+	out["ircchannelpassword"]=channelPassword;
+	out["ircautologin"]=autoLogin;
 	out["ircname"]=name;
 	return out;
 }
@@ -74,24 +79,16 @@ std::string lggIrcData::toString()
 	return llformat("Name is %s\nNick is %s\nChannel is %s\nUUID is %s\nServer is %s",
 		name.c_str(),nick.c_str(),channel.c_str(),id.asString().c_str(),server.c_str());
 }
-void lggIrcData::become(lggIrcData input)
+lggIrcData::lggIrcData(std::string iserver, std::string iname, std::string iport, std::string inick, std::string ichannel, std::string iNickPassword, std::string iChannelpassword, std::string iServerPassword, BOOL iautoLogin, LLUUID iid):
+server(iserver),name(iname),port(iport),nick(inick),channel(ichannel),serverPassword(iServerPassword),channelPassword(iChannelpassword),nickPassword(iNickPassword),autoLogin(iautoLogin),id(iid)
 {
-	name = input.name;
-	server = input.server;
-	port= input.port;
-	nick=input.nick;
-	channel=input.channel;
-	password=input.password;
-	id=input.id;
+
 }
-lggIrcData::lggIrcData(std::string iserver, std::string iname, std::string iport, std::string inick, std::string ichannel, std::string ipassword, LLUUID iid):
-server(iserver),name(iname),port(iport),nick(inick),channel(ichannel),password(ipassword),id(iid)
-{
-}
+
 lggIrcData::lggIrcData():
 server("modularsystems.sl"),name("Emerald Chat"),port("8888"),
 nick(std::string("Emerald-User"+LLUUID::generateNewID().asString().substr(28))),
-channel("#emerald"),password(""),id(LLUUID::generateNewID())
+channel("#emerald"),serverPassword(""),channelPassword(""),nickPassword(""),autoLogin(TRUE),id(LLUUID::generateNewID())
 {
 }
 lggIrcData::~lggIrcData()

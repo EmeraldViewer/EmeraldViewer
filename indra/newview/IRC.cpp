@@ -1074,13 +1074,13 @@ int IRC::privmsg(char* fmt, ...)
 }
 
 
-int IRC::join(char* channel)
+int IRC::join(char* channel, char* channelPass)
 {
 	if (!connected)
 		return 1;
 
 	string sout;
-	sout = "JOIN "; sout += channel; sout += "\r\n";
+	sout = "JOIN "; sout += channel; sout+= channelPass; sout += "\r\n";
 	int ret = send(irc_socket, sout.c_str(), (int)sout.size(), 0);
 	if(ret == -1) return 1;
 

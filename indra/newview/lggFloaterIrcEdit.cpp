@@ -129,10 +129,14 @@ void lggFloaterIrcEdit::update(lggIrcData dat, void* data)
 	caller = (lggPanelIRC*)data;
 	childSetValue("EmeraldIRC_nick",dat.nick);
 	childSetValue("EmeraldIRC_server",dat.server);
-	childSetValue("EmeraldIRC_password",dat.password);
+	childSetValue("EmeraldIRC_password",dat.nickPassword);
+	childSetValue("EmeraldIRC_ServerPassword",dat.serverPassword);
+	childSetValue("EmeraldIRC_ChanPassword",dat.channelPassword);
 	childSetValue("EmeraldIRC_channel",dat.channel);
 	childSetValue("EmeraldIRC_tag",dat.name);
 	childSetValue("EmeraldIRC_port",dat.port);
+
+	childSetValue("EmeraldIRC_AutoConnect",true);
 
 }
 void lggFloaterIrcEdit::onClickSave(void* data)
@@ -148,6 +152,9 @@ void lggFloaterIrcEdit::onClickSave(void* data)
 	self->childGetValue("EmeraldIRC_nick"),	
 	self->childGetValue("EmeraldIRC_channel"),
 	self->childGetValue("EmeraldIRC_password"),
+	self->childGetValue("EmeraldIRC_ChanPassword"),
+	self->childGetValue("EmeraldIRC_ServerPassword"),
+	self->childGetValue("EmeraldIRC_AutoConnect").asBoolean(),
 	LLUUID::generateNewID());
 
 	std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "IRCGroups", ""));
