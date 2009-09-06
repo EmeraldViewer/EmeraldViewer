@@ -615,14 +615,14 @@ Recommended Settings are:
 
 
 
-      <text font="SansSerifSmall" name="BeamPrefs" follows="left|top" left="7" bottom="-150">
+      <text font="SansSerifSmall" name="BeamPrefs" follows="left|top" left="150" bottom="-150">
         Selection beam particle effects
       </text>
       <view_border bevel_style="none" border_thickness="1" bottom_delta="-5" follows="top|left" height="0" left="5" name="EmDivisor" width="480" />
-      <button left="50" bottom_delta="-130" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_rainbow" label="" scale_image="true" image_selected="beam_rainbow.png" image_unselected="beam_rainbow.png" image_hover_selected="beam_rainbow.png" image_hover_unselected="beam_rainbow.png"/>
-      <button left="285" bottom_delta="-0" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_Emerald" label="" scale_image="true" image_selected="beam_emerald.png" image_unselected="beam_emerald.png" image_hover_selected="beam_emerald.png" image_hover_unselected="beam_emerald.png"/>
-      <view_border bevel_style="none" border_thickness="1" bottom_delta="-10" follows="top|left" height="140" left="245" name="EmDivisor2" width="0" />
-      <slider bottom_delta="-30" left="15" name="EmeraldMaxBeamsPerSecond" control_name="EmeraldMaxBeamsPerSecond"
+      <button left="90" bottom_delta="-130" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_rainbow" label="" scale_image="true" image_selected="beam_rainbow.png" image_unselected="beam_rainbow.png" image_hover_selected="beam_rainbow.png" image_hover_unselected="beam_rainbow.png"/>
+      <button left="275" bottom_delta="-0" follows="left|top" width="130" height="100" name="EmeraldBeamPrev_Emerald" label="" scale_image="true" image_selected="beam_emerald.png" image_unselected="beam_emerald.png" image_hover_selected="beam_emerald.png" image_hover_unselected="beam_emerald.png"/>
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="-10" follows="top|left" height="140" left="250" name="EmDivisor2" width="0" />
+      <slider bottom_delta="-30" left="100" name="EmeraldMaxBeamsPerSecond" control_name="EmeraldMaxBeamsPerSecond"
              decimal_digits="0" enabled="true" follows="left|top" height="18"
              increment="1" initial_val="4" label="Beam updates/sec:"
              label_width="100" max_val="200" min_val="4" mouse_opaque="true"
@@ -635,11 +635,12 @@ Recommended Settings are:
            follows="left|top" font="SansSerifSmall" height="16" initial_value="true"
            label="Enable selection beam (turning off will hide the beam)" left="15" mouse_opaque="true"
            name="SLPartBeam" radio_style="false" width="270" control_name="ShowSelectionBeam" />
-      <check_box bottom_delta="185" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Enable rainbow effect" left="45" mouse_opaque="true"
-           name="EmBeamRainbow" radio_style="false" width="270" control_name="EmeraldRainbowBeam" />
-      <combo_box allow_text_entry="false" bottom_delta="-0" left_delta="210"
+      <combo_box allow_text_entry="false" bottom_delta="185" left_delta="50"
+                 follows="left|top" height="18" left="10" max_chars="20"
+                 mouse_opaque="true" name="BeamColor_combo" width="170"
+                 control_name="BeamColor_Current" tool_tip="Select the color preset for the selection beam" />
+
+      <combo_box allow_text_entry="false" bottom_delta="-0" left_delta="195"
                  follows="left|top" height="18" left="10" max_chars="20"
                  mouse_opaque="true" name="EmeraldBeamShape_combo" width="170"
                  control_name="EmeraldBeamShape" tool_tip="Select the shape for the particle beam" />
@@ -649,8 +650,15 @@ Recommended Settings are:
      label_width="35" max_val="4" min_val="0.1" mouse_opaque="true"
      show_text="true" width="150" auto_resize="false" tool_tip="Change the scale of the shape used for the Emerald Shaped Beam"/>
       <button name="delete_beam" label="Delete" halign="center" tool_tip="Remove this beam" left="435" bottom="-180" width="55" height="20" font="SansSerifSmall" follows="left|top"/>
-      <button name="custom_beam_btn" label="Create New" tool_tip="Customize the beam shape" left_delta="-15" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
+      <button name="custom_beam_btn" label="Create New" tool_tip="Customize the beam shape" left_delta="-20" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
       <button name="refresh_beams" label="Refresh List" tool_tip="Refresh the beam list" left_delta="0" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
+
+
+
+
+      <button name="BeamColor_delete" label="Delete" halign="center" tool_tip="Remove this preset" left="5" bottom="-180" width="55" height="20" font="SansSerifSmall" follows="left|top"/>
+      <button name="BeamColor_new" label="Create New" tool_tip="Create a new color preset" left_delta="-0" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
+      <button name="BeamColor_refresh" label="Refresh List" tool_tip="Refresh the preset list" left_delta="0" bottom_delta="-25" width="75" height="20" font="SansSerifSmall" follows="left|top"/>
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Build" left="1" mouse_opaque="true" name="Build" width="418">
 <button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Build" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
