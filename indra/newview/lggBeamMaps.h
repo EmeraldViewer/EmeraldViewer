@@ -1,6 +1,6 @@
 /* Copyright (c) 2009
  *
- * Modular Systems All rights reserved.
+ * Greg Hendrickson (LordGregGreg Back) All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
@@ -29,7 +29,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using namespace std;
+//using namespace std;
 
 #include "llhudeffecttrail.h"
 #include "llviewerprecompiledheaders.h"
@@ -38,6 +38,10 @@ class lggBeamData
 	public:
 		LLVector3d p;
 		LLColor4U c;
+	
+};
+class lggBreamColorData
+{
 	
 };
 class lggBeamMaps

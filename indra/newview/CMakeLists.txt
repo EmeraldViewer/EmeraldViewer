@@ -99,6 +99,7 @@ set(viewer_SOURCE_FILES
 	jc_asset_comparer.cpp
 	jcobjectpropertylist.cpp
 	lggBeamMapFloater.cpp
+	lggBeamsColors.cpp
 	lggIrcData.cpp
 	lggIrcGroupHandler.cpp
 	lggFloaterIrcEdit.cpp
@@ -535,6 +536,7 @@ set(viewer_HEADER_FILES
 	exporttracker.h
     lggBeamMaps.h
     lggBeamMapFloater.h
+	lggBeamsColors.h
     lggFloaterIrcEdit.h
     lggFloaterIrc.h
     lggIrcGroupHandler.h

@@ -954,6 +954,9 @@ bool idle_startup()
 		std::string lgg_beams_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beams", ""));
 		LLFile::mkdir(lgg_beams_path_name.c_str());	
 
+		std::string lgg_beamscolors_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beamsColors", ""));
+		LLFile::mkdir(lgg_beamscolors_path_name.c_str());	
+
 		//guna make a ircgroups directior here too /lgg		
 		std::string lgg_ircgroups_path_name(gDirUtilp->getExpandedFilename( LL_PATH_PER_SL_ACCOUNT, "IRCGroups", ""));
 		LLFile::mkdir(lgg_ircgroups_path_name.c_str());	

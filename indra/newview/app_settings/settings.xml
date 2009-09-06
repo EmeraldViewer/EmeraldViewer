@@ -3534,6 +3534,17 @@
       <key>Value</key>
       <string>Emerald</string>
     </map>
+    <key>EmeraldBeamColorFile</key>
+    <map>
+      <key>Comment</key>
+      <string>Beam file for the shape of your beam</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>===OFF===</string>
+    </map>
     <key>EmeraldBeamShapeScale</key>
     <map>
       <key>Comment</key>

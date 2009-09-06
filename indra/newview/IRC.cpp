@@ -799,23 +799,28 @@ void IRC::parse_irc_reply(char* data)
 						{
 							cup->flags=cup->flags|IRC_USER_OP;
 							p++;
-						}
+						}else
 						if (p[0]=='%')
 						{
 							cup->flags=cup->flags|IRC_USER_HALFOP;
 							p++;
-						}
+						}else
 						if (p[0]=='&')
 						{
 							cup->flags=cup->flags|IRC_USER_OP;
 							p++;
-						}
+						}else
 						if (p[0]=='~')
 						{
 							cup->flags=cup->flags|IRC_USER_OP;
 							p++;
-						}
-						else if (p[0]=='+')
+						}else
+						if (p[0]=='!')
+						{
+							cup->flags=cup->flags|IRC_USER_OP;
+							p++;
+						}else
+						if (p[0]=='+')
 						{
 							cup->flags=cup->flags|IRC_USER_VOICE;
 							p++;
@@ -851,6 +856,11 @@ void IRC::parse_irc_reply(char* data)
 					else if (p[0]=='~')
 					{
 						//q
+						cup->flags=cup->flags|IRC_USER_OP;
+						p++;
+					}
+					else if (p[0]=='1')
+					{
 						cup->flags=cup->flags|IRC_USER_OP;
 						p++;
 					}
