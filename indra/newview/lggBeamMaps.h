@@ -54,6 +54,7 @@ class lggBeamMaps
 		void	fireCurrentBeams(LLPointer<LLHUDEffectSpiral>, LLColor4U rgb);
 		void	forceUpdate();
 		std::vector<std::string> getFileNames();
+		std::vector<std::string> getColorsFileNames();
 	private:
 		LLSD	getPic(std::string filename); 
 		std::string lastFileName;

@@ -205,3 +205,59 @@ std::vector<std::string> lggBeamMaps::getFileNames()
 	
 
 }
+
+std::vector<std::string> lggBeamMaps::getColorsFileNames()
+{
+
+	std::vector<std::string> names;	
+	std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "beamsColors", ""));
+	bool found = true;			
+	while(found) 
+	{
+		std::string name;
+		found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
+		if(found)
+		{
+
+			name=name.erase(name.length()-4);
+
+			// bugfix for SL-46920: preventing filenames that break stuff.
+			char * curl_str = curl_unescape(name.c_str(), name.size());
+			std::string unescaped_name(curl_str);
+			curl_free(curl_str);
+			curl_str = NULL;
+
+			names.push_back(name);
+
+			//LL_DEBUGS2("AppInit", "Shaders") << "name: " << name << LL_ENDL;
+			//loadPreset(unescaped_name,FALSE);
+		}
+	}
+	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "beamsColors", ""));
+	found = true;			
+	while(found) 
+	{
+		std::string name;
+		found = gDirUtilp->getNextFileInDir(path_name2, "*.xml", name, false);
+		if(found)
+		{
+
+			name=name.erase(name.length()-4);
+
+			// bugfix for SL-46920: preventing filenames that break stuff.
+			char * curl_str = curl_unescape(name.c_str(), name.size());
+			std::string unescaped_name(curl_str);
+			curl_free(curl_str);
+			curl_str = NULL;
+
+			names.push_back(name);
+
+			//LL_DEBUGS2("AppInit", "Shaders") << "name: " << name << LL_ENDL;
+			//loadPreset(unescaped_name,FALSE);
+		}
+	}
+	return names;
+
+
+
+}

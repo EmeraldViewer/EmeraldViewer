@@ -35,7 +35,7 @@
 #include "llviewerprecompiledheaders.h"
 #include "lggBeamsColors.h"
 
-lggBeamsColors::fromLLSD(LLSD inputData)
+lggBeamsColors lggBeamsColors::fromLLSD(LLSD inputData)
 {
 
 	lggBeamsColors toReturn;
