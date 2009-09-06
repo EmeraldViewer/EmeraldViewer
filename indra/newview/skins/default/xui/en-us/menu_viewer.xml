@@ -931,11 +931,6 @@
     </menu_item_check>
 		<menu_item_separator bottom="-58" enabled="true" height="8" label="-----------" left="0"
 		     mouse_opaque="true" name="separator1" width="155" />
-		<menu_item_check bottom="-78" enabled="true" height="20" label="Rainbow Beam" left="0"
-		     mouse_opaque="true" name="Rainbow Beam" width="155">
-			<on_click function="ToggleControl" userdata="EmeraldRainbowBeam" />
-			<on_check control="EmeraldRainbowBeam" />
-		</menu_item_check>
 		<menu_item_check bottom="-98" enabled="true" height="20" label="SL Particle Chat" left="0"
 		     mouse_opaque="true" name="SL Particle Chat" width="155">
 			<on_click function="ToggleControl" userdata="EmeraldParticleChat" />
