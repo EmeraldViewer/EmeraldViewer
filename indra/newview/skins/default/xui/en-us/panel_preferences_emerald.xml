@@ -638,7 +638,7 @@ Recommended Settings are:
       <combo_box allow_text_entry="false" bottom_delta="185" left_delta="50"
                  follows="left|top" height="18" left="10" max_chars="20"
                  mouse_opaque="true" name="BeamColor_combo" width="170"
-                 control_name="BeamColor_Current" tool_tip="Select the color preset for the selection beam" />
+                 control_name="EmeraldBeamColorFile" tool_tip="Select the color preset for the selection beam" />
 
       <combo_box allow_text_entry="false" bottom_delta="-0" left_delta="195"
                  follows="left|top" height="18" left="10" max_chars="20"

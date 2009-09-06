@@ -4607,17 +4607,6 @@
       <key>Value</key>
       <integer>-777777777</integer>
     </map>
-    <key>EmeraldRainbowBeam</key>
-    <map>
-      <key>Comment</key>
-      <string>Use color cycling selection beam.</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>0</integer>
-    </map>
     <key>EmeraldRenderHighlightSelections</key>
     <map>
       <key>Comment</key>

@@ -63,6 +63,7 @@
 #include "lldirpicker.h"
 
 #include "llweb.h" // [$PLOTR$/]
+#include "lggbeamcolormapfloater.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -192,6 +193,7 @@ BOOL LLPanelEmerald::postBuild()
 	getChild<LLComboBox>("material")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("combobox shininess")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("EmeraldBeamShape_combo")->setCommitCallback(onComboBoxCommit);
+	getChild<LLComboBox>("BeamColor_combo")->setCommitCallback(onComboBoxCommit);
 	getChild<LLTextureCtrl>("texture control")->setDefaultImageAssetID(LLUUID("89556747-24cb-43ed-920b-47caed15465f"));
 	getChild<LLTextureCtrl>("texture control")->setCommitCallback(onTexturePickerCommit);
 
@@ -201,9 +203,15 @@ BOOL LLPanelEmerald::postBuild()
 	getChild<LLButton>("EmeraldPrefs_Stealth")->setClickedCallback(onStealth, this);
 	getChild<LLButton>("EmeraldPrefs_FullFeatures")->setClickedCallback(onNoStealth, this);
 	
+
+	getChild<LLButton>("BeamColor_new")->setClickedCallback(onCustomBeamColor, this);
+	getChild<LLButton>("BeamColor_refresh")->setClickedCallback(onRefresh,this);
+	getChild<LLButton>("BeamColor_delete")->setClickedCallback(onBeamColorDelete,this);
+			
 	getChild<LLButton>("custom_beam_btn")->setClickedCallback(onCustomBeam, this);
 	getChild<LLButton>("refresh_beams")->setClickedCallback(onRefresh,this);
 	getChild<LLButton>("delete_beam")->setClickedCallback(onBeamDelete,this);
+
 	getChild<LLButton>("revert_production_voice_btn")->setClickedCallback(onClickVoiceRevertProd, this);
 	getChild<LLButton>("revert_debug_voice_btn")->setClickedCallback(onClickVoiceRevertDebug, this);
 	
@@ -306,6 +314,7 @@ BOOL LLPanelEmerald::postBuild()
 void LLPanelEmerald::refresh()
 {
 	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
+	
 
 	if(comboBox != NULL) 
 	{
@@ -318,6 +327,21 @@ void LLPanelEmerald::refresh()
 		}
 		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamShape"));
 	}
+
+	comboBox = getChild<LLComboBox>("BeamColor_combo");
+	if(comboBox != NULL) 
+	{
+		comboBox->removeall();
+		comboBox->add("===OFF===");
+		std::vector<std::string> names = gLggBeamMaps.getColorsFileNames();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamColorFile"));
+	}
+
+
 	//mSkin = gSavedSettings.getString("SkinCurrent");
 	//getChild<LLRadioGroup>("skin_selection")->setValue(mSkin);
 }
@@ -369,6 +393,10 @@ void LLPanelEmerald::onCustomBeam(void* data)
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
 	LggBeamMap::show(true, data);
 
+}
+void LLPanelEmerald::onCustomBeamColor(void* data)
+{
+	LggBeamColorMap::show(true,data);
 }
 void LLPanelEmerald::onStealth(void* data)
 {
@@ -484,6 +512,33 @@ void LLPanelEmerald::onBeamDelete(void* data)
 	}
 	self->refresh();
 }
+void LLPanelEmerald::onBeamColorDelete(void* data)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)data;
+
+	LLComboBox* comboBox = self->getChild<LLComboBox>("BeamColor_combo");
+
+	if(comboBox != NULL) 
+	{
+		std::string filename = comboBox->getValue().asString()+".xml";
+		std::string path_name1(gDirUtilp->getExpandedFilename( LL_PATH_APP_SETTINGS , "beamsColors", filename));
+		std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beamsColors", filename));
+
+		if(gDirUtilp->fileExists(path_name1))
+		{
+			LLFile::remove(path_name1);
+			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
+		}
+		if(gDirUtilp->fileExists(path_name2))
+		{
+			LLFile::remove(path_name2);
+			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
+		}
+	}
+	self->refresh();
+}
+
+
 
 //workaround for lineeditor dumbness in regards to control_name
 void LLPanelEmerald::onCommitApplyControl(LLUICtrl* caller, void* user_data)

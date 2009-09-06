@@ -3661,41 +3661,6 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	}
 }
 
-F32 hueToRgb ( F32 val1In, F32 val2In, F32 valHUeIn )
-{
-	if ( valHUeIn < 0.0f ) valHUeIn += 1.0f;
-	if ( valHUeIn > 1.0f ) valHUeIn -= 1.0f;
-	if ( ( 6.0f * valHUeIn ) < 1.0f ) return ( val1In + ( val2In - val1In ) * 6.0f * valHUeIn );
-	if ( ( 2.0f * valHUeIn ) < 1.0f ) return ( val2In );
-	if ( ( 3.0f * valHUeIn ) < 2.0f ) return ( val1In + ( val2In - val1In ) * ( ( 2.0f / 3.0f ) - valHUeIn ) * 6.0f );
-	return ( val1In );
-}
-
-void hslToRgb ( F32 hValIn, F32 sValIn, F32 lValIn, F32& rValOut, F32& gValOut, F32& bValOut )
-{
-	if ( sValIn < 0.00001f )
-	{
-		rValOut = lValIn;
-		gValOut = lValIn;
-		bValOut = lValIn;
-	}
-	else
-	{
-		F32 interVal1;
-		F32 interVal2;
-
-		if ( lValIn < 0.5f )
-			interVal2 = lValIn * ( 1.0f + sValIn );
-		else
-			interVal2 = ( lValIn + sValIn ) - ( sValIn * lValIn );
-
-		interVal1 = 2.0f * lValIn - interVal2;
-
-		rValOut = hueToRgb ( interVal1, interVal2, hValIn + ( 1.f / 3.f ) );
-		gValOut = hueToRgb ( interVal1, interVal2, hValIn );
-		bValOut = hueToRgb ( interVal1, interVal2, hValIn - ( 1.f / 3.f ) );
-	}
-}
 
 void LLVOAvatar::idleUpdateTractorBeam()
 {
@@ -3706,22 +3671,10 @@ void LLVOAvatar::idleUpdateTractorBeam()
 	{
 		return;
 	}
+	
 
-
 	
-	LLColor4U rgb = LLColor4U(gAgent.getEffectColor());
-	
-	BOOL colorShifting = gSavedSettings.getBOOL("EmeraldRainbowBeam");
-	if(colorShifting)
-	{
-		F32 r, g, b;
-		LLColor4 output;
-		hslToRgb(0.5f+sinf(gFrameTimeSeconds*0.3f), 1.0f, 0.5f, r, g, b);
-		//hslToRgb(0.25f+sinf(gFrameTimeSeconds*1.2f)*(0.166f/2.0f), 1.0f, 0.5f, r, g, b);
-		output.set(r, g, b);
-		rgb.setVecScaleClamp(output);
-	
-	}
+	LLColor4U rgb = gLggBeamMaps.getCurrentColor(LLColor4U(gAgent.getEffectColor()));
 	
 	// This is only done for yourself (maybe it should be in the agent?)
 	if (!needsRenderBeam() || !mIsBuilt)
@@ -3848,10 +3801,8 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			mBeam->setColor(rgb );
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
-			//LGG Picture Projection
-			LLColor4U shift = LLColor4U::black;
-			if(colorShifting) shift = rgb;
-			gLggBeamMaps.fireCurrentBeams(mBeam,shift );
+
+			gLggBeamMaps.fireCurrentBeams(mBeam,rgb );
 		}
 	}
 }

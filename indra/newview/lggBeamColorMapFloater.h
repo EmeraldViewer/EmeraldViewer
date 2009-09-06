@@ -1,6 +1,6 @@
 /* Copyright (c) 2009
  *
- * Greg Hendrickson (LordGregGreg Back) All rights reserved.
+ * Modular Systems All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
@@ -29,39 +29,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//using namespace std;
-
-#include "llhudeffecttrail.h"
-#include "llviewerprecompiledheaders.h"
-#include "lggbeamscolors.h"
-class lggBeamData
+class LggBeamColorMap
 {
 	public:
-		LLVector3d p;
-		LLColor4U c;
-	
+	static void show( BOOL showw , void* data);
 };
-class lggBeamMaps
-{
-	public:
-		lggBeamMaps() { lastFileName = ""; scale=0.0f; duration=0.25f;}
-		~lggBeamMaps() { lastFileName = ""; scale=0.0f; duration=0.25f;}
-	public:
-		F32		setUpAndGetDuration();
-		void	fireCurrentBeams(LLPointer<LLHUDEffectSpiral>, LLColor4U rgb);
-		void	forceUpdate();
-		LLColor4U getCurrentColor(LLColor4U agentColor);
-		std::vector<std::string> getFileNames();
-		std::vector<std::string> getColorsFileNames();
-	private:
-		LLSD	getPic(std::string filename); 
-		std::string lastFileName;
-		std::string lastColorFileName;
-		lggBeamsColors lastColorsData;
-		F32 duration;
-		F32 scale;
-		std::vector<lggBeamData> dots;     
-};
-
-
-extern lggBeamMaps gLggBeamMaps;

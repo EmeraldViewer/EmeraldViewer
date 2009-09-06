@@ -31,6 +31,7 @@
 
 #include "llviewerprecompiledheaders.h"
 #include "lggBeamMaps.h"
+#include "lggBeamsColors.h"
 #include "llfile.h"
 #include "llagent.h"
 #include "llsdserialize.h"
@@ -40,6 +41,43 @@
 //using namespace std;
 
 lggBeamMaps gLggBeamMaps;
+F32 hueToRgb ( F32 val1In, F32 val2In, F32 valHUeIn )
+{
+	if ( valHUeIn < 0.0f ) valHUeIn += 1.0f;
+	if ( valHUeIn > 1.0f ) valHUeIn -= 1.0f;
+	if ( ( 6.0f * valHUeIn ) < 1.0f ) return ( val1In + ( val2In - val1In ) * 6.0f * valHUeIn );
+	if ( ( 2.0f * valHUeIn ) < 1.0f ) return ( val2In );
+	if ( ( 3.0f * valHUeIn ) < 2.0f ) return ( val1In + ( val2In - val1In ) * ( ( 2.0f / 3.0f ) - valHUeIn ) * 6.0f );
+	return ( val1In );
+}
+
+void hslToRgb ( F32 hValIn, F32 sValIn, F32 lValIn, F32& rValOut, F32& gValOut, F32& bValOut )
+{
+	if ( sValIn < 0.00001f )
+	{
+		rValOut = lValIn;
+		gValOut = lValIn;
+		bValOut = lValIn;
+	}
+	else
+	{
+		F32 interVal1;
+		F32 interVal2;
+
+		if ( lValIn < 0.5f )
+			interVal2 = lValIn * ( 1.0f + sValIn );
+		else
+			interVal2 = ( lValIn + sValIn ) - ( sValIn * lValIn );
+
+		interVal1 = 2.0f * lValIn - interVal2;
+
+		rValOut = hueToRgb ( interVal1, interVal2, hValIn + ( 1.f / 3.f ) );
+		gValOut = hueToRgb ( interVal1, interVal2, hValIn );
+		bValOut = hueToRgb ( interVal1, interVal2, hValIn - ( 1.f / 3.f ) );
+	}
+}
+
+
 
 LLSD lggBeamMaps::getPic(std::string filename)
 {
@@ -50,6 +88,65 @@ LLSD lggBeamMaps::getPic(std::string filename)
 	return data;
 	
 }
+LLColor4U lggBeamMaps::getCurrentColor(LLColor4U agentColor)
+{
+	std::string settingName = gSavedSettings.getString("EmeraldBeamColorFile");
+	
+	if(settingName != lastColorFileName)
+	{
+		lastColorFileName=settingName;
+		if(settingName=="===OFF===") return agentColor;
+	
+		std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "beamsColors", ""));
+		std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beamsColors", ""));
+		std::string filename =path_name +settingName+".xml";
+		if(gDirUtilp->fileExists(filename))
+		{
+		}else
+		{
+			filename =path_name2 +settingName+".xml";
+			if(!gDirUtilp->fileExists(filename))
+			{
+				return agentColor;
+			}
+		}
+
+		lastColorsData=lggBeamsColors::fromLLSD(getPic(filename));
+	}
+	F32 r, g, b;
+	LLColor4 output;
+
+		
+	//rainbowhslToRgb(0.5f+sinf(gFrameTimeSeconds*0.3f), 1.0f, 0.5f, r, g, b);
+	//emeraldhslToRgb(0.25f+sinf(gFrameTimeSeconds*1.2f)*(0.166f/2.0f), 1.0f, 0.5f, r, g, b);
+		
+	
+
+	F32 timeinc =  gFrameTimeSeconds*0.3f*(1.0f/ (lastColorsData.rotateSpeed+.01f));
+
+	S32 diference = llround(lastColorsData.endHue  - lastColorsData.startHue);
+	if(diference == 360 || diference == 720)
+	{
+		//full rainbow
+		//liner one
+		hslToRgb(fmod(timeinc,1.0f), 1.0f, 0.5f, r, g, b);
+
+	}else
+	{
+		F32 variance = ((lastColorsData.endHue/360.0f)-(lastColorsData.startHue/360.0f))/2.0f;
+		hslToRgb((lastColorsData.startHue/360.0f) + variance + (sinf(timeinc)*(variance)), 1.0f, 0.5f, r, g, b);
+	}
+	//ful spectrum, then backwards.. need a function to linearise it..
+	//hslToRgb(0.5f+sinf(timeinc)*.5f, 1.0f, 0.5f, r, g, b);)
+
+	
+	
+	output.set(r, g, b);
+	
+	agentColor.setVecScaleClamp(output);
+	
+	return agentColor;
+}
 void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U rgb)
 {
 	if(scale == 0.0f)return;
@@ -57,8 +154,9 @@ void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U
 	for(int i = 0; i < (int)dots.size(); i++)
 	{
 		LLColor4U myColor = rgb;
-		if(rgb == LLColor4U::black)
+		if(	gSavedSettings.getString("EmeraldBeamColorFile")=="===OFF===")
 			myColor = dots[i].c;
+
 		F32 distanceAdjust = dist_vec(mBeam->getPositionGlobal(),gAgent.getPositionGlobal()) ;
 		F32 pulse = (F32)(.75f+sinf(gFrameTimeSeconds*1.0f)*0.25f);
 		LLVector3d offset = dots[i].p;

@@ -103,11 +103,25 @@ void lggIrcGroupHandler::deleteIrcGroup(std::string filename)
 }
 void lggIrcGroupHandler::startUpAutoRunIRC()
 {
+	std::string name;
+	bool found = true;			
+
+	//first move files...
+	std::string old_path_name(gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "IRCGroups", ""));
+	while(found) 
+	{
+		found = gDirUtilp->getNextFileInDir(old_path_name, "*.xml", name, false);
+		if(found)
+		{
+			//copy files over... to per sl account settings..
+		}
+	}
+
+
 
 	std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "IRCGroups", ""));
 	lggIrcData toReturn;
-	std::string name;
-	bool found = true;			
+	found=true;
 	while(found) 
 	{
 		found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
