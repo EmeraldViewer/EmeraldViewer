@@ -157,7 +157,7 @@ void lggFloaterIrcEdit::onClickSave(void* data)
 	self->childGetValue("EmeraldIRC_AutoConnect").asBoolean(),
 	LLUUID::generateNewID());
 
-	std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "IRCGroups", ""));
+	std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_PER_SL_ACCOUNT , "IRCGroups", ""));
 				
 	std::string filename=path_name2 + dat.name+".xml";
 		

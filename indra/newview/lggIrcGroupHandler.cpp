@@ -61,7 +61,7 @@ std::vector<lggIrcData> lggIrcGroupHandler::getFileNames()
 			names.push_back(getIrcGroupInfo(name));
 		}
 	}
-	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "IRCGroups", ""));
+	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_PER_SL_ACCOUNT, "IRCGroups", ""));
 	found = true;			
 	while(found) 
 	{
@@ -89,7 +89,7 @@ void lggIrcGroupHandler::deleteIrcGroup(std::string filename)
 	llinfos << "lggIrcGroupHanlder::" << filename << llendl;
 	
 	std::string path_name1(gDirUtilp->getExpandedFilename( LL_PATH_APP_SETTINGS , "IRCGroups", filename));
-	std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "IRCGroups", filename));
+	std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_PER_SL_ACCOUNT , "IRCGroups", filename));
 		
 	if(gDirUtilp->fileExists(path_name1))
 	{
@@ -121,7 +121,7 @@ void lggIrcGroupHandler::startUpAutoRunIRC()
 			}
 		}
 	}
-	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "IRCGroups", ""));
+	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_PER_SL_ACCOUNT, "IRCGroups", ""));
 	found = true;			
 	while(found) 
 	{
@@ -156,7 +156,7 @@ void lggIrcGroupHandler::deleteIrcGroupByID(LLUUID id)
 			}
 		}
 	}
-	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "IRCGroups", ""));
+	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_PER_SL_ACCOUNT, "IRCGroups", ""));
 	found = true;			
 	while(found) 
 	{
@@ -192,7 +192,7 @@ lggIrcData lggIrcGroupHandler::getIrcGroupInfoByID(LLUUID id)
 			}
 		}
 	}
-	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "IRCGroups", ""));
+	std::string path_name2(gDirUtilp->getExpandedFilename(LL_PATH_PER_SL_ACCOUNT, "IRCGroups", ""));
 	found = true;			
 	while(found) 
 	{
@@ -213,7 +213,7 @@ lggIrcData lggIrcGroupHandler::getIrcGroupInfoByID(LLUUID id)
 lggIrcData lggIrcGroupHandler::getIrcGroupInfo(std::string filename)
 {
 	std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "IRCGroups", ""));
-	std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "IRCGroups", ""));
+	std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_PER_SL_ACCOUNT , "IRCGroups", ""));
 	std::string name =path_name +filename+".xml";
 	if(gDirUtilp->fileExists(filename))
 	{

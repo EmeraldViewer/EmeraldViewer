@@ -129,7 +129,7 @@ LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 	
 	if (!object)
 		return llsd;
-	if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+	if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer() && !gAgent.getGodLevel()))
 		return llsd;
 	// Build a list of everything that we'll actually be exporting
 	LLDynamicArray<LLViewerObject*> export_objects;
@@ -393,7 +393,7 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 	for(LLDynamicArray<LLViewerObject*>::iterator itr = objects.begin(); itr != objects.end(); ++itr)
 	{
 		LLViewerObject* object = *itr;
-		if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+		if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer() && !gAgent.getGodLevel()))
 		{
 			success = false;
 			break;

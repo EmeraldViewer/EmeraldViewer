@@ -955,7 +955,7 @@ bool idle_startup()
 		LLFile::mkdir(lgg_beams_path_name.c_str());	
 
 		//guna make a ircgroups directior here too /lgg		
-		std::string lgg_ircgroups_path_name(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "IRCGroups", ""));
+		std::string lgg_ircgroups_path_name(gDirUtilp->getExpandedFilename( LL_PATH_PER_SL_ACCOUNT, "IRCGroups", ""));
 		LLFile::mkdir(lgg_ircgroups_path_name.c_str());	
 
 
