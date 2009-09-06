@@ -350,7 +350,7 @@ void lggBeamColorMapFloater::onClickLoad(void* data)
 	LLSDSerialize::fromXMLDocument(minedata, importer);
 	
 	self->myData = lggBeamsColors::fromLLSD(minedata);
-	childSetValue("BeamColor_Speed",myData.rotateSpeed*100);
+	self->childSetValue("BeamColor_Speed",self->myData.rotateSpeed*100);
 
 	
 }
