@@ -10,7 +10,7 @@ Left Click Changes End Position.</text>
 <color_swatch border_color="0.45098, 0.517647, 0.607843, 1" bottom="-230" can_apply_immediately="true" color="1, 1, 1, 1" follows="left|top" height="100" label="" left="300" mouse_opaque="true" name="BeamColor_Preview" tool_tip="Click to open Color Picker" width="100" />
 <text font="SansSerifSmall" name="beamcolor_text2" follows="left|top" left_delta="30" bottom_delta="105">Preview</text>
 <slider bottom="-230" left="15" name="BeamColor_Speed" decimal_digits="0" enabled="true" follows="left|top" height="18"
-        increment="1" initial_val="50" label="Rotation Speed:" label_width="85" max_val="100" min_val="0" mouse_opaque="true"
+        increment="1" initial_val="100" label="Rotation Speed:" label_width="85" max_val="300" min_val="0" mouse_opaque="true"
         show_text="true" width="280" auto_resize="false" tool_tip="Controls the speed of the color cycle"/>
 	<button bottom_delta="-50" enabled="true" follows="left|top" font="SansSerif"
 	     halign="center" height="22" label="Save" left="70"
