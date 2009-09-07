@@ -51,6 +51,7 @@
 #include "llsdserialize.h"
 #include "llpanelemerald.h"
 #include "lggbeamscolors.h"
+#include "llslider.h"
 
 F32 convertXToHue(S32 place)
 {return ((place-6)/396.0f)*720.0f;}
@@ -94,6 +95,23 @@ void hslToRgb1 ( F32 hValIn, F32 sValIn, F32 lValIn, F32& rValOut, F32& gValOut,
 
 
 class lggBeamColorMapFloater;
+class lggBeamColorUpdater;
+
+class lggBeamColorUpdater : public LLThread
+{
+public:
+	lggBeamColorUpdater(lggBeamsColors idata, lggBeamColorMapFloater* ipanel);
+	~lggBeamColorUpdater();	
+	/*virtual*/ void run(void);
+	/*virtual*/ void shutdown(void);
+	void setNewData(lggBeamsColors idata);
+
+protected:
+	lggBeamsColors data;
+	lggBeamColorMapFloater* panel;
+
+};
+
 
 ////////////////////////////////////////////////////////////////////////////
 // lggBeamMapFloater
@@ -118,21 +136,22 @@ public:
 	LLSD getMyDataSerialized();
 	
 	lggBeamsColors myData; 
+	lggBeamColorUpdater * colorUpdater;
 
 	// UI Handlers
 	static void onClickSave(void* data);
 	static void onClickCancel(void* data);
 	static void onClickLoad(void* data);
 
-	static void onClickSlider(void* data);
+	static void onClickSlider(LLUICtrl* crtl, void* userdata);
 
 	
 private:
 	static void onBackgroundChange(LLUICtrl* ctrl, void* userdata);
 };
-void lggBeamColorMapFloater::onClickSlider(void* data)
+void lggBeamColorMapFloater::onClickSlider(LLUICtrl* crtl, void* userdata)
 {
-	lggBeamColorMapFloater* self = (lggBeamColorMapFloater*)data;
+	lggBeamColorMapFloater* self = (lggBeamColorMapFloater*)userdata;
 	self->fixOrder();
 }
 void lggBeamColorMapFloater::draw()
@@ -214,6 +233,8 @@ void lggBeamColorMapFloater::draw()
 
 lggBeamColorMapFloater::~lggBeamColorMapFloater()
 {
+	colorUpdater->shutdown();
+	delete colorUpdater;
 	//if(mCallback) mCallback->detach();
 }
 
@@ -235,7 +256,12 @@ BOOL lggBeamColorMapFloater::postBuild(void)
 	childSetAction("BeamColor_Save",onClickSave,this);
 	childSetAction("BeamColor_Load",onClickLoad,this);
 	childSetAction("BeamColor_Cancel",onClickCancel,this);
-	childSetAction("BeamColor_Speed",onClickSlider,this);
+	getChild<LLSlider>("BeamColor_Speed")->setCommitCallback(onClickSlider);
+
+	fixOrder();
+
+	colorUpdater = new lggBeamColorUpdater(myData,this);
+	colorUpdater->start();
 	
 	return true;
 }
@@ -270,7 +296,24 @@ BOOL lggBeamColorMapFloater::handleRightMouseDown(S32 x,S32 y,MASK mask)
 
 void lggBeamColorMapFloater::fixOrder()
 {
-	myData.rotateSpeed = (F32)(childGetValue("BeamColor_Speed").asReal()/100.0f);
+	//LLSlider* slider = getChild<LLSlider>("BeamColor_Speed");
+
+	//llinfos << "testing slider stuff..." << llendl;
+
+	//myData.rotateSpeed = (F32)((F32)(childGetValue("BeamColor_Speed").asReal())/100.0f);
+	//myData.rotateSpeed = slider->getValueF32();
+	//myData.rotateSpeed = (F32)slider->getValue().asReal();
+
+	//llinfos << "slider at  -value as real-" << myData.rotateSpeed << llendl;
+
+	myData.rotateSpeed = (F32)childGetValue("BeamColor_Speed").asReal();
+	myData.rotateSpeed /= 100.0f;
+	//llinfos << "slider at  getchildvalie-" << myData.rotateSpeed << llendl;
+
+	//myData.rotateSpeed = slider->getValueF32();
+	//llinfos << "slider at  get32-" << myData.rotateSpeed << llendl;
+
+	
 	if(myData.endHue < myData.startHue)
 	{
 		F32 temp = myData.startHue;
@@ -321,10 +364,10 @@ void lggBeamColorMapFloater::onClickSave(void* data)
 
 	if(self->empanel)
 	{
-
+		if(self->empanel->isInVisibleChain())
 		self->empanel->refresh();
 	}
-	
+	self->close();
 }
 
 void lggBeamColorMapFloater::onClickCancel(void* data)
@@ -357,13 +400,40 @@ void lggBeamColorMapFloater::onClickLoad(void* data)
 
 void LggBeamColorMap::show(BOOL showin, void * data)
 {
-	//lggBeamMapFloater* beam_floater = 
 	if(showin)
 	{
-
-	
 		lggBeamColorMapFloater* beam_floater = lggBeamColorMapFloater::showInstance();
 		beam_floater->setData(data);
 	}
-	//beam_floater->update();
+}
+
+
+
+///////////////////////////////////
+
+lggBeamColorUpdater::lggBeamColorUpdater(lggBeamsColors idata, lggBeamColorMapFloater* ipanel): LLThread("BEAM COLOR UPDATER"),data(idata),panel(ipanel)
+{
+
+}
+
+void lggBeamColorUpdater::run()
+{
+	while(1)
+	{
+		LLColorSwatchCtrl* colorctrl = panel->getChild<LLColorSwatchCtrl>("BeamColor_Preview");
+		
+		//panel->childSetValue("BeamColor_Preview",lggBeamMaps::beamColorFromData(data));
+		colorctrl->set(LLColor4(lggBeamMaps::beamColorFromData(data)),TRUE);
+	}
+}
+void lggBeamColorUpdater::setNewData(lggBeamsColors idata)
+{
+	data=idata;
+}
+void lggBeamColorUpdater::shutdown()
+{
+}
+
+lggBeamColorUpdater::~lggBeamColorUpdater()
+{
 }

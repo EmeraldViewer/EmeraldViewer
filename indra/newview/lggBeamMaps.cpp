@@ -113,18 +113,20 @@ LLColor4U lggBeamMaps::getCurrentColor(LLColor4U agentColor)
 
 		lastColorsData=lggBeamsColors::fromLLSD(getPic(filename));
 	}
+	agentColor = beamColorFromData(lastColorsData);
+	
+	return agentColor;
+}
+LLColor4U lggBeamMaps::beamColorFromData(lggBeamsColors data)
+{
+
 	F32 r, g, b;
 	LLColor4 output;
+	LLColor4U toReturn;
 
-		
-	//rainbowhslToRgb(0.5f+sinf(gFrameTimeSeconds*0.3f), 1.0f, 0.5f, r, g, b);
-	//emeraldhslToRgb(0.25f+sinf(gFrameTimeSeconds*1.2f)*(0.166f/2.0f), 1.0f, 0.5f, r, g, b);
-		
-	
+	F32 timeinc =  gFrameTimeSeconds*0.3f*((data.rotateSpeed+.01f)) * (360/(data.endHue-data.startHue));
 
-	F32 timeinc =  gFrameTimeSeconds*0.3f*(1.0f/ (lastColorsData.rotateSpeed+.01f));
-
-	S32 diference = llround(lastColorsData.endHue  - lastColorsData.startHue);
+	S32 diference = llround(data.endHue  - data.startHue);
 	if(diference == 360 || diference == 720)
 	{
 		//full rainbow
@@ -133,19 +135,14 @@ LLColor4U lggBeamMaps::getCurrentColor(LLColor4U agentColor)
 
 	}else
 	{
-		F32 variance = ((lastColorsData.endHue/360.0f)-(lastColorsData.startHue/360.0f))/2.0f;
-		hslToRgb((lastColorsData.startHue/360.0f) + variance + (sinf(timeinc)*(variance)), 1.0f, 0.5f, r, g, b);
+		F32 variance = ((data.endHue/360.0f)-(data.startHue/360.0f))/2.0f;
+		hslToRgb((data.startHue/360.0f) + variance + (sinf(timeinc)*(variance)), 1.0f, 0.5f, r, g, b);
 	}
-	//ful spectrum, then backwards.. need a function to linearise it..
-	//hslToRgb(0.5f+sinf(timeinc)*.5f, 1.0f, 0.5f, r, g, b);)
-
-	
-	
 	output.set(r, g, b);
-	
-	agentColor.setVecScaleClamp(output);
-	
-	return agentColor;
+
+	toReturn.setVecScaleClamp(output);
+	return toReturn;
+
 }
 void lggBeamMaps::fireCurrentBeams(LLPointer<LLHUDEffectSpiral> mBeam, LLColor4U rgb)
 {

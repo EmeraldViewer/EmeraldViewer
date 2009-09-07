@@ -50,6 +50,7 @@ class lggBeamMaps
 		F32		setUpAndGetDuration();
 		void	fireCurrentBeams(LLPointer<LLHUDEffectSpiral>, LLColor4U rgb);
 		void	forceUpdate();
+		static LLColor4U beamColorFromData(lggBeamsColors data);
 		LLColor4U getCurrentColor(LLColor4U agentColor);
 		std::vector<std::string> getFileNames();
 		std::vector<std::string> getColorsFileNames();

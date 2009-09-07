@@ -527,12 +527,12 @@ void LLPanelEmerald::onBeamColorDelete(void* data)
 		if(gDirUtilp->fileExists(path_name1))
 		{
 			LLFile::remove(path_name1);
-			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
+			gSavedSettings.setString("EmeraldBeamColorFile","===OFF===");
 		}
 		if(gDirUtilp->fileExists(path_name2))
 		{
 			LLFile::remove(path_name2);
-			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
+			gSavedSettings.setString("EmeraldBeamColorFile","===OFF===");
 		}
 	}
 	self->refresh();

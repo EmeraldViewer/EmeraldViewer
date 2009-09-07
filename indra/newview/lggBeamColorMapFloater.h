@@ -34,3 +34,4 @@ class LggBeamColorMap
 	public:
 	static void show( BOOL showw , void* data);
 };
+

@@ -108,6 +108,7 @@ MsgListener::~MsgListener()
 	
 }
 
+
 lggIrcThread::~lggIrcThread()
 {	
 	sInstances.erase(conn);
