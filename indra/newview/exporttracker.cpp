@@ -268,25 +268,15 @@ LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 		{
 			//cmdline_printchat(llformat("yes %d",export_properties));
 			propertyqueries += 1;
-			//propreq(object);
-
-			//if(started_prop == FALSE)
-			if (!select_packet_objects)
-			{
-				gMessageSystem->newMessageFast(_PREHASH_ObjectSelect);
-				gMessageSystem->nextBlockFast(_PREHASH_AgentData);
-				gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-				gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-			}
+			gMessageSystem->newMessageFast(_PREHASH_ObjectSelect);
+			gMessageSystem->nextBlockFast(_PREHASH_AgentData);
+			gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+			gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 
 			gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
             gMessageSystem->addU32Fast(_PREHASH_ObjectLocalID, object->getLocalID());
             
-            if (++select_packet_objects > 253)
-            {
-                select_packet_objects = 0;
-                gMessageSystem->sendReliable(gAgent.getRegionHost());
-            }
+            gMessageSystem->sendReliable(gAgent.getRegionHost());
 
 			if(export_inventory)
 			{
