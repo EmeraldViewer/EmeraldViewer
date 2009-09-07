@@ -34,6 +34,7 @@
 #include "llhudeffecttrail.h"
 #include "llviewerprecompiledheaders.h"
 #include "lggbeamscolors.h"
+#include "llframetimer.h"
 class lggBeamData
 {
 	public:
@@ -44,7 +45,7 @@ class lggBeamData
 class lggBeamMaps
 {
 	public:
-		lggBeamMaps() { lastFileName = ""; scale=0.0f; duration=0.25f;}
+		lggBeamMaps() { lastFileName = ""; scale=0.0f; duration=0.25f; }
 		~lggBeamMaps() { lastFileName = ""; scale=0.0f; duration=0.25f;}
 	public:
 		F32		setUpAndGetDuration();

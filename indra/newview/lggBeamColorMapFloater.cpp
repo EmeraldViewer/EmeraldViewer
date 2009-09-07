@@ -95,22 +95,22 @@ void hslToRgb1 ( F32 hValIn, F32 sValIn, F32 lValIn, F32& rValOut, F32& gValOut,
 
 
 class lggBeamColorMapFloater;
-class lggBeamColorUpdater;
-
-class lggBeamColorUpdater : public LLThread
-{
-public:
-	lggBeamColorUpdater(lggBeamsColors idata, lggBeamColorMapFloater* ipanel);
-	~lggBeamColorUpdater();	
-	/*virtual*/ void run(void);
-	/*virtual*/ void shutdown(void);
-	void setNewData(lggBeamsColors idata);
-
-protected:
-	lggBeamsColors data;
-	lggBeamColorMapFloater* panel;
-
-};
+// class lggBeamColorUpdater;
+// 
+// class lggBeamColorUpdater : public LLThread
+// {
+// public:
+// 	lggBeamColorUpdater(lggBeamsColors idata, lggBeamColorMapFloater* ipanel);
+// 	~lggBeamColorUpdater();	
+// 	/*virtual*/ void run(void);
+// 	/*virtual*/ void shutdown(void);
+// 	void setNewData(lggBeamsColors idata);
+// 
+// protected:
+// 	lggBeamsColors data;
+// 	lggBeamColorMapFloater* panel;
+// 
+// };
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ public:
 	LLSD getMyDataSerialized();
 	
 	lggBeamsColors myData; 
-	lggBeamColorUpdater * colorUpdater;
+	//lggBeamColorUpdater * colorUpdater;
 
 	// UI Handlers
 	static void onClickSave(void* data);
@@ -145,9 +145,6 @@ public:
 
 	static void onClickSlider(LLUICtrl* crtl, void* userdata);
 
-	
-private:
-	static void onBackgroundChange(LLUICtrl* ctrl, void* userdata);
 };
 void lggBeamColorMapFloater::onClickSlider(LLUICtrl* crtl, void* userdata)
 {
@@ -156,6 +153,11 @@ void lggBeamColorMapFloater::onClickSlider(LLUICtrl* crtl, void* userdata)
 }
 void lggBeamColorMapFloater::draw()
 {
+	LLColorSwatchCtrl* colorctrl = getChild<LLColorSwatchCtrl>("BeamColor_Preview");
+
+	//panel->childSetValue("BeamColor_Preview",lggBeamMaps::beamColorFromData(data));
+	colorctrl->set(LLColor4(lggBeamMaps::beamColorFromData(myData)),TRUE);
+
 	//getChild<LLPanel>("beamshape_draw")->setBackgroundColor(getChild<LLColorSwatchCtrl>("back_color_swatch")->get());
  	LLFloater::draw();
 // 	LLRect rec  = getChild<LLPanel>("beamshape_draw")->getRect();
@@ -233,8 +235,8 @@ void lggBeamColorMapFloater::draw()
 
 lggBeamColorMapFloater::~lggBeamColorMapFloater()
 {
-	colorUpdater->shutdown();
-	delete colorUpdater;
+	//colorUpdater->shutdown();
+	//delete colorUpdater;
 	//if(mCallback) mCallback->detach();
 }
 
@@ -260,8 +262,8 @@ BOOL lggBeamColorMapFloater::postBuild(void)
 
 	fixOrder();
 
-	colorUpdater = new lggBeamColorUpdater(myData,this);
-	colorUpdater->start();
+	//colorUpdater = new lggBeamColorUpdater(myData,this);
+	//colorUpdater->start();
 	
 	return true;
 }
@@ -270,9 +272,18 @@ BOOL lggBeamColorMapFloater::handleMouseDown(S32 x,S32 y,MASK mask)
 	//6, 277
 		//402 201
 	
-	if(y>201 && x>6 && x<402 && y<277)
+	if(y>201 &&  y<277)
 	{
-		myData.startHue  = convertXToHue(x);
+		if(x<6)
+		{
+			myData.startHue=0.0f;
+		}else if( x>402)
+		{
+			myData.endHue=720.0f;
+		}else
+			myData.startHue  = convertXToHue(x);
+		
+	
 		fixOrder();
 	}
 	
@@ -283,9 +294,16 @@ BOOL lggBeamColorMapFloater::handleMouseDown(S32 x,S32 y,MASK mask)
 }
 BOOL lggBeamColorMapFloater::handleRightMouseDown(S32 x,S32 y,MASK mask)
 {
-	if(y>201 && x>6 && x<402 && y<277)
+	if(y>201 &&  y<277)
 	{
-		myData.endHue  = convertXToHue(x);
+		if(x<6)
+		{
+			myData.startHue=0.0f;
+		}else if (x>402)
+		{
+			myData.endHue=720.0f;
+		}else
+			myData.endHue  = convertXToHue(x);
 		fixOrder();
 	}
 	llinfos << "we got right clicked at (" << x << ", " << y << " yay! " << llendl;
@@ -410,30 +428,31 @@ void LggBeamColorMap::show(BOOL showin, void * data)
 
 
 ///////////////////////////////////
-
-lggBeamColorUpdater::lggBeamColorUpdater(lggBeamsColors idata, lggBeamColorMapFloater* ipanel): LLThread("BEAM COLOR UPDATER"),data(idata),panel(ipanel)
-{
-
-}
-
-void lggBeamColorUpdater::run()
-{
-	while(1)
-	{
-		LLColorSwatchCtrl* colorctrl = panel->getChild<LLColorSwatchCtrl>("BeamColor_Preview");
-		
-		//panel->childSetValue("BeamColor_Preview",lggBeamMaps::beamColorFromData(data));
-		colorctrl->set(LLColor4(lggBeamMaps::beamColorFromData(data)),TRUE);
-	}
-}
-void lggBeamColorUpdater::setNewData(lggBeamsColors idata)
-{
-	data=idata;
-}
-void lggBeamColorUpdater::shutdown()
-{
-}
-
-lggBeamColorUpdater::~lggBeamColorUpdater()
-{
-}
+// 
+// lggBeamColorUpdater::lggBeamColorUpdater(lggBeamsColors idata, lggBeamColorMapFloater* ipanel): LLThread("BEAM COLOR UPDATER"),data(idata),panel(ipanel)
+// {
+// 
+// }
+// 
+// void lggBeamColorUpdater::run()
+// {
+// 	while(1)
+// 	{
+// 		LLColorSwatchCtrl* colorctrl = panel->getChild<LLColorSwatchCtrl>("BeamColor_Preview");
+// 		
+// 		//panel->childSetValue("BeamColor_Preview",lggBeamMaps::beamColorFromData(data));
+// 		colorctrl->set(LLColor4(lggBeamMaps::beamColorFromData(data)),TRUE);
+// 		ms_sleep(400);
+// 	}
+// }
+// void lggBeamColorUpdater::setNewData(lggBeamsColors idata)
+// {
+// 	data=idata;
+// }
+// void lggBeamColorUpdater::shutdown()
+// {
+// }
+// 
+// lggBeamColorUpdater::~lggBeamColorUpdater()
+// {
+// }

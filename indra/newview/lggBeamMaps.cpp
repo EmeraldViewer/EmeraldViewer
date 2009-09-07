@@ -43,8 +43,8 @@
 lggBeamMaps gLggBeamMaps;
 F32 hueToRgb ( F32 val1In, F32 val2In, F32 valHUeIn )
 {
-	if ( valHUeIn < 0.0f ) valHUeIn += 1.0f;
-	if ( valHUeIn > 1.0f ) valHUeIn -= 1.0f;
+	while ( valHUeIn < 0.0f ) valHUeIn += 1.0f;
+	while ( valHUeIn > 1.0f ) valHUeIn -= 1.0f;
 	if ( ( 6.0f * valHUeIn ) < 1.0f ) return ( val1In + ( val2In - val1In ) * 6.0f * valHUeIn );
 	if ( ( 2.0f * valHUeIn ) < 1.0f ) return ( val2In );
 	if ( ( 3.0f * valHUeIn ) < 2.0f ) return ( val1In + ( val2In - val1In ) * ( ( 2.0f / 3.0f ) - valHUeIn ) * 6.0f );
@@ -117,14 +117,15 @@ LLColor4U lggBeamMaps::getCurrentColor(LLColor4U agentColor)
 	
 	return agentColor;
 }
+
+static LLFrameTimer timer;
 LLColor4U lggBeamMaps::beamColorFromData(lggBeamsColors data)
 {
 
 	F32 r, g, b;
 	LLColor4 output;
 	LLColor4U toReturn;
-
-	F32 timeinc =  gFrameTimeSeconds*0.3f*((data.rotateSpeed+.01f)) * (360/(data.endHue-data.startHue));
+	F32 timeinc =  timer.getElapsedTimeF32()*0.3f*((data.rotateSpeed+.01f)) * (360/(data.endHue-data.startHue));
 
 	S32 diference = llround(data.endHue  - data.startHue);
 	if(diference == 360 || diference == 720)
