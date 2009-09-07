@@ -63,8 +63,6 @@ U32 JCExportTracker::status;
 std::string JCExportTracker::destination;
 std::string JCExportTracker::asset_dir;
 std::set<LLUUID> JCExportTracker::requested_textures;
-int JCExportTracker::select_packet_objects;
-
 
 JCExportTracker::JCExportTracker()
 {
@@ -346,8 +344,6 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 
 	init();
 
-	select_packet_objects = 0;
-
 	status = EXPORTING;
 
 	LLFilePicker& file_picker = LLFilePicker::instance();
@@ -409,12 +405,6 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 			total[count] = origin;
 		}
 		count += 1;
-	}
-
-	if(select_packet_objects)
-	{
-		select_packet_objects = 0;
-		gMessageSystem->sendReliable(gAgent.getRegionHost());
 	}
 
 	if(success && !total.isUndefined() && propertyqueries == 0 && invqueries == 0)

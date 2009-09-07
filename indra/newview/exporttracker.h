@@ -91,8 +91,6 @@ private:
 	static std::string destination;
 	static std::string asset_dir;
 	static std::set<LLUUID> requested_textures;
-
-	static int select_packet_objects;
 };
 
 

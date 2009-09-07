@@ -3343,9 +3343,7 @@ void LLAppViewer::idle()
 	    gAgentPilot.updateTarget();
 	    gAgent.autoPilot(&yaw);
     
-		static GUS utilityStream;
-
-	    static LLFrameTimer agent_update_timer;
+		static LLFrameTimer agent_update_timer;
 		
 		static LLFrameTimer JSstream_update_timer;
 		static LLFrameTimer GUS_update_timer;
@@ -3380,22 +3378,28 @@ void LLAppViewer::idle()
 		if(canSend)
 		{
 			//theGenius Indigo - Joystick data is streamed inworld on a specific channel
-			F32 JoystickStreamFrequency = gSavedSettings.getF32("JoystickStreamRefresh"); //Joystick data stream refresh frequency
-			if(gSavedSettings.getBOOL("JoystickStreamEnabled") && (JSstream_update_time > (1.0f / llmax(JoystickStreamFrequency, 0.0001f))))
+			if(LLViewerJoystick::streamEnabled)
 			{
-				LLViewerJoystick::getInstance()->cansend(); //Allow data to be sent on the next joystick scan
-				JSstream_update_timer.reset();
+				if(JSstream_update_time > (1.0f / llmax(LLViewerJoystick::streamRefresh, 0.0001f)))
+				{
+					LLViewerJoystick::getInstance()->cansend(); //Allow data to be sent on the next joystick scan
+					JSstream_update_timer.reset();
+				}
 			}
-			F32 GUS_freq = llclamp(gSavedSettings.getF32("EmeraldGUSRefresh"), 0.0001f, 10.f); //Greenlife Utility Stream refresh frequency
-			if(gSavedSettings.getBOOL("EmeraldGUSEnabled") && (GUS_update_time > (1.0f / GUS_freq)))
+			if(GUS::Enabled)
 			{
-			   if(utilityStream.streamData())GUS_update_timer.reset();
-			   utilityStream.FELimiter_dec();
-			}
-			F32 GUS_FE_freq = llclamp(gSavedSettings.getF32("EmeraldGUSFastEventsRefresh"), 0.0001f, 20.f); //Greenlife Utility Stream (Fast Event) refresh frequency
-			if(gSavedSettings.getBOOL("EmeraldGUSEnabled") && gSavedSettings.getBOOL("EmeraldGUSFastEventsEnabled") && (GUS_FE_update_time > (1.0f / llmin(llmax(GUS_FE_freq, 0.0001f), 20.f))))
-			{
-			   if(utilityStream.fastEvent())GUS_FE_update_timer.reset();
+				if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
+				{
+					if(GUS::getInstance()->streamData())GUS_update_timer.reset();
+					GUS::getInstance()->FELimiter_dec();
+				}
+				if(GUS::FEEnabled)
+				{
+					if(GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
+					{
+						if(GUS::getInstance()->fastEvent())GUS_FE_update_timer.reset();
+					}
+				}
 			}
 		}
 	}

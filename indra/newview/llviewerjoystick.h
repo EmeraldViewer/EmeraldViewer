@@ -75,8 +75,13 @@ public:
 	void setSNDefaults();
 	std::string getDescription();
 	void cansend() { mSendStream = true; }
-	
+	static bool streamEnabled;
+	static F32 streamRefresh;
 protected:
+	static void initStream();
+	static void updateStreamEnabled(const LLSD &data);
+	static void updateStreamRefresh(const LLSD &data);
+
 	void updateEnabled(bool autoenable);
 	void terminate();
 	void handleRun(F32 inc);

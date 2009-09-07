@@ -36,6 +36,11 @@
 //theGenius Indigo
 //Currently, all this does is stream the avatar's eyeball rotation and blinking; useful for primed eyes on avatars
 
+bool GUS::Enabled = false;
+F32 GUS::Refresh = 0.001f;
+bool GUS::FEEnabled = false;
+F32 GUS::FERefresh = 0.001f;
+
 //Constructor(s)
 GUS::GUS()
 {
@@ -43,16 +48,40 @@ GUS::GUS()
 	sFEMessage = genFEMessage();
 	changed = true;
 	FEchanged = true;
+	initGUS();
 }
-
-GUS::GUS(GUS& oldGus)
+//static
+void GUS::initGUS()
 {
-	sMessage = oldGus.getMessage();
-	sFEMessage = oldGus.getFEMessage();
-	changed = true;
-	FEchanged = true;
+	Enabled = gSavedSettings.getBOOL("EmeraldGUSEnabled");
+	Refresh = gSavedSettings.getF32("EmeraldGUSRefresh");
+	FEEnabled = gSavedSettings.getBOOL("EmeraldGUSFastEventsEnabled");
+	FERefresh = gSavedSettings.getF32("EmeraldGUSFastEventsRefresh");
+	gSavedSettings.getControl("EmeraldGUSEnabled")->getSignal()->connect(&gusEnabled);
+	gSavedSettings.getControl("EmeraldGUSRefresh")->getSignal()->connect(&gusRefresh);
+	gSavedSettings.getControl("EmeraldGUSFastEventsEnabled")->getSignal()->connect(&gusFEEnabled);
+	gSavedSettings.getControl("EmeraldGUSFastEventsRefresh")->getSignal()->connect(&gusFERefresh);
 }
-
+//static
+void GUS::gusEnabled(const LLSD &data)
+{
+	Enabled = (bool)data.asBoolean();
+}
+//static
+void GUS::gusRefresh(const LLSD &data)
+{
+	Refresh = (F32)data.asReal();
+}
+//static
+void GUS::gusFEEnabled(const LLSD &data)
+{
+	FEEnabled = (bool)data.asBoolean();
+}
+//static
+void GUS::gusFERefresh(const LLSD &data)
+{
+	FERefresh = (F32)data.asReal();
+}
 bool GUS::streamData()
 {
 	std::string nMessage = genMessage();

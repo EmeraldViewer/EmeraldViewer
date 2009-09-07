@@ -49,6 +49,8 @@
 #include "llchat.h"
 #include "llviewerstats.h"
 
+bool LLViewerJoystick::streamEnabled = false;
+F32 LLViewerJoystick::streamRefresh = 0.0001f;
 
 // ----------------------------------------------------------------------------
 // Constants
@@ -170,8 +172,27 @@ LLViewerJoystick::LLViewerJoystick()
 
 	// factor in bandwidth? bandwidth = gViewerStats->mKBitStat
 	mPerfScale = 4000.f / gSysCPU.getMhz();
-}
 
+	initStream();
+}
+//static
+void LLViewerJoystick::initStream()
+{
+	streamEnabled = gSavedSettings.getBOOL("JoystickStreamEnabled");
+	streamRefresh = gSavedSettings.getF32("JoystickStreamRefresh");
+	gSavedSettings.getControl("JoystickStreamEnabled")->getSignal()->connect(&updateStreamEnabled);
+	gSavedSettings.getControl("JoystickStreamRefresh")->getSignal()->connect(&updateStreamRefresh);
+}
+//static
+void LLViewerJoystick::updateStreamEnabled(const LLSD &data)
+{
+	streamEnabled = (bool)data.asBoolean();
+}
+//static
+void LLViewerJoystick::updateStreamRefresh(const LLSD &data)
+{
+	streamRefresh = (F32)data.asReal();
+}
 // -----------------------------------------------------------------------------
 LLViewerJoystick::~LLViewerJoystick()
 {

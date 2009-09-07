@@ -44,17 +44,25 @@
 #include "llviewerstats.h"
 #include "llfloaterchat.h"
 
-class GUS
+class GUS : public LLSingleton<GUS>
 {
 	public:
 		GUS();
-		GUS(GUS&);
 		bool streamData();
 		bool fastEvent();
 		std::string getMessage(){ return sMessage; }
 		std::string getFEMessage(){ return sFEMessage; }
 		void FELimiter_dec(){ FELimiter = (FELimiter>0)?FELimiter-1:0; }
+		static bool Enabled;
+		static F32 Refresh;
+		static bool FEEnabled;
+		static F32 FERefresh;
 	private:
+		static void initGUS();
+		static void gusEnabled(const LLSD &data);
+		static void gusRefresh(const LLSD &data);
+		static void gusFEEnabled(const LLSD &data);
+		static void gusFERefresh(const LLSD &data);
 		std::string genMessage();
 		std::string genFEMessage();
 		std::string sMessage;
