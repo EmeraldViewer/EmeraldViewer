@@ -3082,7 +3082,8 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
                 if (was_finished)
                 {
                     llinfos << "$PLOTR$ OTR tried to send into finished conv, not sending message!" << llendl;
-                    otrLogMessageGetstringName("otr_err_send_in_finished");
+                    //otrLogMessageGetstringName("otr_err_send_in_finished"); //Don't error and tell the user to restart, just restart instead!
+					doOtrStart();
                     return; // leave the unsent message in the edit box
                 }
                 OtrlMessageType msgtype = OTRL_MSGTYPE_NOTOTR;
