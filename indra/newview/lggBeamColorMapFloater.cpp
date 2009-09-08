@@ -332,6 +332,12 @@ void lggBeamColorMapFloater::fixOrder()
 void lggBeamColorMapFloater::setData(void* data)
 {
 	empanel = (LLPanelEmerald*)data;
+	if(empanel)
+	{
+		gFloaterView->getParentFloater(empanel)->addDependentFloater(this);
+	}
+
+	
 
 }
 void lggBeamColorMapFloater::update()
@@ -368,9 +374,8 @@ void lggBeamColorMapFloater::onClickSave(void* data)
 
 	gSavedSettings.setString("EmeraldBeamColorFile",gDirUtilp->getBaseFileName(filename,true));
 
-	if(self->empanel)
+	if(self->empanel != NULL)
 	{
-		if(self->empanel->isInVisibleChain())
 		self->empanel->refresh();
 	}
 	self->close();
@@ -410,6 +415,7 @@ void LggBeamColorMap::show(BOOL showin, void * data)
 	{
 		lggBeamColorMapFloater* beam_floater = lggBeamColorMapFloater::showInstance();
 		beam_floater->setData(data);
+
 	}
 }
 

@@ -64,6 +64,7 @@
 
 #include "llweb.h" // [$PLOTR$/]
 #include "lggbeamcolormapfloater.h"
+#include "llsliderctrl.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -187,8 +188,14 @@ BOOL LLPanelEmerald::postBuild()
 	getChild<LLComboBox>("material")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Material"));
 	getChild<LLComboBox>("combobox shininess")->setSimple(gSavedSettings.getString("EmeraldBuildPrefs_Shiny"));
 	
-	getChild<LLSlider>("EmeraldBeamShapeScale")->setCommitCallback(beamUpdateCall);
-	getChild<LLSlider>("EmeraldMaxBeamsPerSecond")->setCommitCallback(beamUpdateCall);
+
+	LLSliderCtrl* mShapeScaleSlider = getChild<LLSliderCtrl>("EmeraldBeamShapeScale",TRUE,FALSE);
+	mShapeScaleSlider->setCommitCallback(&LLPanelEmerald::beamUpdateCall);
+	mShapeScaleSlider->setCallbackUserData(this);
+
+	LLSliderCtrl* mBeamsPerSecondSlider = getChild<LLSliderCtrl>("EmeraldMaxBeamsPerSecond",TRUE,FALSE);
+	mBeamsPerSecondSlider->setCommitCallback(&LLPanelEmerald::beamUpdateCall);
+	mBeamsPerSecondSlider->setCallbackUserData(this);
 
 	getChild<LLComboBox>("material")->setCommitCallback(onComboBoxCommit);
 	getChild<LLComboBox>("combobox shininess")->setCommitCallback(onComboBoxCommit);

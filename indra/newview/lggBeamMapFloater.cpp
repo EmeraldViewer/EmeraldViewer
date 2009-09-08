@@ -181,6 +181,11 @@ BOOL lggBeamMapFloater::handleMouseDown(S32 x,S32 y,MASK mask)
 void lggBeamMapFloater::setData(void* data)
 {
 	empanel = (LLPanelEmerald*)data;
+	if(empanel)
+	{
+
+		gFloaterView->getParentFloater(empanel)->addDependentFloater(this);
+	}
 
 }
 BOOL lggBeamMapFloater::handleRightMouseDown(S32 x,S32 y,MASK mask)
@@ -326,6 +331,8 @@ void LggBeamMap::show(BOOL showin, void * data)
 	
 		lggBeamMapFloater* beam_floater = lggBeamMapFloater::showInstance();
 		beam_floater->setData(data);
+
+
 	}
 	//beam_floater->update();
 }
