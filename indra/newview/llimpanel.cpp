@@ -1375,10 +1375,17 @@ BOOL LLFloaterIMPanel::postBuild()
 		}
 		if(IM_SESSION_IRC_START == mDialog || IM_PRIVATE_IRC == mDialog)
 		{
-			childSetVisible("profile_btn", FALSE);
-			childSetVisible("profile_callee_btn", FALSE);
-			childSetVisible("start_call_btn",FALSE);
-			childSetVisible("profile_tele_btn",FALSE);
+// 			childSetVisible("profile_btn", FALSE);
+// 			childSetVisible("profile_callee_btn", FALSE);
+// 			childSetVisible("start_call_btn",FALSE);
+// 			childSetVisible("profile_tele_btn",FALSE);
+// 			childSetVisible("password",FALSE);
+// 			childSetVisible("otr_combo",FALSE);
+		
+			childSetEnabled("profile_btn", FALSE);
+			childSetEnabled("profile_callee_btn", FALSE);
+			childSetEnabled("start_call_btn",FALSE);
+			childSetEnabled("profile_tele_btn",FALSE);
 			childSetVisible("password",FALSE);
 			childSetVisible("otr_combo",FALSE);
 		}

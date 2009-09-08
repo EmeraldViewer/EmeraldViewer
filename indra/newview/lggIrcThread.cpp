@@ -244,11 +244,11 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 			}
 		}else
 		{
-			msg("No target or nick given");
+			//msg("No target or nick given");
 		}
 	}else
 	{
-		msg("No host given");
+		//msg("No host given");
 	}
 	
 	return 0;
@@ -283,8 +283,15 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 int lggIrcThread::JoinMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
 	//msg( llformat("JOIN Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
-	if(gSavedSettings.getBOOL("EmeraldIRC_ShowJoin"))
-	msg( llformat("%s has joined this chat.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorJoin"));
+	if(hostd)
+	{
+		if(hostd->nick)
+		{
+			if(gSavedSettings.getBOOL("EmeraldIRC_ShowJoin"))
+				msg( llformat("%s has joined this chat.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorJoin"));
+
+		}
+	}
 	
 	updateNames();
 	return 0;
@@ -294,8 +301,14 @@ int lggIrcThread::PartMessageResponce( char * params, irc_reply_data * hostd, vo
 	//[20:36]  PART Params: #emerald and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
 
 	//msg( llformat("PART Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
-	if(gSavedSettings.getBOOL("EmeraldIRC_ShowQuit"))
-	msg( llformat("%s has left this chat.",hostd->nick).c_str());
+	if(hostd)
+	{
+		if(hostd->nick)
+		{
+			if(gSavedSettings.getBOOL("EmeraldIRC_ShowQuit"))
+				msg( llformat("%s has left this chat.",hostd->nick).c_str());
+		}
+	}
 	
 	updateNames();
 	return 0;
@@ -304,9 +317,14 @@ int lggIrcThread::QuitMessageResponce( char * params, irc_reply_data * hostd, vo
 {
 	//[20:45]  QUIT Params: :Quit:  and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
 	//msg( llformat("QUIT Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
-	if(gSavedSettings.getBOOL("EmeraldIRC_ShowQuit"))
-	msg( llformat("%s has logged off.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"));
-	
+	if(hostd)
+	{
+		if(hostd->nick)
+		{
+			if(gSavedSettings.getBOOL("EmeraldIRC_ShowQuit"))
+				msg( llformat("%s has logged off.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"));
+		}
+	}
 	updateNames();
 	return 0;
 }
@@ -316,9 +334,14 @@ int lggIrcThread::NickMessageResponce( char * params, irc_reply_data * hostd, vo
 	//[20:46]  NICK Params: :lgg and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick new and target (null) 
 
 	//msg( llformat("NICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
-	if(gSavedSettings.getBOOL("EmeraldIRC_ShowNick"))
-	msg( llformat("%s (%s) is now known as %s.",hostd->nick,hostd->ident,&params[1]).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorNick"));
-	
+	if(hostd)
+	{
+		if(hostd->nick && hostd->ident && params)
+		{
+			if(gSavedSettings.getBOOL("EmeraldIRC_ShowNick"))
+				msg( llformat("%s (%s) is now known as %s.",hostd->nick,hostd->ident,&params[1]).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorNick"));
+		}
+	}
 	updateNames();
 	return 0;
 }
@@ -328,8 +351,15 @@ int lggIrcThread::ModeMessageResponce( char * params, irc_reply_data * hostd, vo
 	//[20:46]  NICK Params: :lgg and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick new and target (null) 
 
 	//msg( llformat("NICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
-	if(gSavedSettings.getBOOL("EmeraldIRC_ShowNick"))
-	msg( llformat("%s (%s) sets mode on %s. (%s)",hostd->nick,hostd->ident,&params[0],hostd->target).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorNick"));
+	
+	if(hostd)
+	{
+		if(hostd->nick && hostd->ident && params && hostd->target)
+		{
+			if(gSavedSettings.getBOOL("EmeraldIRC_ShowNick"))
+				msg( llformat("%s (%s) sets mode on %s. (%s)",hostd->nick,hostd->ident,&params[0],hostd->target).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorNick"));
+		}
+	}
 	
 	updateNames();
 	return 0;
@@ -338,22 +368,30 @@ int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, vo
 {
 	//[20:10]  KICK Params: #emerald Emerald-User354541ac :test and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
 	//msg( llformat("KICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
-	std::string twho;
-	std::string twhy;
-	std::string paramstring(&params[1]);
-	istringstream iss(paramstring);
-	iss >> twho;//first part we dont need
-	
-	if(gSavedSettings.getBOOL("EmeraldIRC_ShowKick"))
-	if(iss >> twho)
+	if(hostd)
 	{
-		
-		if(iss >> twhy)
+
+	
+		if(hostd->nick && hostd->ident && params)
 		{
-			msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"));	
-		}else
-		{
-			msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"));	
+			std::string twho;
+			std::string twhy;
+			std::string paramstring(&params[1]);
+			istringstream iss(paramstring);
+			iss >> twho;//first part we dont need
+			
+			if(gSavedSettings.getBOOL("EmeraldIRC_ShowKick"))
+			if(iss >> twho)
+			{
+				
+				if(iss >> twhy)
+				{
+					msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"));	
+				}else
+				{
+					msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"));	
+				}
+			}
 		}
 	}
 	updateNames();
