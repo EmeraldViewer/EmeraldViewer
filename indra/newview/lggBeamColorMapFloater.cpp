@@ -51,7 +51,7 @@
 #include "llsdserialize.h"
 #include "llpanelemerald.h"
 #include "lggbeamscolors.h"
-#include "llslider.h"
+#include "llsliderctrl.h"
 
 F32 convertXToHue(S32 place)
 {return ((place-6)/396.0f)*720.0f;}
@@ -144,6 +144,7 @@ public:
 	static void onClickLoad(void* data);
 
 	static void onClickSlider(LLUICtrl* crtl, void* userdata);
+	LLSliderCtrl* mColorSlider;
 
 };
 void lggBeamColorMapFloater::onClickSlider(LLUICtrl* crtl, void* userdata)
@@ -258,7 +259,9 @@ BOOL lggBeamColorMapFloater::postBuild(void)
 	childSetAction("BeamColor_Save",onClickSave,this);
 	childSetAction("BeamColor_Load",onClickLoad,this);
 	childSetAction("BeamColor_Cancel",onClickCancel,this);
-	getChild<LLSlider>("BeamColor_Speed")->setCommitCallback(onClickSlider);
+	mColorSlider = getChild<LLSliderCtrl>("BeamColor_Speed",TRUE,FALSE);
+	mColorSlider->setCommitCallback(&lggBeamColorMapFloater::onClickSlider);
+	mColorSlider->setCallbackUserData(this);
 
 	fixOrder();
 
@@ -314,23 +317,8 @@ BOOL lggBeamColorMapFloater::handleRightMouseDown(S32 x,S32 y,MASK mask)
 
 void lggBeamColorMapFloater::fixOrder()
 {
-	//LLSlider* slider = getChild<LLSlider>("BeamColor_Speed");
-
-	//llinfos << "testing slider stuff..." << llendl;
-
-	//myData.rotateSpeed = (F32)((F32)(childGetValue("BeamColor_Speed").asReal())/100.0f);
-	//myData.rotateSpeed = slider->getValueF32();
-	//myData.rotateSpeed = (F32)slider->getValue().asReal();
-
-	//llinfos << "slider at  -value as real-" << myData.rotateSpeed << llendl;
-
-	myData.rotateSpeed = (F32)childGetValue("BeamColor_Speed").asReal();
+	myData.rotateSpeed = mColorSlider->getValueF32();
 	myData.rotateSpeed /= 100.0f;
-	//llinfos << "slider at  getchildvalie-" << myData.rotateSpeed << llendl;
-
-	//myData.rotateSpeed = slider->getValueF32();
-	//llinfos << "slider at  get32-" << myData.rotateSpeed << llendl;
-
 	
 	if(myData.endHue < myData.startHue)
 	{

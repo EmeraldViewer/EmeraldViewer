@@ -239,14 +239,6 @@ BOOL LLPanelEmerald::postBuild()
 	childSetValue("EmeraldUseOTR", LLSD((S32)gSavedSettings.getU32("EmeraldUseOTR"))); // [$PLOTR$]
 	getChild<LLButton>("otr_help_btn")->setClickedCallback(onClickOtrHelp, this);      // [/$PLOTR$]
 
-	childSetCommitCallback("EmeraldGUSEnabled", onUpdateGUSEnabled);
-	childSetCommitCallback("EmeraldGUSChannel", onUpdateGUSChannel);
-	childSetCommitCallback("EmeraldGUSRefresh", onUpdateGUSRate);
-	childSetCommitCallback("EmeraldGUSFastEventsEnabled", onUpdateGUSEnabled);
-	childSetCommitCallback("EmeraldGUSFastEventsRefresh", onUpdateGUSRate);
-	childSetCommitCallback("EmeraldGUSEyeRot", onUpdateGUSFeatures);
-	childSetCommitCallback("EmeraldGUSEyelidState", onUpdateGUSFeatures);
-
 	initHelpBtn("EmeraldHelp_TeleportLogin",	"EmeraldHelp_TeleportLogin");
 	initHelpBtn("EmeraldHelp_Voice",			"EmeraldHelp_Voice");
 	initHelpBtn("EmeraldHelp_Shields",			"EmeraldHelp_Shields");
@@ -376,7 +368,6 @@ void LLPanelEmerald::apply()
 	gSavedSettings.setBOOL("EmeraldDoubleClickTeleportMode", childGetValue("EmeraldDoubleClickTeleportMode").asBoolean());
 	gSavedSettings.setU32("EmeraldUseOTR", (U32)childGetValue("EmeraldUseOTR").asReal());
 	gLggBeamMaps.forceUpdate();
-	onUpdateGUS(new LLUICtrl(), this);
 }
 
 void LLPanelEmerald::cancel()
@@ -440,7 +431,7 @@ void LLPanelEmerald::callbackEmeraldNoStealth(const LLSD &notification, const LL
 		gSavedSettings.setBOOL("EmeraldRainbowBeam",true);
 		gSavedSettings.setString("EmeraldBeamShape","Emerald");
 		gSavedSettings.setBOOL("EmeraldCryoDetect",true);
-		gSavedSettings.setBOOL("EmeraldGUSEnabled",true);
+		//gSavedSettings.setBOOL("EmeraldGUSEnabled",true);
 		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",true);
 	}
 }
@@ -584,38 +575,6 @@ void LLPanelEmerald::onClickSetMirror(void* user_data)
 	}
 }
 
-
-void LLPanelEmerald::onUpdateGUSEnabled(LLUICtrl* ctrl, void* userdata)
-{
-	LLPanelEmerald* self = (LLPanelEmerald*)userdata;
-	gSavedPerAccountSettings.setBOOL("EmeraldGUSEnabled", self->childGetValue("EmeraldGUSEnabled").asBoolean());
-	gSavedPerAccountSettings.setBOOL("EmeraldGUSFastEventsEnabled", self->childGetValue("EmeraldGUSFastEventsEnabled").asBoolean());
-}
-void LLPanelEmerald::onUpdateGUSChannel(LLUICtrl* ctrl, void* userdata)
-{
-	LLPanelEmerald* self = (LLPanelEmerald*)userdata;
-	gSavedPerAccountSettings.setS32("EmeraldGUSChannel", self->childGetValue("EmeraldGUSChannel").asReal());
-}
-void LLPanelEmerald::onUpdateGUSRate(LLUICtrl* ctrl, void* userdata)
-{
-	LLPanelEmerald* self = (LLPanelEmerald*)userdata;
-	gSavedPerAccountSettings.setF32("EmeraldGUSRefresh", llclamp((F32)self->childGetValue("EmeraldGUSRefresh").asReal(), 0.0001f, 10.f));
-	gSavedPerAccountSettings.setF32("EmeraldGUSFastEventsRefresh", llclamp((F32)self->childGetValue("EmeraldGUSFastEventRefresh").asReal(), 0.0001f, 20.f));
-}
-void LLPanelEmerald::onUpdateGUSFeatures(LLUICtrl* ctrl, void* userdata)
-{
-	LLPanelEmerald* self = (LLPanelEmerald*)userdata;
-	gSavedPerAccountSettings.setBOOL("EmeraldGUSEyeRot", self->childGetValue("EmeraldGUSEyeRot").asBoolean());
-	gSavedPerAccountSettings.setBOOL("EmeraldGUSEyelidState", self->childGetValue("EmeraldGUSEyelidState").asBoolean());
-}
-void LLPanelEmerald::onUpdateGUS(LLUICtrl* ctrl, void* userdata)
-{
-	//update everything
-	onUpdateGUSEnabled(ctrl, userdata);
-	onUpdateGUSChannel(ctrl, userdata);
-	onUpdateGUSRate(ctrl, userdata);
-	onUpdateGUSFeatures(ctrl, userdata);
-}
 /*
 //static 
 void LLPanelEmerald::onClickSilver(void* data)
