@@ -50,8 +50,14 @@
 
 #include "llsdserialize.h"
 #include "llpanelemerald.h"
+#include "llfocusmgr.h"
 class lggPoint;
 class lggBeamMapFloater;
+
+const F32 CONTEXT_CONE_IN_ALPHA = 0.0f;
+const F32 CONTEXT_CONE_OUT_ALPHA = 1.f;
+const F32 CONTEXT_FADE_TIME = 0.08f;
+
 
 ////////////////////////////////////////////////////////////////////////////
 // lggBeamMapFloater
@@ -85,6 +91,8 @@ public:
 	
 private:
 	static void onBackgroundChange(LLUICtrl* ctrl, void* userdata);
+
+	F32 mContextConeOpacity;
 };
 class lggPoint
 {
@@ -101,6 +109,50 @@ void lggBeamMapFloater::clearPoints()
 }
 void lggBeamMapFloater::draw()
 {
+
+	LLRect swatch_rect;
+	empanel->localRectToOtherView(empanel->getLocalRect(), &swatch_rect, this);
+	LLRect local_rect = getLocalRect();
+	if (gFocusMgr.childHasKeyboardFocus(this) && empanel->isInVisibleChain() && mContextConeOpacity > 0.001f)
+	{
+		gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+		LLGLEnable(GL_CULL_FACE);
+		gGL.begin(LLRender::QUADS);
+		{
+			gGL.color4f(0.f, 0.f, 0.f, CONTEXT_CONE_IN_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(swatch_rect.mLeft, swatch_rect.mTop);
+			gGL.vertex2i(swatch_rect.mRight, swatch_rect.mTop);
+			gGL.color4f(0.f, 0.f, 0.f, CONTEXT_CONE_OUT_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(local_rect.mRight, local_rect.mTop);
+			gGL.vertex2i(local_rect.mLeft, local_rect.mTop);
+
+			gGL.color4f(0.f, 0.f, 0.f, CONTEXT_CONE_OUT_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(local_rect.mLeft, local_rect.mTop);
+			gGL.vertex2i(local_rect.mLeft, local_rect.mBottom);
+			gGL.color4f(0.f, 0.f, 0.f, CONTEXT_CONE_IN_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(swatch_rect.mLeft, swatch_rect.mBottom);
+			gGL.vertex2i(swatch_rect.mLeft, swatch_rect.mTop);
+
+			gGL.color4f(0.f, 0.f, 0.f, CONTEXT_CONE_OUT_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(local_rect.mRight, local_rect.mBottom);
+			gGL.vertex2i(local_rect.mRight, local_rect.mTop);
+			gGL.color4f(0.f, 0.f, 0.f, CONTEXT_CONE_IN_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(swatch_rect.mRight, swatch_rect.mTop);
+			gGL.vertex2i(swatch_rect.mRight, swatch_rect.mBottom);
+
+			gGL.color4f(0.f, 0.f, 0.f, CONTEXT_CONE_OUT_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(local_rect.mLeft, local_rect.mBottom);
+			gGL.vertex2i(local_rect.mRight, local_rect.mBottom);
+			gGL.color4f(0.f, 0.f, 0.f, CONTEXT_CONE_IN_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(swatch_rect.mRight, swatch_rect.mBottom);
+			gGL.vertex2i(swatch_rect.mLeft, swatch_rect.mBottom);
+		}
+		gGL.end();
+	}
+
+	mContextConeOpacity = lerp(mContextConeOpacity, gSavedSettings.getF32("PickerContextOpacity"), LLCriticalDamp::getInterpolant(CONTEXT_FADE_TIME));
+
+
 	//getChild<LLPanel>("beamshape_draw")->setBackgroundColor(getChild<LLColorSwatchCtrl>("back_color_swatch")->get());
 	LLFloater::draw();
 	LLRect rec  = getChild<LLPanel>("beamshape_draw")->getRect();
@@ -139,7 +191,7 @@ lggBeamMapFloater::~lggBeamMapFloater()
 	//if(mCallback) mCallback->detach();
 }
 
-lggBeamMapFloater::lggBeamMapFloater(const LLSD& seed)
+lggBeamMapFloater::lggBeamMapFloater(const LLSD& seed):mContextConeOpacity(0.0f)
 {
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_beamshape.xml");
 	

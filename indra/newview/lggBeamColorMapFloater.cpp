@@ -52,6 +52,7 @@
 #include "llpanelemerald.h"
 #include "lggbeamscolors.h"
 #include "llsliderctrl.h"
+#include "llfocusmgr.h"
 
 F32 convertXToHue(S32 place)
 {return ((place-6)/396.0f)*720.0f;}
@@ -111,6 +112,9 @@ class lggBeamColorMapFloater;
 // 	lggBeamColorMapFloater* panel;
 // 
 // };
+const F32 CONTEXT_CONE_IN_ALPHA = 0.0f;
+const F32 CONTEXT_CONE_OUT_ALPHA = 1.f;
+const F32 CONTEXT_FADE_TIME = 0.08f;
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -129,21 +133,25 @@ public:
 	void update();
 	
 	void setData(void* data);
-	LLPanelEmerald * empanel;
 
 	void draw();
 	
 	LLSD getMyDataSerialized();
 	
-	lggBeamsColors myData; 
-	//lggBeamColorUpdater * colorUpdater;
-
 	// UI Handlers
 	static void onClickSave(void* data);
 	static void onClickCancel(void* data);
 	static void onClickLoad(void* data);
 
 	static void onClickSlider(LLUICtrl* crtl, void* userdata);
+
+
+	
+	
+protected:
+	F32 mContextConeOpacity;
+	LLPanelEmerald * empanel;
+	lggBeamsColors myData; 
 	LLSliderCtrl* mColorSlider;
 
 };
@@ -154,16 +162,64 @@ void lggBeamColorMapFloater::onClickSlider(LLUICtrl* crtl, void* userdata)
 }
 void lggBeamColorMapFloater::draw()
 {
+	//set the color of the preview thing
 	LLColorSwatchCtrl* colorctrl = getChild<LLColorSwatchCtrl>("BeamColor_Preview");
+	LLColor4 bColor = LLColor4(lggBeamMaps::beamColorFromData(myData));
+	colorctrl->set(bColor,TRUE);
+	
+	//Try draw rectangle attach beam
+	LLRect swatch_rect;
+	empanel->localRectToOtherView(empanel->getLocalRect(), &swatch_rect, this);
+	LLRect local_rect = getLocalRect();
+	if (gFocusMgr.childHasKeyboardFocus(this) && empanel->isInVisibleChain() && mContextConeOpacity > 0.001f)
+	{
+		gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+		LLGLEnable(GL_CULL_FACE);
+		gGL.begin(LLRender::QUADS);
+		{
+			F32 r = bColor.mV[0];
+			F32 g = bColor.mV[1];
+			F32 b = bColor.mV[2];
 
-	//panel->childSetValue("BeamColor_Preview",lggBeamMaps::beamColorFromData(data));
-	colorctrl->set(LLColor4(lggBeamMaps::beamColorFromData(myData)),TRUE);
+			gGL.color4f(r, g, b, CONTEXT_CONE_IN_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(swatch_rect.mLeft, swatch_rect.mTop);
+			gGL.vertex2i(swatch_rect.mRight, swatch_rect.mTop);
+			gGL.color4f(r, g, b, CONTEXT_CONE_OUT_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(local_rect.mRight, local_rect.mTop);
+			gGL.vertex2i(local_rect.mLeft, local_rect.mTop);
 
-	//getChild<LLPanel>("beamshape_draw")->setBackgroundColor(getChild<LLColorSwatchCtrl>("back_color_swatch")->get());
- 	LLFloater::draw();
-// 	LLRect rec  = getChild<LLPanel>("beamshape_draw")->getRect();
-// 	
- 	gGL.pushMatrix();
+			gGL.color4f(r, g, b, CONTEXT_CONE_OUT_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(local_rect.mLeft, local_rect.mTop);
+			gGL.vertex2i(local_rect.mLeft, local_rect.mBottom);
+			gGL.color4f(r, g, b, CONTEXT_CONE_IN_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(swatch_rect.mLeft, swatch_rect.mBottom);
+			gGL.vertex2i(swatch_rect.mLeft, swatch_rect.mTop);
+
+			gGL.color4f(r, g, b, CONTEXT_CONE_OUT_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(local_rect.mRight, local_rect.mBottom);
+			gGL.vertex2i(local_rect.mRight, local_rect.mTop);
+			gGL.color4f(r, g, b, CONTEXT_CONE_IN_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(swatch_rect.mRight, swatch_rect.mTop);
+			gGL.vertex2i(swatch_rect.mRight, swatch_rect.mBottom);
+
+			gGL.color4f(r, g, b, CONTEXT_CONE_OUT_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(local_rect.mLeft, local_rect.mBottom);
+			gGL.vertex2i(local_rect.mRight, local_rect.mBottom);
+			gGL.color4f(r, g, b, CONTEXT_CONE_IN_ALPHA * mContextConeOpacity);
+			gGL.vertex2i(swatch_rect.mRight, swatch_rect.mBottom);
+			gGL.vertex2i(swatch_rect.mLeft, swatch_rect.mBottom);
+		}
+		gGL.end();
+	}
+
+	mContextConeOpacity = lerp(mContextConeOpacity, gSavedSettings.getF32("PickerContextOpacity"), LLCriticalDamp::getInterpolant(CONTEXT_FADE_TIME));
+
+
+	//Draw Base Stuff
+	LLFloater::draw();
+	
+	//Draw hues and pointers at color
+	gGL.pushMatrix();
 	F32 r, g, b;
 	LLColor4 output;
 	for (int i  = 0;i <= 720;i++)
@@ -241,7 +297,7 @@ lggBeamColorMapFloater::~lggBeamColorMapFloater()
 	//if(mCallback) mCallback->detach();
 }
 
-lggBeamColorMapFloater::lggBeamColorMapFloater(const LLSD& seed)
+lggBeamColorMapFloater::lggBeamColorMapFloater(const LLSD& seed):mContextConeOpacity(0.0f)
 {
 	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_beamcolor.xml");
 	
