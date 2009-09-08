@@ -242,7 +242,13 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 				
 				displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
 			}
+		}else
+		{
+			msg("No target or nick given");
 		}
+	}else
+	{
+		msg("No host given");
 	}
 	
 	return 0;

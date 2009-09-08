@@ -311,7 +311,7 @@ lggIrcThread* lggIrcGroupHandler::getThreadByID(LLUUID id)
 	}
 	return NULL;
 }
-bool lggIrcGroupHandler::trySendPrivateImToID(std::string msg, LLUUID id)
+bool lggIrcGroupHandler::trySendPrivateImToID(std::string msg, LLUUID id, BOOL testingForExistance)
 {
 	for(std::list<lggIrcThread*>::iterator it = activeThreads.begin(); it != activeThreads.end(); it++)
 	{
@@ -322,7 +322,8 @@ bool lggIrcGroupHandler::trySendPrivateImToID(std::string msg, LLUUID id)
 		{
 			if(parts[innerItter] == id)
 			{
-				ita->sendPrivateImToID(msg,id);
+				if(!testingForExistance)
+					ita->sendPrivateImToID(msg,id);
 				return true;
 
 			}

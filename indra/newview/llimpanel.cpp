@@ -1174,6 +1174,7 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 		mVoiceChannel = new LLVoiceChannelGroup(mSessionUUID, mSessionLabel);
 		break;
 	case IM_SESSION_IRC_START:
+		mSessionLabel = "#"+mSessionLabel;
 		mFactoryMap["active_speakers_panel"] = LLCallbackMap(createSpeakersPanel, this);
 		xml_filename =  "floater_instant_message_ad_hoc.xml";
 		mVoiceChannel = new LLVoiceChannelGroup(mSessionUUID, mSessionLabel);
@@ -1211,6 +1212,8 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 		mVoiceChannel = new LLVoiceChannelP2P(mSessionUUID, mSessionLabel, mOtherParticipantUUID);
 		break;
 	case IM_PRIVATE_IRC:
+		mSessionLabel = "#"+mSessionLabel;
+
 		xml_filename = "floater_instant_message.xml";
 
 		mTextIMPossible = TRUE;
@@ -1375,7 +1378,9 @@ BOOL LLFloaterIMPanel::postBuild()
 			childSetVisible("profile_btn", FALSE);
 			childSetVisible("profile_callee_btn", FALSE);
 			childSetVisible("start_call_btn",FALSE);
+			childSetVisible("profile_tele_btn",FALSE);
 			childSetVisible("password",FALSE);
+			childSetVisible("otr_combo",FALSE);
 		}
 		
 		if(!mProfileButtonEnabled)
@@ -1932,7 +1937,9 @@ void LLFloaterIMPanel::onClickHistory( void* userdata )
 	{
 		char command[256];
 		std::string fullname;
-		gCacheName->getFullName(self->mOtherParticipantUUID, fullname);
+		//gCacheName->getFullName(self->mOtherParticipantUUID, fullname);
+		//if(fullname == "(Loading...)")
+			fullname= self->getTitle();
 		sprintf(command, "\"%s\\%s.txt\"", gDirUtilp->getPerAccountChatLogsDir().c_str(),fullname.c_str());
 		gViewerWindow->getWindow()->ShellEx(command);
 
@@ -3187,18 +3194,9 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 						
 						
 						
-						if(
-							( mDialog == IM_PRIVATE_IRC || mDialog == IM_NOTHING_SPECIAL) &&
-							(glggIrcGroupHandler.trySendPrivateImToID(utf8_text,mOtherParticipantUUID)
-							)
-						)
+						if( mDialog == IM_PRIVATE_IRC)
 						{
-							childSetVisible("profile_btn", FALSE);
-							childSetVisible("profile_callee_btn", FALSE);
-							childSetVisible("start_call_btn",FALSE);
-							childSetVisible("password",FALSE);
-							mDialog = IM_PRIVATE_IRC;
-								
+							glggIrcGroupHandler.trySendPrivateImToID(utf8_text,mOtherParticipantUUID,false);
 						}
 						else
                         // *FIXME: Queue messages if IM is not IM_NOTHING_SPECIAL

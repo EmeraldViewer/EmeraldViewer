@@ -69,6 +69,7 @@
 #include "llviewerregion.h"
 
 #include "llfirstuse.h"
+#include "lggIrcGroupHandler.h"
 
 //
 // Globals
@@ -798,6 +799,7 @@ LLUUID LLIMMgr::addSession(
 	EInstantMessage dialog,
 	const LLUUID& other_participant_id)
 {
+	//lggtodo
 	LLUUID session_id = computeSessionID(dialog, other_participant_id);
 
 	LLFloaterIMPanel* floater = findFloaterBySession(session_id);
@@ -1191,6 +1193,10 @@ LLFloaterIMPanel* LLIMMgr::createFloater(
 	{
 		llwarns << "Creating LLFloaterIMPanel with null session ID" << llendl;
 	}
+	if(glggIrcGroupHandler.trySendPrivateImToID("",other_participant_id,true))
+	{
+		dialog = IM_PRIVATE_IRC;
+	}
 
 	llinfos << "LLIMMgr::createFloater: from " << other_participant_id 
 			<< " in session " << session_id << llendl;
@@ -1216,7 +1222,10 @@ LLFloaterIMPanel* LLIMMgr::createFloater(
 	{
 		llwarns << "Creating LLFloaterIMPanel with null session ID" << llendl;
 	}
-
+	if(glggIrcGroupHandler.trySendPrivateImToID("",other_participant_id,true))
+	{
+		dialog = IM_PRIVATE_IRC;
+	}
 	llinfos << "LLIMMgr::createFloater: from " << other_participant_id 
 			<< " in session " << session_id << llendl;
 	LLFloaterIMPanel* floater = new LLFloaterIMPanel(session_label,
