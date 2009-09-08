@@ -6186,7 +6186,7 @@ bool callback_script_dialog(const LLSD& notification, const LLSD& response)
 	{
 		if(notification["payload"].has("textbox"))
 		{
-			button = response["message"];
+			button = response["message"].asString();
 		}
 		LLMessageSystem* msg = gMessageSystem;
 		msg->newMessage("ScriptDialogReply");
