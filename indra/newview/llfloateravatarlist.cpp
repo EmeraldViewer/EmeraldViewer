@@ -1290,7 +1290,8 @@ void LLFloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 			if(self) self->clearAnnouncements();
 		}else
 		{
-			LLNotifications::instance().add("EmeraldRadarChat", LLSD(),LLSD(), callbackEmeraldChat);
+			if(gSavedSettings.getWarning("EmeraldRadarChat"))
+				LLNotifications::instance().add("EmeraldRadarChat", LLSD(),LLSD(), callbackEmeraldChat);
 	
 		}
 	}
