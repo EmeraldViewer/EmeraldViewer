@@ -103,6 +103,7 @@ void lggIrcGroupHandler::deleteIrcGroup(std::string filename)
 }
 BOOL lggIrcGroupHandler::sendWhoisToAll(LLUUID who)
 {
+	llinfos << "LOOKING FOR " << who.asString() << llendl;
 	for(std::list<lggIrcThread*>::iterator it = activeThreads.begin(); it != activeThreads.end(); it++)
 	{
 
@@ -110,6 +111,8 @@ BOOL lggIrcGroupHandler::sendWhoisToAll(LLUUID who)
 		std::vector<LLUUID> parts = ita->getParticipants();
 		for(int innerItter = 0; innerItter < (int)parts.size(); innerItter++)
 		{
+			//llinfos << "--" << parts[innerItter].asString() << llendl;
+
 			if(parts[innerItter] == who)
 			{
 				ita->whois(who);

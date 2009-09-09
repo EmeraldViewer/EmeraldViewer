@@ -364,6 +364,7 @@ LLSD IRC::getSpeakersLLSD()
 			//hashedName.hex_digest(toMakeUUID);
 			//LLUUID hashedUUID(toMakeUUID);
 			LLUUID uid;
+			//llinfos << "Generating uuid from " << strnick << " and " << std::string(cup->channel) << llendl;
 			uid.generate(strnick+"lgg"+std::string(cup->channel));
 			participants.push_back(uid);
 			corespondingNick.push_back(strnick);
