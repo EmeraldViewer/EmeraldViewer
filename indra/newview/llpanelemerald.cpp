@@ -412,7 +412,7 @@ void LLPanelEmerald::callbackEmeraldStealth(const LLSD &notification, const LLSD
 		gSavedSettings.setU32("EmeraldUseOTR",(U32)0);
 		gSavedSettings.setBOOL("EmeraldRainbowBeam",false);
 		gSavedSettings.setString("EmeraldBeamShape","===OFF===");
-		gSavedSettings.setBOOL("EmeraldCryoDetect",false);
+		gSavedSettings.setBOOL("EmeraldCryoDetection",false);
 		gSavedSettings.setBOOL("EmeraldGUSEnabled",false);
 		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",false);
 		gSavedSettings.setBOOL("EmeraldParticleChat",false);
@@ -437,7 +437,7 @@ void LLPanelEmerald::callbackEmeraldNoStealth(const LLSD &notification, const LL
 		gSavedSettings.setU32("EmeraldUseOTR",(U32)2);
 		gSavedSettings.setBOOL("EmeraldRainbowBeam",true);
 		gSavedSettings.setString("EmeraldBeamShape","Emerald");
-		gSavedSettings.setBOOL("EmeraldCryoDetect",true);
+		//gSavedSettings.setBOOL("EmeraldCryoDetect",true);
 		//gSavedSettings.setBOOL("EmeraldGUSEnabled",true);
 		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",true);
 	}

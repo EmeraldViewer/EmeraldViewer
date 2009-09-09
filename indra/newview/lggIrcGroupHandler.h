@@ -53,6 +53,7 @@ class lggIrcGroupHandler
 		void deleteIrcGroup(std::string filename);		
 		void deleteIrcGroupByID(LLUUID id);
 		void startUpAutoRunIRC();
+		BOOL sendWhoisToAll(LLUUID who);
 		void startUpIRCListener(lggIrcData dat);
 		void endDownIRCListener(LLUUID id);
 		lggIrcThread* getThreadByID(LLUUID id);

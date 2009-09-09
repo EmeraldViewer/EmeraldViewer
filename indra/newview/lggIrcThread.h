@@ -52,7 +52,27 @@ protected:
 
 };
 
+class whoisresponce
+{
+public:
+	std::string nick;
+	std::string user;
+	std::string host;
+	std::string realName;
+	std::string channels;
+	std::string servers;
+	std::string idle;
+	std::string away;
+		
+	std::string REALChannel;
 
+
+	whoisresponce::whoisresponce(){user=channels=servers=idle=away=nick=host=realName="";}
+	void newOne(){user=channels=servers=idle=away=nick=host=realName="";}
+	void done();//need to make this one
+	static void callbackProfile(const LLSD& notification, const LLSD& response);
+	
+};
 
 class lggIrcThread
 {
@@ -61,6 +81,7 @@ public:
 	~lggIrcThread();
 	
 	MsgListener * listener;
+	whoisresponce whoR;
 	
 
 	std::vector<LLUUID> getParticipants();
@@ -69,6 +90,8 @@ public:
 	void run(void);
 	void join();
 	void stopRun(void);
+	void whois(std::string user);
+	void whois(LLUUID who);
 	void setData(lggIrcData dat);
 	lggIrcData getData() const;
 	void actionDisp(std::string name, std::string msg);
@@ -88,6 +111,14 @@ public:
 	int NickMessageResponce( char * params, irc_reply_data * hostd, void * conn);
 	int ModeMessageResponce( char * params, irc_reply_data * hostd, void * conn);
 	int KickMessageResponce( char * params, irc_reply_data * hostd, void * conn);
+
+	int RPL_WHOISUSER( char * params, irc_reply_data * hostd, void * conn);
+	int RPL_WHOISCHANNELS( char * params, irc_reply_data * hostd, void * conn);
+	int RPL_WHOISSERVER( char * params, irc_reply_data * hostd, void * conn);
+	int RPL_AWAY( char * params, irc_reply_data * hostd, void * conn);
+	int RPL_WHOISIDLE( char * params, irc_reply_data * hostd, void * conn);
+	int RPL_ENDOFWHOIS( char * params, irc_reply_data * hostd, void * conn);
+	
 	std::string stripColorCodes(std::string input);
 	std::string getChannel();
 	LLUUID getMID();

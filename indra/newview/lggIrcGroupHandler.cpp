@@ -101,6 +101,25 @@ void lggIrcGroupHandler::deleteIrcGroup(std::string filename)
 	}
 	
 }
+BOOL lggIrcGroupHandler::sendWhoisToAll(LLUUID who)
+{
+	for(std::list<lggIrcThread*>::iterator it = activeThreads.begin(); it != activeThreads.end(); it++)
+	{
+
+		lggIrcThread* ita = *it;		
+		std::vector<LLUUID> parts = ita->getParticipants();
+		for(int innerItter = 0; innerItter < (int)parts.size(); innerItter++)
+		{
+			if(parts[innerItter] == who)
+			{
+				ita->whois(who);
+				return true;
+
+			}
+		}
+	}
+	return false;
+}
 void lggIrcGroupHandler::startUpAutoRunIRC()
 {
 	std::string name;

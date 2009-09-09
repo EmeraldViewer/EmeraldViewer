@@ -3174,6 +3174,24 @@ Kick [EVIL_USER] from this estate?
 
   <notification
    icon="alertmodal.tga"
+   name="EmeraldIRCInfo"
+   type="alert">
+IRC Profile -- [NICK]
+Nick:       [NICK]
+User:       [USER]
+Host:       [HOST]
+Real Name:  [REALNAME]
+Channels:   [CHANNELS]
+Servers:    [SERVERS]
+Idle Time:  [IDLE]
+    <usetemplate
+     name="okcancelbuttons"
+     notext="Close"
+     yestext="Private IM"/>
+  </notification>
+
+  <notification
+   icon="alertmodal.tga"
    name="EstateChangeCovenant"
    type="alertmodal">
 Are you sure you want to change the Estate Covenant?

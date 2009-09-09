@@ -343,6 +343,7 @@ int IRC::is_op(char* channel, char* nick)
 LLSD IRC::getSpeakersLLSD()
 {
 	participants.clear();
+	corespondingNick.clear();
 	channel_user* cup;
 
 	cup=chan_users;
@@ -365,6 +366,7 @@ LLSD IRC::getSpeakersLLSD()
 			LLUUID uid;
 			uid.generate(strnick+"lgg"+std::string(cup->channel));
 			participants.push_back(uid);
+			corespondingNick.push_back(strnick);
 			speaker["irc_agent_id"]=uid;
 			speaker["irc_agent_name"]=strnick;
 			speaker["irc_channel"]=std::string(cup->channel);

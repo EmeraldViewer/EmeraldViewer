@@ -3272,7 +3272,7 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 	}
 	if(avatar->mCheckingCryolife < 2 && !avatar->mIsCryolife)
     {
-		if(gSavedSettings.getBOOL("EmeraldCryoDetect"))
+		if(gSavedSettings.getBOOL("EmeraldCryoDetection"))
 		{
 			if(avatar->mCheckingCryolife < 1)
 			{

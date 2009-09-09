@@ -62,6 +62,7 @@ Ok, here is how this is suposed to work.
 #include "llimview.h"
 #if LL_WINDOWS
 #include <crtdbg.h>
+#include "llnotifications.h"
 #endif
 
 
@@ -69,6 +70,52 @@ Ok, here is how this is suposed to work.
 std::map<IRC*,lggIrcThread*> lggIrcThread::sInstances;
 std::map<MsgListener*,lggIrcThread*> lggIrcThread::msInstances;
 
+void whoisresponce::done()
+{
+	LLSD args;
+	LLSD payload;
+	
+// IRC Profile -- [NICK]
+// Nick:       [NICK]
+// User:       [USER]
+// Host:       [HOST]
+// Real Name:  [REALNAME]
+// Channels:   [CHANNELS]
+// Servers:    [SERVERS]
+// Idle Time:  [IDLE]
+	args["NICK"] = nick;
+	args["USER"] = user;
+	args["HOST"] = host;
+	args["REALNAME"] = realName;
+	args["CHANNELS"] = channels;
+	args["SERVERS"] = servers;
+	args["IDLE"] = idle;
+	LLNotifications::instance().add("EmeraldIRCInfo", args, payload,callbackProfile);
+	//pop up
+	newOne();
+	
+	
+}
+void whoisresponce::callbackProfile(const LLSD& notification, const LLSD& response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
+
+	if ( option == 0 )
+	{
+// 		LLUUID uid;
+// 		uid.generate(nick+"lgg"+REALChannel);
+// 
+// 		LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
+// 		
+// 		if(!gIMMgr->hasSession(computed_session_id))
+// 		{
+// 			make_ui_sound("UISndNewIncomingIMSession");
+// 			gIMMgr->addSession(
+// 				llformat("%s",nick.c_str()),IM_PRIVATE_IRC,uid);
+// 		}
+	}
+	//newOne();
+}
 
 lggIrcThread::lggIrcThread(lggIrcData data):
 	mData(data),
@@ -208,6 +255,54 @@ int modemsg( char * params, irc_reply_data * hostd, void * conn)
 	else
 		return 0;
 }
+int bRPL_WHOISUSER( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->RPL_WHOISUSER(params, hostd, conn);
+	else
+		return 0;
+}
+int bRPL_WHOISCHANNELS( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->RPL_WHOISCHANNELS(params, hostd, conn);
+	else
+		return 0;
+}int bRPL_AWAY( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->RPL_AWAY(params, hostd, conn);
+	else
+		return 0;
+}int bRPL_WHOISIDLE( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->RPL_WHOISIDLE(params, hostd, conn);
+	else
+		return 0;
+}
+int bRPL_WHOISSERVER( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->RPL_WHOISSERVER(params, hostd, conn);
+	else
+		return 0;
+}
+
+int bRPL_ENDOFWHOIS( char * params, irc_reply_data * hostd, void * conn)
+{
+	lggIrcThread* thread = lggIrcThread::findInstance((IRC*)conn);
+	if(thread)
+		return thread->RPL_ENDOFWHOIS(params, hostd, conn);
+	else
+		return 0;
+}
+
 void lggIrcThread::setData(lggIrcData dat)
 {
 	mData =dat;
@@ -252,6 +347,21 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 	}
 	
 	return 0;
+}
+void lggIrcThread::whois(LLUUID who)
+{
+	
+	for(int innerItter = 0; innerItter < (int)conn->participants.size(); innerItter++)
+	{
+		if(conn->participants[innerItter] == who)
+		{
+			whois(conn->corespondingNick[innerItter]);
+		}
+	}
+}
+void lggIrcThread::whois(std::string user)
+{
+	conn->raw((char *)std::string("WHOIS "+user+"\r\n").c_str());
 }
 int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
@@ -364,6 +474,111 @@ int lggIrcThread::ModeMessageResponce( char * params, irc_reply_data * hostd, vo
 	updateNames();
 	return 0;
 }
+
+int lggIrcThread::RPL_WHOISUSER( char * params, irc_reply_data * hostd, void * conn)
+{
+	//2009-09-08T22:13:55Z INFO: lggIrcThread::RPL_WHOISUSER: Params Shadow Liny Liny msl-95D65E08.dsl.irvnca.pacbell.net * :Liny
+	if(params)
+	{
+		llinfos << "Params " << params << llendl;
+		//"<nick> <user> <host> * :<real name>"
+		std::istringstream i(params);
+		std::string us;
+		if(i >> us)
+		{
+			if(i >> whoR.nick)
+				if( i >> whoR.user)
+					if(i>>whoR.host)
+						if(i>>us)
+							if(i>>whoR.realName)
+							{
+								//do nothing.. stupid warnings.. uhm..
+								us = "";
+							}
+
+		}
+	}
+	return 0;
+}
+int lggIrcThread::RPL_WHOISCHANNELS( char * params, irc_reply_data * hostd, void * conn)
+{
+	//2009-09-08T22:13:55Z INFO: lggIrcThread::RPL_WHOISCHANNELS: Params Shadow Liny :#emerald 
+	if(params)
+	{
+		llinfos << "Params " << params << llendl;
+		std::istringstream i(params);
+		std::string us;
+		if(i >> us)//shadow
+			if(i >> us )//liny
+				while(i >> us)
+				{
+
+					whoR.channels = whoR.channels + us+ " ";
+				}
+	}
+	return 0;
+}
+int lggIrcThread::RPL_WHOISSERVER( char * params, irc_reply_data * hostd, void * conn)
+{
+	//2009-09-08T22:13:55Z INFO: lggIrcThread::RPL_WHOISSERVER: Params Shadow Liny irc.modularsystems.sl :Modular Systems Ltd. IRC
+	if(params)
+	{
+		llinfos << "Params " << params << llendl;
+		std::istringstream i(params);
+		std::string us;
+		if(i >> us)//shadow
+			if(i>> us)//liny
+				while(i >> us)
+				{
+
+					whoR.servers = whoR.servers + us + " ";
+				}
+	}
+	return 0;
+}
+int lggIrcThread::RPL_AWAY( char * params, irc_reply_data * hostd, void * conn)
+{
+	if(params)
+	{
+		llinfos << "Params " << params << llendl;
+		std::istringstream i(params);
+		std::string us;
+		if(i >> us)//shadow
+			if(i>> us)//liny
+				while(i >> us)
+				{
+
+					whoR.away= whoR.away + us + " ";
+				}
+	}
+	return 0;
+}
+int lggIrcThread::RPL_WHOISIDLE( char * params, irc_reply_data * hostd, void * conn)
+{
+	//2009-09-08T22:13:55Z INFO: lggIrcThread::RPL_WHOISIDLE: Params Shadow Liny 17 1252440858 :seconds idle, signon time
+	if(params)
+	{
+		llinfos << "Params " << params << llendl;
+		std::istringstream i(params);
+		std::string us;
+		if(i >> us)//shadow
+			if(i>> us)//liny
+				while(i >> us)
+				{
+
+					whoR.away= whoR.away + us + " ";
+				}
+	}
+	return 0;
+}
+int lggIrcThread::RPL_ENDOFWHOIS( char * params, irc_reply_data * hostd, void * conn)
+{
+	whoR.done();
+	return 0;
+}
+
+
+
 int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, void * conn)
 {
 	//[20:10]  KICK Params: #emerald Emerald-User354541ac :test and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
@@ -450,6 +665,13 @@ void lggIrcThread::run()
 	conn->hook_irc_command("NICK",&nickmsg);
 	conn->hook_irc_command("KICK",&kickmsg);
 	conn->hook_irc_command("MODE",&modemsg);
+
+	conn->hook_irc_command("311",&bRPL_WHOISUSER);
+	conn->hook_irc_command("319",&bRPL_WHOISCHANNELS);
+	conn->hook_irc_command("312",&bRPL_WHOISSERVER);
+	conn->hook_irc_command("301",&bRPL_AWAY);
+	conn->hook_irc_command("317",&bRPL_WHOISIDLE); 
+	conn->hook_irc_command("318",&bRPL_ENDOFWHOIS); 
 	
 	if(
 	conn->start((char*) mData.server.c_str(),
@@ -466,6 +688,8 @@ void lggIrcThread::run()
 	//msg("Starting the thread...");
 	listener = new MsgListener(conn,getChannel(),getMID());
 	listener->start();
+
+	whoR.REALChannel = getChannel();
 
 	
 	msInstances[listener]=this;
