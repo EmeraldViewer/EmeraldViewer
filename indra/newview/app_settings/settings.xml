@@ -97,6 +97,17 @@
         <real>0.15</real>
       </array>
     </map>
+	<key>EmeraldDisableMinZoomDist</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable the constraint on the closest distance the camera is allowed to get to an object.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>RestrainedLife</key>
     <map>
       <key>Comment</key>
