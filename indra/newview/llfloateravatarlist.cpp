@@ -1471,7 +1471,7 @@ void LLFloaterAvatarList::lookAtAvatar(LLUUID &uuid)
         gAgent.changeCameraToThirdPerson();
         gAgent.setFocusGlobal(voavatar->getPositionGlobal(),uuid);
         gAgent.setCameraPosAndFocusGlobal(voavatar->getPositionGlobal() 
-                + LLVector3d(2.5,0.5,0.75) * voavatar->getRotation(), 
+                + LLVector3d(3.5,1.35,0.75) * voavatar->getRotation(), 
                                                 voavatar->getPositionGlobal(), 
                                                 uuid );
     }
