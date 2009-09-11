@@ -1032,9 +1032,10 @@ void LLFolderViewItem::draw()
 		{
 			// don't draw backgrounds for zero-length strings
 			S32 filter_string_length = mRoot->getFilterSubString().size();
-			if (filter_string_length > 0)
+			std::string combined_string = mLabel + mLabelSuffix;
+			if ((filter_string_length > 0) && (combined_string.find(mRoot->getFilterSubString()) != -1))
 			{
-				std::string combined_string = mLabel + mLabelSuffix;
+//				llinfos << "mLabel " << mLabel<< " mLabelSuffix " << mLabelSuffix << " mLabel " << mLabel << " mLabel " << mLabel << llendl;
 				S32 left = llround(text_left) + sFont->getWidth(combined_string, 0, mStringMatchOffset) - 1;
 				S32 right = left + sFont->getWidth(combined_string, mStringMatchOffset, filter_string_length) + 2;
 				S32 bottom = llfloor(getRect().getHeight() - sFont->getLineHeight() - 3);
