@@ -3517,12 +3517,12 @@ void LLObjectBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 				// commented out for DEV-32347
 				//items.push_back(std::string("Restore to Last Position"));
 
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-06 (RLVa-1.0.0c) | Modified: RLVa-0.2.0c
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-09-08 (RLVa-1.0.2c) | Modified: RLVa-1.0.2c
 				// Only enable "Wear" if there is an attach point name *and* there isn't a worn attachment there that's currently locked
 				if ( (rlv_handler_t::isEnabled()) && (!RlvSettings::getEnableWear()) && (gRlvHandler.hasLockedAttachment()) )
 				{
 					LLViewerJointAttachment* pAttachPt = gRlvHandler.getAttachPoint(item, true);
-					if ( (!pAttachPt) || (!gRlvHandler.isDetachable(pAttachPt->getObject())) )
+					if ( (!pAttachPt) || (!gRlvHandler.isDetachable(pAttachPt)) )
 						disabled_items.push_back(std::string("Object Wear"));
 				}
 // [/RLVa:KB]
@@ -4087,7 +4087,7 @@ void wear_inventory_category_on_avatar_step2( BOOL proceed, void* userdata )
 			for (S32 idxObj = obj_item_array.count() - 1; idxObj >= 0; idxObj--)
 			{
 				LLViewerJointAttachment* pAttachPt = gRlvHandler.getAttachPoint(obj_item_array.get(idxObj).get(), true);
-				if ( ((!pAttachPt) || (!gRlvHandler.isDetachable(pAttachPt->getObject()))) )
+				if ( ((!pAttachPt) || (!gRlvHandler.isDetachable(pAttachPt))) )
 					obj_item_array.remove(idxObj);
 			}
 			obj_count = obj_item_array.count();
@@ -4273,9 +4273,10 @@ void wear_attachments_on_avatar(const std::set<LLUUID>& item_ids, BOOL remove)
 			if ( (gInventory.isObjectDescendentOf(*it, gAgent.getInventoryRootID())) )
 			{
 //				items.put(item);
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-06 (RLVa-1.0.0c) | Modified: RLVa-1.0.0c
-				if ( (!rlv_handler_t::isEnabled()) || (RlvSettings::getEnableWear()) ||
-					 (!gRlvHandler.hasLockedAttachment()) || (gRlvHandler.getAttachPoint(item, true) != NULL) )
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-09-11 (RLVa-1.0.2c) | Modified: RLVa-1.0.2c
+				LLViewerJointAttachment* pAttachPt = NULL;
+				if ( (!rlv_handler_t::isEnabled()) || (RlvSettings::getEnableWear()) || (!gRlvHandler.hasLockedAttachment()) || 
+					 (((pAttachPt = gRlvHandler.getAttachPoint(item, true)) != NULL) && (gRlvHandler.isDetachable(pAttachPt))) )
 				{
 					items.put(item);
 				}
