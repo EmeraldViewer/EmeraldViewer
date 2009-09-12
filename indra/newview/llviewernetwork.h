@@ -119,7 +119,7 @@ private:
 	std::string mLoginPageURI;
 	std::vector<std::string> mGridURIs;
 	
-	int mCurrentURI;
+	unsigned int mCurrentURI;
 };
 
 const EGridInfo DEFAULT_GRID_CHOICE = GRID_INFO_AGNI;
