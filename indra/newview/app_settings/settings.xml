@@ -4453,6 +4453,17 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldMegaprims</key>
+    <map>
+      <key>Comment</key>
+      <string>>Disables the 10m limit on prims</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>EmeraldMiniMapPrimMaxRadius</key>
     <map>
       <key>Comment</key>
