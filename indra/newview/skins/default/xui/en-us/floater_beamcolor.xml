@@ -5,8 +5,8 @@
 <text font="SansSerifSmall" name="beamcolor_text" follows="left|top" left="15" bottom_delta="-40">
 Please use the mouse to select the colors for which
 you wish your beam color to start and stop on.
-Right Click Changes Start Position.
-Left Click Changes End Position.</text>
+Left Click Changes Start Position.
+Left Right Click Changes End Position.</text>
 <color_swatch border_color="0.45098, 0.517647, 0.607843, 1" bottom="-230" can_apply_immediately="true" color="1, 1, 1, 1" follows="left|top" height="100" label="" left="300" mouse_opaque="true" name="BeamColor_Preview" tool_tip="Click to open Color Picker" width="100" />
 <text font="SansSerifSmall" name="beamcolor_text2" follows="left|top" left_delta="30" bottom_delta="105">Preview</text>
 <slider bottom="-230" left="15" name="BeamColor_Speed" control_name="BeamColor_Speed" decimal_digits="0" enabled="true" follows="left|top" height="18"
