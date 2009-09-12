@@ -442,14 +442,41 @@ void LLViewerJoystick::agentFly(F32 inc)
 }
 
 // -----------------------------------------------------------------------------
-void LLViewerJoystick::agentRotate(F32 pitch_inc, F32 yaw_inc)
+void LLViewerJoystick::agentPitch(F32 pitch_inc)
 {
-	LLQuaternion new_rot;
-	pitch_inc = gAgent.clampPitchToLimits(-pitch_inc);
-	const LLQuaternion qx(pitch_inc, gAgent.getLeftAxis());
-	const LLQuaternion qy(-yaw_inc, gAgent.getReferenceUpVector());
-	new_rot.setQuat(qx * qy);
-	gAgent.rotate(new_rot);
+	if (pitch_inc < 0)
+	{
+		gAgent.setControlFlags(AGENT_CONTROL_PITCH_POS);
+	}
+	else if (pitch_inc > 0)
+	{
+		gAgent.setControlFlags(AGENT_CONTROL_PITCH_NEG);
+	}
+	
+	gAgent.pitch(-pitch_inc);
+}
+
+// -----------------------------------------------------------------------------
+void LLViewerJoystick::agentYaw(F32 yaw_inc)
+{	
+	// Cannot steer some vehicles in mouselook if the script grabs the controls
+	if (gAgent.cameraMouselook() && !gSavedSettings.getBOOL("JoystickMouselookYaw"))
+	{
+		gAgent.rotate(-yaw_inc, gAgent.getReferenceUpVector());
+	}
+	else
+	{
+		if (yaw_inc < 0)
+		{
+			gAgent.setControlFlags(AGENT_CONTROL_YAW_POS);
+		}
+		else if (yaw_inc > 0)
+		{
+			gAgent.setControlFlags(AGENT_CONTROL_YAW_NEG);
+		}
+
+		gAgent.yaw(-yaw_inc);
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -787,11 +814,13 @@ void LLViewerJoystick::moveAvatar(bool reset)
 		{
 			if (gAgent.getFlying())
 			{
-				agentRotate(eff_rx, eff_ry);
+				agentPitch(eff_rx);
+				agentYaw(eff_ry);
 			}
 			else
 			{
-				agentRotate(eff_rx, 2.f * eff_ry);
+				agentPitch(eff_rx);
+				agentYaw(2.f * eff_ry);
 			}
 		}
 	}
@@ -800,7 +829,8 @@ void LLViewerJoystick::moveAvatar(bool reset)
 		agentSlide(sDelta[X_I]);		// move sideways
 		agentFly(sDelta[Y_I]);			// up/down & crouch
 		agentPush(sDelta[Z_I]);			// forward/back
-		agentRotate(sDelta[RX_I], sDelta[RY_I]);	// pitch & turn
+		agentPitch(sDelta[RX_I]);		// pitch
+		agentYaw(sDelta[RY_I]);			// turn
 	}
 }
 
