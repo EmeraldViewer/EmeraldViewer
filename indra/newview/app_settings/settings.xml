@@ -5472,6 +5472,83 @@
         <integer>0</integer>
       </array>
     </map>
+  <key>BoobMass</key>
+  <map>
+    <key>Comment</key>
+    <string>Mass of boobs.</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>30.0</real>
+  </map>
+   <key>BoobHardness</key>
+  <map>
+    <key>Comment</key>
+    <string>Hardness (dampening) of boobs.</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>20.0</real>
+  </map>
+   <key>BoobZInfluence</key>
+  <map>
+    <key>Comment</key>
+    <string>The influence velocity along the Z axis has on boob physics</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>30</real>
+  </map>
+  <key>BoobZMax</key>
+  <map>
+    <key>Comment</key>
+    <string>Furthest boobs can go along the z axis</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>1.3</real>
+  </map>
+  <key>BoobVelMax</key>
+  <map>
+    <key>Comment</key>
+    <string>Max amount of velocity boobs can have</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>0.010</real>
+  </map>
+  <key>BoobFriction</key>
+  <map>
+    <key>Comment</key>
+    <string>Internal friction (brings boobs to rest). Shouldn't ever be above 1.</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>0.730</real>
+  </map>
+  <key>BoobFrictionFraction</key>
+  <map>
+    <key>Comment</key>
+    <string>Friction Fraction of FPS (used to keep friction uniform through FPS change).</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>0.55</real>
+  </map>
     <key>FloaterFindRect2</key>
     <map>
       <key>Comment</key>
