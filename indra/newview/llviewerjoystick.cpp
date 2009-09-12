@@ -651,11 +651,33 @@ void LLViewerJoystick::moveAvatar(bool reset)
 	}
 
 	bool is_zero = true;
+	static bool btn_held = false;
 
 	if (mBtn[1] == 1)
 	{
-		agentJump();
+		if (gSavedSettings.getBOOL("AutomaticFly"))
+		{
+			if (!gAgent.getFlying())
+			{
+				gAgent.moveUp(1);
+			}
+			else if (!btn_held)
+			{
+				btn_held = true;
+				gAgent.setFlying(FALSE);
+			}
+		}
+		else if (!btn_held)
+		{
+			btn_held = true;
+			gAgent.setFlying(!gAgent.getFlying());
+		}
+
 		is_zero = false;
+	}
+	else
+	{
+		btn_held = false;
 	}
 
 	F32 axis_scale[] =
