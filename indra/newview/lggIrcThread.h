@@ -67,7 +67,7 @@ public:
 	std::string REALChannel;
 
 
-	whoisresponce::whoisresponce(){user=channels=servers=idle=away=nick=host=realName="";}
+	whoisresponce(){user=channels=servers=idle=away=nick=host=realName="";}
 	void newOne(){user=channels=servers=idle=away=nick=host=realName="";}
 	void done();//need to make this one
 	static void callbackProfile(const LLSD& notification, const LLSD& response);
