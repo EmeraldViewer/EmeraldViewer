@@ -1868,6 +1868,16 @@ bool LLAppViewer::initConfiguration()
 	// - apply command line settings 
 	clp.notify(); 
 
+	// Register the core crash option as soon as we can
+	// if we want gdb post-mortum on cores we need to be up and running
+	// ASAP or we might miss init issue etc.
+	
+	if(clp.hasOption("coreoncrash"))
+	{
+		llwarns << "Crashes will be handled by system, stack trace logs and crash logger are both disabled" <<llendl;
+		sGenerateCores=true;
+	}
+
 	// Handle initialization from settings.
 	// Start up the debugging console before handling other options.
 	if (gSavedSettings.getBOOL("ShowConsoleWindow"))
