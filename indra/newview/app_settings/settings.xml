@@ -4937,17 +4937,6 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
-    <key>EnableVoiceChat</key>
-    <map>
-      <key>Comment</key>
-      <string>Enable talking to other residents with a microphone</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>1</integer>
-    </map>
     <key>EnergyFromTop</key>
     <map>
       <key>Comment</key>
