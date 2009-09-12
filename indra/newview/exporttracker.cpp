@@ -426,9 +426,10 @@ void JCExportTracker::finalize(LLSD data)
 	header["Version"] = 2;
 	file["Header"] = header;
 	std::vector<std::string> uris;
-	LLViewerLogin::getInstance()->getLoginURIs(uris);
+		LLViewerLogin* vl = LLViewerLogin::getInstance();
+		std::string grid_uri = vl->getCurrentGridURI();
 	//LLStringUtil::toLower(uris[0]);
-	file["Grid"] = uris[0];
+	file["Grid"] = grid_uri;
 	file["Objects"] = data;
 
 	// Create a file stream and write to it
@@ -821,4 +822,4 @@ BOOL JCExportTracker::mirror(LLInventoryObject* item, LLViewerObject* container,
 		}
 	}
 	return FALSE;
-}
+}

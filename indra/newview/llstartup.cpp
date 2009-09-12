@@ -246,7 +246,6 @@ EStartupState LLStartUp::gStartupState = STATE_FIRST;
 
 void login_show();
 void login_callback(S32 option, void* userdata);
-bool is_hex_string(U8* str, S32 len);
 void show_first_run_dialog();
 bool first_run_dialog_callback(const LLSD& notification, const LLSD& response);
 void set_startup_status(const F32 frac, const std::string& string, const std::string& msg);
@@ -324,9 +323,6 @@ void pass_process_sound_trigger(LLMessageSystem* msg,void**)
 	LLFloaterAvatarList::processSoundTrigger(msg,0);
 	JCLSLBridge::processSoundTrigger(msg,0);
 }
-static std::vector<std::string> sAuthUris;
-static S32 sAuthUriNum = -1;
-
 // Returns false to skip other idle processing. Should only return
 // true when all initialization done.
 bool idle_startup()
@@ -800,11 +796,15 @@ bool idle_startup()
 			}
 			// Make sure the process dialog doesn't hide things
 			gViewerWindow->setShowProgress(FALSE);
+			
+			// Load login history
+			std::string login_hist_filepath = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "saved_logins.xml");
+			LLSavedLogins login_history = LLSavedLogins::loadFile(login_hist_filepath);
 
 			// Show the login dialog
 			login_show();
 			// connect dialog is already shown, so fill in the names
-			LLPanelLogin::setFields( firstname, lastname, password);
+			LLPanelLogin::setFields( firstname, lastname, password, login_history );
 
 			LLPanelLogin::giveFocus();
 
@@ -862,7 +862,7 @@ bool idle_startup()
 		ms_sleep(1);
 		return FALSE;
 	}
-
+	
 	if (STATE_LOGIN_CLEANUP == LLStartUp::getStartupState())
 	{
 		//reset the values that could have come in from a slurl
@@ -878,7 +878,7 @@ bool idle_startup()
 			// TODO if not use viewer auth
 			// Load all the name information out of the login view
 			LLPanelLogin::getFields(&firstname, &lastname, &password);
-			// end TODO
+			// end TODO			
 	 
 			// HACK: Try to make not jump on login
 			gKeyboard->resetKeys();
@@ -888,6 +888,8 @@ bool idle_startup()
 		{
 			gSavedSettings.setString("FirstName", firstname);
 			gSavedSettings.setString("LastName", lastname);
+			if (!gSavedSettings.controlExists("RememberLogin")) gSavedSettings.declareBOOL("RememberLogin", false, "Remember login", false);
+			gSavedSettings.setBOOL("RememberLogin", LLPanelLogin::getRememberLogin());
 
 			LL_INFOS("AppInit") << "Attempting login as: " << firstname << " " << lastname << LL_ENDL;
 			gDebugInfo["LoginName"] = firstname + " " + lastname;	
@@ -964,13 +966,14 @@ bool idle_startup()
 
 		if (show_connect_box)
 		{
-			if ( LLPanelLogin::isGridComboDirty() )
+			// *TODO Remove
+/*			if ( LLPanelLogin::isGridComboDirty() )
 			{
 				// User picked a grid from the popup, so clear the 
 				// stored uris and they will be reacquired from the grid choice.
 				sAuthUris.clear();
 			}
-			
+*/			
 			std::string location;
 			LLPanelLogin::getLocation( location );
 			LLURLSimString::setString( location );
@@ -1103,8 +1106,8 @@ bool idle_startup()
 			gSavedSettings.setBOOL("UseDebugMenus", TRUE);
 			requested_options.push_back("god-connect");
 		}
-		std::vector<std::string> uris;
-		LLViewerLogin::getInstance()->getLoginURIs(uris);
+		// *TODO Remove
+/*		std::vector<std::string> uris = LLViewerLogin::getInstance()->getLoginURIs();
 		std::vector<std::string>::const_iterator iter, end;
 		for (iter = uris.begin(), end = uris.end(); iter != end; ++iter)
 		{
@@ -1114,7 +1117,7 @@ bool idle_startup()
 							 rewritten.begin(), rewritten.end());
 		}
 		sAuthUriNum = 0;
-		auth_method = "login_to_simulator";
+*/		auth_method = "login_to_simulator";
 		
 		LLStringUtil::format_map_t args;
 		args["[APP_NAME]"] = LLAppViewer::instance()->getSecondLifeTitle();
@@ -1156,11 +1159,16 @@ bool idle_startup()
 		hashed_mac.update( gMACAddress, MAC_ADDRESS_BYTES );
 		hashed_mac.finalize();
 		hashed_mac.hex_digest(hashed_mac_string);
+		
+		LLViewerLogin* vl = LLViewerLogin::getInstance();
+		std::string grid_uri = vl->getCurrentGridURI();
+		
+		llinfos << "Authenticating with " << grid_uri << llendl;
 
 		// TODO if statement here to use web_login_key
-		sAuthUriNum = llclamp(sAuthUriNum, 0, (S32)sAuthUris.size()-1);
+		// sAuthUriNum = llclamp(sAuthUriNum, 0, (S32)sAuthUris.size()-1);
 		LLUserAuth::getInstance()->authenticate(
-			sAuthUris[sAuthUriNum],
+			grid_uri,
 			auth_method,
 			firstname,
 			lastname,			
@@ -1253,8 +1261,8 @@ bool idle_startup()
 			else if(login_response == "indeterminate")
 			{
 				LL_INFOS("AppInit") << "Indeterminate login..." << LL_ENDL;
-				sAuthUris = LLSRV::rewriteURI(LLUserAuth::getInstance()->getResponse("next_url"));
-				sAuthUriNum = 0;
+				LLViewerLogin::getInstance()->setGridURIs(LLSRV::rewriteURI(LLUserAuth::getInstance()->getResponse("next_url")));
+				
 				auth_method = LLUserAuth::getInstance()->getResponse("next_method");
 				auth_message = LLUserAuth::getInstance()->getResponse("message");
 				if(auth_method.substr(0, 5) == "login")
@@ -1356,18 +1364,20 @@ bool idle_startup()
 		case LLUserAuth::E_SSL_CACERT:
 		case LLUserAuth::E_SSL_CONNECT_ERROR:
 		default:
-			if (sAuthUriNum >= (int) sAuthUris.size() - 1)
+			if (LLViewerLogin::getInstance()->tryNextURI())
 			{
-				emsg << "Unable to connect to " << LLAppViewer::instance()->getSecondLifeTitle() << ".\n";
-				emsg << LLUserAuth::getInstance()->errorMessage();
-			} else {
-				sAuthUriNum++;
+				static int login_attempt_number = 0;
 				std::ostringstream s;
 				LLStringUtil::format_map_t args;
-				args["[NUMBER]"] = llformat("%d", sAuthUriNum + 1);
+				args["[NUMBER]"] = llformat("%d", ++login_attempt_number);
 				auth_desc = LLTrans::getString("LoginAttempt", args);
 				LLStartUp::setStartupState( STATE_LOGIN_AUTHENTICATE );
 				return FALSE;
+			}
+			else
+			{
+				emsg << "Unable to connect to " << LLAppViewer::instance()->getSecondLifeTitle() << ".\n";
+				emsg << LLUserAuth::getInstance()->errorMessage();
 			}
 			break;
 		}
@@ -1440,8 +1450,42 @@ bool idle_startup()
 				// Don't leave password from previous session sitting around
 				// during this login session.
 				LLStartUp::deletePasswordFromDisk();
+				password.assign(""); // clear the password so it isn't saved to login history either
 			}
+			
+			{
+				// Save the login history data to disk
+				std::string history_file = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "saved_logins.xml");
 
+				LLSavedLogins history_data = LLSavedLogins::loadFile(history_file);
+				LLViewerLogin* login_data = LLViewerLogin::getInstance();
+				EGridInfo grid_choice = login_data->getGridChoice();
+				history_data.deleteEntry(grid_choice, firstname, lastname);
+				if (gSavedSettings.getBOOL("RememberLogin"))
+				{
+					LLSavedLoginEntry login_entry(grid_choice, firstname, lastname, password);
+					if (grid_choice == GRID_INFO_OTHER)
+					{
+						std::string grid_uri = login_data->getCurrentGridURI();
+						std::string login_uri = login_data->getLoginPageURI();
+						std::string helper_uri = login_data->getHelperURI();
+						
+						if (!grid_uri.empty()) login_entry.setGridURI(LLURI(grid_uri));
+						if (!login_uri.empty()) login_entry.setLoginPageURI(LLURI(login_uri));
+						if (!helper_uri.empty()) login_entry.setHelperURI(LLURI(helper_uri));
+					}
+					history_data.addEntry(login_entry);
+				}
+				else
+				{
+					// Clear the old-style login data as well
+					gSavedSettings.setString("FirstName", std::string(""));
+					gSavedSettings.setString("LastName", std::string(""));
+				}
+				
+				LLSavedLogins::saveFile(history_data, history_file);
+			}
+			
 			// this is their actual ability to access content
 			text = LLUserAuth::getInstance()->getResponse("agent_access_max");
 			if (!text.empty())
@@ -2678,12 +2722,12 @@ void login_show()
 						login_callback, NULL );
 
 	// UI textures have been previously loaded in doPreloadImages()
-	
+					
 	LL_DEBUGS("AppInit") << "Setting Servers" << LL_ENDL;
 
-	LLPanelLogin::addServer(LLViewerLogin::getInstance()->getGridLabel(), LLViewerLogin::getInstance()->getGridChoice());
-
 	LLViewerLogin* vl = LLViewerLogin::getInstance();
+	LLPanelLogin::addServer(vl->getGridLabel(), vl->getGridChoice());
+
 	for(int grid_index = GRID_INFO_ADITI; grid_index < GRID_INFO_OTHER; ++grid_index)
 	{
 		LLPanelLogin::addServer(vl->getKnownGridLabel((EGridInfo)grid_index), grid_index);
@@ -2782,7 +2826,7 @@ std::string LLStartUp::loadPasswordFromDisk()
 	// password. It should be a hex-string or else the mac adress has
 	// changed. This is a security feature to make sure that if you
 	// get someone's password.dat file, you cannot hack their account.
-	if(is_hex_string(buffer, HASHED_LENGTH))
+	if(LLStringOps::isHexString(std::string(reinterpret_cast<const char*>(buffer), HASHED_LENGTH)))
 	{
 		hashed_password.assign((char*)buffer);
 	}
@@ -2826,41 +2870,6 @@ void LLStartUp::deletePasswordFromDisk()
 	std::string filepath = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS,
 														  "password.dat");
 	LLFile::remove(filepath);
-}
-
-
-bool is_hex_string(U8* str, S32 len)
-{
-	bool rv = true;
-	U8* c = str;
-	while(rv && len--)
-	{
-		switch(*c)
-		{
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-		case 'a':
-		case 'b':
-		case 'c':
-		case 'd':
-		case 'e':
-		case 'f':
-			++c;
-			break;
-		default:
-			rv = false;
-			break;
-		}
-	}
-	return rv;
 }
 
 void show_first_run_dialog()
@@ -3641,4 +3650,3 @@ void apply_udp_blacklist(const std::string& csv)
 	while(comma < csv.length());
 	
 }
-
