@@ -63,7 +63,7 @@
 #include "lldirpicker.h"
 
 #include "llweb.h" // [$PLOTR$/]
-#include "lggbeamcolormapfloater.h"
+#include "lggBeamColorMapFloater.h"
 #include "llsliderctrl.h"
 
 ////////begin drop utility/////////////

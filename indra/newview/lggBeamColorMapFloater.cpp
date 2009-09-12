@@ -50,7 +50,7 @@
 
 #include "llsdserialize.h"
 #include "llpanelemerald.h"
-#include "lggbeamscolors.h"
+#include "lggBeamsColors.h"
 #include "llsliderctrl.h"
 #include "llfocusmgr.h"
 

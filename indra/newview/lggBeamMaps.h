@@ -33,7 +33,7 @@
 
 #include "llhudeffecttrail.h"
 #include "llviewerprecompiledheaders.h"
-#include "lggbeamscolors.h"
+#include "lggBeamsColors.h"
 #include "llframetimer.h"
 class lggBeamData
 {
