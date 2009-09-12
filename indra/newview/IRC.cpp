@@ -315,7 +315,7 @@ void IRC::split_to_replies(char* data)
 {
 	char* p;
 
-	while (p=strstr(data, "\r\n"))
+	while ((p=strstr(data, "\r\n")))
 	{
 		*p='\0';
 		parse_irc_reply(data);
@@ -372,7 +372,7 @@ LLSD IRC::getSpeakersLLSD()
 			speaker["irc_agent_name"]=strnick;
 			speaker["irc_channel"]=std::string(cup->channel);
 			speaker["irc_mode"]=std::string("nvm");
-			speaker["irc_agent_mod"]=(cup->flags&IRC_USER_OP|cup->flags&IRC_USER_HALFOP);
+			speaker["irc_agent_mod"]=((cup->flags&IRC_USER_OP)|(cup->flags&IRC_USER_HALFOP));
 			speakers[i]=speaker;
 			i++;
 		}
