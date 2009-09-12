@@ -166,6 +166,48 @@ static bool handleAvatarMaxVisibleChanged(const LLSD& newvalue)
 	return true;
 }
 
+static bool handleAvatarBoobMassChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobMass = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobHardnessChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobHardness = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobZMaxChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobZMax = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobVelMaxChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobVelMax = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobZInfluenceChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobZInfluence = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobFrictionChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobFriction = (F32) newvalue.asReal();
+	return true;
+}
+
+static bool handleAvatarBoobFrictionFractionChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobFrictionFraction = (F32) newvalue.asReal();
+	return true;
+}
+
 static bool handleTerrainLODChanged(const LLSD& newvalue)
 {
 		LLVOSurfacePatch::sLODFactor = (F32)newvalue.asReal();
@@ -505,6 +547,13 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("RenderDelayCreation")->getSignal()->connect(boost::bind(&handleRenderDelayCreationChanged, _1));
 	gSavedSettings.getControl("RenderUnloadedAvatar")->getSignal()->connect(boost::bind(&handleRenderUnloadedAvatarChanged, _1));
 	gSavedSettings.getControl("RenderGamma")->getSignal()->connect(boost::bind(&handleGammaChanged, _1));
+	gSavedSettings.getControl("BoobMass")->getSignal()->connect(boost::bind(&handleAvatarBoobMassChanged, _1));
+	gSavedSettings.getControl("BoobHardness")->getSignal()->connect(boost::bind(&handleAvatarBoobHardnessChanged, _1));
+	gSavedSettings.getControl("BoobZMax")->getSignal()->connect(boost::bind(&handleAvatarBoobZMaxChanged, _1));
+	gSavedSettings.getControl("BoobVelMax")->getSignal()->connect(boost::bind(&handleAvatarBoobVelMaxChanged, _1));
+	gSavedSettings.getControl("BoobZInfluence")->getSignal()->connect(boost::bind(&handleAvatarBoobZInfluenceChanged, _1));
+	gSavedSettings.getControl("BoobFriction")->getSignal()->connect(boost::bind(&handleAvatarBoobFrictionChanged, _1));
+	gSavedSettings.getControl("BoobFrictionFraction")->getSignal()->connect(boost::bind(&handleAvatarBoobFrictionFractionChanged, _1));
 	gSavedSettings.getControl("RenderFogRatio")->getSignal()->connect(boost::bind(&handleFogRatioChanged, _1));
 	gSavedSettings.getControl("RenderMaxPartCount")->getSignal()->connect(boost::bind(&handleMaxPartCountChanged, _1));
 	gSavedSettings.getControl("RenderDynamicLOD")->getSignal()->connect(boost::bind(&handleRenderDynamicLODChanged, _1));

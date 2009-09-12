@@ -108,6 +108,7 @@ public:
 	void idleUpdateLipSync(bool voice_enabled);
 	void idleUpdateLoadingEffect();
 	void idleUpdateWindEffect();
+	void idleUpdateBoobEffect();
 	void idleUpdateNameTag(const LLVector3& root_pos_last);
 	void idleUpdateRenderCost();
 	void idleUpdateTractorBeam();
@@ -496,6 +497,31 @@ private:
 	LLFrameTimer	mAppearanceMorphTimer;
 	BOOL			mAppearanceAnimSetByUser;
 	F32				mLastAppearanceBlendTime;
+
+	//--------------------------------------------------------------------
+	// boob bounce stuff
+	//--------------------------------------------------------------------
+
+private:
+	LLVector3		mLastChestPos;
+	F32				mBoobGravity;
+	F32				mBoobDisplacement;
+	F32				mLastDisplacement;
+	F32				mLastTime;
+	F32				mActualBoobGrav;
+	LLFrameTimer	mBoobBounceTimer;
+
+public:
+	F32				getActualBoobGrav() { return mActualBoobGrav; }
+	void			setActualBoobGrav(F32 grav) { mActualBoobGrav = grav; }
+
+	static F32		sBoobMass;
+	static F32		sBoobHardness;
+	static F32		sBoobZMax;
+	static F32		sBoobVelMax;
+	static F32		sBoobZInfluence;
+	static F32		sBoobFriction;
+	static F32		sBoobFrictionFraction;
 
 	//--------------------------------------------------------------------
 	// Attachments

@@ -726,6 +726,14 @@ F32 LLVOAvatar::sLODFactor = 1.f;
 BOOL LLVOAvatar::sUseImpostors = FALSE;
 BOOL LLVOAvatar::sJointDebug = FALSE;
 
+F32 LLVOAvatar::sBoobHardness = 20.0f;
+F32 LLVOAvatar::sBoobMass = 60.0f;
+F32 LLVOAvatar::sBoobZInfluence = 25.f; //30 before fps additions
+F32 LLVOAvatar::sBoobFriction = 0.7f;
+F32 LLVOAvatar::sBoobFrictionFraction = 0.8f;
+F32 LLVOAvatar::sBoobZMax = 1.3f;
+F32 LLVOAvatar::sBoobVelMax = 0.006f;
+
 F32 LLVOAvatar::sUnbakedTime = 0.f;
 F32 LLVOAvatar::sUnbakedUpdateTime = 0.f;
 F32 LLVOAvatar::sGreyTime = 0.f;
@@ -2586,6 +2594,7 @@ BOOL LLVOAvatar::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 
 	idleUpdateVoiceVisualizer( voice_enabled );
 	idleUpdateMisc( detailed_update );
+	idleUpdateBoobEffect();
 	idleUpdateAppearanceAnimation();
 	idleUpdateLipSync( voice_enabled );
 	idleUpdateLoadingEffect();
@@ -2840,7 +2849,11 @@ void LLVOAvatar::idleUpdateAppearanceAnimation()
 			{
 				if (param->getGroup() == VISUAL_PARAM_GROUP_TWEAKABLE)
 				{
-					param->animate(morph_amt, mAppearanceAnimSetByUser);
+						// so boobs don't go spastic when a shape's changed, but still seems buggy
+						if(param->getID() == 507)
+							param->stopAnimating(mAppearanceAnimSetByUser);
+						else
+							param->animate(morph_amt, mAppearanceAnimSetByUser);
 				}
 			}
 
@@ -2932,6 +2945,110 @@ void LLVOAvatar::idleUpdateLoadingEffect()
 		}
 	}
 }	
+
+
+// ------------------------------------------------------------
+// Danny: boob stuff. Ignore all the comments, still figuring out math
+// ------------------------------------------------------------
+void LLVOAvatar::idleUpdateBoobEffect()
+{
+
+			LLFastTimer t(LLFastTimer::FTM_LOAD_AVATAR);
+			LLVisualParam *param;
+			param = getVisualParam(105); //boob size
+			F32 boobSize = param->getCurrentWeight();
+			//llwarns << "current boob size = " << boobSize << llendl;
+			param = getVisualParam(507);
+
+			ESex avatar_sex = getSex();
+
+			LLVector3 Pos = mChestp->getWorldPosition();
+
+			F32 originWeight = (mActualBoobGrav + 1.5f) / 3.5f;
+			originWeight = mActualBoobGrav;
+
+			F32 difftime = 0.0f;
+			F32 boobVel = 0.0f;
+			F32 zInfluence = sBoobZInfluence;
+			F32 zMax = sBoobZMax;
+			F32 velMax = sBoobVelMax;
+
+			//llwarns << "fps = " << gFPSClamped << llendl;
+
+			if(!getAppearanceFlag() && mActualBoobGrav != -2.0f)
+			{
+
+				//difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
+				difftime = 1.f/gFPSClamped;
+
+				boobVel = (Pos.mV[VZ] - mLastChestPos.mV[VZ]); //multiplyer being the
+				boobVel += (Pos.mV[VX] - mLastChestPos.mV[VX]) * 0.3f;
+				boobVel += (Pos.mV[VY] - mLastChestPos.mV[VY]) * 0.3f;
+				//boobVel /= mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
+				boobVel = llclamp(boobVel, -velMax, velMax);
+				//boobVel *= zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f) * (1.0f / gFPSClamped);
+				boobVel *= zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f);
+
+				boobVel *= 1-difftime;
+
+				F32 boobMass = sBoobMass;
+				F32 boobHardness = sBoobHardness;
+
+				mBoobGravity += (boobVel * boobMass) * difftime;
+				mBoobGravity += (-boobHardness * (mBoobDisplacement-originWeight)) * difftime; // hooke's law force
+					F32 FPS = gFPSClamped > 44.f ? 44.f : gFPSClamped;
+					F32 friction = sBoobFriction - (44.f - FPS) * (sBoobFrictionFraction*0.01f);
+				mBoobGravity *= llround(friction, 0.01f); // was just 0.9
+				mBoobDisplacement += mBoobGravity;
+
+				//llwarns << "boob vel = " << boobVel << llendl;
+				//llwarns << "boob friction = " << llround(friction, 0.01f) << llendl;
+				//llwarns << "boob displacement = " << mBoobDisplacement << llendl;
+
+
+								//mBoobGravity *= (sBoobFriction * (1.0f - 4.0f*difftime)); // was just 0.9
+
+				//account for FPS
+				//mBoobDisplacement = (mBoobDisplacement - mLastDisplacement) * difftime;
+
+				mLastDisplacement = mBoobDisplacement;
+
+
+					//llwarns << "1 mBoobDisplacement = " << llround(mBoobDisplacement, 0.1f) << llendl;
+					//llwarns << "1 mBoobDisplacement = " << mBoobDisplacement << llendl;
+					//llwarns << "----- difftime = " << difftime << llendl;
+					if(mBoobDisplacement < -5.f)
+						mBoobDisplacement = -5.f;
+					if(mBoobDisplacement > 5.f)
+						mBoobDisplacement = 5.f;
+						
+						
+
+					param->setWeight(llclamp(mBoobDisplacement, -zMax, zMax), FALSE);
+					param->apply(avatar_sex);
+
+					updateVisualParams();
+
+				}
+
+				if(getAppearanceFlag())
+				if(mBoobDisplacement != mActualBoobGrav)
+				{
+					llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << llendl;
+					mBoobDisplacement = mActualBoobGrav;
+					param->setWeight(mActualBoobGrav, FALSE);
+					param->apply(avatar_sex);
+					updateVisualParams();
+					if (mIsSelf)
+					{
+						gAgent.sendAgentSetAppearance();
+					}
+					dirtyMesh();
+				}
+
+			mLastTime = mBoobBounceTimer.getElapsedTimeF32();
+			mLastChestPos = mChestp->getWorldPosition();
+}
 
 void LLVOAvatar::idleUpdateWindEffect()
 {
@@ -3545,6 +3662,11 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				{
 					line += "\n";
 					line += "(Editing Appearance)";
+					setAppearanceFlag(true);
+				}
+				else
+				{
+					setAppearanceFlag(false);
 				}
 				mNameAway = is_away;
 				mNameBusy = is_busy;
@@ -8454,6 +8576,11 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 				mesgsys->getU8Fast(_PREHASH_VisualParam, _PREHASH_ParamValue, value, i);
 				F32 newWeight = U8_to_F32(value, param->getMinWeight(), param->getMaxWeight());
 
+				if(param->getID() == 507 && !mIsSelf && newWeight != getActualBoobGrav())
+				{
+					llwarns << "Boob Grav SET" << llendl;
+					setActualBoobGrav(newWeight);
+				}
 				if (is_first_appearance_message || (param->getWeight() != newWeight))
 				{
 					//llinfos << "Received update for param " << param->getDisplayName() << " at value " << newWeight << llendl;
