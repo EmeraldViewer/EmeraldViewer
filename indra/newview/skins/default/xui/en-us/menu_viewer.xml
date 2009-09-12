@@ -741,6 +741,16 @@
 				<on_click function="Tools.SelectNextPart" userdata="previous" />
 				<on_enable function="Tools.EnableSelectNextPart" />
 			</menu_item_call>
+			<menu_item_call enabled="false" label="Include Next Part" mouse_opaque="true"
+				 name="Include Next Part" shortcut="control|shift|]">
+				<on_click function="Tools.SelectNextPart" userdata="includenext" />
+				<on_enable function="Tools.EnableSelectNextPart" />
+			</menu_item_call>
+			<menu_item_call enabled="false" label="Include Previous Part" mouse_opaque="true"
+				 name="Include Previous Part" shortcut="control|shift|[">
+				<on_click function="Tools.SelectNextPart" userdata="includeprevious" />
+				<on_enable function="Tools.EnableSelectNextPart" />
+			</menu_item_call>
 		</menu>
 		<menu_item_call bottom="-262" enabled="false" height="19" label="Link" left="0"
 		     mouse_opaque="true" name="Link" shortcut="control|L" width="250">

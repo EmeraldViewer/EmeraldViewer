@@ -4619,6 +4619,9 @@ class LLToolsSelectNextPart : public view_listener_t
 			if (selected && selected->getRootEdit())
 			{
 				bool fwd = (userdata.asString() == "next");
+				bool prev = (userdata.asString() == "previous");
+				bool ifwd = (userdata.asString() == "includenext");
+				bool iprev = (userdata.asString() == "includeprevious");
 				LLViewerObject* to_select = NULL;
 				LLViewerObject::child_list_t children = selected->getRootEdit()->getChildren();
 				children.push_front(selected->getRootEdit());	// need root in the list too
@@ -4627,7 +4630,7 @@ class LLToolsSelectNextPart : public view_listener_t
 				{
 					if ((*iter)->isSelected())
 					{
-						if (object_count > 1)	// multiple selection, find first or last selected
+						if (object_count > 1 && (fwd || prev))	// multiple selection, find first or last selected if not include
 						{
 							to_select = *iter;
 							if (fwd)
@@ -4635,23 +4638,23 @@ class LLToolsSelectNextPart : public view_listener_t
 								break;
 							}
 						}
-						else if (object_count == 1)	// single selection
+						else if ((object_count == 1) || (ifwd || iprev))	// single selection or include
 						{
-							if (fwd)
+							if (fwd || ifwd)
 							{
 								++iter;
-								while (iter != children.end() && (*iter)->isAvatar())
+								while (iter != children.end() && ((*iter)->isAvatar() || (ifwd && (*iter)->isSelected())))
 								{
-									++iter;	// skip sitting avatars
+									++iter;	// skip sitting avatars and selected if include
 								}
 							}
 							else
 							{
 								iter = (iter == children.begin() ? children.end() : iter);
 								--iter;
-								while (iter != children.begin() && (*iter)->isAvatar())
+								while (iter != children.begin() && ((*iter)->isAvatar() || (iprev && (*iter)->isSelected())))
 								{
-									--iter;	// skip sitting avatars
+									--iter;	// skip sitting avatars and selected if include
 								}
 							}
 							iter = (iter == children.end() ? children.begin() : iter);
@@ -4667,7 +4670,10 @@ class LLToolsSelectNextPart : public view_listener_t
 					{
 						gFocusMgr.setKeyboardFocus(NULL);	// force edit toolbox to commit any changes
 					}
+					if (fwd || prev)
+					{
 					LLSelectMgr::getInstance()->deselectAll();
+					}
 					LLSelectMgr::getInstance()->selectObjectOnly(to_select);
 					return true;
 				}
