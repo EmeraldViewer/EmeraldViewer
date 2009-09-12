@@ -503,7 +503,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	addBoolControl("Inventory.SearchByAll", !search_by_name);
 	
 	//Bool for toggling the partial search results - RKeast
-	BOOL partial_search = gSavedSettings.getBOOL("ShowPartialSearchType");
+	BOOL partial_search = gSavedSettings.getBOOL("ShowPartialSearchResults");
 	
 	addBoolControl("Inventory.PartialSearchToggle", partial_search);
 
