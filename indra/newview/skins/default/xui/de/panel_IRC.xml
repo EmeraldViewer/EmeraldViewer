@@ -10,4 +10,5 @@
 	<button label="Bearbeiten" name="EmeraldIRC_edit"/>
   <button label="Entfernen" name="EmeraldIRC_remove"/>
   <button label="Neu laden" name="EmeraldIRC_refresh"/>
+  <button label="Hilfe" name="EmeraldIRC_Help"/>
 </panel>

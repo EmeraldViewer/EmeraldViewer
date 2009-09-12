@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <floater name="EmeraldIRC_info" title="IRC Settings">
+      <button label="?" name="EmeraldIRC_Help" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <text name="EmIRC_tag">Settings Tag:</text>
       <line_editor name="EmeraldIRC_tag"/>
       <text name="EmIRC_nick">Nick:</text>

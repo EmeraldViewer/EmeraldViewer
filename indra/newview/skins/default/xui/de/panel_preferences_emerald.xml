@@ -244,12 +244,15 @@ Empfohlene Eisntellungen:
 <slider name="EmeraldMaxBeamsPerSecond" label="Updates/sec:" tool_tip="Wieviele Updates pro Sekunde gesendet werden. Standard 40"/>
       <check_box label="Sende Zielposition per Chat" name="lol-toggle!"/>
       <check_box label="Zeige Auswahleffekt(deaktiviert wird kein Effekt mehr angezeigt)" name="SLPartBeam"/>
-      <check_box label="Regenbogen Effekt" name="EmBeamRainbow"/>
+      <combo_box name="BeamColor_combo" tool_tip="Select the color preset for the selection beam"/>
       <combo_box name="EmeraldBeamShape_combo" tool_tip="Wähle die Form des Effekts aus"/>      
         <slider name="EmeraldBeamShapeScale" label="Größe" tool_tip="ändert die Größe des Auswahleffekts"/>
       <button name="delete_beam" label="Löschen" tool_tip="Löscht die ausgewählte Effekt Form"/>
       <button name="custom_beam_btn" label="Neue Form" tool_tip="Anpassen der Effekt Form"/>
       <button name="refresh_beams" label="Neuladen" tool_tip="Läd die Liste vorhandener Formen neu"/>
+      <button name="BeamColor_delete" label="Farbwechsel löschen" tool_tip="löscht den Farbwechsel"/>
+      <button name="BeamColor_new" label="Neuer Farbwechsel" tool_tip="Erstellt einen neuen Farbwechsel"/>
+      <button name="BeamColor_refresh" label="Neuladen" tool_tip="Läd die Liste vorhandener Farbwechsel neu"/>
     </panel>
     <panel label="Bauoptionen" left="1" name="Build">
     <button label="?" name="EmeraldHelp_Build" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -329,6 +332,8 @@ Empfohlene Eisntellungen:
       <check_box label="Werte sind in Prozent" tool_tip="Standardwerte sind Prozent und jede Achse 50.0" name="EmPivotPercToggle"/>
       <check_box label="Ausgewählten Prims hervorheben" name="EmBuildPrefsRenderHighlight_toggle"/>
       <check_box label="Zeige Achsenpfeile an der Root Prim Position" tool_tip="Standardmässig werden die Pfeile am Mittelpunkt des Linksets angezeigt. Wenn aktiviert werden sie am Mittelpunkt des Root Prims angezeigt." name="EmBuildPrefsActualRoot_toggle"/>
+      <check_box label="Megaprim Unterstützung" tool_tip="Erstellung und Modifikation von Prims grösser als SL Maximum aktivieren." name="EmBuildPrefsMegaprim_toggle"/>
+      
     </panel>
     </tab_container>
 
