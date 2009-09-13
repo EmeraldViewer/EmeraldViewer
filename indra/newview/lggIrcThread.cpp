@@ -62,12 +62,12 @@ Ok, here is how this is suposed to work.
 #include "llimview.h"
 #if LL_WINDOWS
 #include <crtdbg.h>
+#endif
 #include "llnotifications.h"
-#include "lggircprofilefloater.h"
+#include "lggIrcProfileFloater.h"
 #include "llfloaterchat.h"
 #include "llfloaterchatterbox.h"
 #include "llfloater.h"
-#endif
 
 
 //static
