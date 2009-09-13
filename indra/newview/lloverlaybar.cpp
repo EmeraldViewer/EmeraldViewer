@@ -45,7 +45,6 @@
 #include "llfocusmgr.h"
 #include "llimview.h"
 #include "llmediaremotectrl.h"
-#include "llgraphicsremotectrl.h"
 #include "llpanelaudiovolume.h"
 #include "llparcel.h"
 #include "lltextbox.h"
@@ -65,6 +64,7 @@
 #include "llvoiceremotectrl.h"
 #include "llwebbrowserctrl.h"
 #include "llselectmgr.h"
+#include "wlfPanel_AdvSettings.h"
 
 //
 // Globals
@@ -94,11 +94,11 @@ void* LLOverlayBar::createVoiceRemote(void* userdata)
 	return self->mVoiceRemote;
 }
 
-void* LLOverlayBar::createGraphicsRemote(void* userdata)
+void* LLOverlayBar::createAdvSettings(void* userdata)
 {
 	LLOverlayBar *self = (LLOverlayBar*)userdata;	
-	self->mGraphicsRemote = new LLGraphicsRemoteCtrl ();
-	return self->mGraphicsRemote;
+	self->mAdvSettings = new wlfPanel_AdvSettings();
+	return self->mAdvSettings;
 }
 
 void* LLOverlayBar::createChatBar(void* userdata)
@@ -111,7 +111,7 @@ LLOverlayBar::LLOverlayBar()
 	:	LLPanel(),
 		mMediaRemote(NULL),
 		mVoiceRemote(NULL),
-		mGraphicsRemote(NULL),
+		mAdvSettings(NULL),
 		mMusicState(STOPPED)
 {
 	setMouseOpaque(FALSE);
@@ -122,7 +122,7 @@ LLOverlayBar::LLOverlayBar()
 	LLCallbackMap::map_t factory_map;
 	factory_map["media_remote"] = LLCallbackMap(LLOverlayBar::createMediaRemote, this);
 	factory_map["voice_remote"] = LLCallbackMap(LLOverlayBar::createVoiceRemote, this);
-	factory_map["graphics_remote"] = LLCallbackMap(LLOverlayBar::createGraphicsRemote, this);
+	factory_map["Adv_Settings"] = LLCallbackMap(LLOverlayBar::createAdvSettings, this);
 	factory_map["chat_bar"] = LLCallbackMap(LLOverlayBar::createChatBar, this);
 	
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_overlaybar.xml", &factory_map);
@@ -291,23 +291,25 @@ void LLOverlayBar::refresh()
 
 	moveChildToBackOfTabGroup(mMediaRemote);
 	moveChildToBackOfTabGroup(mVoiceRemote);
-	moveChildToBackOfTabGroup(mGraphicsRemote);
+	moveChildToBackOfTabGroup(mAdvSettings);
 
 	// turn off the whole bar in mouselook
 	if (gAgent.cameraMouselook())
 	{
 		childSetVisible("media_remote_container", FALSE);
 		childSetVisible("voice_remote_container", FALSE);
+		childSetVisible("AdvSettings_container", FALSE);
+		childSetVisible("AdvSettings_container_exp", FALSE);
 		childSetVisible("state_buttons", FALSE);
-		childSetVisible("graphics_remote_container", FALSE);
 	}
 	else
 	{
 		// update "remotes"
 		childSetVisible("media_remote_container", TRUE);
 		childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
+		childSetVisible("AdvSettings_container", !gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
+		childSetVisible("AdvSettings_container_exp", gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
 		childSetVisible("state_buttons", TRUE);
-		childSetVisible("graphics_remote_container", TRUE);
 	}
 
 	// always let user toggle into and out of chatbar
