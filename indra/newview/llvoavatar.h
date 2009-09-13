@@ -509,6 +509,7 @@ private:
 	F32				mLastDisplacement;
 	F32				mLastTime;
 	F32				mActualBoobGrav;
+	bool			mFirstIdleUpdateBoobGravRan;
 	LLFrameTimer	mBoobBounceTimer;
 
 public:

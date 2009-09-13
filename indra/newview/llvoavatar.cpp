@@ -790,7 +790,8 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 	mCheckingCryolife(0),
     mIsCryolife(FALSE),
 	mFullyLoadedInitialized(FALSE),
-	mHasBakedHair( FALSE )
+	mHasBakedHair( FALSE ),
+	mFirstIdleUpdateBoobGravRan( false )
 {
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
 	//VTResume();  // VTune
@@ -2952,6 +2953,10 @@ void LLVOAvatar::idleUpdateLoadingEffect()
 // ------------------------------------------------------------
 void LLVOAvatar::idleUpdateBoobEffect()
 {
+  if(!mFirstIdleUpdateBoobGravRan) {
+	llwarns << "Running first idleUpdateBoobEffect() for " << getFullname() << llendl;
+	mFirstIdleUpdateBoobGravRan=true;
+  }
 
 			LLFastTimer t(LLFastTimer::FTM_LOAD_AVATAR);
 			LLVisualParam *param;
@@ -8585,7 +8590,7 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 
 				if(param->getID() == 507 && !mIsSelf && newWeight != getActualBoobGrav())
 				{
-					llwarns << "Boob Grav SET" << llendl;
+					llwarns << "Boob Grav SET to " << newWeight << " for " << getFullname() << llendl;
 					setActualBoobGrav(newWeight);
 				}
 				if (is_first_appearance_message || (param->getWeight() != newWeight))
