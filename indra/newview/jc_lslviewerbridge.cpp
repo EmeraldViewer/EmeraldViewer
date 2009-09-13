@@ -70,7 +70,7 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 {
 	if(message == "someshit")
 	{
-		cmdline_printchat("got someshit from "+source_id.asString());
+		//cmdline_printchat("got someshit from "+source_id.asString());
 		
 		return true;
 	}else
@@ -195,20 +195,20 @@ BOOL JCLSLBridge::tick()
 					sBridgeStatus = FAILED;
 					break;
 				}
-				cmdline_printchat("initializing");
+				llinfos << "initializing" << llendl;
 				if(gInventory.isEverythingFetched())
 				{
-					cmdline_printchat("inv is fetched");
+					llinfos << "inv is fetched" << llendl;
 					LLUUID item_id = findInventoryByName(vBridgeName);
 					if(item_id.notNull())
 					{
 						LLViewerInventoryItem* bridge = gInventory.getItem(item_id);
 						if(bridge)
 						{
-							cmdline_printchat("bridge");
+							llinfos << "bridge is ready to attach" << llendl;
 							if(bridge->isComplete())
 							{
-								cmdline_printchat("bridge is complete");
+								llinfos << "bridge is complete, attaching" << llendl;
 								LLMessageSystem* msg = gMessageSystem;
 								msg->newMessageFast(_PREHASH_RezSingleAttachmentFromInv);
 								msg->nextBlockFast(_PREHASH_AgentData);
@@ -225,29 +225,26 @@ BOOL JCLSLBridge::tick()
 								sBridgeStatus = ACTIVE;
 							}else if(isworn(bridge->getUUID()))
 							{
-								cmdline_printchat("bridge is already worn");
+								llinfos << "bridge is already worn" << llendl;
 								sBridgeStatus = ACTIVE;
 							}
 						}
 					}else
 					{
-						cmdline_printchat("no bridge");
+						llinfos << "no bridge" << llendl;
 						//sBridgeStatus = BUILDING;
 						std::string directory = gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"bridge.xml");
 						if(!LLFile::isfile(directory.c_str()))
 						{
-							cmdline_printchat("file not there o.o");
+							llinfos << "file not there o.o" << llendl;
 							sBridgeStatus = FAILED;
 						}else
 						{
-							cmdline_printchat("bridge.xml located. importing..");
+							llinfos << "bridge.xml located. importing.." << llendl;
 							gImportTracker.importer(directory,&setBridgeObject);
 							sBridgeStatus = BUILDING;
 						}
 					}
-				}else
-				{
-					//cmdline_printchat("inv not fetched");
 				}
 			}
 			break;
