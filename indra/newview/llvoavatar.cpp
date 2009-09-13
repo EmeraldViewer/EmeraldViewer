@@ -726,9 +726,9 @@ F32 LLVOAvatar::sLODFactor = 1.f;
 BOOL LLVOAvatar::sUseImpostors = FALSE;
 BOOL LLVOAvatar::sJointDebug = FALSE;
 
-F32 LLVOAvatar::sBoobHardness = 1.10f;
-F32 LLVOAvatar::sBoobMass = 2.0f;
-F32 LLVOAvatar::sBoobZInfluence = 1.f; //30 before fps additions
+F32 LLVOAvatar::sBoobHardness = 1.0f;
+F32 LLVOAvatar::sBoobMass = 1.0f;
+F32 LLVOAvatar::sBoobZInfluence = 10.f; //30 before fps additions
 F32 LLVOAvatar::sBoobFriction = 0.8f;
 F32 LLVOAvatar::sBoobFrictionFraction = 1.7f;
 F32 LLVOAvatar::sBoobZMax = 1.3f;
@@ -2980,9 +2980,8 @@ void LLVOAvatar::idleUpdateBoobEffect()
 			if(!getAppearanceFlag() && mActualBoobGrav != -2.0f)
 			{
 
-				difftime = (mBoobBounceTimer.getElapsedTimeF32() - mLastTime)*20.0f ;//20 is to scale it to what origonal code was based on
-				difftime *= sBoobFrictionFraction ;//moved so dif time is scaled corelty for later use
-
+				difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
+				difftime *= sBoobFrictionFraction;
 				//difftime = 1.f/gFPSClamped;
 
 				boobVel = (Pos.mV[VZ] - mLastChestPos.mV[VZ]); //multiplyer being the
@@ -2998,9 +2997,9 @@ void LLVOAvatar::idleUpdateBoobEffect()
 				F32 boobMass = sBoobMass;
 				F32 boobHardness = sBoobHardness;
 
-				mBoobGravity += (boobVel * boobMass) * difftime;// * difftime;
+				mBoobGravity += (boobVel * boobMass);// * difftime;
 				mBoobGravity *= friction; // was just 0.9
-				mBoobGravity += (-boobHardness * (mBoobDisplacement-originWeight)) * difftime;// * difftime; // hooke's law force
+				mBoobGravity += (-boobHardness * (mBoobDisplacement-originWeight));// * difftime; // hooke's law force
 				//	FPS		 = gFPSClamped > 44.f ? 44.f : gFPSClamped;
 				//	FPS		 = gFPSClamped < 1.f ? 1.f : gFPSClamped
 				//	friction = sBoobFriction - (44.f - FPS) * (sBoobFrictionFraction*0.01f);
@@ -3009,12 +3008,12 @@ void LLVOAvatar::idleUpdateBoobEffect()
 					mBoobDisplacement = llclamp(mBoobDisplacement, -5.f, 5.f);
 					mBoobGravity = llclamp(mBoobGravity, -5.f, 5.f);
 
-				mBoobDisplacement += mBoobGravity * difftime;
+				mBoobDisplacement += mBoobGravity;
 
-				llwarns << "difftime = " << llround(difftime, 0.01f) << llendl;
-				llwarns << "boob vel = " << llround(boobVel, 0.01f) << llendl;
+				//llwarns << "difftime = " << llround(difftime, 0.01f) << llendl;
+				//llwarns << "boob vel = " << llround(boobVel, 0.01f) << llendl;
 				//llwarns << "boob friction = " << llround(friction, 0.01f) << llendl;
-				llwarns << "boob displacement = " << llround(mBoobDisplacement, 0.01f) << llendl;
+				//llwarns << "boob displacement = " << llround(mBoobDisplacement, 0.01f) << llendl;
 
 
 

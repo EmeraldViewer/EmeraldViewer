@@ -63,6 +63,7 @@ Ok, here is how this is suposed to work.
 #if LL_WINDOWS
 #include <crtdbg.h>
 #include "llnotifications.h"
+#include "lggircprofilefloater.h"
 #endif
 
 
@@ -90,32 +91,24 @@ void whoisresponce::done()
 	args["CHANNELS"] = channels;
 	args["SERVERS"] = servers;
 	args["IDLE"] = idle;
-	LLNotifications::instance().add("EmeraldIRCInfo", args, payload,callbackProfile);
+	args["RCHANNEL"]= REALChannel;
+	LggIrcProfile::show(args);
+	//LLNotifications::instance().add("EmeraldIRCInfo", args, payload,callbackProfile);
 	//pop up
 	newOne();
 	
 	
 }
-void whoisresponce::callbackProfile(const LLSD& notification, const LLSD& response)
-{
-	S32 option = LLNotification::getSelectedOption(notification, response);
-
-	if ( option == 0 )
-	{
-// 		LLUUID uid;
-// 		uid.generate(nick+"lgg"+REALChannel);
+// void whoisresponce::callbackProfile(const LLSD& notification, const LLSD& response)
+// {
+// 	S32 option = LLNotification::getSelectedOption(notification, response);
 // 
-// 		LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
-// 		
-// 		if(!gIMMgr->hasSession(computed_session_id))
-// 		{
-// 			make_ui_sound("UISndNewIncomingIMSession");
-// 			gIMMgr->addSession(
-// 				llformat("%s",nick.c_str()),IM_PRIVATE_IRC,uid);
-// 		}
-	}
-	//newOne();
-}
+// 	if ( option == 0 )
+// 	{
+// 
+// 	}
+// 	//newOne();
+// }
 
 lggIrcThread::lggIrcThread(lggIrcData data):
 	mData(data),
@@ -331,7 +324,9 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 					return 0;
 				}
 				if(gSavedSettings.getBOOL("EmeraldIRC_ShowChannel"))
-					msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("#%s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
+					msg(
+					llformat("#%s: %s",hostd->nick,std::string(&params[1]).c_str()),
+					gSavedSettings.getColor("EmeraldIRC_ColorChannel"));
 			}else
 			{
 				
@@ -351,11 +346,11 @@ int lggIrcThread::PrivMessageResponce( char * params, irc_reply_data * hostd, vo
 void lggIrcThread::whois(LLUUID who)
 {
 	
-	for(int innerItter = 0; innerItter < (int)conn->participants.size(); innerItter++)
+	for(int innerItter = 0; innerItter < (int)conn->allparticipants.size(); innerItter++)
 	{
-		if(conn->participants[innerItter] == who)
+		if(conn->allparticipants[innerItter] == who)
 		{
-			whois(conn->corespondingNick[innerItter]);
+			whois(conn->allcorespondingNick[innerItter]);
 		}
 	}
 }
@@ -382,7 +377,9 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 				}
 				//chan msg
 				if(gSavedSettings.getBOOL("EmeraldIRC_ShowNotice"))
-					msg(llformat(": %s",std::string(&params[1]).c_str()),llformat("#%s",hostd->nick),gSavedSettings.getColor("EmeraldIRC_ColorNotice"));
+					msg(llformat(": %s",std::string(&params[1]).c_str()),
+					llformat("#%s",hostd->nick),
+					gSavedSettings.getColor("EmeraldIRC_ColorNotice"));
 			}else
 				displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
 		}
@@ -398,7 +395,9 @@ int lggIrcThread::JoinMessageResponce( char * params, irc_reply_data * hostd, vo
 		if(hostd->nick)
 		{
 			if(gSavedSettings.getBOOL("EmeraldIRC_ShowJoin"))
-				msg( llformat("%s has joined this chat.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorJoin"));
+				msg( 
+				llformat("%s has joined this chat.",hostd->nick).c_str(),
+				gSavedSettings.getColor("EmeraldIRC_ColorJoin"));
 
 		}
 	}
@@ -817,10 +816,10 @@ void lggIrcThread::sendChat(std::string chat)
 void lggIrcThread::stopRun()
 {
 	// close other IRC windows
-	for(int i = 0; i < (int)conn->participants.size() ; i++)
+	for(int i = 0; i < (int)conn->allparticipants.size() ; i++)
 	{
 
-		LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,conn->participants[i]);
+		LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,conn->allparticipants[i]);
 		if(!gIMMgr->hasSession(computed_session_id))
 		{
 			
@@ -862,9 +861,9 @@ void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 	LLUUID uid;
 	uid.generate(name+"lgg"+getChannel());//dont touch this one
 	BOOL found = false;
-	for(int i = 0; i < (int) conn->participants.size();i++)
+	for(int i = 0; i < (int) conn->allparticipants.size();i++)
 	{
-		if(conn->participants[i] == uid)found=true;
+		if(conn->allparticipants[i] == uid)found=true;
 	}
 	if(found)
 	{
@@ -919,7 +918,10 @@ void lggIrcThread::msg(std::string message, std::string name)
 void lggIrcThread::msg(std::string message, std::string name, LLColor4 color)
 {
 	LLUUID uid;
-	uid.generate(name.substr(1)+"lgg"+getChannel());
+	uid.generate(name.substr(1)+"lgg"+getChannel().c_str());
+
+	llinfos << "Generating Disp uuid from |" << name.substr(1) << "| and |" << getChannel().c_str() << "| it was " << uid.asString() << llendl;
+
 
 	gIMMgr->findFloaterBySession(getMID())->addHistoryLine(stripColorCodes(message),
 		color,
@@ -929,20 +931,19 @@ void lggIrcThread::msg(std::string message, std::string name, LLColor4 color)
 }
 std::vector<LLUUID> lggIrcThread::getParticipants()
 {
-	return conn->participants;
+	return conn->allparticipants;
 }
 void lggIrcThread::sendPrivateImToID(std::string msg, LLUUID id)
 {
 	
 	LLUUID uid;
-	LLSD speakers = conn->getSpeakersLLSD();
-	for(int i = 0; i < speakers.size(); i++)
+	
+	for(int i = 0; i < (int)conn->allparticipants.size(); i++)
 	{
-		LLSD personData = speakers[i];	
-		std::string name = personData["irc_agent_name"].asString();
-		uid.generate(name+"lgg"+getChannel());
-		if ( id ==uid)
+		if(conn->allparticipants[i] == id)
 		{
+			std::string name = conn->allcorespondingNick[i];
+			uid.generate(name+"lgg"+getChannel());
 			LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
 			std::istringstream i(msg);
 			std::string command;

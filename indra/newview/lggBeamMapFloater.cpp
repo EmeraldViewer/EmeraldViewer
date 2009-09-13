@@ -111,9 +111,11 @@ void lggBeamMapFloater::draw()
 {
 
 	LLRect swatch_rect;
-	empanel->localRectToOtherView(empanel->getLocalRect(), &swatch_rect, this);
+	LLButton* createButton = empanel->getChild<LLButton>("custom_beam_btn");
+
+	createButton->localRectToOtherView(createButton->getLocalRect(), &swatch_rect, this);
 	LLRect local_rect = getLocalRect();
-	if (gFocusMgr.childHasKeyboardFocus(this) && empanel->isInVisibleChain() && mContextConeOpacity > 0.001f)
+	if (gFocusMgr.childHasKeyboardFocus(this) && createButton->isInVisibleChain() && mContextConeOpacity > 0.001f)
 	{
 		gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 		LLGLEnable(GL_CULL_FACE);

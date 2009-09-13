@@ -103,6 +103,7 @@ set(viewer_SOURCE_FILES
 	lggBeamsColors.cpp
 	lggIrcData.cpp
 	lggIrcGroupHandler.cpp
+	lggIrcProfileFloater.cpp
 	lggFloaterIrcEdit.cpp
 	lggFloaterIrc.cpp
 	lggBeamMaps.cpp
@@ -543,6 +544,7 @@ set(viewer_HEADER_FILES
     lggFloaterIrcEdit.h
     lggFloaterIrc.h
     lggIrcGroupHandler.h
+	lggIrcProfileFloater.h
     lggIrcThread.h
     lggIrcData.h
 	llfloaterassetbrowser.h

@@ -95,8 +95,8 @@ public:
 
 	IRCMiscInfo info;
 
-	std::vector<LLUUID> participants;
-	std::vector<std::string> corespondingNick;
+	std::vector<LLUUID> allparticipants;
+	std::vector<std::string> allcorespondingNick;
 
 	IRC();
 	~IRC();

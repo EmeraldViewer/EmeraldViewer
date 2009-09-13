@@ -65,6 +65,8 @@ IRC::IRC()
 	sentnick=false;
 	sentpass=false;
 	sentuser=false;
+	allparticipants.clear();
+	allcorespondingNick.clear();
 	cur_nick=0;
 }
 
@@ -342,8 +344,7 @@ int IRC::is_op(char* channel, char* nick)
 }
 LLSD IRC::getSpeakersLLSD()
 {
-	participants.clear();
-	corespondingNick.clear();
+	
 	channel_user* cup;
 
 	cup=chan_users;
@@ -354,6 +355,19 @@ LLSD IRC::getSpeakersLLSD()
 	{
 		LLSD speaker;
 		std::string strnick = std::string(cup->nick);
+		LLUUID uid;
+		//llinfos << "Generating uuid from " << strnick << " and " << std::string(cup->channel) << llendl;
+		uid.generate(strnick+"lgg"+std::string(cup->channel));
+
+		vector<LLUUID>::iterator result;
+		result = find( allparticipants.begin(), allparticipants.end(),uid );
+		if( result == allparticipants.end() ) 
+		{
+			llinfos << "Generating uuid from |" << strnick << "| and |" << std::string(cup->channel) << "| it was " << uid.asString() << llendl;
+
+			allparticipants.push_back(uid);
+			allcorespondingNick.push_back(strnick);
+		}
 		if(strnick != "")
 		{
 			//std::string toMakeUUID;
@@ -363,11 +377,7 @@ LLSD IRC::getSpeakersLLSD()
 			//hashedName.finalize();
 			//hashedName.hex_digest(toMakeUUID);
 			//LLUUID hashedUUID(toMakeUUID);
-			LLUUID uid;
-			//llinfos << "Generating uuid from " << strnick << " and " << std::string(cup->channel) << llendl;
-			uid.generate(strnick+"lgg"+std::string(cup->channel));
-			participants.push_back(uid);
-			corespondingNick.push_back(strnick);
+			
 			speaker["irc_agent_id"]=uid;
 			speaker["irc_agent_name"]=strnick;
 			speaker["irc_channel"]=std::string(cup->channel);
@@ -463,6 +473,9 @@ void IRC::parse_irc_reply(char* data)
 					}
 					cup=cup->next;
 				}
+				if(strstr(params," :"))params+=2;
+				if(strstr(params,":"))params+=1;
+
 				cup->channel=new char[strlen(params)+1];
 				strcpy(cup->channel, params);
 				cup->nick=new char[strlen(hostd_tmp.nick)+1];
@@ -775,7 +788,7 @@ void IRC::parse_irc_reply(char* data)
 			{
 				//chan_temp+=3;
 				p=strstr(chan_temp, " :");
-				if (p)
+				if(p)
 				{
 					*p='\0';
 					p+=2;
@@ -828,6 +841,10 @@ void IRC::parse_irc_reply(char* data)
 							cup->flags=cup->flags|IRC_USER_VOICE;
 							p++;
 						}
+						//llinfos << "chan temp was " << chan_temp << llendl;
+						if(strstr(chan_temp," :"))chan_temp+=2;
+						if(strstr(chan_temp,":"))chan_temp+=1;
+						//llinfos << "chan temp is now " << chan_temp << llendl;
 						cup->nick=new char[strlen(p)+1];
 						strcpy(cup->nick, p);
 						cup->channel=new char[strlen(chan_temp)+1];
@@ -873,6 +890,11 @@ void IRC::parse_irc_reply(char* data)
 						cup->flags=cup->flags|IRC_USER_OP;
 						p++;
 					}//(qaohv)~&@%+
+
+					//llinfos << "chan temp was " << chan_temp << llendl;
+					if(strstr(chan_temp," :"))chan_temp+=2;
+					if(strstr(chan_temp,":"))chan_temp+=1;
+					//llinfos << "chan temp is now " << chan_temp << llendl;
 					cup->nick=new char[strlen(p)+1];
 					strcpy(cup->nick, p);
 					cup->channel=new char[strlen(chan_temp)+1];

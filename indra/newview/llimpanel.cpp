@@ -1369,10 +1369,7 @@ BOOL LLFloaterIMPanel::postBuild()
 		mHistoryEditor->setParseHTML(TRUE);
 		mHistoryEditor->setParseHighlights(TRUE);
 
-		if ( IM_SESSION_GROUP_START == mDialog )
-		{
-			childSetEnabled("profile_btn", FALSE);
-		}
+		
 		if(IM_SESSION_IRC_START == mDialog || IM_PRIVATE_IRC == mDialog)
 		{
 // 			childSetVisible("profile_btn", FALSE);
@@ -1382,12 +1379,20 @@ BOOL LLFloaterIMPanel::postBuild()
 // 			childSetVisible("password",FALSE);
 // 			childSetVisible("otr_combo",FALSE);
 		
-			childSetEnabled("profile_btn", FALSE);
 			childSetEnabled("profile_callee_btn", FALSE);
 			childSetEnabled("start_call_btn",FALSE);
 			childSetEnabled("profile_tele_btn",FALSE);
 			childSetVisible("password",FALSE);
 			childSetVisible("otr_combo",FALSE);
+			if ( IM_SESSION_GROUP_START == mDialog )
+			{
+				childSetEnabled("profile_btn", FALSE);
+			}
+			else if(IM_PRIVATE_IRC == mDialog)
+			{
+				childSetEnabled("profile_btn",TRUE);
+
+			}
 		}
 		
 		if(!mProfileButtonEnabled)

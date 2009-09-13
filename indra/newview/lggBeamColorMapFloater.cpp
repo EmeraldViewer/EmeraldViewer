@@ -169,7 +169,9 @@ void lggBeamColorMapFloater::draw()
 	
 	//Try draw rectangle attach beam
 	LLRect swatch_rect;
-	empanel->localRectToOtherView(empanel->getLocalRect(), &swatch_rect, this);
+	LLButton* createButton = empanel->getChild<LLButton>("BeamColor_new");
+	
+	createButton->localRectToOtherView(createButton->getLocalRect(), &swatch_rect, this);
 	LLRect local_rect = getLocalRect();
 	if (gFocusMgr.childHasKeyboardFocus(this) && empanel->isInVisibleChain() && mContextConeOpacity > 0.001f)
 	{
