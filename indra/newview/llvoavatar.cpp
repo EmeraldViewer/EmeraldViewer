@@ -726,13 +726,13 @@ F32 LLVOAvatar::sLODFactor = 1.f;
 BOOL LLVOAvatar::sUseImpostors = FALSE;
 BOOL LLVOAvatar::sJointDebug = FALSE;
 
-F32 LLVOAvatar::sBoobHardness = 20.0f;
-F32 LLVOAvatar::sBoobMass = 60.0f;
-F32 LLVOAvatar::sBoobZInfluence = 25.f; //30 before fps additions
-F32 LLVOAvatar::sBoobFriction = 0.7f;
-F32 LLVOAvatar::sBoobFrictionFraction = 0.8f;
+F32 LLVOAvatar::sBoobHardness = 1.0f;
+F32 LLVOAvatar::sBoobMass = 1.0f;
+F32 LLVOAvatar::sBoobZInfluence = 10.f; //30 before fps additions
+F32 LLVOAvatar::sBoobFriction = 0.8f;
+F32 LLVOAvatar::sBoobFrictionFraction = 1.7f;
 F32 LLVOAvatar::sBoobZMax = 1.3f;
-F32 LLVOAvatar::sBoobVelMax = 0.006f;
+F32 LLVOAvatar::sBoobVelMax = 1.f;
 
 F32 LLVOAvatar::sUnbakedTime = 0.f;
 F32 LLVOAvatar::sUnbakedUpdateTime = 0.f;
@@ -2972,38 +2972,49 @@ void LLVOAvatar::idleUpdateBoobEffect()
 			F32 zInfluence = sBoobZInfluence;
 			F32 zMax = sBoobZMax;
 			F32 velMax = sBoobVelMax;
+			//F32 FPS = 44.f;
+			F32 friction = sBoobFriction;
 
 			//llwarns << "fps = " << gFPSClamped << llendl;
 
 			if(!getAppearanceFlag() && mActualBoobGrav != -2.0f)
 			{
 
-				//difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
-				difftime = 1.f/gFPSClamped;
+				difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
+				difftime *= sBoobFrictionFraction;
+				//difftime = 1.f/gFPSClamped;
 
 				boobVel = (Pos.mV[VZ] - mLastChestPos.mV[VZ]); //multiplyer being the
 				boobVel += (Pos.mV[VX] - mLastChestPos.mV[VX]) * 0.3f;
 				boobVel += (Pos.mV[VY] - mLastChestPos.mV[VY]) * 0.3f;
-				//boobVel /= mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
 				boobVel = llclamp(boobVel, -velMax, velMax);
+				boobVel = boobVel / difftime;
 				//boobVel *= zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f) * (1.0f / gFPSClamped);
 				boobVel *= zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f);
 
-				boobVel *= 1-difftime;
+				//boobVel *= 1-difftime;
 
 				F32 boobMass = sBoobMass;
 				F32 boobHardness = sBoobHardness;
 
-				mBoobGravity += (boobVel * boobMass) * difftime;
-				mBoobGravity += (-boobHardness * (mBoobDisplacement-originWeight)) * difftime; // hooke's law force
-					F32 FPS = gFPSClamped > 44.f ? 44.f : gFPSClamped;
-					F32 friction = sBoobFriction - (44.f - FPS) * (sBoobFrictionFraction*0.01f);
-				mBoobGravity *= llround(friction, 0.01f); // was just 0.9
+				mBoobGravity += (boobVel * boobMass);// * difftime;
+				mBoobGravity *= friction; // was just 0.9
+				mBoobGravity += (-boobHardness * (mBoobDisplacement-originWeight));// * difftime; // hooke's law force
+				//	FPS		 = gFPSClamped > 44.f ? 44.f : gFPSClamped;
+				//	FPS		 = gFPSClamped < 1.f ? 1.f : gFPSClamped
+				//	friction = sBoobFriction - (44.f - FPS) * (sBoobFrictionFraction*0.01f);
+
+
+					mBoobDisplacement = llclamp(mBoobDisplacement, -5.f, 5.f);
+					mBoobGravity = llclamp(mBoobGravity, -5.f, 5.f);
+
 				mBoobDisplacement += mBoobGravity;
 
-				//llwarns << "boob vel = " << boobVel << llendl;
+				llwarns << "difftime = " << llround(difftime, 0.01f) << llendl;
+				llwarns << "boob vel = " << llround(boobVel, 0.01f) << llendl;
 				//llwarns << "boob friction = " << llround(friction, 0.01f) << llendl;
-				//llwarns << "boob displacement = " << mBoobDisplacement << llendl;
+				llwarns << "boob displacement = " << llround(mBoobDisplacement, 0.01f) << llendl;
+
 
 
 								//mBoobGravity *= (sBoobFriction * (1.0f - 4.0f*difftime)); // was just 0.9
@@ -3017,10 +3028,6 @@ void LLVOAvatar::idleUpdateBoobEffect()
 					//llwarns << "1 mBoobDisplacement = " << llround(mBoobDisplacement, 0.1f) << llendl;
 					//llwarns << "1 mBoobDisplacement = " << mBoobDisplacement << llendl;
 					//llwarns << "----- difftime = " << difftime << llendl;
-					if(mBoobDisplacement < -5.f)
-						mBoobDisplacement = -5.f;
-					if(mBoobDisplacement > 5.f)
-						mBoobDisplacement = 5.f;
 						
 						
 
