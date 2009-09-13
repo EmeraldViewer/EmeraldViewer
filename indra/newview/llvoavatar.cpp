@@ -791,6 +791,7 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
     mIsCryolife(FALSE),
 	mFullyLoadedInitialized(FALSE),
 	mHasBakedHair( FALSE ),
+	mActualBoobGrav( -2.0f ),
 	mFirstIdleUpdateBoobGravRan( false )
 {
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
@@ -2982,7 +2983,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 			//llwarns << "fps = " << gFPSClamped << llendl;
 
-			if(!getAppearanceFlag() && mActualBoobGrav != -2.0f)
+			if(!getAppearanceFlag() && abs(mActualBoobGrav-2.0f)>0.01f)
 			{
 
 				difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
@@ -3046,7 +3047,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 				if(getAppearanceFlag())
 				if(mBoobDisplacement != mActualBoobGrav)
 				{
-					llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << llendl;
+					llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << " for " << getFullname() << llendl;
 					mBoobDisplacement = mActualBoobGrav;
 					param->setWeight(mActualBoobGrav, FALSE);
 					param->apply(avatar_sex);

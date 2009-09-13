@@ -814,12 +814,14 @@ BOOL LLFace::getGeometryVolume(const LLVolume& volume,
 		if (num_indices + (S32) mIndicesIndex > mVertexBuffer->getNumIndices())
 		{
 			llwarns << "Index buffer overflow!" << llendl;
+			llwarns << "Object: " << getViewerObject()->mID << llendl;
 			return FALSE;
 		}
 
 		if (num_vertices + mGeomIndex > mVertexBuffer->getNumVerts())
 		{
 			llwarns << "Vertex buffer overflow!" << llendl;
+			llwarns << "Object: " << getViewerObject()->mID << llendl;
 			return FALSE;
 		}
 	}
