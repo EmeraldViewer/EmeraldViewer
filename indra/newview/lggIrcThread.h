@@ -36,6 +36,8 @@
 #include "lggIrcData.h"
 #include "llviewerprecompiledheaders.h"
 #include "IRC.h"
+#include "llimpanel.h"
+#include "llchat.h"
 
 class MsgListener : public LLThread
 {
@@ -82,13 +84,16 @@ public:
 	
 	MsgListener * listener;
 	whoisresponce whoR;
-	
+	LLChat chat;
+
+	LLFloaterIMPanel* floater;
 
 	std::vector<LLUUID> getParticipants();
 	void displayPrivateIm(std::string msg, std::string name);
 	void sendPrivateImToID(std::string msg, LLUUID id);
 	void run(void);
 	void join();
+	void notifyStuff();
 	void stopRun(void);
 	void whois(std::string user);
 	void whois(LLUUID who);
@@ -96,9 +101,9 @@ public:
 	lggIrcData getData() const;
 	void actionDisp(std::string name, std::string msg);
 	void msg(std::string message); 
-	void msg(std::string message, std::string name);
-	void msg(std::string message, LLColor4 color);
-	void msg(std::string message, std::string name, LLColor4 color);
+	//void msg(std::string message, std::string name, bool notify);
+	void msg(std::string message, LLColor4 color, bool notify);
+	void msg(std::string message, std::string name, LLColor4 color,bool notify);
 	void sendChat(std::string chat);
 	void updateNames();
 	int ircresponce(char* params, irc_reply_data* hostd, void* conn);
