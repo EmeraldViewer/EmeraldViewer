@@ -5,8 +5,8 @@
 <panel bottom="0" filename="panel_bg_tab.xml" height="198" left="0" width="205" />
 <slider bottom="175" left="5" control_name="RenderFarClip"
 	     decimal_digits="0" enabled="true" follows="left|bottom" height="20"
-	     increment="8" label="Draw Distance:" can_edit_text="true"
-	     label_width="75" max_val="512" min_val="24" mouse_opaque="true"
+	     increment="8" label="Draw Dist.:" can_edit_text="true"
+	     label_width="55" max_val="1024" min_val="24" mouse_opaque="true"
 	     name="DrawDistance" show_text="true" width="195" tool_tip="Change your Draw Distance"/>
 <slider bottom_delta="-20" left_delta="-0" control_name="ThrottleBandwidthKBPS"
 	     decimal_digits="0" enabled="true" follows="left|bottom" height="20"
@@ -28,6 +28,9 @@
 	     increment="64" label="Max Node:" can_edit_text="true"
 	     label_width="55" max_val="16382" min_val="64" mouse_opaque="true"
 	     name="RenderMaxNodeSize" show_text="true" width="195" tool_tip="Maximum memory size limit for rendering NEW objects, in Kb. Anything over the limit will not be rendered. [Default 4096]"/>
+
+<combo_box name="WLPresetsCombo" bottom="5" left="40" follows="left|top" height="18" width="150" max_chars="20" mouse_opaque="true" allow_text_entry="false"
+           tool_tip="WindLight Presets for your Sky." />
 
 <button bottom="1" control_name="wlfAdvSettingsPopup" height="22" label=""
 	     left="5" name="expand" scale_image="true" toggle="true"

@@ -44,6 +44,7 @@ public:
 	void draw();
 
 	static void onClickExpandBtn(void* user_data);
+	static void onChangePresetName(LLUICtrl* ctrl, void* userData);
 
 protected:
 	void build();
