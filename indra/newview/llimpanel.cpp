@@ -1386,11 +1386,11 @@ BOOL LLFloaterIMPanel::postBuild()
 			childSetVisible("otr_combo",FALSE);
 			if ( IM_SESSION_GROUP_START == mDialog )
 			{
-				childSetEnabled("profile_btn", FALSE);
+				childSetEnabled("profile_callee_btn", FALSE);
 			}
 			else if(IM_PRIVATE_IRC == mDialog)
 			{
-				childSetEnabled("profile_btn",TRUE);
+				childSetEnabled("profile_callee_btn",TRUE);
 
 			}
 		}
