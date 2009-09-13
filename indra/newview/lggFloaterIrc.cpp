@@ -66,14 +66,15 @@ bool lggPanelIRC::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	return false;
 }
 // clear the group list, and get a fresh set of info.
-void lggPanelIRC::reset()
+void lggPanelIRC::newList()
 {
-	LLCtrlListInterface *group_list = childGetListInterface("EmeraldIRC_list");
-	if (group_list)
-	{
-		group_list->operateOnAll(LLCtrlListInterface::OP_DELETE);
-	}
-	
+// 	LLCtrlListInterface *group_list = childGetListInterface("EmeraldIRC_list");
+// 	if (group_list)
+// 	{
+// 		group_list->operateOnAll(LLCtrlListInterface::OP_DELETE);
+// 	}
+	llinfos << "refreshing..." << llendl;
+
 	init_irc_list(getChild<LLScrollListCtrl>("EmeraldIRC_list"));
 	enableButtons();
 }
@@ -90,7 +91,7 @@ BOOL lggPanelIRC::postBuild()
 {
 	childSetCommitCallback("EmeraldIRC_list", onIrcList, this);
 
-	init_irc_list(getChild<LLScrollListCtrl>("EmeraldIRC_list"));
+	//init_irc_list(getChild<LLScrollListCtrl>("EmeraldIRC_list"));
 
 	childSetAction("EmeraldIRC_IM", onBtnIM, this);
 
@@ -108,7 +109,8 @@ BOOL lggPanelIRC::postBuild()
 
 	initHelpBtn("EmeraldIRC_Help",	"EmeraldHelp_IRCSettings");
 
-	reset();
+	glggIrcGroupHandler.setListPanel(this);
+	//newList();
 
 	return TRUE;
 }
@@ -134,7 +136,7 @@ void lggPanelIRC::enableButtons()
 		childDisable("EmeraldIRC_remove");
 	}
 	childEnable("EmeraldIRC_new");
-
+	refresh();
 }
 
 
@@ -161,7 +163,7 @@ void lggPanelIRC::onBtnIM(void* userdata)
 void lggPanelIRC::onBtnRefresh(void* userdata)
 {
 	lggPanelIRC* self = (lggPanelIRC*)userdata;
-	if(self) self->reset();
+	if(self) self->newList();
 }
 void lggPanelIRC::onBtnRemove(void* userdata)
 {
@@ -186,7 +188,7 @@ void lggPanelIRC::editirc()
 		
 		LggIrcFloaterStarter::show(glggIrcGroupHandler.getIrcGroupInfoByID(irc_list->getCurrentID()),this);
 		//TODO CLeanup shit
-		reset();
+		
 	}
 	
 }
@@ -219,8 +221,9 @@ void lggPanelIRC::removeirc()
 		llinfos << "lggPanelIRC::removeirc" << irc_list->getSelectedValue() << " and " << irc_list->getCurrentID() << llendl;
 	
 		glggIrcGroupHandler.deleteIrcGroupByID(irc_list->getCurrentID());
-		reset();
+		
 	}
+	newList();
 }
 
 
@@ -233,6 +236,9 @@ void lggPanelIRC::onIrcList(LLUICtrl* ctrl, void* userdata)
 
 void init_irc_list(LLScrollListCtrl* ctrl)
 {
+	if(!ctrl)return;
+	llinfos << "more refreshing.." << llendl;
+
 	std::vector<lggIrcData> allGroups = glggIrcGroupHandler.getFileNames();
 	S32 count = allGroups.size();
 	LLUUID id;

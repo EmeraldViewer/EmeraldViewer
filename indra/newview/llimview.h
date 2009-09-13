@@ -140,7 +140,6 @@ public:
 
 	// IM received that you haven't seen yet
 	BOOL getIMReceived() const;
-	void setIMReceived(bool received);
 
 	void		setFloaterOpen(BOOL open);		/*Flawfinder: ignore*/
 	BOOL		getFloaterOpen();

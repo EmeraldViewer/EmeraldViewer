@@ -51,7 +51,7 @@ public:
 	lggPanelIRC();
 	virtual ~lggPanelIRC();
 
-	void reset();
+	void newList();
 
 protected:
 	// initialize based on the type

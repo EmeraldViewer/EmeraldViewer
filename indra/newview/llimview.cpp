@@ -763,10 +763,6 @@ BOOL LLIMMgr::getIMReceived() const
 {
 	return mIMReceived;
 }
-void LLIMMgr::setIMReceived(bool received)
-{
-	mIMReceived = received;
-}
 
 // This method returns TRUE if the local viewer has a session
 // currently open keyed to the uuid. 

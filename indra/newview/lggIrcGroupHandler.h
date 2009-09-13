@@ -38,6 +38,7 @@
 #include "llviewerprecompiledheaders.h"
 #include "lggIrcThread.h"
 #include "lggIrcData.h"
+#include "lggFloaterIrc.h"
 
 class lggIrcGroupHandler
 {
@@ -46,6 +47,9 @@ class lggIrcGroupHandler
 		lggIrcGroupHandler() {}
 		~lggIrcGroupHandler() { }
 	public:
+		lggPanelIRC * listPanel;
+		void setListPanel(lggPanelIRC * ilistPanel);
+		void fillListPanel();
 		std::list<lggIrcThread*> activeThreads;
 		std::vector<lggIrcData> getFileNames();
 		lggIrcData	getIrcGroupInfo(std::string filename);

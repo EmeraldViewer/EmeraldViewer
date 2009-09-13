@@ -47,7 +47,8 @@ std::vector<lggIrcData> lggIrcGroupHandler::getFileNames()
 {
 	
 	std::vector<lggIrcData> names;	
-
+	llinfos << "grabbing irc file names.." << llendl;
+	
 	std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "IRCGroups", ""));
 	bool found = true;			
 	while(found) 
@@ -80,7 +81,16 @@ std::vector<lggIrcData> lggIrcGroupHandler::getFileNames()
 	
 
 }
-
+void lggIrcGroupHandler::setListPanel(lggPanelIRC * ilistPanel)
+{
+	listPanel = ilistPanel;
+}
+void lggIrcGroupHandler::fillListPanel()
+{
+	if(listPanel)
+	listPanel->newList();
+	else llwarns << "list panel not there" << llendl;
+}
 
 
 void lggIrcGroupHandler::deleteIrcGroup(std::string filename)
@@ -125,6 +135,7 @@ BOOL lggIrcGroupHandler::sendWhoisToAll(LLUUID who)
 }
 void lggIrcGroupHandler::startUpAutoRunIRC()
 {
+	
 	std::string name;
 	bool found = true;			
 
@@ -171,6 +182,7 @@ void lggIrcGroupHandler::startUpAutoRunIRC()
 			}
 		}
 	}
+	fillListPanel();
 
 }
 void lggIrcGroupHandler::deleteIrcGroupByID(LLUUID id)

@@ -162,6 +162,7 @@ public:
 
 protected:
 	LLTabContainer* mTabs;
+
 };
 
 #endif // LL_LLFLOATERCHATTERBOX_H

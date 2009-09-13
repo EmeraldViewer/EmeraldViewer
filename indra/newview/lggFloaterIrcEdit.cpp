@@ -173,7 +173,7 @@ void lggFloaterIrcEdit::onClickSave(void* data)
 	//gSavedSettings.setString("EmeraldBeamShape",gDirUtilp->getBaseFileName(filename,true));
 	if(self->caller)
 	{
-		self->caller->reset();
+		self->caller->newList();
 	}
 	
 	self->close();
