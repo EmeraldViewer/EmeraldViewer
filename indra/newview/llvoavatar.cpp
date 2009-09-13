@@ -726,9 +726,9 @@ F32 LLVOAvatar::sLODFactor = 1.f;
 BOOL LLVOAvatar::sUseImpostors = FALSE;
 BOOL LLVOAvatar::sJointDebug = FALSE;
 
-F32 LLVOAvatar::sBoobHardness = 1.0f;
-F32 LLVOAvatar::sBoobMass = 1.0f;
-F32 LLVOAvatar::sBoobZInfluence = 10.f; //30 before fps additions
+F32 LLVOAvatar::sBoobHardness = 1.10f;
+F32 LLVOAvatar::sBoobMass = 2.0f;
+F32 LLVOAvatar::sBoobZInfluence = 1.f; //30 before fps additions
 F32 LLVOAvatar::sBoobFriction = 0.8f;
 F32 LLVOAvatar::sBoobFrictionFraction = 1.7f;
 F32 LLVOAvatar::sBoobZMax = 1.3f;
