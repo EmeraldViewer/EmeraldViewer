@@ -108,8 +108,10 @@ public:
 	static void useMedia();
 	static void callbackClientTags(const LLSD& notification, const LLSD& response);
 	static void callbackEmeraldOTR(const LLSD& notification, const LLSD& response);
+	static void callbackEmeraldBridge(const LLSD& notification, const LLSD& response);
 	static void ClientTags();
 	static void EmeraldOTR();
+	static void EmeraldBridge();
 	
 protected:
 	static std::set<std::string> sConfigVariables;

@@ -45,6 +45,7 @@
 #include "llappviewer.h"
 #include "lltracker.h"
 #include "llvoavatar.h"
+#include "jc_lslviewerbridge.h"
 // static
 std::set<std::string> LLFirstUse::sConfigVariables;
 
@@ -316,6 +317,21 @@ void LLFirstUse::callbackEmeraldOTR(const LLSD &notification, const LLSD &respon
 		gSavedSettings.setU32("EmeraldUseOTR",(U32)2);
 	}
 }
+void LLFirstUse::callbackEmeraldBridge(const LLSD &notification, const LLSD &response)
+{
+	gSavedSettings.setWarning("EmeraldBuildBridge", FALSE);
+	S32 option = LLNotification::getSelectedOption(notification, response);
+	
+	if ( option ==0 )
+	{
+		gSavedSettings.setBOOL("EmeraldBuildBridge",TRUE);
+		gSavedSettings.setBOOL("EmeraldUseBridgeOnline",TRUE);
+		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",TRUE);
+		JCLSLBridge::sBridgeStatus = JCLSLBridge::UNINITIALIZED;
+	}
+
+
+}
 // static
 void LLFirstUse::ClientTags()
 {
@@ -331,4 +347,11 @@ void LLFirstUse::EmeraldOTR()
 		LLNotifications::instance().add("QueryEmeraldOTR", LLSD(),LLSD(), callbackEmeraldOTR);
 	}
 }
+void LLFirstUse::EmeraldBridge()
+{
+	if(gSavedSettings.getWarning("EmeraldBuildBridge"))
+	{
+		LLNotifications::instance().add("QueryEmeraldBuildBridge", LLSD(),LLSD(), callbackEmeraldBridge);
 
+	}
+}

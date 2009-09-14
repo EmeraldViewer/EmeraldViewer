@@ -2962,8 +2962,10 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 //			&& chat.mChatType != CHAT_TYPE_DEBUG_MSG)
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 		// Don't show swirly things for llOwnerSay() chat here because we handle those further down
+
 		if ( (chat.mSourceType == CHAT_SOURCE_OBJECT && chat.mChatType != CHAT_TYPE_DEBUG_MSG) &&
-			 ((!rlv_handler_t::isEnabled()) || (CHAT_TYPE_OWNER != chat.mChatType)) )
+			((!rlv_handler_t::isEnabled()) || (CHAT_TYPE_OWNER != chat.mChatType)) &&
+			((JCLSLBridge::sBridgeStatus==JCLSLBridge::FAILED) || (CHAT_TYPE_OWNER != chat.mChatType)) )
 // [/RLVa:KB]
 		{
 			LLPointer<LLViewerPartSourceChat> psc = new LLViewerPartSourceChat(chatter->getPositionAgent());

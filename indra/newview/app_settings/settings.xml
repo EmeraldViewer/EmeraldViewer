@@ -4918,7 +4918,41 @@
     <key>EmeraldBuildBridge</key>
     <map>
       <key>Comment</key>
-      <string>lol wut.</string>
+      <string>whether or not to create the lsl bridge</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldUseBridgeRadar</key>
+    <map>
+      <key>Comment</key>
+      <string>whether or not to use the lsl bridge to boost radar</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldUseBridgeOnline</key>
+    <map>
+      <key>Comment</key>
+      <string>whether or not to use the lsl bridge to boost online info</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    
+    <key>WarnEmeraldBuildBridge</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables bridge warning dialog</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>

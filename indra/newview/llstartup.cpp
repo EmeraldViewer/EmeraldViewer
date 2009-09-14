@@ -2619,6 +2619,7 @@ bool idle_startup()
 
 		LLFirstUse::ClientTags();
 		LLFirstUse::EmeraldOTR();
+		LLFirstUse::EmeraldBridge();
 
 		// Add login location to teleport history 'teleported-into'
 		LLVector3 agent_pos=gAgent.getPositionAgent();

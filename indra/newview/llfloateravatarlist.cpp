@@ -1118,7 +1118,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 	}
 	
 	//lgg send batch of names to bridge
-	if(toSendToBridge != "")
+	if((toSendToBridge != "" ) && gSavedSettings.getBOOL("EmeraldUseBridgeRadar"))
 	{
 		F32 timeNow = gFrameTimeSeconds;
 		if( (timeNow - mlastBridgeCallTime) > 20)

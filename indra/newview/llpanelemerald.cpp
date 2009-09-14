@@ -417,6 +417,8 @@ void LLPanelEmerald::callbackEmeraldStealth(const LLSD &notification, const LLSD
 		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",false);
 		gSavedSettings.setBOOL("EmeraldParticleChat",false);
 		gSavedSettings.setBOOL("EmeraldRadarChatKeys",false);
+		gSavedSettings.setBOOL("EmeraldUseBridgeOnline",false);
+		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",false);
 	}
 }
 void LLPanelEmerald::onNoStealth(void* data)
@@ -440,6 +442,9 @@ void LLPanelEmerald::callbackEmeraldNoStealth(const LLSD &notification, const LL
 		//gSavedSettings.setBOOL("EmeraldCryoDetect",true);
 		//gSavedSettings.setBOOL("EmeraldGUSEnabled",true);
 		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",true);
+		gSavedSettings.setBOOL("EmeraldBuildBridge",true);
+		gSavedSettings.setBOOL("EmeraldUseBridgeOnline",true);
+		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",true);
 	}
 }
 void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
