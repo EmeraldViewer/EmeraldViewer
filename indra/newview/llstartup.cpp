@@ -191,7 +191,7 @@
 #include "exporttracker.h"
 #include "llfloaterteleporthistory.h"
 #include "jc_lslviewerbridge.h"
-
+#include "wlfPanel_AdvSettings.h"
 #if LL_LIBXUL_ENABLED
 #include "llmozlib.h"
 #endif // LL_LIBXUL_ENABLED
@@ -2690,6 +2690,8 @@ bool idle_startup()
 
 		// reset keyboard focus to sane state of pointing at world
 		gFocusMgr.setKeyboardFocus(NULL);
+		//Fix this panel that refuses to obey the gods.
+		wlfPanel_AdvSettings::fixPanel();
 
 #if 0 // sjb: enable for auto-enabling timer display 
 		gDebugView->mFastTimerView->setVisible(TRUE);

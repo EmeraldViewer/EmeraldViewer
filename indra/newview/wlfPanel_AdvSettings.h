@@ -42,6 +42,7 @@ public:
 	~wlfPanel_AdvSettings ();
 	BOOL postBuild();
 	void draw();
+	static void fixPanel();
 
 	static void onClickExpandBtn(void* user_data);
 	static void onChangePresetName(LLUICtrl* ctrl, void* userData);

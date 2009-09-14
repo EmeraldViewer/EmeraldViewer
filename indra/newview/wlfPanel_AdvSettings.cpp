@@ -41,7 +41,9 @@
 #include "lltextbox.h"
 #include "llcombobox.h"
 #include "llwlparammanager.h"
-
+#include "llstartup.h"
+BOOL firstBuildDone;
+void* fixPointer;
 wlfPanel_AdvSettings::wlfPanel_AdvSettings()
 {
 	setIsChrome(TRUE);
@@ -59,11 +61,20 @@ void wlfPanel_AdvSettings::build()
 	{
 		LLUICtrlFactory::getInstance()->buildPanel(this, "wlfPanel_AdvSettings.xml", &getFactoryMap());
 	}
-} 
+}
+
+void wlfPanel_AdvSettings::fixPanel()
+{
+	if(!firstBuildDone)
+	{
+		llinfos << "firstbuild done" << llendl;
+		firstBuildDone = TRUE;
+		onClickExpandBtn(fixPointer);
+	}
+}
 BOOL wlfPanel_AdvSettings::postBuild()
 {
 	childSetAction("expand", onClickExpandBtn, this);
-	
 	
 	LLComboBox* comboBox = getChild<LLComboBox>("WLPresetsCombo");
 	if(comboBox != NULL) {
@@ -77,6 +88,7 @@ BOOL wlfPanel_AdvSettings::postBuild()
 		comboBox->selectByValue(LLSD("Default"));
 	}
 	comboBox->setCommitCallback(onChangePresetName);
+	fixPointer = this;
 	return TRUE;
 }
 void wlfPanel_AdvSettings::draw()
@@ -100,6 +112,7 @@ wlfPanel_AdvSettings::~wlfPanel_AdvSettings ()
 }
 void wlfPanel_AdvSettings::onClickExpandBtn(void* user_data)
 {
+	gSavedSettings.setBOOL("wlfAdvSettingsPopup",!gSavedSettings.getBOOL("wlfAdvSettingsPopup"));
 	wlfPanel_AdvSettings* remotep = (wlfPanel_AdvSettings*)user_data;
 	remotep->build();
 	gOverlayBar->layoutButtons();
