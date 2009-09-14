@@ -360,6 +360,8 @@ public:
 
 	LLVector3d getPosition();
 
+	BOOL getNeedsBridgeAssist();
+
 	/**
 	 * @brief Returns the age of this entry in frames
 	 *
@@ -449,6 +451,8 @@ private:
 	std::string mName;
 	time_t mTime;
 	LLVector3d mPosition;
+	BOOL mNeedBridgeAssist;
+	F32 mLastBridgeRequestTime;
 	LLVector3d mDrawPosition;
 	BOOL mAlert;
 	BOOL mMarked;
@@ -535,6 +539,11 @@ public:
 	 * @brief Process the reply to a request for avatar properties
 	 */
 	static void processAvatarPropertiesReply(LLMessageSystem *msg, void**);
+
+	/**
+	* @brief Process the update pos based on bridge info
+	*/
+	static void processBridgeReply(std::vector<LLUUID> avatars, LLSD bridgeResponce);
 	
 	/**
 	 * @brief Process the reply to a request for avatar properties
@@ -670,6 +679,8 @@ private:
 	 */
 	LLScrollListCtrl*			mAvatarList;
 	std::map<LLUUID, LLAvatarListEntry>	mAvatars;
+
+	F32 mlastBridgeCallTime;
 
 	struct LLAreaAlertEntry
 	{

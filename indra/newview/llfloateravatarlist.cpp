@@ -11,6 +11,7 @@
  * Removed usage of globals
  * Removed TrustNET
  * Added utilization of "minimap" data
+ * Added bridge info -lgg
  */
 
 #include "llviewerprecompiledheaders.h"
@@ -52,6 +53,8 @@
 #include "llworld.h"
 
 #include "llsdutil.h"
+#include "jc_lslviewerbridge.h"
+#include "v3dmath.h"
 
 // Timeouts
 /**
@@ -199,7 +202,18 @@ void LLAvatarListEntry::setPosition(LLVector3d position, bool this_sim, bool dra
 		mDrawPosition.setZero();
 	}
 
-	mPosition = position;
+	//lgg if we already got a Z value from the bridge, dont over write it here
+	if(position.mdV[VZ] == 0.0)
+	{
+		mPosition.mdV[VX] = position.mdV[VX];
+		mPosition.mdV[VY] = position.mdV[VY];
+		mNeedBridgeAssist = true;
+	}else
+	{
+		//all normal
+		mNeedBridgeAssist = false;
+		mPosition = position;
+	}
 
 	mFrame = gFrameCount;
 	if(this_sim)
@@ -227,6 +241,11 @@ void LLAvatarListEntry::setPosition(LLVector3d position, bool this_sim, bool dra
 LLVector3d LLAvatarListEntry::getPosition()
 {
 	return mPosition;
+}
+
+BOOL LLAvatarListEntry::getNeedsBridgeAssist()
+{
+	return mNeedBridgeAssist;
 }
 
 bool LLAvatarListEntry::getAlive()
@@ -373,12 +392,33 @@ BOOL LLAvatarListEntry::isMarked()
 	return mMarked;
 }
 
+
+class LggPosCallback : public JCBridgeCallback
+{
+public:
+	LggPosCallback(std::vector<LLUUID> inavatars)
+	{
+		avatars = inavatars;
+	}
+
+	void fire(LLSD data)
+	{
+		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
+		LLFloaterAvatarList::processBridgeReply(avatars,data);
+	}
+
+private:
+	std::vector<LLUUID> avatars;
+};
+
+
 BOOL LLAvatarListEntry::isDead()
 {
 	return getEntryAgeSeconds() > DEAD_KEEP_TIME;
 }
 
 LLFloaterAvatarList* LLFloaterAvatarList::sInstance = NULL;
+
 
 LLFloaterAvatarList::LLFloaterAvatarList() :  LLFloater(std::string("avatar list"))
 {
@@ -774,6 +814,10 @@ void LLFloaterAvatarList::refreshAvatarList()
 
 
 	std::map<LLUUID, LLAvatarListEntry>::iterator iter;
+
+	std::string toSendToBridge("");
+	std::vector<LLUUID> avatarsToSendToBridge;
+
 	for(iter = mAvatars.begin(); iter != mAvatars.end(); iter++)
 	{
 		LLSD element;
@@ -806,7 +850,15 @@ void LLFloaterAvatarList::refreshAvatarList()
 		{
 			flagForFedUpDistance = true;
 			distance = 9000;
+			
 		}
+		if(ent->getNeedsBridgeAssist() )
+		{
+			toSendToBridge += std::string("|") +av_id.asString();
+			avatarsToSendToBridge.push_back(av_id);
+			//we might not send this depending on the last time we did
+		}
+		
 		delta.mdV[2] = 0.0f;
 		F32 side_distance = (F32)delta.magVec();
 
@@ -1064,7 +1116,19 @@ void LLFloaterAvatarList::refreshAvatarList()
 			//llinfos << "Data for avatar " << ent->getName() << " didn't arrive yet, retrying" << llendl;
 		}
 	}
+	
+	//lgg send batch of names to bridge
+	if(toSendToBridge != "")
+	{
+		F32 timeNow = gFrameTimeSeconds;
+		if( (timeNow - mlastBridgeCallTime) > 20)
+		{
+			mlastBridgeCallTime = timeNow;
+			JCLSLBridge::bridgetolsl("pos"+toSendToBridge, new LggPosCallback(avatarsToSendToBridge));
 
+		}
+		
+	}
 	// finish
 	mAvatarList->sortItems();
 	mAvatarList->selectMultiple(selected);
@@ -1155,6 +1219,55 @@ void LLFloaterAvatarList::sendAvatarPropertiesRequest(LLUUID avid)
 	gAgent.sendReliableMessage();
 
 	mAvatars[avid].mAvatarInfo.requestStarted();
+}
+
+// static
+void LLFloaterAvatarList::processBridgeReply(std::vector<LLUUID> avatars, LLSD bridgeResponce)
+{
+	if(!sInstance)return;
+
+	LLFloaterAvatarList* self = sInstance;
+
+
+	//lgg
+	for(int i=0;i<(int)bridgeResponce.size();i++)
+	{
+
+		// Verify that the avatar is in the list, if not, ignore.
+		if ( self->mAvatarList->getItemIndex(avatars[i]) < 0 )
+		{
+			return;
+		}
+
+		LLAvatarListEntry *entry = &self->mAvatars[avatars[i]];
+
+		std::string toParse = bridgeResponce[i].asString();
+		
+		llinfos << "trying to parse " << toParse.c_str() << llendl;
+		
+		LLVector3d v;
+		char * pch = strtok ((char *)toParse.c_str()," ,<>");
+		std::string toParseOut("");
+		while (pch != NULL)
+		{
+			toParseOut += std::string(" ") + std::string(pch);
+			pch = strtok (NULL, " ,<>");
+		}
+		if(toParseOut.length() > 1)
+			toParseOut = toParseOut.substr(1);
+
+		//llinfos << "ok now trying to parse " << toParseOut.c_str() << llendl;
+
+
+		S32 count = sscanf( toParseOut.c_str(), "%lf %lf %lf", v.mdV + 0, v.mdV + 1, v.mdV + 2 );
+		if( 3 == count )
+		{
+			llinfos << "setting new height" << llendl;
+			entry->mPosition =v;
+		}
+	}
+		
+
 }
 
 // static
