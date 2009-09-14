@@ -5549,7 +5549,7 @@
     <key>Value</key>
     <real>0.55</real>
   </map>
-   <key>EmeraldBoobPhysicsToggle</key>
+   <key>EmeraldBoobZInfluence</key>
   <map>
     <key>Comment</key>
     <string>Enable/Disable Breast Physics</string>
