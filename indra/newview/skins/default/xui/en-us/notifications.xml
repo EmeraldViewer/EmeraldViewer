@@ -6792,5 +6792,14 @@ Channel: This is like the chat room name you wish to join.
 Channel Password: You can set up a channel to have a password by (/msg ChanServ), if you have, place it here.
   </notification>
 
+  <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_Effects"
+   type="alertmodal">
+
+
+  </notification>
+
 </notifications>
 

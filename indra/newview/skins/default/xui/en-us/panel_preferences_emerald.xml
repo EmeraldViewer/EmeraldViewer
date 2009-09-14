@@ -394,8 +394,6 @@ Recommended Settings are:
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="Misc" left="1" mouse_opaque="true" name="AvatarEffects" width="418">
 <button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Misc" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
-<button bottom="-40" follows="left|top" font="SansSerifSmall" height="20" label="Shadows ON" name="Emerald_ShadowsON" tool_tip="Turn on the rendering of dynamic shadows cast by objects inworld. Result may vary, and the having it on may affect the framerate negatively." right="400" width="100" />
-<button bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="20" label="Shadows OFF" name="Emerald_ShadowsOFF" tool_tip="Turn off the rendering of dynamic shadows." left_delta="0" width="100" />
       <check_box bottom="-30" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Enable Always Fly" left="5" mouse_opaque="true"
@@ -1054,15 +1052,12 @@ from the Emerald viewer into the simulator for access via scripts.
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Wear objects in inventory via double-click" left_delta="0" mouse_opaque="true"
            name="wear-inv-toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickWearInventoryObjects" />
-
-
       <text type="string" bottom="-100"
              follows="left|top" font="SansSerifSmall" halign="left"
              height="10" left="280" mouse_opaque="false" name="impexp"
              v_pad="0" width="200">
         Import/Export Backup Settings:
       </text>
-
       <check_box bottom_delta="-30" enabled="true" follows="left|top" font="SansSerifSmall"
            height="16" label="Export object Properties" left_delta="0"
            mouse_opaque="true" name="EmExpProp" control_name="EmeraldExportProperties" width="126" />
@@ -1072,11 +1067,55 @@ from the Emerald viewer into the simulator for access via scripts.
       <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall"
            height="16" label="Export object Textures" left_delta="0"
            mouse_opaque="true" name="EmExpTex" control_name="EmeraldExportTextures" width="126" />
-
-
-
     </panel>
+    <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Effects" left="1" mouse_opaque="true" name="Effects" width="418">
+<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_Effects" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
+<button bottom="-40" follows="left|top" font="SansSerifSmall" height="20" label="Shadows ON" name="Emerald_ShadowsON" tool_tip="Turn on the rendering of dynamic shadows cast by objects inworld. Result may vary, and the having it on may affect the framerate negatively." right="400" width="100" />
+<button bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="20" label="Shadows OFF" name="Emerald_ShadowsOFF" tool_tip="Turn off the rendering of dynamic shadows." left_delta="0" width="100" />
 
+
+      <check_box bottom="-40" enabled="true" follows="left|top" font="SansSerifSmall"
+           height="16" label="Enable advanced physics on avatars breasts" left="5"
+           mouse_opaque="true" name="EmBreastsToggle" control_name="EmeraldBreastPhysicsToggle" width="126" />
+
+      <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobMass" control_name="EmeraldBoobMass"
+             decimal_digits="2" enabled="true" follows="left|top" height="18"
+             increment="0.05" label="Breasts mass:"
+             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
+             show_text="true" width="250" auto_resize="false" tool_tip=""/>
+      <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobHardness" control_name="EmeraldBoobHardness"
+             decimal_digits="2" enabled="true" follows="left|top" height="18"
+             increment="0.05" label="Breasts rebound:"
+             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
+             show_text="true" width="250" auto_resize="false" tool_tip=""/>
+      <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobZMax" control_name="EmeraldBoobZMax"
+             decimal_digits="2" enabled="true" follows="left|top" height="18"
+             increment="0.05" label="Breasts max Z:"
+             label_width="100" max_val="2" min_val="0" mouse_opaque="true"
+             show_text="true" width="250" auto_resize="false" tool_tip=""/>
+      <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobVelMax" control_name="EmeraldBoobVelMax"
+             decimal_digits="3" enabled="true" follows="left|top" height="18"
+             increment="0.001" label="Breasts max vel:"
+             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
+             show_text="true" width="250" auto_resize="false" tool_tip=""/>
+      <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobFriction" control_name="EmeraldBoobFriction"
+             decimal_digits="2" enabled="true" follows="left|top" height="18"
+             increment="0.05" label="Breasts friction:"
+             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
+             show_text="true" width="250" auto_resize="false" tool_tip=""/>
+      <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobFrictionFraction" control_name="EmeraldBoobFrictionFraction"
+             decimal_digits="2" enabled="true" follows="left|top" height="18"
+             increment="0.05" label="Breasts fraction:"
+             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
+             show_text="true" width="250" auto_resize="false" tool_tip=""/>
+      <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobZInfluence" control_name="EmeraldBoobZInfluence"
+             decimal_digits="2" enabled="true" follows="left|top" height="18"
+             increment="0.05" label="Breasts Z influence:"
+             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
+             show_text="true" width="250" auto_resize="false" tool_tip=""/>
+
+
+</panel>
 
 
 
