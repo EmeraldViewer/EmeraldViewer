@@ -2983,11 +2983,10 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 			//llwarns << "fps = " << gFPSClamped << llendl;
 
-			if(!getAppearanceFlag() && abs(mActualBoobGrav-2.0f)>0.01f || sBoobToggle != TRUE)
+			if(!getAppearanceFlag() && abs(mActualBoobGrav-2.0f)>0.01f && sBoobToggle == TRUE)
 			{
 
 				difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
-				//difftime = 1.f/gFPSClamped;
 
 				boobVel = (Pos.mV[VZ] - mLastChestPos.mV[VZ]); //multiplyer being the
 				boobVel += (Pos.mV[VX] - mLastChestPos.mV[VX]) * 0.3f;
@@ -3000,11 +2999,13 @@ void LLVOAvatar::idleUpdateBoobEffect()
 				//boobVel *= 1-difftime;
 
 				//F32 fps = gFPSClamped * sBoobFrictionFraction > 60.f * sBoobFrictionFraction? 60.f * sBoobFrictionFraction : gFPSClamped;
-				F32 boobMass = sBoobMass;
-				F32 boobHardness = sBoobHardness;
-				F32 friction = sBoobFriction;
+				F32 boobMass = sBoobMass / difftime;
+				//F32 boobHardness = sBoobHardness + (sBoobHardness/sBoobFrictionFraction-sBoobHardness)*((gFPSClamped-5.f)/70.f);
+				//F32 friction = llclamp((  0.01f + (sBoobFriction - 0.01f)*((gFPSClamped - 5.f )/ 70.f)  ), 0.1f, 0.95f);
 				//F32 boobHardness = sBoobHardness / (fps/(60.f * sBoobFrictionFraction));
 				//F32 friction = gFPSClamped > 60.f? 60.f : gFPSClamped / 60.f;
+				F32 boobHardness = sBoobHardness;
+				F32 friction = sBoobFriction;
 
 				mBoobGravity += (boobVel * boobMass);// * difftime;
 				mBoobGravity *= friction; // was just 0.9
@@ -3021,6 +3022,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 				//llwarns << "difftime = " << llround(difftime, 0.01f) << llendl;
 				//llwarns << "boob vel = " << llround(boobVel, 0.01f) << llendl;
+				//llwarns << "boob hardness = " << llround(boobHardness, 0.01f) << llendl;
 				//llwarns << "boob friction = " << llround(friction, 0.01f) << llendl;
 				//llwarns << "boob displacement = " << llround(mBoobDisplacement, 0.01f) << llendl;
 
@@ -3031,7 +3033,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 				//account for FPS
 				//mBoobDisplacement = (mBoobDisplacement - mLastDisplacement) * difftime;
 
-				mLastDisplacement = mBoobDisplacement;
+				//mLastDisplacement = mBoobDisplacement;
 
 
 					//llwarns << "1 mBoobDisplacement = " << llround(mBoobDisplacement, 0.1f) << llendl;
@@ -3047,7 +3049,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 				}
 
-				if(getAppearanceFlag())
+				if(getAppearanceFlag() || sBoobToggle != TRUE)
 				if(mBoobDisplacement != mActualBoobGrav)
 				{
 					llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << " for " << getFullname() << llendl;
@@ -3064,6 +3066,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 			mLastTime = mBoobBounceTimer.getElapsedTimeF32();
 			mLastChestPos = mChestp->getWorldPosition();
+			
 }
 
 void LLVOAvatar::idleUpdateWindEffect()
