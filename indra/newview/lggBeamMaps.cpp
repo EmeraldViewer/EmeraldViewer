@@ -91,11 +91,12 @@ LLSD lggBeamMaps::getPic(std::string filename)
 LLColor4U lggBeamMaps::getCurrentColor(LLColor4U agentColor)
 {
 	std::string settingName = gSavedSettings.getString("EmeraldBeamColorFile");
-	
+
+	if(settingName=="===OFF===") return agentColor;
+
 	if(settingName != lastColorFileName)
 	{
 		lastColorFileName=settingName;
-		if(settingName=="===OFF===") return agentColor;
 	
 		std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "beamsColors", ""));
 		std::string path_name2(gDirUtilp->getExpandedFilename( LL_PATH_USER_SETTINGS , "beamsColors", ""));
