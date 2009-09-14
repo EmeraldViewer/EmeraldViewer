@@ -208,6 +208,12 @@ static bool handleAvatarBoobFrictionFractionChanged(const LLSD& newvalue)
 	return true;
 }
 
+static bool handleAvatarBoobToggleChanged(const LLSD& newvalue)
+{
+	LLVOAvatar::sBoobToggle = (BOOL) newvalue.asReal();
+	return true;
+}
+
 static bool handleTerrainLODChanged(const LLSD& newvalue)
 {
 		LLVOSurfacePatch::sLODFactor = (F32)newvalue.asReal();
@@ -554,6 +560,7 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("EmeraldBoobZInfluence")->getSignal()->connect(boost::bind(&handleAvatarBoobZInfluenceChanged, _1));
 	gSavedSettings.getControl("EmeraldBoobFriction")->getSignal()->connect(boost::bind(&handleAvatarBoobFrictionChanged, _1));
 	gSavedSettings.getControl("EmeraldBoobFrictionFraction")->getSignal()->connect(boost::bind(&handleAvatarBoobFrictionFractionChanged, _1));
+	gSavedSettings.getControl("EmeraldBreastPhysicsToggle")->getSignal()->connect(boost::bind(&handleAvatarBoobToggleChanged, _1));
 	gSavedSettings.getControl("RenderFogRatio")->getSignal()->connect(boost::bind(&handleFogRatioChanged, _1));
 	gSavedSettings.getControl("RenderMaxPartCount")->getSignal()->connect(boost::bind(&handleMaxPartCountChanged, _1));
 	gSavedSettings.getControl("RenderDynamicLOD")->getSignal()->connect(boost::bind(&handleRenderDynamicLODChanged, _1));

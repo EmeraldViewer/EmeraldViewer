@@ -726,13 +726,14 @@ F32 LLVOAvatar::sLODFactor = 1.f;
 BOOL LLVOAvatar::sUseImpostors = FALSE;
 BOOL LLVOAvatar::sJointDebug = FALSE;
 
-F32 LLVOAvatar::sBoobHardness = 1.0f;
-F32 LLVOAvatar::sBoobMass = 1.0f;
-F32 LLVOAvatar::sBoobZInfluence = 10.f; //30 before fps additions
-F32 LLVOAvatar::sBoobFriction = 0.8f;
-F32 LLVOAvatar::sBoobFrictionFraction = 1.7f;
-F32 LLVOAvatar::sBoobZMax = 1.3f;
-F32 LLVOAvatar::sBoobVelMax = 1.f;
+F32 LLVOAvatar::sBoobHardness			= 10.0f;
+F32 LLVOAvatar::sBoobMass				= 2.0f;
+F32 LLVOAvatar::sBoobZInfluence			= 1.f; //30 before fps additions
+F32 LLVOAvatar::sBoobFriction			= 0.8f;
+F32 LLVOAvatar::sBoobFrictionFraction	= 1.7f;
+F32 LLVOAvatar::sBoobZMax				= 1.3f;
+F32 LLVOAvatar::sBoobVelMax				= 1.f;
+BOOL LLVOAvatar::sBoobToggle			= TRUE;
 
 F32 LLVOAvatar::sUnbakedTime = 0.f;
 F32 LLVOAvatar::sUnbakedUpdateTime = 0.f;
@@ -2959,7 +2960,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 	mFirstIdleUpdateBoobGravRan=true;
   }
 
-			LLFastTimer t(LLFastTimer::FTM_LOAD_AVATAR);
+			//LLFastTimer t(LLFastTimer::FTM_LOAD_AVATAR);
 			LLVisualParam *param;
 			param = getVisualParam(105); //boob size
 			F32 boobSize = param->getCurrentWeight();
@@ -2979,15 +2980,13 @@ void LLVOAvatar::idleUpdateBoobEffect()
 			F32 zMax = sBoobZMax;
 			F32 velMax = sBoobVelMax;
 			//F32 FPS = 44.f;
-			F32 friction = sBoobFriction;
 
 			//llwarns << "fps = " << gFPSClamped << llendl;
 
-			if(!getAppearanceFlag() && abs(mActualBoobGrav-2.0f)>0.01f)
+			if(!getAppearanceFlag() && abs(mActualBoobGrav-2.0f)>0.01f || sBoobToggle != TRUE)
 			{
 
 				difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
-				difftime *= sBoobFrictionFraction;
 				//difftime = 1.f/gFPSClamped;
 
 				boobVel = (Pos.mV[VZ] - mLastChestPos.mV[VZ]); //multiplyer being the
@@ -3000,8 +2999,12 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 				//boobVel *= 1-difftime;
 
+				F32 fps = gFPSClamped * sBoobFrictionFraction > 60.f * sBoobFrictionFraction? 60.f * sBoobFrictionFraction : gFPSClamped;
 				F32 boobMass = sBoobMass;
 				F32 boobHardness = sBoobHardness;
+				F32 friction = sBoobFriction;
+				//F32 boobHardness = sBoobHardness / (fps/(60.f * sBoobFrictionFraction));
+				//F32 friction = gFPSClamped > 60.f? 60.f : gFPSClamped / 60.f;
 
 				mBoobGravity += (boobVel * boobMass);// * difftime;
 				mBoobGravity *= friction; // was just 0.9
@@ -8557,6 +8560,16 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 	}
 	
 	updateMeshTextures(); // enables updates for laysets without baked textures.
+
+	// re-grab the boob savedparams (prob a better place for this)
+	sBoobMass				= gSavedSettings.getF32("EmeraldBoobMass");
+	sBoobHardness			= gSavedSettings.getF32("EmeraldBoobHardness");
+	sBoobZMax				= gSavedSettings.getF32("EmeraldBoobZMax");
+	sBoobVelMax				= gSavedSettings.getF32("EmeraldBoobVelMax");
+	sBoobZInfluence			= gSavedSettings.getF32("EmeraldBoobZInfluence");
+	sBoobFriction			= gSavedSettings.getF32("EmeraldBoobFriction");
+	sBoobFrictionFraction	= gSavedSettings.getF32("EmeraldBoobFrictionFraction");
+	sBoobToggle				= gSavedSettings.getBOOL("EmeraldBreastPhysicsToggle");
 
 	// parse visual params
 	S32 num_blocks = mesgsys->getNumberOfBlocksFast(_PREHASH_VisualParam);

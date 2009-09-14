@@ -523,6 +523,7 @@ public:
 	static F32		sBoobZInfluence;
 	static F32		sBoobFriction;
 	static F32		sBoobFrictionFraction;
+	static BOOL		sBoobToggle;
 
 	//--------------------------------------------------------------------
 	// Attachments
