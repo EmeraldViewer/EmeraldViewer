@@ -2999,7 +2999,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 				//boobVel *= 1-difftime;
 
-				F32 fps = gFPSClamped * sBoobFrictionFraction > 60.f * sBoobFrictionFraction? 60.f * sBoobFrictionFraction : gFPSClamped;
+				//F32 fps = gFPSClamped * sBoobFrictionFraction > 60.f * sBoobFrictionFraction? 60.f * sBoobFrictionFraction : gFPSClamped;
 				F32 boobMass = sBoobMass;
 				F32 boobHardness = sBoobHardness;
 				F32 friction = sBoobFriction;
