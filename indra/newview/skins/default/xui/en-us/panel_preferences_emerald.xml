@@ -1081,7 +1081,7 @@ from the Emerald viewer into the simulator for access via scripts.
       <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobMass" control_name="EmeraldBoobMass"
              decimal_digits="2" enabled="true" follows="left|top" height="18"
              increment="0.05" label="Breasts mass:"
-             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
+             label_width="100" max_val="20" min_val="0" mouse_opaque="true"
              show_text="true" width="250" auto_resize="false" tool_tip=""/>
       <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobHardness" control_name="EmeraldBoobHardness"
              decimal_digits="2" enabled="true" follows="left|top" height="18"
@@ -1091,27 +1091,22 @@ from the Emerald viewer into the simulator for access via scripts.
       <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobZMax" control_name="EmeraldBoobZMax"
              decimal_digits="2" enabled="true" follows="left|top" height="18"
              increment="0.05" label="Breasts max Z:"
-             label_width="100" max_val="2" min_val="0" mouse_opaque="true"
+             label_width="100" max_val="3" min_val="0" mouse_opaque="true"
              show_text="true" width="250" auto_resize="false" tool_tip=""/>
       <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobVelMax" control_name="EmeraldBoobVelMax"
              decimal_digits="3" enabled="true" follows="left|top" height="18"
              increment="0.001" label="Breasts max vel:"
-             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
+             label_width="100" max_val="0.1" min_val="0" mouse_opaque="true"
              show_text="true" width="250" auto_resize="false" tool_tip=""/>
       <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobFriction" control_name="EmeraldBoobFriction"
              decimal_digits="2" enabled="true" follows="left|top" height="18"
              increment="0.05" label="Breasts friction:"
              label_width="100" max_val="1" min_val="0" mouse_opaque="true"
              show_text="true" width="250" auto_resize="false" tool_tip=""/>
-      <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobFrictionFraction" control_name="EmeraldBoobFrictionFraction"
-             decimal_digits="2" enabled="true" follows="left|top" height="18"
-             increment="0.05" label="Breasts fraction:"
-             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
-             show_text="true" width="250" auto_resize="false" tool_tip=""/>
       <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobZInfluence" control_name="EmeraldBoobZInfluence"
              decimal_digits="2" enabled="true" follows="left|top" height="18"
              increment="0.05" label="Breasts Z influence:"
-             label_width="100" max_val="1" min_val="0" mouse_opaque="true"
+             label_width="100" max_val="50" min_val="0" mouse_opaque="true"
              show_text="true" width="250" auto_resize="false" tool_tip=""/>
 
 
