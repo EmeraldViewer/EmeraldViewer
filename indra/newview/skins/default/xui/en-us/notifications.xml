@@ -6798,21 +6798,20 @@ Channel Password: You can set up a channel to have a password by (/msg ChanServ)
    name="EmeraldHelp_Effects"
    type="alertmodal">
 Breast Physics
-	This enables you and other avatar's breasts to have actual physics applied to them.
-	You can use these settings to fine-tune the physics to match your personal taste.
-	
-	-Mass
-		A higher value will seemingly increase the total effect
-	-Rebound
-		Controls how quickly the breasts will come to rest after any movement.
-	-Max Z
-		This is the max in either direction that the breasts can go.
-	-Max Vel
-		The amount of "momentum" they can recieve. Lower for less bounce
-	-Friction
-		This controls the internal friction. Brings the breasts to a halt. Higher the number, quicker they stop.
-	-Z Influence
-		Changes how much your avatar's movement will effect the breasts. Higher = more effect.
+This enables you and other avatar's breasts to have actual physics applied to them. You can use these settings to fine-tune the physics to match your personal taste.
+
+-Mass
+   A higher value will seemingly increase the total effect
+-Rebound
+   Controls how quickly the breasts will come to rest after any movement.
+-Max Z
+   This is the max in either direction that the breasts can go.
+-Max Vel
+   The amount of "momentum" they can recieve. Lower for less bounce
+-Friction
+   This controls the internal friction. Brings the breasts to a halt. Higher the number, quicker they stop.
+-Z Influence
+   Changes how much your avatar's movement will effect the breasts. Higher = more effect.
 
   </notification>
 
