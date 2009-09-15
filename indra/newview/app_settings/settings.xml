@@ -5515,7 +5515,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>30.0</real>
+    <real>7.0</real>
   </map>
    <key>EmeraldBoobHardness</key>
   <map>
@@ -5526,7 +5526,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>20.0</real>
+    <real>0.4</real>
   </map>
     <key>EmeraldBreastPhysicsToggle</key>
     <map>
@@ -5559,7 +5559,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>0.010</real>
+    <real>0.011</real>
   </map>
   <key>EmeraldBoobFriction</key>
   <map>
@@ -5570,7 +5570,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>0.730</real>
+    <real>0.650</real>
   </map>
   <key>EmeraldBoobFrictionFraction</key>
   <map>
@@ -5581,7 +5581,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>0.55</real>
+    <real>1.7</real>
   </map>
    <key>EmeraldBoobZInfluence</key>
   <map>
@@ -5592,7 +5592,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>1.0</real>
+    <real>12.0</real>
   </map>
     <key>FloaterFindRect2</key>
     <map>
