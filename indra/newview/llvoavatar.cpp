@@ -2996,7 +2996,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 			F32 zInfluence		= sBoobZInfluence/100.f*50.f;
 			F32 zMax			= sBoobZMax/100.f*3.f;
 			F32 velMax			= sBoobVelMax/100.f*0.1f;
-			F32 boobMass		= sBoobMass/100f.f*20.f;
+			F32 boobMass		= sBoobMass/100.f*20.f;
 			F32 boobHardness	= sBoobHardness/100.f*1.0f;
 			F32 friction		= sBoobFriction/100.f*0.5f;
 
@@ -3015,8 +3015,8 @@ void LLVOAvatar::idleUpdateBoobEffect()
 				boobVel = llclamp(boobVel, -velMax, velMax);
 				boobVel *= zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f);
 
-				boobHardness = -(1.5f - ( (1.5f - (sBoobHardness))*((FPS - 1.f )/ (50.f - 1.f)) ));
-				friction = (1.f - (1.f - sBoobFriction)) + ((1.f - sBoobFriction) - (1.f - (1.f - sBoobFriction)))*((FPS - 1.f )/ (50.f - 1.f));
+				boobHardness = -(1.5f - ( (1.5f - (boobHardness))*((FPS - 1.f )/ (50.f - 1.f)) ));
+				friction = (1.f - (1.f - friction)) + ((1.f - friction) - (1.f - (1.f - friction)))*((FPS - 1.f )/ (50.f - 1.f));
 
 				mBoobDisplacement += boobVel * boobMass;
 				mBoobGravity += boobHardness * (mBoobDisplacement-originWeight);
