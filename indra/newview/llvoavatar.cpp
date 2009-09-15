@@ -3022,8 +3022,8 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 				mBoobDisplacement += mBoobGravity;
 
-				llwarns << "hard = " << boobHardness << llendl;
-				llwarns << "friction = " << friction << llendl;
+				//llwarns << getFullname() << " hard = " << boobHardness << llendl;
+				//llwarns << getFullname() << " friction = " << friction << llendl;
 
 				// clamp both 'just in case'
 				mBoobDisplacement	= llclamp(mBoobDisplacement, -5.f, 5.f);
