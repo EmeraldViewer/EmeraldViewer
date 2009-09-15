@@ -1075,7 +1075,7 @@ from the Emerald viewer into the simulator for access via scripts.
 
 
       <check_box bottom="-40" enabled="true" follows="left|top" font="SansSerifSmall"
-           height="16" label="Enable enhanced physics on avatars breasts" left="5"
+           height="16" label="Enable enhanced physics on avatar's breasts" left="5"
            mouse_opaque="true" name="EmBreastsToggle" control_name="EmeraldBreastPhysicsToggle" width="126" />
 
       <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobMass" control_name="EmeraldBoobMass"

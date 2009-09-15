@@ -726,14 +726,14 @@ F32 LLVOAvatar::sLODFactor = 1.f;
 BOOL LLVOAvatar::sUseImpostors = FALSE;
 BOOL LLVOAvatar::sJointDebug = FALSE;
 
-F32 LLVOAvatar::sBoobHardness			= 0.4f;
-F32 LLVOAvatar::sBoobMass				= 4.0f;
-F32 LLVOAvatar::sBoobZInfluence			= 12.f; //30 before fps additions
-F32 LLVOAvatar::sBoobFriction			= 0.65f;
-F32 LLVOAvatar::sBoobFrictionFraction	= 1.7f;
-F32 LLVOAvatar::sBoobZMax				= 1.3f;
-F32 LLVOAvatar::sBoobVelMax				= 0.011f;
-BOOL LLVOAvatar::sBoobToggle			= FALSE;
+F32 LLVOAvatar::sBoobHardness			= 45.f;
+F32 LLVOAvatar::sBoobMass				= 34.5f;
+F32 LLVOAvatar::sBoobZInfluence			= 14.f; //30 before fps additions
+F32 LLVOAvatar::sBoobFriction			= 10.f;
+F32 LLVOAvatar::sBoobFrictionFraction	= 0.0f; //not used, keeping var just in case for now
+F32 LLVOAvatar::sBoobZMax				= 43.f;
+F32 LLVOAvatar::sBoobVelMax				= 20.f;
+BOOL LLVOAvatar::sBoobToggle			= TRUE;
 
 
 F32 LLVOAvatar::sUnbakedTime = 0.f;
@@ -2991,11 +2991,14 @@ void LLVOAvatar::idleUpdateBoobEffect()
 			F32 originWeight = (mActualBoobGrav + 1.5f) / 3.5f;
 			originWeight = mActualBoobGrav;
 
-			F32 difftime = 0.0f;
-			F32 boobVel = 0.0f;
-			F32 zInfluence = sBoobZInfluence;
-			F32 zMax = sBoobZMax;
-			F32 velMax = sBoobVelMax;
+			F32 difftime		= 0.0f;
+			F32 boobVel			= 0.0f;
+			F32 zInfluence		= sBoobZInfluence/100.f*50.f;
+			F32 zMax			= sBoobZMax/100.f*3.f;
+			F32 velMax			= sBoobVelMax/100.f*0.1f;
+			F32 boobMass		= sBoobMass/100f.f*20.f;
+			F32 boobHardness	= sBoobHardness/100.f*1.0f;
+			F32 friction		= sBoobFriction/100.f*0.5f;
 
 			F32 FPS = llclamp(gFPSClamped, 1.f, 50.f);
 
@@ -3006,15 +3009,14 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 				difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
 
-				boobVel = (Pos.mV[VZ] - mLastChestPos.mV[VZ]); //multiplyer being the
-				boobVel += (Pos.mV[VX] - mLastChestPos.mV[VX]) * 0.3f;
-				boobVel += (Pos.mV[VY] - mLastChestPos.mV[VY]) * 0.3f;
+				boobVel = (mLastChestPos.mV[VZ] - Pos.mV[VZ]); //multiplyer being the
+				boobVel += (mLastChestPos.mV[VX] - Pos.mV[VX]) * 0.3f;
+				boobVel += (mLastChestPos.mV[VY] - Pos.mV[VY]) * 0.3f;
 				boobVel = llclamp(boobVel, -velMax, velMax);
 				boobVel *= zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f);
 
-				F32 boobMass = sBoobMass;
-				F32 boobHardness = -(1.5f - ( (1.5f - (sBoobHardness))*((FPS - 1.f )/ (50.f - 1.f)) ));
-				F32 friction = (1.f - sBoobFriction) + (sBoobFriction - (1.f - sBoobFriction))*((FPS - 1.f )/ (50.f - 1.f));
+				boobHardness = -(1.5f - ( (1.5f - (sBoobHardness))*((FPS - 1.f )/ (50.f - 1.f)) ));
+				friction = (1.f - (1.f - sBoobFriction)) + ((1.f - sBoobFriction) - (1.f - (1.f - sBoobFriction)))*((FPS - 1.f )/ (50.f - 1.f));
 
 				mBoobDisplacement += boobVel * boobMass;
 				mBoobGravity += boobHardness * (mBoobDisplacement-originWeight);
