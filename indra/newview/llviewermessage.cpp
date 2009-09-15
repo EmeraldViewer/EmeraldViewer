@@ -1639,15 +1639,20 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		if (tlvs)
 		{
 			llinfos << "$PLOTR$ recieved TLVs" << llendl;
-            // currently the only TLVs we deal with are SMP, and they require an IM panel
-            LLUUID session = LLIMMgr::computeSessionID(dialog,from_id);
-            if(!gIMMgr->hasSession(session))
-            {
-                gIMMgr->addSession(name,IM_NOTHING_SPECIAL,from_id);
-            }
-            LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session);
-            if (pan) pan->handleOtrTlvs(tlvs);
-            otrl_tlv_free(tlvs);
+			LLUUID session = LLIMMgr::computeSessionID(dialog,from_id);
+
+			if(!otrl_tlv_find(tlvs, OTRL_TLV_DISCONNECTED))
+			{
+				// currently the only TLVs we deal with are SMP, and they require an IM panel
+				if(!gIMMgr->hasSession(session))
+				{
+					gIMMgr->addSession(name,IM_NOTHING_SPECIAL,from_id);
+				}
+							
+			}
+			LLFloaterIMPanel* pan = gIMMgr->findFloaterBySession(session);
+			if (pan) pan->handleOtrTlvs(tlvs);
+			otrl_tlv_free(tlvs);
 		}
 		if (1 == ignore_message)
 		{
