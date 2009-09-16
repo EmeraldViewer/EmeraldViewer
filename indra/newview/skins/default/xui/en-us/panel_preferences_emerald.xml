@@ -1109,6 +1109,8 @@ from the Emerald viewer into the simulator for access via scripts.
              label_width="100" max_val="100" min_val="1" mouse_opaque="true"
              show_text="true" width="250" auto_resize="false" tool_tip=""/>
 
+<button bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="20" label="Default Settings" name="EmeraldBreastReset" tool_tip="Revert the values to the default settings." left_delta="70" width="100" />
+
 
 </panel>
 
