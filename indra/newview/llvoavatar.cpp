@@ -2952,7 +2952,7 @@ void LLVOAvatar::idleUpdateLoadingEffect()
 
 
 // ------------------------------------------------------------
-// Danny: boob stuff. Ignore all the comments, still figuring out math
+// Danny: ZOMG Boob Phsyics go!
 // ------------------------------------------------------------
 void LLVOAvatar::idleUpdateBoobEffect()
 {
@@ -2969,93 +2969,91 @@ void LLVOAvatar::idleUpdateBoobEffect()
 	sBoobFriction			= gSavedSettings.getF32("EmeraldBoobFriction");
 	sBoobFrictionFraction	= gSavedSettings.getF32("EmeraldBoobFrictionFraction");
 	sBoobToggle				= gSavedSettings.getBOOL("EmeraldBreastPhysicsToggle");
-
   }
 
 	if (mBoobBounceTimer.getElapsedTimeF32() - mLastDisplacement > 0.02f) // cap updates to 50fps
-	{
 		mLastDisplacement = mBoobBounceTimer.getElapsedTimeF32();
-	}
 	else
 		return;
 
-			LLVisualParam *param;
-			param = getVisualParam(105); //boob size
-			F32 boobSize = param->getCurrentWeight();
-			param = getVisualParam(507);
+	//check to make sure mActualBoobGrav is a valid number
+	if(mActualBoobGrav < -5.f || mActualBoobGrav > 5.f)
+		return;
 
-			ESex avatar_sex = getSex();
+	LLVisualParam *param;
+	param = getVisualParam(105); //boob size
+	F32 boobSize = param->getCurrentWeight();
+	param = getVisualParam(507);
 
-			LLVector3 Pos = mChestp->getWorldPosition();
+	ESex avatar_sex = getSex();
 
-			F32 originWeight = (mActualBoobGrav + 1.5f) / 3.5f;
-			originWeight = mActualBoobGrav;
+	LLVector3 Pos = mChestp->getWorldPosition();
 
-			F32 difftime		= 0.0f;
-			F32 boobVel			= 0.0f;
-			F32 zInfluence		= sBoobZInfluence/100.f*50.f;
-			F32 zMax			= sBoobZMax/100.f*3.f;
-			F32 velMax			= sBoobVelMax/100.f*0.1f;
-			F32 boobMass		= sBoobMass/100.f*20.f;
-			F32 boobHardness	= sBoobHardness/100.f*1.0f;
-			F32 friction		= sBoobFriction/100.f*0.5f;
+	F32 originWeight = (mActualBoobGrav + 1.5f) / 3.5f;
+	originWeight = mActualBoobGrav;
 
-			F32 FPS = llclamp(gFPSClamped, 1.f, 50.f);
+	// Convert values from percent to real value
+	F32 zInfluence		= sBoobZInfluence/100.f*50.f;
+	F32 zMax			= sBoobZMax/100.f*3.f;
+	F32 velMax			= sBoobVelMax/100.f*0.1f;
+	F32 boobMass		= sBoobMass/100.f*20.f;
+	F32 boobHardness	= sBoobHardness/100.f*1.0f;
+	F32 friction		= sBoobFriction/100.f*0.5f;
 
-			//llwarns << "fps = " << gFPSClamped << llendl;
+	F32 FPS = llclamp(gFPSClamped, 1.f, 50.f);
 
-			if(!getAppearanceFlag() && abs(mActualBoobGrav-2.0f)>0.01f && sBoobToggle == TRUE)
-			{
+	if(!getAppearanceFlag() && abs(mActualBoobGrav-2.0f)>0.01f && sBoobToggle == TRUE)
+	{
+		F32 difftime;
+		difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
+		LLQuaternion root_rot = mRoot.getWorldRotation();
+		
+		F32 boobVel = 0.f;
+		LLVector3 distance = (Pos - mLastChestPos) * ~root_rot;
+		boobVel = distance.mV[VZ];
+		//boobVel +=	distance[VX] * 0.3f;
+		//boobVel +=	distance.mV[VY] * 0.3f;
+		boobVel =	llclamp(boobVel, -velMax, velMax);
+		boobVel *=	zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f);
 
-				difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
+		boobHardness = -(1.5f - ( (1.5f - (boobHardness))*((FPS - 1.f )/ (50.f - 1.f)) ));
+		friction	 =	(1.f - (1.f - friction)) + ((1.f - friction) - (1.f - (1.f - friction)))*((FPS - 1.f )/ (50.f - 1.f));
 
-				boobVel = (mLastChestPos.mV[VZ] - Pos.mV[VZ]); //multiplyer being the
-				boobVel += (mLastChestPos.mV[VX] - Pos.mV[VX]) * 0.3f;
-				boobVel += (mLastChestPos.mV[VY] - Pos.mV[VY]) * 0.3f;
-				boobVel = llclamp(boobVel, -velMax, velMax);
-				boobVel *= zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f);
+		mBoobDisplacement	+= boobVel * boobMass;
+		mBoobGravity		+= boobHardness * (mBoobDisplacement-originWeight);
+		mBoobGravity		*= friction;
 
-				boobHardness = -(1.5f - ( (1.5f - (boobHardness))*((FPS - 1.f )/ (50.f - 1.f)) ));
-				friction = (1.f - (1.f - friction)) + ((1.f - friction) - (1.f - (1.f - friction)))*((FPS - 1.f )/ (50.f - 1.f));
+		mBoobDisplacement += mBoobGravity;
 
-				mBoobDisplacement += boobVel * boobMass;
-				mBoobGravity += boobHardness * (mBoobDisplacement-originWeight);
-				mBoobGravity *= friction; //friction
+		//llwarns << getFullname() << " hard = " << boobHardness << llendl;
+		//llwarns << getFullname() << " friction = " << friction << llendl;
 
-				mBoobDisplacement += mBoobGravity;
+		// clamp both 'just in case'
+		mBoobDisplacement	= llclamp(mBoobDisplacement, -5.f, 5.f);
+		mBoobGravity		= llclamp(mBoobGravity, -5.f, 5.f);
+				
+				
+		param->setWeight(llclamp(mBoobDisplacement, -zMax, zMax), FALSE);
+		param->apply(avatar_sex);
+		updateVisualParams();
 
-				//llwarns << getFullname() << " hard = " << boobHardness << llendl;
-				//llwarns << getFullname() << " friction = " << friction << llendl;
+	}
 
-				// clamp both 'just in case'
-				mBoobDisplacement	= llclamp(mBoobDisplacement, -5.f, 5.f);
-				mBoobGravity		= llclamp(mBoobGravity, -5.f, 5.f);
-						
-						
-				param->setWeight(llclamp(mBoobDisplacement, -zMax, zMax), FALSE);
-				param->apply(avatar_sex);
+	if(getAppearanceFlag() || sBoobToggle != TRUE)
+		if(mBoobDisplacement != mActualBoobGrav && abs(mActualBoobGrav-2.0f)>0.01f)
+		{
+			llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << " for " << getFullname() << llendl;
+			mBoobDisplacement = mActualBoobGrav;
+			param->setWeight(mActualBoobGrav, FALSE);
+			param->apply(avatar_sex);
+			updateVisualParams();
+			if (mIsSelf)
+				gAgent.sendAgentSetAppearance();
+			dirtyMesh();
+		}
 
-				updateVisualParams();
-
-			}
-
-			if(getAppearanceFlag() || sBoobToggle != TRUE)
-				if(mBoobDisplacement != mActualBoobGrav)
-				{
-					llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << " for " << getFullname() << llendl;
-					mBoobDisplacement = mActualBoobGrav;
-					param->setWeight(mActualBoobGrav, FALSE);
-					param->apply(avatar_sex);
-					updateVisualParams();
-					if (mIsSelf)
-					{
-						gAgent.sendAgentSetAppearance();
-					}
-					dirtyMesh();
-				}
-
-			mLastTime = mBoobBounceTimer.getElapsedTimeF32();
-			mLastChestPos = mChestp->getWorldPosition();
+	mLastTime = mBoobBounceTimer.getElapsedTimeF32();
+	mLastChestPos = mChestp->getWorldPosition();
 			
 }
 
