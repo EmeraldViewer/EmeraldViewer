@@ -3006,13 +3006,14 @@ void LLVOAvatar::idleUpdateBoobEffect()
 	{
 		F32 difftime;
 		difftime = mBoobBounceTimer.getElapsedTimeF32() - mLastTime;
-		LLQuaternion root_rot = mRoot.getWorldRotation();
+		//LLQuaternion root_rot = mRoot.getWorldRotation();
+		LLQuaternion root_rot = mChestp->getWorldRotation();
 		
 		F32 boobVel = 0.f;
 		LLVector3 distance = (Pos - mLastChestPos) * ~root_rot;
 		boobVel = distance.mV[VZ];
-		//boobVel +=	distance[VX] * 0.3f;
-		//boobVel +=	distance.mV[VY] * 0.3f;
+		boobVel +=	distance[VX] * 0.3f;
+		boobVel +=	distance.mV[VY] * 0.3f;
 		boobVel =	llclamp(boobVel, -velMax, velMax);
 		boobVel *=	zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f);
 
