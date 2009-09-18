@@ -2268,7 +2268,7 @@ void LLFloaterIMPanel::doOtrStart()
     // otrpref: 0 == Require use of OTR in IMs, 1 == Request OTR if available, 2 == Accept OTR requests, 3 == Decline use of OTR
     if (3 == otrpref)
     {
-        otrLogMessageGetstring("otr_err_deacivated");
+        //otrLogMessageGetstring("otr_err_deacivated");
         showOtrStatus();
         return;
     }
