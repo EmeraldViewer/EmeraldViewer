@@ -6,5 +6,6 @@
 <slider label="Partikel:" name="MaxParticleCount" tool_tip="Max. Partikel Anzahl"/>
 <slider label="Max Avatare:" name="RenderAvatarMaxVisible" tool_tip="Wieviele Avatare angezeigt werden. Kleinerer Wert verbessert FPS bei vielen Avataren. Ersatzavatare muss aktiviert sein. [Standard 35]"/>
 <slider label="Max Node:" name="RenderMaxNodeSize" tool_tip="Maximum Speichergrösse zum Anzeigen NEUER Objekte in kb. Alles über dem Maximum wird nicht angezeigt. [Standard 4096]"/>
+<combo_box name="WLPresetsCombo" tool_tip="WindLight Himmel Vorlagen."/>
 <button label="" name="expand" tool_tip="Fenster verstecken"/>
 </panel>

@@ -3021,6 +3021,16 @@ Klicken Sie auf „Akzeptieren“, um dem Chat beizutreten, oder auf „Ablehnen
     </form>
   </notification>
   
+   <notification name="QueryEmeraldBuildBridge">
+    Emerald has a feature to create and attach an full perm item.
+    This allows it to get better online data and radar data.
+    Would you like to permit this?
+    <form name="form">
+      <button name="Yes" text="Ja"/>
+      <button name="No" text="Nein"/>
+    </form>
+  </notification>
+  
   <notification name="QueryEmeraldOTR">
     OTR kann ihre Instant Messages verschlüsseln, damit kann ihre Privatssphäre geschützt werden da niemand ausser dem Empfänger ihre Instant Message lesen kann.
     Da verhindert wird das dritte ihre Nachrichten mitlesen können kann auch Linden Labs diese Nachrichten lesen und damit nicht bestätigen wenn nötig (z.b. Abuse Report).
@@ -3098,25 +3108,37 @@ Sollte das Problem fortbestehen, finden Sie weitere Hilfestellung unter: http://
 	
   <notification label="Emerald Help"
    name="EmeraldHelp_TeleportLogin">
-   Help text will go here, please update notifications.xml
-   the related entries are at the bottom of the file.
+  Doppelklick TP - Bei Doppelklick auf etwas wird man dorthin tped.
+  Doppelklick Autopilot - Bei Doppelklick auf etwas läuft man automatisch an diese Position.
+  Velocity Interpolate - Die Geschwindigkeit die man vor einem TP hatte wird nach dem TP beibehalten.
 
-   TeleportLogin
+  Neue Client Definitionen runterladen - Eine kleine XML Datei mit den aktuellsten Viewer Signaturen wird von modularsystems heruntergeladen.
+  Client Info anzeigen - Benutzt diese Datei um Viewer zu erkennen und neben dem Namen anzuzeigen.
 
+  Login Ladeverzögerung - Wie lange soll der Login verzögert werden um Texturen zu laden.  (Höher als 0)
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_Voice">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
-
-  Voice
-
+  Die Voice Server Einstellungen sind für Erfahrene Benutzer!
+  
+  Wenn sie einen Proxy benutzen (PAR, Gridproxy) aber Voice verwenden wollen
+  sollten sie beide auf bhr.vivox.com ändern.
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_Shields">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
-
-  Shields
-
+    
+  Aktuelle kleidung schützen - Maskiert ihre individuelen Textur Schichten um sie vor Diebstahl zu schützen.
+  (Info: Dadurch können andere Viewer auch erkennen welchen Viewer sie benutzen)
+  Stealth Modus und Alle Extras Modus - Klicken sie auf einen der Buttons für mehr Informationen.
+  Dialog Spam Schutz - Legt fest wieviele Dialoge sie maximal pro zeitspanne empfangen können.
+    Verhindert das sie mit Dialogen angegriffen werden und möglicherweise abstürzen.
+  Rechte Entziehen - Entzieht einem Objekt Animations oder Steuerungs Rechte.
+    Objekte behalten für immer diese Rechte sollten sie nicht entzogen werden.
+  URL laden Dialog anzeigen - Deaktivieren sie diese sollte sie jemand damit angreifen.
+  LLMapDestination verbieten - Blockiert das Scripte die Karte öffnen können.
+  Viewer Effekte übertragen - Erlaubt anderen Viewern zu fest zu stellen wohin ihr Avatar zeigt oder sieht.
+    (Muss aktiviert sein da sonst der Auswahlstrahl zur Hüfte geht)
+  Kamera Ziel übertragen - Erlaubt anderen fest zu stellen wohin sie sehen per Blickziel.
+  Aktieviere aktive Cryolife Erkennung - Sendet anderen Avataren einen unsichtbaren Ping um fest zu stellen 
+    ob sie den Copybot Viewer CryoLife benutzen.
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_IM">
   Help text will go here, please update notifications.xml
@@ -3126,58 +3148,76 @@ Sollte das Problem fortbestehen, finden Sie weitere Hilfestellung unter: http://
 
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_Chat">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
-
-  Chat
-
+    Display Radar Info To Chat - Alerts you via chat messages when people enter or leave.
+    Display Total Script Changes - If the total scripts in the region jumps suddenly, you will be notified.
+    Use this in combined with radar info to chat to help see who may be lagging the sim.
+    Autocomplete OOC - If you begin a chat with (( , the corresponding )) will automatically be added when you send.
+    Allow MU* Poses - Allows a preceding colon to act the same as /me.
+    Show Money Changes in Chat - Provides informative chat information for all money actions with timestamps.
+    Add Seconds to timestamps - Allows your timestamps to be more precise.
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_Misc">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
-
-  Misc
-
+    Enable Always Fly - Allows you to override parcel settings as if you were in admin mode.
+    Enable Phantom - Allows you to make your avatar unable to be moved by attacks.  Objects Pass through you.
+    Enable Sit - Allows you to sit anywhere, even in air, to lock your avatar from moving (even if being orbited).
+    Block Sitting - Turns off the the single click sit option to prevent accidentally giving a object permissions.
+    Show Agent Name on LookAt - Allows you to see who is looking where if LookAt Setting is enabled (in advanced menu).
+    ECS key reset camera - Whether or not you want the esc key to center your camera behind you.
+    Show Search Bar - Hides lag meters and instead displays a search bar in top right corner.
+    Enable RLV - Turns on a multitude of features that allow lsl objects to control your viewer.
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_CmdLine">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
-
-  CmdLine
-
+    Various Options For Command Line features.
+    To use a command, type it in your chat bar (Local chat) and press enter.
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_Avatar">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
+    X,Y,and Z Modifiers - Allow you to slightly adjust you avatars bounding box.
+    This is useful (Z Modifier) to raise or lower where your avatars feet hit the ground.
+    Agents Updates Per Second - How many updates you send the sim each second.
+    Make this slightly higher for better performance (NEVER above 20)
+    Make this lower to help lower sim lag.
+    Emerald Clothing Mode - Allows mode for infinite layers of clothing
 
-  Avatar
+    Selection Beam Particles
+    These are the particles that come from your hand when you right click and select objects.
+    Left Side:
+    Choose a Color rotation Pattern if you wish your beams to not stay a constant color.
+    Create New - Allows you to define a new range of hues to slide colors between.
+    You Must Save, and then select it from the drop down.
+    Right Side:
+    Allows you to customise a pattern shape for your beams.
+    Choose one from the drop down, or create a new one.
+    When Creating a new one, click on the color picker to define the color for the next click.
 
+    Scale - Increases the size of the beam shape.  (Already scaled by distance)
+    Beam Updates Per Second - Allows you to lower lag by keeping this low.
+
+    Enable Transmission of Beam Pos - Sends chat messages for creative lsl objects to receive beam data.
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_Build">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
-
-  Build
-
+    New Object Settings - Allows you to replace wood textured 0.5 Object with more Presets
+    Pivot Point - Allows you to change the pivot point of an object.
+    This allows for more advanced rotation and building methods.
+    Enable Highlight Of Selection Prims - Shows the (laggy) yellow highlight on selected prims.
+    Show Axis Arrow on Root Prim - Moves the axis from the center of the object to the center of the root.
+    Enable Mega Prim - Allows you to create objects larger than 10 meter if you are on a open grid.
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_IRC">
-Use the color picker for each different kind of message type to set the color used to display the related text.
+    Use the color picker for each different kind of message type to set the color used to display the related text.
 
-Toggling the checkboxes allows the selection of which types of informations should be shown on the chat window.
+    Toggling the checkboxes allows the selection of which types of information should be shown on the chat window.
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_UtilityStream">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
-
-  Utility Stream
-
+    The Utility Stream is a way to send data from the client to special lsl objects.
+    Information such as your avatars eyelid state can optionally be set to send a chat
+    message (on set channel) each time it changes, for other objects to listen and react to.
   </notification>
   <notification label="Emerald Help" name="EmeraldHelp_Inventory">
-  Help text will go here, please update notifications.xml
-  the related entries are at the bottom of the file.
-
-  Inventory
-
+    Inventory Mirroring  -
+    Allows you to back up your inventory tree to a offline folder.
+    Once you have defined a save location, you may right click on
+    Selected items in your inventory, and choose the export option.
+    Wear Objects via Double Click - Double Click wears the object, instead of showing properties.
   </notification>
 <notification label="Emerald Help" name="EmeraldHelp_IRCSettings">
 IRC is an alternative type of group chat.
@@ -3196,5 +3236,21 @@ Server: This is the server you would like to connect to.  You are free to use th
 Server Password: Some servers require a password (most don't) to connect, put that here
 Channel: This is like the chat room name you wish to join.
 Channel Password: You can set up a channel to have a password by (/msg ChanServ), if you have, place it here.
+  </notification>
+  <notification label="Emerald Help" name="EmeraldHelp_Effects">
+This enables you and other avatar's breasts to have actual physics applied to them. You can use these settings to fine-tune the physics to match your personal taste.
+
+-Mass
+   A higher value will seemingly increase the total effect
+-Rebound
+   Controls how quickly the breasts will come to rest after any movement.
+-Max Z
+   This is the max in either direction that the breasts can go.
+-Max Vel
+   The amount of "momentum" they can recieve. Lower for less bounce
+-Friction
+   This controls the internal friction. Brings the breasts to a halt. Higher the number, quicker they stop.
+-Z Influence
+   Changes how much your avatar's movement will effect the breasts. Higher = more effect.
   </notification>
 </notifications>

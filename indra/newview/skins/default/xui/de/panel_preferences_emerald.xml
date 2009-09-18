@@ -151,8 +151,6 @@ Empfohlene Eisntellungen:
       </panel>
       <panel label="Verschiedenes" name="AvatarEffects">
         <button label="?" name="EmeraldHelp_Misc" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
-        <button label="Schatten AN" name="Emerald_ShadowsON" tool_tip="Aktiviert das Anzeigen von dynamischen Schatten. Das Ergebnis kann unterschiedlich ausfallen und die Leistung negativ beeinflussen."/>
-        <button label="Schatten AUS" name="Emerald_ShadowsOFF" tool_tip="Deaktiviert die Anzeige von dynamische Schatten."/>
         <check_box label="Fliegen immer erlauben" name="alwaysflytoggle"/>
         <check_box label="Aktiviere STRG-Alt-P für phantom" name="allowphantomtoggle"/>
         <check_box label="Aktiviere STRG-Alt-S um überall auf den Boden zu sitzen" name="allowsittoggle"/>
@@ -161,7 +159,11 @@ Empfohlene Eisntellungen:
         <check_box label="Escape setzt Kamera zurück auf Standard im Kameramodus (STRG-1)" name="EmResetCamOnEscape-toggle" tool_tip="Deaktivieren verhindert das sich die Kamera zurücksetzt wenn Escape gedrückt wurde ."/>
         <check_box label="Aktiviere Minimap Rotation" name="MinimapRotate"/>
         <check_box label="Suchleiste anzeigen" name="Search_bar-toggle"/>
-        <check_box label="Aktiviere Restrained Life [RLV] Funktionen(benötigt Neustart)" name="rlv-toggle"/>      
+        <check_box label="Aktiviere Restrained Life [RLV] Funktionen(benötigt Neustart)" name="rlv-toggle"/>
+        <view_border name="EmDivisorBridge"/>
+        <check_box label="Aktiviere LSL-Client Brücke" name="EmeraldBuildBridge"/>
+        <check_box label="Radar nutzt Brücke" name="EmeraldUseBridgeRadar"/>
+        <check_box label="Online Status in Profilen" name="EmeraldUseBridgeOnline"/>
     </panel>
     <panel label="Befehlszeile" name="CmdLine">
     <button label="?" name="EmeraldHelp_CmdLine" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -414,12 +416,26 @@ Simulator damit man per Script darauf zugreifen kann.
       <check_box label="Scripte spiegeln" name="check_script"/>
       <check_box label="Inventar Fenster automatisch öffnen" name="popup_inventory" tool_tip="Inventar automatisch öffnen bei neuen Objekten"/>
       <check_box label="Aktviere Inventarobjekt anziehen per Doppelklick" name="wear-inv-toggle"/>
+      <text name="impexp">
+        Import/Export Backup Einstellungen:
+      </text>
+      <check_box label="Exportiere Objekt Eigenschaften" name="EmExpProp"/>
+      <check_box label="Exportiere Objekt Inhalt" name="EmExpInv"/>
+      <check_box label="Exportiere Objekt Texturen" name="EmExpTex"/>
     </panel>
-
-
-
-
-
+    <panel label="Effekte" name="Effects">
+      <button label="?" name="EmeraldHelp_Effects" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+      <button label="Schatten AN" name="Emerald_ShadowsON" tool_tip="Aktiviert das Anzeigen von dynamischen Schatten. Das Ergebnis kann unterschiedlich ausfallen und die Leistung negativ beeinflussen."/>
+      <button label="Schatten AUS" name="Emerald_ShadowsOFF" tool_tip="Deaktiviert die Anzeige von dynamische Schatten."/>
+      <check_box label="Aktiviere erweiterte Physik für Avatar Brüste" name="EmBreastsToggle"/>
+      <slider name="EmeraldBoobMass" label="Brust Masse:" tool_tip=""/>
+      <slider name="EmeraldBoobHardness" label="Brust Rückprall:" tool_tip=""/>
+      <slider name="EmeraldBoobZMax" label="Brust max Z:" tool_tip=""/>
+      <slider name="EmeraldBoobVelMax" label="Brust max vel:" tool_tip=""/>
+      <slider name="EmeraldBoobFriction" label="Brust Reibung:" tool_tip=""/>
+      <slider name="EmeraldBoobZInfluence" label="Brust Z Einfluss:" tool_tip=""/>
+      <button label="Standard" name="EmeraldBreastReset" tool_tip="Setzt die Einstellungen auf Standardwerte zurück"/>
+    </panel>
   </tab_container>
   </tab_container>
 </panel>
