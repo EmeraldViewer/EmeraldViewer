@@ -945,6 +945,7 @@ set(viewer_HEADER_FILES
     tslua.h
     VertexCache.h
     VorbisFramework.h
+    rlvdefines.h
     rlvevent.h
     rlvhandler.h
     rlvhelper.h

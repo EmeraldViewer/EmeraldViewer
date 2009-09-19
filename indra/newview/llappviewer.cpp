@@ -1816,6 +1816,12 @@ bool LLAppViewer::initConfiguration()
 	LLFirstUse::addConfigVariable("FirstVoice");
 	LLFirstUse::addConfigVariable("FirstMedia");
 
+// [RLVa:KB] - Checked: RLVa-1.0.3a (2009-09-10) | Added: RLVa-1.0.3a
+	//LLFirstUse::addConfigVariable(RLV_SETTING_FIRSTUSE_DETACH);
+	//LLFirstUse::addConfigVariable(RLV_SETTING_FIRSTUSE_ENABLEWEAR);
+	//LLFirstUse::addConfigVariable(RLV_SETTING_FIRSTUSE_FARTOUCH);
+// [/RLVa:KB]
+
 	//Zwagoth: Uhg... these have to go here because otherwise the command line parser
 	// does not trigger the callbacks. Putting it above this function causes null ptrs
 	// because gSavedSettings is not set up yet. Also... above this line, we don't have the

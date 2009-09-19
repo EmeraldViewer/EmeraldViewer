@@ -42,6 +42,7 @@ public:
 	~wlfPanel_AdvSettings ();
 	BOOL postBuild();
 	void draw();
+	void refresh();
 	static void fixPanel();
 
 	static void onClickExpandBtn(void* user_data);

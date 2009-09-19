@@ -42,6 +42,11 @@
 #include "llcombobox.h"
 #include "llwlparammanager.h"
 #include "llstartup.h"
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 BOOL firstBuildDone;
 void* fixPointer;
 wlfPanel_AdvSettings::wlfPanel_AdvSettings()
@@ -61,6 +66,16 @@ void wlfPanel_AdvSettings::build()
 	{
 		LLUICtrlFactory::getInstance()->buildPanel(this, "wlfPanel_AdvSettings.xml", &getFactoryMap());
 	}
+}
+
+void wlfPanel_AdvSettings::refresh()
+{
+// [RLVa:KB] - Checked: 2009-09-19
+	if ( (rlv_handler_t::isEnabled()) && (gSavedSettings.getBOOL("wlfAdvSettingsPopup")) )
+	{
+		childSetEnabled("WLPresetsCombo", !gRlvHandler.hasBehaviour(RLV_BHVR_SETENV));
+	}
+// [/RLVa:KB]
 }
 
 void wlfPanel_AdvSettings::fixPanel()
@@ -105,6 +120,7 @@ void wlfPanel_AdvSettings::draw()
 			expand_button->setImageOverlay("arrow_up.tga");
 		}
 	}
+	refresh();
 	LLPanel::draw();
 }
 wlfPanel_AdvSettings::~wlfPanel_AdvSettings ()
