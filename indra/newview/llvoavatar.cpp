@@ -2855,7 +2855,10 @@ void LLVOAvatar::idleUpdateAppearanceAnimation()
 				{
 						// so boobs don't go spastic when a shape's changed, but still seems buggy
 						if(param->getID() == 507)
-							param->stopAnimating(mAppearanceAnimSetByUser);
+						{
+							//param->stopAnimating(mAppearanceAnimSetByUser);
+							param->animate(mActualBoobGrav, mAppearanceAnimSetByUser);
+						}
 						else
 							param->animate(morph_amt, mAppearanceAnimSetByUser);
 				}
@@ -3045,7 +3048,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 		{
 			llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << " for " << getFullname() << llendl;
 			mBoobDisplacement = mActualBoobGrav;
-			param->setWeight(mActualBoobGrav, FALSE);
+			param->setWeight(llclamp(mActualBoobGrav, -zMax, zMax), FALSE);
 			param->apply(avatar_sex);
 			updateVisualParams();
 			if (mIsSelf)
