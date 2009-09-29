@@ -580,6 +580,17 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+  <key>AuditTexture</key>
+  <map>
+    <key>Comment</key>
+    <string>Enable texture auditting.</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>Boolean</string>
+    <key>Value</key>
+    <integer>0</integer>
+  </map>
     <key>AutoAcceptNewInventory</key>
     <map>
       <key>Comment</key>
@@ -3456,6 +3467,28 @@
       <string>Boolean</string>
       <key>Value</key>
       <integer>0</integer>
+    </map>
+    <key>EmeraldAppearanceAnimate</key>
+    <map>
+      <key>Comment</key>
+      <string>Play appearance anim when entering appearance mode?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldAppearanceForceStand</key>
+    <map>
+      <key>Comment</key>
+      <string>Unsit avatar when entering appearance mode?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
     </map>
     <key>EmeraldAvatarAgeAlert</key>
     <map>
@@ -7428,7 +7461,7 @@
     <key>LastFindPanel</key>
     <map>
       <key>Comment</key>
-      <string>Controls which find operation appears by default when clicking "Find" button</string>
+      <string>Controls which find operation appears by default when clicking "Find" button </string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -7956,7 +7989,7 @@
     <key>MiniMapScale</key>
     <map>
       <key>Comment</key>
-      <string>Miniature world map zoom levle (pixels per region)</string>
+      <string>Miniature world map zoom level (pixels per region)</string>
       <key>Persist</key>
       <integer>1</integer>
       <key>Type</key>
@@ -14352,6 +14385,39 @@
       <integer>0</integer>
       <key>Type</key>
       <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+        <key>LogTextureDownloadsToViewerLog</key>
+    <map>
+      <key>Comment</key>
+      <string>Send texture download details to the viewer log</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>LogTextureDownloadsToSimulator</key>
+    <map>
+      <key>Comment</key>
+      <string>Send a digest of texture info to the sim</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>TextureLoggingThreshold</key>
+    <map>
+      <key>Comment</key>
+      <string>Specifies the byte threshold at which texture download data should be sent to the sim.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>U32</string>
       <key>Value</key>
       <integer>1</integer>
     </map>
