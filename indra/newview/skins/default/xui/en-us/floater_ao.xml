@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<floater
+	name="geminifloater"
+  rect_control="EmeraldAORect"
+	title="Animation Overrider"
+	can_resize="false"
+	can_minimize="true"
+	can_close="true"
+	can_drag_on_left="false"
+	width="200"
+	height="200">
+
+
+  <check_box bottom_delta="-42" control_name="EmeraldAOEnabled" enabled="true"
+	 follows="left|top" font="SansSerifSmall" height="16" initial_value="false" label="Override Anims" left="10"
+	 mouse_opaque="true" name="EmeraldAOEnabled" radio_style="false" width="90" />
+  <check_box bottom_delta="0" control_name="EmeraldAOSitsEnabled" enabled="true"
+	 follows="left|top" font="SansSerifSmall" height="16" initial_value="true" label="Override Sits" left="110"
+	 mouse_opaque="true" name="EmeraldAOSitsEnabled" radio_style="false" width="90" />
+
+  <spinner bottom_delta="-20" decimal_digits="2" follows="left|top" height="16" control_name="EmeraldAOStandInterval"
+	 increment="1" initial_val="20" left="10" max_val="240" min_val="0"
+	 mouse_opaque="true" name="standtime" label="Stand Time" label_width="80"
+	 tool_tip="AO Stand Time in seconds" width="180" />
+  <button
+    name="prevstand"
+    tool_tip="previous stand"
+    label="&lt;&lt;"
+    font="SansSerifSmall"
+    left="10"
+    bottom_delta="-25"
+    width="90"
+    height="20"
+    follows="bottom|left"
+		/>
+  <button
+  name="nextstand"
+  tool_tip="next stand"
+  label="&gt;&gt;"
+  font="SansSerifSmall"
+  left="100"
+  bottom_delta="0"
+  width="90"
+  height="20"
+  follows="bottom|left"
+		/>
+
+  <view_border blevel_style="in" bottom_delta="-42" follows="left|top" height="16" left="10"
+       mouse_opaque="false" name="ao_notecard" width="180" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+       bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+       font="SansSerifSmall" h_pad="0" halign="center" height="16" left_delta="0"
+       mouse_opaque="true" name="Give inventory"
+       tool_tip="Drop a ZHAO notecard here. Animations have to be in the same Inventory folder as the notecard." v_pad="2"
+       width="180">
+    Drop Notecard here.
+  </text>
+  <view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="0"
+       mouse_opaque="false" name="ao_notecard_disp" width="180" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+       bottom_delta="0" drop_shadow_visible="true" follows="left|top"
+       font="SansSerifSmall" h_pad="0" halign="center" height="16" left_delta="0"
+       mouse_opaque="true" name="ao_nc_text"
+       tool_tip="" v_pad="2"
+       width="180">
+    Currently set to: ITEM
+  </text>
+  <button
+	  name="reloadcard"
+	  label="reload card"
+	  font="SansSerifSmall"
+	  left="10"
+	  bottom_delta="-25"
+	  width="80"
+	  height="20"
+	  follows="bottom|left"
+		/>
+</floater>
