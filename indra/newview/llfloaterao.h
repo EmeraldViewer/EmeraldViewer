@@ -71,7 +71,7 @@ public:
 	static void show(void*);
 	static void init();
 
-	static void LLFloaterAO::onClickRun(LLUICtrl *, void*);
+	static void onClickRun(LLUICtrl *, void*);
 	static void run();
 
 	static BOOL loadAnims();
