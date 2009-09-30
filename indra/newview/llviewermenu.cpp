@@ -81,6 +81,7 @@
 #include "llface.h"
 #include "llfirstuse.h"
 #include "llfloater.h"
+#include "llfloaterao.h"
 #include "llfloaterabout.h"
 #include "llfloaterbuycurrency.h"
 #include "llfloateractivespeakers.h"
@@ -8316,6 +8317,15 @@ class LLEmeraldTogglePhantom: public view_listener_t
 
 };
 
+class LLAO : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLFloaterAO::show(NULL);
+		return true;
+	}
+};
+
 class LLEmeraldCheckPhantom: public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -8792,6 +8802,7 @@ void initialize_menus()
 	addMenu(new EmeraldMarkAllDead(), "Emerald.ClearEffects");
 	addMenu(new LLPhoxToggleAssetBrowser(),"Phox.ToggleAssetBrowser");
 	addMenu(new LLPhoxCheckAssetBrowser(),"Phox.CheckAssetBrowser");
+	addMenu(new LLAO(), "AO");
 
 	// World menu
 	addMenu(new LLWorldChat(), "World.Chat");

@@ -75,6 +75,7 @@
 #include "lldriverparam.h"
 #include "lleditingmotion.h"
 #include "llemote.h"
+#include "llfloaterao.h"
 #include "llfirstuse.h"
 #include "llheadrotmotion.h"
 #include "llhudeffecttrail.h"
@@ -5287,6 +5288,14 @@ void LLVOAvatar::processAnimationStateChanges()
 		// playing, but not signaled, so stop
 		if (found_anim == mSignaledAnimations.end())
 		{
+			if (mIsSelf)
+			{
+				if ((gSavedSettings.getBOOL("EmeraldAOEnabled")) && LLFloaterAO::stopMotion(anim_it->first, FALSE)) // if the AO replaced this anim serverside then stop it serverside
+				{
+//					return TRUE; //no local stop needed
+				}
+			}
+
 			processSingleAnimationStateChange(anim_it->first, FALSE);
 			mPlayingAnimations.erase(anim_it++);
 			continue;
@@ -5305,6 +5314,19 @@ void LLVOAvatar::processAnimationStateChanges()
 		{
 			if (processSingleAnimationStateChange(anim_it->first, TRUE))
 			{
+
+				if (mIsSelf) // AO is only for ME
+				{
+					if (gSavedSettings.getBOOL("EmeraldAOEnabled"))
+					{
+						if (LLFloaterAO::startMotion(anim_it->first, 0,FALSE)) // AO overrides the anim if needed
+						{
+//								return TRUE; // not playing it locally
+						}
+					}
+				}
+
+
 				mPlayingAnimations[anim_it->first] = anim_it->second;
 				++anim_it;
 				continue;
@@ -5426,7 +5448,7 @@ void LLVOAvatar::resetAnimations()
 
 //-----------------------------------------------------------------------------
 // startMotion()
-// id is the asset if of the animation to start
+// id is the asset id of the animation to start
 // time_offset is the offset into the animation at which to start playing
 //-----------------------------------------------------------------------------
 BOOL LLVOAvatar::startMotion(const LLUUID& id, F32 time_offset)

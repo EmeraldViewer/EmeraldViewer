@@ -67,6 +67,7 @@
 #include "llface.h"
 #include "llfirstuse.h"
 #include "llfloater.h"
+#include "llfloaterao.h"
 #include "llfloateractivespeakers.h"
 #include "llfloateravatarinfo.h"
 #include "llfloateravatarlist.h"

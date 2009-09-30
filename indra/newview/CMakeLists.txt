@@ -88,6 +88,7 @@ include_directories(
 )
 
 set(viewer_SOURCE_FILES
+	llfloaterao.cpp
 	importtracker.cpp
 	exporttracker.cpp
 	chatbar_as_cmdline.cpp
@@ -533,6 +534,7 @@ set(viewer_HEADER_FILES
     IRC.h
 	jc_lslviewerbridge.h
 	jc_layer_editor.h
+	llfloaterao.h
     jcfloater_animation_list.h
     jcfloater_areasearch.h
     jcobjectpropertylist.h
