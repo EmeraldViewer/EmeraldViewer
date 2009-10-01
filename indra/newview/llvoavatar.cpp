@@ -1187,6 +1187,47 @@ void LLVOAvatar::dumpScratchTextureByteCount()
 }
 
 // static
+void LLVOAvatar::getMeshInfo (mesh_info_t* mesh_info)
+{
+	if (!mesh_info) return;
+
+	LLVOAvatarXmlInfo::mesh_info_list_t::iterator iter = sAvatarXmlInfo->mMeshInfoList.begin();
+	LLVOAvatarXmlInfo::mesh_info_list_t::iterator end  = sAvatarXmlInfo->mMeshInfoList.end();
+
+	for (; iter != end; ++iter)
+	{
+		LLVOAvatarXmlInfo::LLVOAvatarMeshInfo* avatar_info = (*iter);
+		std::string type = avatar_info->mType;
+		S32         lod  = avatar_info->mLOD;
+		std::string file = avatar_info->mMeshFileName;
+
+		mesh_info_t::iterator iter_info = mesh_info->find(type);
+		if(iter_info == mesh_info->end()) 
+		{
+			lod_mesh_map_t lod_mesh;
+			lod_mesh.insert(std::pair<S32,std::string>(lod, file));
+			mesh_info->insert(std::pair<std::string,lod_mesh_map_t>(type, lod_mesh));
+		}
+		else
+		{
+			lod_mesh_map_t& lod_mesh = iter_info->second;
+			lod_mesh_map_t::iterator iter_lod = lod_mesh.find(lod);
+			if (iter_lod == lod_mesh.end())
+			{
+				lod_mesh.insert(std::pair<S32,std::string>(lod, file));
+			}
+			else
+			{
+				// Should never happen
+				llwarns << "Duplicate mesh LOD " << type << " " << lod << " " << file << llendl;
+			}
+		}
+	}
+	return;
+}
+
+
+// static
 void LLVOAvatar::dumpBakedStatus()
 {
 	LLVector3d camera_pos_global = gAgent.getCameraPositionGlobal();
@@ -6489,6 +6530,21 @@ void LLVOAvatar::hideSkirt()
 	mMeshLOD[MESH_ID_SKIRT]->setVisible(FALSE, TRUE);
 }
 
+//-----------------------------------------------------------------------------
+// getMesh( LLPolyMeshSharedData *shared_data )
+//-----------------------------------------------------------------------------
+LLPolyMesh* LLVOAvatar::getMesh( LLPolyMeshSharedData *shared_data )
+{
+	for (polymesh_map_t::iterator i = mMeshes.begin(); i != mMeshes.end(); ++i)
+	{
+		LLPolyMesh* mesh = i->second;
+		if (mesh->getSharedData() == shared_data)
+		{
+			return mesh;
+		}
+	}
+	return NULL;
+}
 
 //-----------------------------------------------------------------------------
 // requestLayerSetUpdate()

@@ -273,6 +273,7 @@ public:
 	void onFirstTEMessageReceived();
 	void updateSexDependentLayerSets( BOOL set_by_user );
 	void dirtyMesh(); // Dirty the avatar mesh
+	LLPolyMesh* getMesh( LLPolyMeshSharedData *shared_data );
 	void hideSkirt();
 
 	virtual void setParent(LLViewerObject* parent);
@@ -352,6 +353,11 @@ public:
 public:
 	void			setLocTexTE( U8 te, LLViewerImage* image, BOOL set_by_user );
 	void			setupComposites();
+
+	typedef std::map<S32,std::string> lod_mesh_map_t;
+	typedef std::map<std::string,lod_mesh_map_t> mesh_info_t;
+
+	static void getMeshInfo (mesh_info_t* mesh_info);
 
 	//--------------------------------------------------------------------
 	// Handling partially loaded avatars (Ruth)
