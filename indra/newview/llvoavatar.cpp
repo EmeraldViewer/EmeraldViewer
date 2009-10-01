@@ -114,6 +114,7 @@
 #include "llviewermessage.h"
 #include "llsdserialize.h" // client resolver
 #include "lggBeamMaps.h"
+#include "llfloaterao.h"
 
 #include "boost/lexical_cast.hpp"
 
@@ -6743,6 +6744,7 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 
 	gPipeline.markMoved(mDrawable, TRUE);
 	mIsSitting = TRUE;
+	LLFloaterAO::ChangeStand();
 // [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.1d
 	#ifdef RLV_EXTENSION_STARTLOCATION
 	if (rlv_handler_t::isEnabled())

@@ -9,6 +9,7 @@
 #include "llfloaterao.h"
 
 #include "llagent.h"
+#include "llvoavatar.h"
 #include "llanimationstates.h"
 #include "llframetimer.h"
 #include "lluictrlfactory.h"
@@ -17,7 +18,6 @@
 #include "llpreviewnotecard.h"
 #include "llviewertexteditor.h"
 #include "llcheckboxctrl.h"
-#include "llinventory.h"
 #include "chatbar_as_cmdline.h"
 
 #include "llinventory.h"
@@ -58,12 +58,12 @@ AOInvTimer::~AOInvTimer()
 BOOL AOInvTimer::tick()
 {
 	if (!(gSavedSettings.getBOOL("EmeraldAOEnabled"))) return TRUE;
-//	cmdline_printchat("fetching inventory");
+//	cmdline_printchat("fetching Inventory..");
 	if(LLStartUp::getStartupState() >= STATE_INVENTORY_SEND)
 	{
 		if(gInventory.isEverythingFetched())
 		{
-			cmdline_printchat("inventory fetched, loading ao");
+			cmdline_printchat("Inventory fetched, loading AO.");
 			LLFloaterAO::init();
 			return TRUE;
 		}
@@ -434,8 +434,18 @@ BOOL LLFloaterAO::ChangeStand()
 {
 	if (gSavedSettings.getBOOL("EmeraldAOEnabled"))
 	{
-//		llinfos << "tick getAnimationState() " << getAnimationState() << llendl;
-		if ((getAnimationState() == STATE_AGENT_IDLE) || (getAnimationState() == STATE_AGENT_STAND)) // stands have lowest priority
+//		llinfos << "tick sit getAnimationState() " << getAnimationState() << llendl;
+		if (gAgent.getAvatarObject())
+		{
+			if (gAgent.getAvatarObject()->mIsSitting)
+			{
+				stopMotion(getCurrentStandId(), FALSE, TRUE); //stop stand first then set state
+				setAnimationState(STATE_AGENT_SIT);
+				setCurrentStandId(LLUUID::null);
+				return FALSE;
+			}
+		}
+		if ((getAnimationState() == STATE_AGENT_IDLE) || (getAnimationState() == STATE_AGENT_STAND))// stands have lowest priority
 		{
 			if (!(mAOStands.size() > 0)) return TRUE;
 			if (stand_iterator < 0) stand_iterator = int( mAOStands.size()-stand_iterator);
@@ -473,6 +483,12 @@ BOOL LLFloaterAO::startMotion(const LLUUID& id, F32 time_offset, BOOL stand)
 	{
 		if (id.notNull())
 		{
+			BOOL sitting = FALSE;
+			if (gAgent.getAvatarObject())
+			{
+				sitting = gAgent.getAvatarObject()->mIsSitting;
+			}
+			if (sitting) return FALSE;
 			gAgent.sendAnimationRequest(id, ANIM_REQUEST_START);
 			return TRUE;
 		}
