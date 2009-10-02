@@ -114,7 +114,6 @@
 #include "llviewermessage.h"
 #include "llsdserialize.h" // client resolver
 #include "lggBeamMaps.h"
-#include "llfloaterao.h"
 
 #include "boost/lexical_cast.hpp"
 
