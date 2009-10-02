@@ -7,45 +7,26 @@
 	can_minimize="true"
 	can_close="true"
 	can_drag_on_left="false"
-	width="200"
-	height="200">
+	width="400"
+	height="220">
 
-
-  <check_box bottom_delta="-42" control_name="EmeraldAOEnabled" enabled="true"
-	 follows="left|top" font="SansSerifSmall" height="16" initial_value="false" label="Override Anims" left="10"
-	 mouse_opaque="true" name="EmeraldAOEnabled" radio_style="false" width="90" />
-  <check_box bottom_delta="0" control_name="EmeraldAOSitsEnabled" enabled="true"
-	 follows="left|top" font="SansSerifSmall" height="16" initial_value="true" label="Override Sits" left="110"
-	 mouse_opaque="true" name="EmeraldAOSitsEnabled" radio_style="false" width="90" />
-
-  <spinner bottom_delta="-20" decimal_digits="2" follows="left|top" height="16" control_name="EmeraldAOStandInterval"
-	 increment="1" initial_val="20" left="10" max_val="240" min_val="0"
-	 mouse_opaque="true" name="standtime" label="Stand Time" label_width="80"
-	 tool_tip="AO Stand Time in seconds" width="180" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="-42" drop_shadow_visible="true" follows="left|bottom"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="10"
+	     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
+    Config Notecard:
+  </text>
   <button
-    name="prevstand"
-    tool_tip="previous stand"
-    label="&lt;&lt;"
-    font="SansSerifSmall"
-    left="10"
-    bottom_delta="-25"
-    width="90"
-    height="20"
-    follows="bottom|left"
+      name="reloadcard"
+      label="Reload Card"
+      font="SansSerifSmall"
+      left="100"
+      bottom_delta="0"
+      width="90"
+      height="20"
+      follows="bottom|left"
 		/>
-  <button
-  name="nextstand"
-  tool_tip="next stand"
-  label="&gt;&gt;"
-  font="SansSerifSmall"
-  left="100"
-  bottom_delta="0"
-  width="90"
-  height="20"
-  follows="bottom|left"
-		/>
-
-  <view_border blevel_style="in" bottom_delta="-42" follows="left|top" height="16" left="10"
+  <view_border blevel_style="in" bottom_delta="-20" follows="left|top" height="16" left="10"
        mouse_opaque="false" name="ao_notecard" width="180" />
   <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
        bottom_delta="0" drop_shadow_visible="true" follows="left|top"
@@ -53,7 +34,7 @@
        mouse_opaque="true" name="Give inventory"
        tool_tip="Drop a ZHAO notecard here. Animations have to be in the same Inventory folder as the notecard." v_pad="2"
        width="180">
-    Drop Notecard here.
+    Drop a ZHAO II Notecard here.
   </text>
   <view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="0"
        mouse_opaque="false" name="ao_notecard_disp" width="180" />
@@ -65,14 +46,67 @@
        width="180">
     Currently set to: ITEM
   </text>
+
+  <check_box bottom_delta="-42" control_name="EmeraldAOEnabled" enabled="true"
+	 follows="left|top" font="SansSerifSmall" height="16" initial_value="false" label="Override Anims" left="10"
+	 mouse_opaque="true" name="EmeraldAOEnabled" radio_style="false" width="90" />
+  <check_box bottom_delta="0" control_name="EmeraldAOSitsEnabled" enabled="true"
+	 follows="left|top" font="SansSerifSmall" height="16" initial_value="true" label="Override Sits" left="110"
+	 mouse_opaque="true" name="EmeraldAOSitsEnabled" radio_style="false" width="90" />
+
+  <spinner bottom_delta="-20" decimal_digits="2" follows="left|top" height="16" control_name="EmeraldAOStandInterval"
+	 increment="1" initial_val="20" left="10" max_val="240" min_val="1.00"
+	 mouse_opaque="true" name="standtime" label="Stand Time" label_width="80"
+	 tool_tip="AO Stand Time in seconds" width="180" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="100" drop_shadow_visible="true" follows="left|bottom"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="210"
+	     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
+    Stands:
+  </text>
+  <combo_box name="stands" label="" follows="left|top" height="20" left="210" width="180" bottom_delta="-20"/>
   <button
-	  name="reloadcard"
-	  label="reload card"
-	  font="SansSerifSmall"
-	  left="10"
-	  bottom_delta="-25"
-	  width="80"
-	  height="20"
-	  follows="bottom|left"
+    name="prevstand"
+    tool_tip="previous stand"
+    label="&lt;&lt;"
+    font="SansSerifSmall"
+    left="210"
+    bottom_delta="-22"
+    width="90"
+    height="20"
+    follows="bottom|left"
 		/>
+  <button
+  name="nextstand"
+  tool_tip="next stand"
+  label="&gt;&gt;"
+  font="SansSerifSmall"
+  left="300"
+  bottom_delta="0"
+  width="90"
+  height="20"
+  follows="bottom|left"
+		/>
+
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="-20" drop_shadow_visible="true" follows="left|bottom"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="210"
+	     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
+    Default Walk:
+  </text>
+  <combo_box name="walks" label="" follows="left|top" height="20" left="210" width="180" bottom_delta="-20" control_name="EmeraldAODefaultWalk" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="-20" drop_shadow_visible="true" follows="left|bottom"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="210"
+	     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
+    Default Sit:
+  </text>
+  <combo_box name="sits" label="" follows="left|top" height="20" left="210" width="180" bottom_delta="-20" control_name="EmeraldAODefaultSit" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="-20" drop_shadow_visible="true" follows="left|bottom"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="210"
+	     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
+    Default Groundsit:
+  </text>
+  <combo_box name="gsits" label="" follows="left|top" height="20" left="210" width="180" bottom_delta="-20" control_name="EmeraldAODefaultGroundSit" />
 </floater>

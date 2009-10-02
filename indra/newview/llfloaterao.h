@@ -4,12 +4,7 @@
 
 #include "llfloater.h"
 #include "llviewercontrol.h"
-
-//#include "llviewerobject.h" 
-//#include "llviewerobjectlist.h"
-//#include "llviewerwindow.h"
 #include "llagent.h"
-//#include "llviewerregion.h"
 
 
 class AONoteCardDropTarget;
@@ -49,7 +44,8 @@ class AOStandTimer : public LLEventTimer
 public:
     AOStandTimer();
     ~AOStandTimer();
-    BOOL tick();
+    virtual BOOL tick();
+	virtual void reset();
 };
 
 class AOInvTimer : public LLEventTimer
@@ -108,6 +104,8 @@ private:
 
 	static AONoteCardDropTarget* mAOItemDropTarget;
 	static void AOItemDrop(LLViewerInventoryItem* item);
+	static void onSpinnerCommit(LLUICtrl* ctrl, void* userdata);
+	static void onComboBoxCommit(LLUICtrl* ctrl, void* userdata);
 
 	BOOL					mDirty;
 

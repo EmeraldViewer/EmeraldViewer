@@ -11,13 +11,14 @@
 #include "llagent.h"
 #include "llvoavatar.h"
 #include "llanimationstates.h"
-#include "llframetimer.h"
 #include "lluictrlfactory.h"
 #include "llinventoryview.h"
 #include "llstartup.h"
 #include "llpreviewnotecard.h"
 #include "llviewertexteditor.h"
 #include "llcheckboxctrl.h"
+#include "llcombobox.h"
+#include "llspinctrl.h"
 #include "chatbar_as_cmdline.h"
 
 #include "llinventory.h"
@@ -34,17 +35,29 @@ void cmdline_printchat(std::string message);
 
 // -------------------------------------------------------
 
+AOStandTimer* mAOStandTimer;
+
 AOStandTimer::AOStandTimer() : LLEventTimer( gSavedSettings.getF32("EmeraldAOStandInterval") )
 {
-	LLFloaterAO::ChangeStand();
+	AOStandTimer::tick();
 }
 AOStandTimer::~AOStandTimer()
 {
+//	llinfos << "dead" << llendl;
+}
+void AOStandTimer::reset()
+{
+	mPeriod = gSavedSettings.getF32("EmeraldAOStandInterval");
+	mEventTimer.reset();
+//	llinfos << "reset" << llendl;
 }
 BOOL AOStandTimer::tick()
 {
 	LLFloaterAO::stand_iterator++;
-	return LLFloaterAO::ChangeStand();
+//	llinfos << "tick" << llendl;
+	LLFloaterAO::ChangeStand();
+	return FALSE;
+//	return LLFloaterAO::ChangeStand(); //timer is always active now ..
 }
 
 // -------------------------------------------------------
@@ -146,6 +159,11 @@ int LLFloaterAO::stand_iterator = 0;
 LLUUID LLFloaterAO::invfolderid = LLUUID::null;
 LLUUID LLFloaterAO::mCurrentStandId = LLUUID::null;
 
+LLComboBox* mcomboBox_stands;
+LLComboBox* mcomboBox_walks;
+LLComboBox* mcomboBox_sits;
+LLComboBox* mcomboBox_gsits;
+
 struct struct_overrides
 {
 	LLUUID orig_id;
@@ -175,10 +193,8 @@ LLFloaterAO::LLFloaterAO()
 :LLFloater(std::string("floater_ao"))
 {
 //	init();
+	llassert_always(sInstance == NULL);
     LLUICtrlFactory::getInstance()->buildFloater(this, "floater_ao.xml");
-	childSetAction("reloadcard",onClickReloadCard,this);
-	childSetAction("prevstand",onClickPrevStand,this);
-	childSetAction("nextstand",onClickNextStand,this);
 	sInstance = this;
 }
 
@@ -187,6 +203,18 @@ LLFloaterAO::~LLFloaterAO()
     sInstance=NULL;
 	delete mAOItemDropTarget;
 	mAOItemDropTarget = NULL;
+//	llinfos << "floater destroyed" << llendl;
+}
+
+void LLFloaterAO::show(void*)
+{
+    if (!sInstance)
+	sInstance = new LLFloaterAO();
+
+//	if(!sInstance->getVisible())
+//	{
+		sInstance->open();
+//	}
 }
 
 BOOL LLFloaterAO::postBuild()
@@ -222,19 +250,51 @@ BOOL LLFloaterAO::postBuild()
 	{
 		childSetValue("ao_nc_text","Not logged in");
 	}
-	childSetCommitCallback("EmeraldAOEnabled",onClickRun,this);
-//	getChild<LLCheckBoxCtrl>("")->setClickedCallback(run, this);
-//	childSetValue("EmeraldAOEnabled", gSavedPerAccountSettings.getBOOL("EmeraldAOEnabled"));
-//	childSetValue("EmeraldAOSitsEnabled", gSavedPerAccountSettings.getBOOL("EmeraldAOSitsEnabled"));
-//	childSetValue("standtime", gSavedPerAccountSettings.getBOOL("EmeraldAOStandInterval"));
+	childSetAction("reloadcard",onClickReloadCard,this);
+	childSetAction("prevstand",onClickPrevStand,this);
+	childSetAction("nextstand",onClickNextStand,this);
+	childSetCommitCallback("EmeraldAOEnabled",onClickRun);
+	childSetCommitCallback("standtime",onSpinnerCommit);
+	mcomboBox_stands = getChild<LLComboBox>("stands");
+	mcomboBox_walks = getChild<LLComboBox>("walks");
+	mcomboBox_sits = getChild<LLComboBox>("sits");
+	mcomboBox_gsits = getChild<LLComboBox>("gsits");
+	getChild<LLComboBox>("stands")->setCommitCallback(onComboBoxCommit);
+	getChild<LLComboBox>("walks")->setCommitCallback(onComboBoxCommit);
+	getChild<LLComboBox>("sits")->setCommitCallback(onComboBoxCommit);
+	getChild<LLComboBox>("gsits")->setCommitCallback(onComboBoxCommit);
+
 	return TRUE;
 }
 
-void LLFloaterAO::show(void*)
+void LLFloaterAO::onSpinnerCommit(LLUICtrl* ctrl, void* userdata)
 {
-    if (!sInstance)
-	sInstance = new LLFloaterAO();
-    sInstance->open();
+	LLSpinCtrl* spin = (LLSpinCtrl*) ctrl;
+	if(spin)
+	{
+		if (spin->getName() == "standtime")
+		{
+			if (mAOStandTimer) mAOStandTimer->reset();
+		}
+	}
+}
+
+void LLFloaterAO::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
+{
+	LLComboBox* box = (LLComboBox*)ctrl;
+	if(box)
+	{
+		if (box->getName() == "stands")
+		{
+			stand_iterator = box->getCurrentIndex();
+			cmdline_printchat(llformat("Changing stand to %s.",mAOStands[stand_iterator].anim_name.c_str()));
+			ChangeStand();
+		}
+		else
+		{
+			gSavedSettings.setString(box->getControlName(),box->getValue().asString());
+		}
+	}
 }
 
 void LLFloaterAO::init()
@@ -332,9 +392,9 @@ void LLFloaterAO::init()
 		cmdline_printchat("Could not read the specified Config Notecard");
 	}
 
-	mAnimationState = 0;
-	mCurrentStandId = LLUUID::null;
-	setAnimationState(STATE_AGENT_IDLE);
+//	mAnimationState = 0;
+//	mCurrentStandId = LLUUID::null;
+//	setAnimationState(STATE_AGENT_IDLE);
 
 }
 
@@ -347,14 +407,21 @@ void LLFloaterAO::run()
 {
 	if (gSavedSettings.getBOOL("EmeraldAOEnabled"))
 	{
-		new AOStandTimer();
+		if (mAOStandTimer)
+		{
+			mAOStandTimer->reset();
+			mAOStandTimer->tick();
+		}
+		else
+		{
+			mAOStandTimer =	new AOStandTimer();
+	}
 	}
 	else
 	{
 		stopMotion(getCurrentStandId(), FALSE, TRUE); //stop stand first then set state
 		setAnimationState(STATE_AGENT_IDLE);
 	}
-//	return TRUE;
 }
 
 int LLFloaterAO::getAnimationState()
@@ -434,7 +501,6 @@ BOOL LLFloaterAO::ChangeStand()
 {
 	if (gSavedSettings.getBOOL("EmeraldAOEnabled"))
 	{
-//		llinfos << "tick sit getAnimationState() " << getAnimationState() << llendl;
 		if (gAgent.getAvatarObject())
 		{
 			if (gAgent.getAvatarObject()->mIsSitting)
@@ -462,7 +528,7 @@ BOOL LLFloaterAO::ChangeStand()
 
 				setAnimationState(STATE_AGENT_STAND);
 				setCurrentStandId(mAOStands[stand_iterator].ao_id);
-
+				if ((sInstance)&&(mcomboBox_stands)) mcomboBox_stands->selectNthItem(stand_iterator);
 //				llinfos << "changing stand to " << mAOStands[stand_iterator].anim_name << llendl;
 				return FALSE;
 			}
@@ -536,13 +602,10 @@ BOOL LLFloaterAO::stopMotion(const LLUUID& id, BOOL stop_immediate, BOOL stand)
 
 void LLFloaterAO::onClickReloadCard(void* user_data)
 {
-//	cmdline_printchat("fetching inventory");
 	if(gInventory.isEverythingFetched())
 	{
-//		cmdline_printchat("inventory fetched, loading ao");
 		LLFloaterAO::init();
 	}
-//	init();
 }
 
 struct AOAssetInfo
@@ -569,9 +632,11 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 				edit->die();
 
 				mAOStands.clear();
+				if (mcomboBox_stands) mcomboBox_stands->removeall();
+				if (mcomboBox_walks) mcomboBox_walks->removeall();
+				if (mcomboBox_sits) mcomboBox_sits->removeall();
+				if (mcomboBox_gsits) mcomboBox_gsits->removeall();
 				struct_stands loader;
-
-//				if (card.find("@gemini_uuid_ao") != card.npos ) llinfos << "@gemini_uuid_ao found" << llendl;
 
 				typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 				boost::char_separator<char> sep("\n");
@@ -610,10 +675,24 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 								if (GetStateFromToken(strtoken.c_str()) == STATE_AGENT_STAND)
 								{
 									loader.ao_id = animid; loader.anim_name = stranim.c_str(); mAOStands.push_back(loader);
+									if(mcomboBox_stands != NULL) mcomboBox_stands->add(stranim.c_str());
 								}
 								else
 								{
 //									loader.ao_id = animid; loader.anim_name = stranim.c_str(); mAOStands.push_back(loader);
+									if ((GetStateFromToken(strtoken.c_str()) == STATE_AGENT_WALK) && (mcomboBox_walks != NULL))
+									{
+										if (!(mcomboBox_stands->selectByValue(stranim.c_str()))) mcomboBox_walks->add(stranim.c_str());
+									}
+									else if ((GetStateFromToken(strtoken.c_str()) == STATE_AGENT_SIT) && (mcomboBox_walks != NULL))
+									{
+										if (!(mcomboBox_sits->selectByValue(stranim.c_str()))) mcomboBox_sits->add(stranim.c_str());
+									}
+									else if ((GetStateFromToken(strtoken.c_str()) == STATE_AGENT_GROUNDSIT) && (mcomboBox_walks != NULL))
+									{
+										if (!(mcomboBox_gsits->selectByValue(stranim.c_str()))) mcomboBox_gsits->add(stranim.c_str());
+									}
+									
 									for (std::vector<struct_overrides>::iterator iter = mAOOverrides.begin(); iter != mAOOverrides.end(); ++iter)
 									{
 										if (GetStateFromToken(strtoken.c_str()) == iter->state)
@@ -626,6 +705,12 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 						}
 					} 
 				}
+				llinfos << "ao nc read sucess" << llendl;
+				if (mcomboBox_walks) mcomboBox_walks->sortByName();
+				if (mcomboBox_sits) mcomboBox_sits->sortByName();
+				if (mcomboBox_gsits) mcomboBox_gsits->sortByName();
+				stopMotion(getCurrentStandId(), FALSE, TRUE); //stop stand first then set state
+				setAnimationState(STATE_AGENT_IDLE);
 				run(); // start overriding, stands etc..
 			}
 			else
