@@ -71,7 +71,6 @@ AOInvTimer::~AOInvTimer()
 BOOL AOInvTimer::tick()
 {
 	if (!(gSavedSettings.getBOOL("EmeraldAOEnabled"))) return TRUE;
-//	cmdline_printchat("fetching Inventory..");
 	if(LLStartUp::getStartupState() >= STATE_INVENTORY_SEND)
 	{
 		if(gInventory.isEverythingFetched())
@@ -294,6 +293,7 @@ void LLFloaterAO::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 		{
 			int state = STATE_AGENT_IDLE;
 			std::string stranim = box->getValue().asString();
+//			llinfos << "state " << (gAgent.getAvatarObject()->mIsSitting) << " - " << getAnimationState() << llendl;
 			if (box->getName() == "walks")
 			{
 				gSavedPerAccountSettings.setString("EmeraldAODefaultWalk",stranim);
@@ -301,11 +301,30 @@ void LLFloaterAO::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 			}
 			else if (box->getName() == "sits")
 			{
+				if (gAgent.getAvatarObject())
+				{
+					if ((gAgent.getAvatarObject()->mIsSitting) && (getAnimationState() == STATE_AGENT_SIT))
+					{
+//						llinfos << "gsitting " << GetAnimID(ANIM_AGENT_SIT) << " " << getAssetIDByName(stranim) << llendl;
+						gAgent.sendAnimationRequest(GetAnimID(ANIM_AGENT_SIT), ANIM_REQUEST_STOP);
+						gAgent.sendAnimationRequest(getAssetIDByName(stranim), ANIM_REQUEST_START);
+					}
+				}
 				gSavedPerAccountSettings.setString("EmeraldAODefaultSit",stranim);
 				state = STATE_AGENT_SIT;
 			}
 			else if (box->getName() == "gsits")
 			{
+//				llinfos << "gsitting " << GetAnimID(ANIM_AGENT_SIT_GROUND) << " " << getAssetIDByName(stranim) << llendl;
+				if (gAgent.getAvatarObject())
+				{
+					if ((gAgent.getAvatarObject()->mIsSitting) && (getAnimationState() == STATE_AGENT_GROUNDSIT))
+					{
+//						llinfos << "gsitting " << GetAnimID(ANIM_AGENT_SIT_GROUND) << " " << getAssetIDByName(stranim) << llendl;
+						gAgent.sendAnimationRequest(GetAnimID(ANIM_AGENT_SIT_GROUND), ANIM_REQUEST_STOP);
+						gAgent.sendAnimationRequest(getAssetIDByName(stranim), ANIM_REQUEST_START);
+					}
+				}
 				gSavedPerAccountSettings.setString("EmeraldAODefaultGroundSit",stranim);
 				state = STATE_AGENT_GROUNDSIT;
 			}
@@ -433,7 +452,8 @@ void LLFloaterAO::run()
 		if (mAOStandTimer)
 		{
 			mAOStandTimer->reset();
-			mAOStandTimer->tick();
+			//mAOStandTimer->tick();
+			ChangeStand();
 		}
 		else
 		{
@@ -528,9 +548,9 @@ BOOL LLFloaterAO::ChangeStand()
 		{
 			if (gAgent.getAvatarObject()->mIsSitting)
 			{
-				stopMotion(getCurrentStandId(), FALSE, TRUE); //stop stand first then set state
-				setAnimationState(STATE_AGENT_SIT);
-				setCurrentStandId(LLUUID::null);
+//				stopMotion(getCurrentStandId(), FALSE, TRUE); //stop stand first then set state
+//				if (getAnimationState() != STATE_AGENT_GROUNDSIT) setAnimationState(STATE_AGENT_SIT);
+//				setCurrentStandId(LLUUID::null);
 				return FALSE;
 			}
 		}
@@ -613,7 +633,7 @@ BOOL LLFloaterAO::stopMotion(const LLUUID& id, BOOL stop_immediate, BOOL stand)
 //			llinfos << "  state " << getAnimationState() << "/" << GetStateFromAnimID(id) << "(now 0)  stop anim " << id << " overriding with " << GetAnimID(id) << llendl;
 			if (getAnimationState() == GetStateFromAnimID(id))
 			{
-				setAnimationState(STATE_AGENT_IDLE); // if anim id doesnt match the state means we pressed another key in the meantime, so dont reset the state, it should be correct
+				setAnimationState(STATE_AGENT_IDLE);
 			}
 			startMotion(getCurrentStandId(), 0, TRUE);
 			gAgent.sendAnimationRequest(GetAnimID(id), ANIM_REQUEST_STOP);
@@ -724,8 +744,6 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 											if (!(mcomboBox_gsits->selectByValue(stranim.c_str()))) mcomboBox_gsits->add(stranim.c_str()); //check if exist
 									}
 									}
-									else
-									{
 									for (std::vector<struct_overrides>::iterator iter = mAOOverrides.begin(); iter != mAOOverrides.end(); ++iter)
 									{
 										if (GetStateFromToken(strtoken.c_str()) == iter->state)
@@ -737,7 +755,6 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 							}
 						}
 					} 
-				}
 				}
 				llinfos << "ao nc read sucess" << llendl;
 
