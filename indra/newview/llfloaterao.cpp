@@ -292,7 +292,30 @@ void LLFloaterAO::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 		}
 		else
 		{
-			gSavedSettings.setString(box->getControlName(),box->getValue().asString());
+			int state = STATE_AGENT_IDLE;
+			std::string stranim = box->getValue().asString();
+			if (box->getName() == "walks")
+			{
+				gSavedPerAccountSettings.setString("EmeraldAODefaultWalk",stranim);
+				state = STATE_AGENT_WALK;
+			}
+			else if (box->getName() == "sits")
+			{
+				gSavedPerAccountSettings.setString("EmeraldAODefaultSit",stranim);
+				state = STATE_AGENT_SIT;
+			}
+			else if (box->getName() == "gsits")
+			{
+				gSavedPerAccountSettings.setString("EmeraldAODefaultGroundSit",stranim);
+				state = STATE_AGENT_GROUNDSIT;
+			}
+			for (std::vector<struct_overrides>::iterator iter = mAOOverrides.begin(); iter != mAOOverrides.end(); ++iter)
+			{
+				if (state == iter->state)
+				{
+					iter->ao_id = getAssetIDByName(stranim);
+				}
+			}
 		}
 	}
 }
@@ -680,19 +703,29 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 								else
 								{
 //									loader.ao_id = animid; loader.anim_name = stranim.c_str(); mAOStands.push_back(loader);
-									if ((GetStateFromToken(strtoken.c_str()) == STATE_AGENT_WALK) && (mcomboBox_walks != NULL))
+									if (GetStateFromToken(strtoken.c_str()) == STATE_AGENT_WALK)
 									{
-										if (!(mcomboBox_stands->selectByValue(stranim.c_str()))) mcomboBox_walks->add(stranim.c_str());
-									}
-									else if ((GetStateFromToken(strtoken.c_str()) == STATE_AGENT_SIT) && (mcomboBox_walks != NULL))
+										if (sInstance && (mcomboBox_walks != NULL))
 									{
-										if (!(mcomboBox_sits->selectByValue(stranim.c_str()))) mcomboBox_sits->add(stranim.c_str());
+											if (!(mcomboBox_walks->selectByValue(stranim.c_str()))) mcomboBox_walks->add(stranim.c_str()); //check if exist
 									}
-									else if ((GetStateFromToken(strtoken.c_str()) == STATE_AGENT_GROUNDSIT) && (mcomboBox_walks != NULL))
+									}
+									else if (GetStateFromToken(strtoken.c_str()) == STATE_AGENT_SIT)
 									{
-										if (!(mcomboBox_gsits->selectByValue(stranim.c_str()))) mcomboBox_gsits->add(stranim.c_str());
+										if (sInstance && (mcomboBox_sits != NULL))
+										{
+											if (!(mcomboBox_sits->selectByValue(stranim.c_str()))) mcomboBox_sits->add(stranim.c_str()); //check if exist
 									}
-									
+									}
+									else if (GetStateFromToken(strtoken.c_str()) == STATE_AGENT_GROUNDSIT)
+									{
+										if (sInstance && (mcomboBox_gsits != NULL))
+										{
+											if (!(mcomboBox_gsits->selectByValue(stranim.c_str()))) mcomboBox_gsits->add(stranim.c_str()); //check if exist
+									}
+									}
+									else
+									{
 									for (std::vector<struct_overrides>::iterator iter = mAOOverrides.begin(); iter != mAOOverrides.end(); ++iter)
 									{
 										if (GetStateFromToken(strtoken.c_str()) == iter->state)
@@ -705,10 +738,32 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 						}
 					} 
 				}
+				}
 				llinfos << "ao nc read sucess" << llendl;
-				if (mcomboBox_walks) mcomboBox_walks->sortByName();
-				if (mcomboBox_sits) mcomboBox_sits->sortByName();
-				if (mcomboBox_gsits) mcomboBox_gsits->sortByName();
+
+//				if (mcomboBox_walks) mcomboBox_walks->sortByName();
+//				if (mcomboBox_sits) mcomboBox_sits->sortByName();
+//				if (mcomboBox_gsits) mcomboBox_gsits->sortByName();
+
+				if (sInstance && (mcomboBox_walks != NULL))
+				{
+					for (std::vector<struct_overrides>::iterator iter = mAOOverrides.begin(); iter != mAOOverrides.end(); ++iter)
+					{
+						if ((STATE_AGENT_WALK == iter->state) && (mcomboBox_walks->selectByValue(gSavedPerAccountSettings.getString("EmeraldAODefaultWalk"))))
+						{
+							iter->ao_id = getAssetIDByName(gSavedPerAccountSettings.getString("EmeraldAODefaultWalk"));
+						}
+						else if ((STATE_AGENT_SIT == iter->state) && (mcomboBox_sits->selectByValue(gSavedPerAccountSettings.getString("EmeraldAODefaultSit"))))
+						{
+							iter->ao_id = getAssetIDByName(gSavedPerAccountSettings.getString("EmeraldAODefaultSit"));
+						}
+						else if ((STATE_AGENT_GROUNDSIT == iter->state) && (mcomboBox_gsits->selectByValue(gSavedPerAccountSettings.getString("EmeraldAODefaultGroundSit"))))
+						{
+							iter->ao_id = getAssetIDByName(gSavedPerAccountSettings.getString("EmeraldAODefaultGroundSit"));
+						}
+					}
+				}
+
 				stopMotion(getCurrentStandId(), FALSE, TRUE); //stop stand first then set state
 				setAnimationState(STATE_AGENT_IDLE);
 				run(); // start overriding, stands etc..
