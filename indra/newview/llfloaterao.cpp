@@ -75,7 +75,7 @@ BOOL AOInvTimer::tick()
 	{
 		if(gInventory.isEverythingFetched())
 		{
-			cmdline_printchat("Inventory fetched, loading AO.");
+//			cmdline_printchat("Inventory fetched, loading AO.");
 			LLFloaterAO::init();
 			return TRUE;
 		}
@@ -210,10 +210,8 @@ void LLFloaterAO::show(void*)
     if (!sInstance)
 	sInstance = new LLFloaterAO();
 
-//	if(!sInstance->getVisible())
-//	{
 		sInstance->open();
-//	}
+	init();
 }
 
 BOOL LLFloaterAO::postBuild()
@@ -305,7 +303,7 @@ void LLFloaterAO::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 				{
 					if ((gAgent.getAvatarObject()->mIsSitting) && (getAnimationState() == STATE_AGENT_SIT))
 					{
-//						llinfos << "gsitting " << GetAnimID(ANIM_AGENT_SIT) << " " << getAssetIDByName(stranim) << llendl;
+//						llinfos << "sitting " << GetAnimID(ANIM_AGENT_SIT) << " " << getAssetIDByName(stranim) << llendl;
 						gAgent.sendAnimationRequest(GetAnimID(ANIM_AGENT_SIT), ANIM_REQUEST_STOP);
 						gAgent.sendAnimationRequest(getAssetIDByName(stranim), ANIM_REQUEST_START);
 					}
@@ -781,8 +779,8 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 					}
 				}
 
-				stopMotion(getCurrentStandId(), FALSE, TRUE); //stop stand first then set state
-				setAnimationState(STATE_AGENT_IDLE);
+//				stopMotion(getCurrentStandId(), FALSE, TRUE); //stop stand first then set state
+//				setAnimationState(STATE_AGENT_IDLE);
 				run(); // start overriding, stands etc..
 			}
 			else

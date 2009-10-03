@@ -2145,6 +2145,7 @@ void LLFloaterAvatarList::checkAnnouncements()
 	}
 
 	// Where the heck are iterators in LLDynamicArray?
+	if (!regionp) return; // caused crash if logged out/connection lost
 	for (int i = 0; i < regionp->mMapAvatarIDs.count(); i++)
 	{
 		const LLUUID &id = regionp->mMapAvatarIDs.get(i);
