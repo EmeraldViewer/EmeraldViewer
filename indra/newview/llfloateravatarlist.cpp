@@ -145,24 +145,33 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 		case ALERT_TYPE_SIM:
 			if(gSavedSettings.getBOOL("EmeraldRadarAlertSim"))
 			{
+				chat.mFromName = name;
+				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
 				chat.mText = name+" has "+(entering ? "entered" : "left")+" the sim.";// ("+key.asString()+")";
 			}
 			break;
 		case ALERT_TYPE_DRAW:
 			if(gSavedSettings.getBOOL("EmeraldRadarAlertDraw"))
 			{
+				chat.mFromName = name;
+				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
 				chat.mText = name+" has "+(entering ? "entered" : "left")+" draw distance.";// ("+key.asString()+")";
 			}
 			break;
 		case ALERT_TYPE_CHATRANGE:
 			if(gSavedSettings.getBOOL("EmeraldRadarAlertChatRange"))
 			{
+				chat.mFromName = name;
+				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
 				chat.mText = name+" has "+(entering ? "entered" : "left")+" chat range.";// ("+key.asString()+")";
 			}
 			break;
 		case ALERT_TYPE_AGE:
 			if(gSavedSettings.getBOOL("EmeraldAvatarAgeAlert"))
 			{
+				chat.mFromName = name;
+				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
+
 				make_ui_sound("EmeraldAvatarAgeAlertSoundUUID");
 				chat.mText = name+" has triggered your avatar age alert.";
 			}

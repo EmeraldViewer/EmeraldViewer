@@ -553,6 +553,7 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("RenderDelayCreation")->getSignal()->connect(boost::bind(&handleRenderDelayCreationChanged, _1));
 	gSavedSettings.getControl("RenderUnloadedAvatar")->getSignal()->connect(boost::bind(&handleRenderUnloadedAvatarChanged, _1));
 	gSavedSettings.getControl("RenderGamma")->getSignal()->connect(boost::bind(&handleGammaChanged, _1));
+	gSavedSettings.getControl("EmeraldNewShiny")->getSignal()->connect(boost::bind(&handleSetShaderChanged, _1));
 	gSavedSettings.getControl("EmeraldBoobMass")->getSignal()->connect(boost::bind(&handleAvatarBoobMassChanged, _1));
 	gSavedSettings.getControl("EmeraldBoobHardness")->getSignal()->connect(boost::bind(&handleAvatarBoobHardnessChanged, _1));
 	gSavedSettings.getControl("EmeraldBoobZMax")->getSignal()->connect(boost::bind(&handleAvatarBoobZMaxChanged, _1));
