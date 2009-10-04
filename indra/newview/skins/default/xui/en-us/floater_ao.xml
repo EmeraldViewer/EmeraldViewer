@@ -72,7 +72,7 @@
     font="SansSerifSmall"
     left="210"
     bottom_delta="-22"
-    width="90"
+    width="50"
     height="20"
     follows="bottom|left"
 		/>
@@ -81,13 +81,15 @@
   tool_tip="next stand"
   label="&gt;&gt;"
   font="SansSerifSmall"
-  left="300"
+  left="260"
   bottom_delta="0"
-  width="90"
+  width="50"
   height="20"
   follows="bottom|left"
 		/>
-
+  <check_box bottom_delta="0" control_name="EmeraldAOStandRandomize" enabled="true"
+ follows="left|top" font="SansSerifSmall" height="16" initial_value="false" label="randomize" left="310"
+ mouse_opaque="true" name="EmeraldAOStandRandomize" radio_style="false" width="90" />
   <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom_delta="-20" drop_shadow_visible="true" follows="left|bottom"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="210"

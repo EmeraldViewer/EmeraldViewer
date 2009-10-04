@@ -555,6 +555,10 @@ BOOL LLFloaterAO::ChangeStand()
 		if ((getAnimationState() == STATE_AGENT_IDLE) || (getAnimationState() == STATE_AGENT_STAND))// stands have lowest priority
 		{
 			if (!(mAOStands.size() > 0)) return TRUE;
+			if (gSavedSettings.getBOOL("EmeraldAOStandRandomize"))
+			{
+				stand_iterator = ll_rand(mAOStands.size()-1);
+			}
 			if (stand_iterator < 0) stand_iterator = int( mAOStands.size()-stand_iterator);
 			if (stand_iterator > int( mAOStands.size()-1)) stand_iterator = 0;
 
