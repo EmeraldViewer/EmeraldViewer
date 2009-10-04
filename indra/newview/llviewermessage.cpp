@@ -3107,15 +3107,6 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 			{
 				((LLVOAvatar*)chatter)->startTyping();
 			}
-
-			if ( LLFloaterAvatarList::getInstance() )
-			{
-				LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(from_id);
-				if ( ent )
-				{
-					ent->setActivity(ACTIVITY_TYPING);
-				}
-			}
 			return;
 		}
 		else if (CHAT_TYPE_STOP == chat.mChatType)

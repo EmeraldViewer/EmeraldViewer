@@ -2216,6 +2216,7 @@ void addParticleSourcesToList(LLDrawable *drawablep)
 			LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(id);
 			if ( NULL != ent )
 			{
+				if ( ent->getActivity() != ACTIVITY_TYPING)
 				ent->setActivity(ACTIVITY_PARTICLES);
 			}
 		}
@@ -2422,6 +2423,7 @@ void LLPipeline::postSort(LLCamera& camera)
 
 			if ( ent )
 			{
+				if ( ent->getActivity() != ACTIVITY_TYPING)
 				ent->setActivity(ACTIVITY_SOUND);
 			}
 		}

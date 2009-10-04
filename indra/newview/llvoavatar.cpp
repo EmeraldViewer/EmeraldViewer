@@ -114,6 +114,7 @@
 #include "llviewermessage.h"
 #include "llsdserialize.h" // client resolver
 #include "lggBeamMaps.h"
+#include "llfloateravatarlist.h"
 
 #include "boost/lexical_cast.hpp"
 
@@ -5412,6 +5413,15 @@ BOOL LLVOAvatar::processSingleAnimationStateChange( const LLUUID& anim_id, BOOL 
 	{
 		if (anim_id == ANIM_AGENT_TYPE)
 		{
+			// Avatar list support
+			if ( LLFloaterAvatarList::getInstance() )
+			{
+				LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(getID());
+				if ( ent )
+				{
+					ent->setActivity(ACTIVITY_TYPING);
+				}
+			}
 			if (gAudiop)
 			{
 				LLVector3d char_pos_global = gAgent.getPosGlobalFromAgent(getCharacterPosition());
@@ -5452,6 +5462,18 @@ BOOL LLVOAvatar::processSingleAnimationStateChange( const LLUUID& anim_id, BOOL 
 	}
 	else //stop animation
 	{
+		if (anim_id == ANIM_AGENT_TYPE)
+		{
+			// Avatar list support
+			if ( LLFloaterAvatarList::getInstance() )
+			{
+				LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(getID());
+				if ( ent )
+				{
+					ent->setActivity(ACTIVITY_NONE);
+				}
+			}
+		}
 		if (anim_id == ANIM_AGENT_SIT_GROUND_CONSTRAINED)
 		{
 			mIsSitting = FALSE;
