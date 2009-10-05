@@ -341,7 +341,6 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 			edit_text_contents,
 			sFont,
 			FALSE);
-			mUserInputBox->setFocus(TRUE);
 			mUserInputBox->setBorderVisible(TRUE);
 			mUserInputBox->setTakesNonScrollClicks(TRUE);
 			mUserInputBox->setHideScrollbarForShortDocs(TRUE);

@@ -2130,6 +2130,7 @@ void LLFloaterAvatarList::onClickTeleport(void* userdata)
 void LLFloaterAvatarList::checkAnnouncements()
 {
 	LLViewerRegion* regionp = gAgent.getRegion();
+	if(!regionp)return;//ALWAYS VALIDATE DATA
 	std::ostringstream ids;
 	std::set<LLUUID> new_set;
 	static int last_transact_num = 0;
