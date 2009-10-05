@@ -211,8 +211,8 @@ void LLOverlayBar::refresh()
 	int unread_count = gIMMgr->getIMUnreadCount();
 	LLButton* button = getChild<LLButton>("IM Received");
 
-	if (button && button->getVisible() != im_received ||
-		button && button->getVisible())
+	if ((button && button->getVisible() != im_received) ||
+			(button && button->getVisible()))
 	{
 		if (unread_count > 0)
 		{
