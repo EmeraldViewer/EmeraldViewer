@@ -646,7 +646,13 @@ void LLWearable::writeToAvatar( BOOL set_by_user )
 			if(param_id == 507)
 			{
 				 //ZOMG: When switching shapes from inventory
+
+			llwarns << "-------------------------------- " << llendl;
+			llwarns << "write To Avatar for  " << avatar->getFullname() << llendl;
+			llwarns << "-------------------------------- " << llendl;
+
 				avatar->setActualBoobGrav(weight);
+				continue;
 			}
 			// only animate with user-originated changes
 			if (set_by_user)
@@ -738,7 +744,11 @@ void LLWearable::removeFromAvatar( EWearableType type, BOOL set_by_user )
 		if( (((LLViewerVisualParam*)param)->getWearableType() == type) && (param->getGroup() == VISUAL_PARAM_GROUP_TWEAKABLE ) )
 		{
 			S32 param_id = param->getID();
-			avatar->setVisualParamWeight( param_id, param->getDefaultWeight(), set_by_user );
+			llwarns << "-------------------------------- " << llendl;
+			llwarns << "remove From Avatar " << llendl;
+			llwarns << "-------------------------------- " << llendl;
+			if(param->getID() != 507)
+				avatar->setVisualParamWeight( param_id, param->getDefaultWeight(), set_by_user );
 		}
 	}
 

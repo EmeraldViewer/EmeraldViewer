@@ -5654,6 +5654,17 @@
         <integer>0</integer>
       </array>
     </map>
+  <key>AvatarMorphTime</key>
+  <map>
+    <key>Comment</key>
+    <string>Time it takes to morph into new shape.</string>
+    <key>Persist</key>
+    <integer>1</integer>
+    <key>Type</key>
+    <string>F32</string>
+    <key>Value</key>
+    <real>0.65</real>
+  </map>
   <key>EmeraldBoobMass</key>
   <map>
     <key>Comment</key>

@@ -520,7 +520,7 @@ private:
 
 public:
 	F32				getActualBoobGrav() { return mActualBoobGrav; }
-	void			setActualBoobGrav(F32 grav) { mActualBoobGrav = grav; }
+	void			setActualBoobGrav(F32 grav) { mActualBoobGrav = grav; mFirstIdleUpdateBoobGravRan = true; }
 
 	static F32		sBoobMass;
 	static F32		sBoobHardness;
@@ -559,6 +559,7 @@ public:
 	static F32		sLODFactor; // user-settable LOD factor
 	static BOOL		sJointDebug; // output total number of joints being touched for each avatar
 	static BOOL     sDebugAvatarRotation;
+	static F32		sAvMorphTime;
 
 	static S32 sNumVisibleAvatars; // Number of instances of this class
 	

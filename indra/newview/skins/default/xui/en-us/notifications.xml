@@ -6860,6 +6860,8 @@ This enables you and other avatar's breasts to have actual physics applied to th
    This controls the internal friction. Brings the breasts to a halt. Higher the number, quicker they stop.
 -Z Influence
    Changes how much your avatar's movement will effect the breasts. Higher = more effect.
+-Min Vel
+   This value is the minimum amount of velocity you have to have, in order to effect breasts. This scales with Max Vel. 
 
   </notification>
 

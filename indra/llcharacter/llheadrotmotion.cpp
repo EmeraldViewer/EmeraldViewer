@@ -487,21 +487,19 @@ BOOL LLEyeMotion::onUpdate(F32 time, U8* joint_mask)
 		// convert target rotation to head-local coordinates
 		*/
 
-		LLVector3 forward =  (LLVector3::x_axis * mHeadJoint->getWorldRotation()) * 5.0f;
+		LLVector3 forward =  (LLVector3::x_axis * mHeadJoint->getWorldRotation()) * 5.f;
 		forward.normVec();
 		eye_look_at = forward;
 		lookAtDistance = eye_look_at.normVec();
 
-		if(mEyeRefocusTimer.getElapsedTimeF32() > 1.5f)
+		if(mEyeRefocusTimer.getElapsedTimeF32() > 1.5f + ll_frand(2.f))
 		{
 			mEyeRefocusTimer.reset();
 			mLastTargetPos = eye_look_at;
 		}
 		else
-		{
 			if(mCharacter->getAppearanceFlag() != true)
 				eye_look_at = mLastTargetPos;
-		}
 
 
 		left.setVec(skyward % eye_look_at);
