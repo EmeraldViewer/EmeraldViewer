@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<floater name="geminifloater" title="Animation Overrider">
+  <text name="buttons_desc">
+    Konfigurationsnotiz:
+  </text>
+  <button name="reloadcard" label="Neuladen"/>
+  <view_border name="ao_notecard"/>
+  <text name="Give inventory" tool_tip="ZHAO Notiz hier fallen lassen. Konfiguration und Animationen müssen im gleichen Inventar Ordner liegen!">
+    ZHAO II Konfiguration hier fallen lassen.
+  </text>
+  <view_border name="ao_notecard_disp"/>
+  <text name="ao_nc_text" tool_tip="">
+    Aktuell: ITEM
+  </text>
+  <check_box label="Anis übersteuern" name="EmeraldAOEnabled"/>
+  <check_box label="Sitzanis überschreiben" name="EmeraldAOSitsEnabled"/>
+  <spinner name="standtime" label="Stand Zeit" tool_tip="AO Stand Zeit in Sekunden"/>
+  <text name="buttons_desc">
+    Stands:
+  </text>
+  <combo_box name="stands" label=""/>
+  <button name="prevstand" tool_tip="vorheriger Stand" label="&lt;&lt;"/>
+  <button name="nextstand" tool_tip="nächster Stand" label="&gt;&gt;"/>
+  <check_box label="zufällig" name="EmeraldAOStandRandomize"/>
+  <text name="buttons_desc">
+    Standard Gehen:
+  </text>
+  <combo_box name="walks" label=""/>
+  <text name="buttons_desc">
+    Standard Sitzen:
+  </text>
+  <combo_box name="sits" label=""/>
+  <text name="buttons_desc">
+    Standard Boden sitzen:
+  </text>
+  <combo_box name="gsits" label=""/>
+</floater>

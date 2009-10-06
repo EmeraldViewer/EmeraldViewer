@@ -253,5 +253,7 @@
 		<menu_item_check label="Teleport Verlauf" name="Teleport History"/>
 		<menu_item_check label="Lua Konsole" name="Lua Console"/>
     <menu_item_check label="Asset Browser" name="asset browser"/>
+    <menu_item_check label="AO" name="AO"/>
+    </menu_item_check>
 	</menu>
 </menu_bar>

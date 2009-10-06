@@ -425,8 +425,6 @@ Simulator damit man per Script darauf zugreifen kann.
     </panel>
     <panel label="Effekte" name="Effects">
       <button label="?" name="EmeraldHelp_Effects" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
-      <button label="Schatten AN" name="Emerald_ShadowsON" tool_tip="Aktiviert das Anzeigen von dynamischen Schatten. Das Ergebnis kann unterschiedlich ausfallen und die Leistung negativ beeinflussen."/>
-      <button label="Schatten AUS" name="Emerald_ShadowsOFF" tool_tip="Deaktiviert die Anzeige von dynamische Schatten."/>
       <check_box label="Aktiviere erweiterte Physik für Avatar Brüste" name="EmBreastsToggle"/>
       <slider name="EmeraldBoobMass" label="Brust Masse:" tool_tip=""/>
       <slider name="EmeraldBoobHardness" label="Brust Rückprall:" tool_tip=""/>
@@ -435,6 +433,14 @@ Simulator damit man per Script darauf zugreifen kann.
       <slider name="EmeraldBoobFriction" label="Brust Reibung:" tool_tip=""/>
       <slider name="EmeraldBoobZInfluence" label="Brust Z Einfluss:" tool_tip=""/>
       <button label="Standard" name="EmeraldBreastReset" tool_tip="Setzt die Einstellungen auf Standardwerte zurück"/>
+      <check_box label="Aktiviere neue Glanz Berechnung" name="EmeraldNewShiny"/>
+      <check_box label="Aktiviere Schatten Berechnung" name="EmeraldShadowsON"/>
+<!--
+      <button bottom_delta="-40" follows="left|top" font="SansSerifSmall" height="20" label="Shadows ON" name="Emerald_ShadowsON" 
+              tool_tip="Turn on the rendering of dynamic shadows cast by objects inworld. Result may vary, and the having it on may affect the framerate negatively." left="10" width="100" />
+      <button bottom_delta="0" follows="left|top" font="SansSerifSmall" height="20" label="Shadows OFF" name="Emerald_ShadowsOFF" tool_tip="Turn off the rendering of dynamic shadows."
+              left="120" width="100" />
+-->
     </panel>
   </tab_container>
   </tab_container>
