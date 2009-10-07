@@ -576,29 +576,30 @@ S32 LLFontGL::render(const LLWString &wstr,
 		}
 		else
 		{
-			if (!hasGlyph(wch))
+			const LLFontGlyphInfo* fgi = getGlyphInfo(wch);
+			if(!fgi || !fgi->mIsRendered)
 			{
-				addChar(wch);
+				if(!addChar(wch))
+				{
+					LL_ERRS("FONTS") << "Missing Glyph Info" << LL_ENDL;
+					break;
+				}
+				//Zwag: Can this possibly fail after the above didn't fail?
+				fgi = getGlyphInfo(wch);
 			}
-
-			const LLFontGlyphInfo* fgi= getGlyphInfo(wch);
-			if (!fgi)
+			
+			if ((start_x + scaled_max_pixels) < (cur_x + fgi->mXBearing + fgi->mWidth))
 			{
-				llerrs << "Missing Glyph Info" << llendl;
+				// Not enough room for this character.
 				break;
 			}
+
 			// Per-glyph bitmap texture.
 			LLImageGL *image_gl = mFontBitmapCachep->getImageGL(fgi->mBitmapNum);
 			if (last_bound_texture != image_gl)
 			{
 				gGL.getTexUnit(0)->bind(image_gl);
 				last_bound_texture = image_gl;
-			}
-
-			if ((start_x + scaled_max_pixels) < (cur_x + fgi->mXBearing + fgi->mWidth))
-			{
-				// Not enough room for this character.
-				break;
 			}
 
 			// Draw the text at the appropriate location
@@ -623,11 +624,17 @@ S32 LLFontGL::render(const LLWString &wstr,
 			if (next_char && (next_char < LAST_CHARACTER))
 			{
 				// Kern this puppy.
-				if (!hasGlyph(next_char))
+				LLFontGlyphInfo* next_fgi = getGlyphInfo(next_char);
+				if (!next_fgi || !next_fgi->mIsRendered)
 				{
-					addChar(next_char);
+					if(!addChar(next_char))
+					{
+						LL_ERRS("FONTS") << "Can't get glyph info!" << LL_ENDL;
+						break;
+					}
+					next_fgi = getGlyphInfo(next_char);
 				}
-				cur_x += getXKerning(wch, next_char);
+				cur_x += getXKerning(fgi, next_fgi);
 			}
 
 			// Round after kerning.

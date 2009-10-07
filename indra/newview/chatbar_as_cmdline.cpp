@@ -270,6 +270,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 			{
 				//Zwag: I wonder how many people will actually get this?
 				cmdline_printchat("Nothing happens.");
+				return false;
 			}
 		}
 	}
