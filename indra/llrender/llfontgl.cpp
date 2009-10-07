@@ -507,6 +507,7 @@ S32 LLFontGL::render(const LLWString &wstr,
 	// Remember last-used texture to avoid unnecesssary bind calls.
 	LLImageGL *last_bound_texture = NULL;
 
+	gGL.begin(LLRender::QUADS);
 	for (i = begin_offset; i < begin_offset + length; i++)
 	{
 		llwchar wch = wstr[i];
@@ -648,6 +649,7 @@ S32 LLFontGL::render(const LLWString &wstr,
 			cur_render_y = cur_y;
 		}
 	}
+	gGL.end();
 
 	if (right_x)
 	{
@@ -1120,7 +1122,7 @@ void LLFontGL::drawGlyph(const LLRectf& screen_rect, const LLRectf& uv_rect, con
 	F32 slant_offset;
 	slant_offset = ((style & ITALIC) ? ( -mAscender * 0.2f) : 0.f);
 
-	gGL.begin(LLRender::QUADS);
+	
 	{
 		//FIXME: bold and drop shadow are mutually exclusive only for convenience
 		//Allow both when we need them.
@@ -1186,7 +1188,6 @@ void LLFontGL::drawGlyph(const LLRectf& screen_rect, const LLRectf& uv_rect, con
 		}
 
 	}
-	gGL.end();
 }
 
 std::string LLFontGL::nameFromFont(const LLFontGL* fontp)
