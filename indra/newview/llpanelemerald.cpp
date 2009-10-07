@@ -221,6 +221,8 @@ BOOL LLPanelEmerald::postBuild()
 
 	getChild<LLButton>("revert_production_voice_btn")->setClickedCallback(onClickVoiceRevertProd, this);
 	getChild<LLButton>("revert_debug_voice_btn")->setClickedCallback(onClickVoiceRevertDebug, this);
+
+	getChild<LLButton>("EmeraldBreastReset")->setClickedCallback(onClickBoobReset, this);
 	
 
 	childSetCommitCallback("production_voice_field", onCommitApplyControl);//onCommitVoiceProductionServerName);
@@ -387,6 +389,34 @@ void LLPanelEmerald::onClickVoiceRevertProd(void* data)
 	gSavedSettings.setString("vivoxProductionServerName", "bhr.vivox.com");
 	self->getChild<LLLineEditor>("production_voice_field")->setValue("bhr.vivox.com");
 }
+
+void LLPanelEmerald::onClickBoobReset(void* data)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)data;
+	LLControlVariable *var;
+
+	var = self->findControl("EmeraldBoobMass");
+	self->getChild<LLSliderCtrl>("EmeraldBoobMass")->setValue(var->getDefault());
+
+	var = self->findControl("EmeraldBoobHardness");
+	self->getChild<LLSliderCtrl>("EmeraldBoobHardness")->setValue(var->getDefault());
+
+	var = self->findControl("EmeraldBoobZMax");
+	self->getChild<LLSliderCtrl>("EmeraldBoobZMax")->setValue(var->getDefault());
+
+	var = self->findControl("EmeraldBoobVelMax");
+	self->getChild<LLSliderCtrl>("EmeraldBoobVelMax")->setValue(var->getDefault());
+
+	var = self->findControl("EmeraldBoobFriction");
+	self->getChild<LLSliderCtrl>("EmeraldBoobFriction")->setValue(var->getDefault());
+
+	var = self->findControl("EmeraldBoobZInfluence");
+	self->getChild<LLSliderCtrl>("EmeraldBoobZInfluence")->setValue(var->getDefault());
+
+	var = self->findControl("EmeraldBoobFrictionFraction");
+	self->getChild<LLSliderCtrl>("EmeraldBoobFrictionFraction")->setValue(var->getDefault());
+}
+
 void LLPanelEmerald::onCustomBeam(void* data)
 {
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
