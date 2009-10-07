@@ -8,21 +8,31 @@
 	can_close="true"
 	can_drag_on_left="false"
 	width="400"
-	height="220">
+	height="300">
 
   <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom_delta="-42" drop_shadow_visible="true" follows="left|bottom"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="10"
 	     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
-    Config Notecard:
+    Notecard:
   </text>
   <button
-      name="reloadcard"
-      label="Reload Card"
+      name="opencard"
+      label="Open"
       font="SansSerifSmall"
-      left="100"
+      left="70"
       bottom_delta="0"
-      width="90"
+      width="60"
+      height="20"
+      follows="bottom|left"
+		/>
+  <button
+      name="reloadcard"
+      label="Reload"
+      font="SansSerifSmall"
+      left="131"
+      bottom_delta="0"
+      width="60"
       height="20"
       follows="bottom|left"
 		/>
@@ -54,12 +64,16 @@
 	 follows="left|top" font="SansSerifSmall" height="16" initial_value="true" label="Override Sits" left="110"
 	 mouse_opaque="true" name="EmeraldAOSitsEnabled" radio_style="false" width="90" />
 
-  <spinner bottom_delta="-20" decimal_digits="2" follows="left|top" height="16" control_name="EmeraldAOStandInterval"
-	 increment="1" initial_val="20" left="10" max_val="240" min_val="1.00"
+  <spinner bottom_delta="-40" decimal_digits="2" follows="left|top" height="16" control_name="EmeraldAOStandInterval"
+	 increment="1" initial_val="20" left="10" max_val="9000" min_val="1.00"
 	 mouse_opaque="true" name="standtime" label="Stand Time" label_width="80"
 	 tool_tip="AO Stand Time in seconds" width="180" />
+  <check_box bottom_delta="-20" control_name="EmeraldAONoStandsInMouselook" enabled="true"
+	 follows="left|top" font="SansSerifSmall" height="16" initial_value="true" label="Disable Stands in Mouselook" left="10"
+	 mouse_opaque="true" name="EmeraldAONoStandsInMouselook" radio_style="false" width="180" />
+
   <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-	     bottom_delta="100" drop_shadow_visible="true" follows="left|bottom"
+	     bottom_delta="140" drop_shadow_visible="true" follows="left|bottom"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="210"
 	     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
     Stands:
@@ -101,6 +115,20 @@
 	     bottom_delta="-20" drop_shadow_visible="true" follows="left|bottom"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="210"
 	     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
+    Default Run:
+  </text>
+  <combo_box name="runs" label="" follows="left|top" height="20" left="210" width="180" bottom_delta="-20" control_name="EmeraldAODefaultRun" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+	     bottom_delta="-20" drop_shadow_visible="true" follows="left|bottom"
+	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="210"
+	     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
+    Default Jump:
+  </text>
+  <combo_box name="jumps" label="" follows="left|top" height="20" left="210" width="180" bottom_delta="-20" control_name="EmeraldAODefaultJump" />
+  <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
+     bottom_delta="-20" drop_shadow_visible="true" follows="left|bottom"
+     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="210"
+     mouse_opaque="true" name="buttons_desc" v_pad="0" width="180">
     Default Sit:
   </text>
   <combo_box name="sits" label="" follows="left|top" height="20" left="210" width="180" bottom_delta="-20" control_name="EmeraldAODefaultSit" />

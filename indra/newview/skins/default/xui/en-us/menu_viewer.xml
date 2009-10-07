@@ -1012,7 +1012,7 @@
       <on_check function="Phox.CheckAssetBrowser" userdata="" />
     </menu_item_check>
     <menu_item_check bottom="-58" enabled="true" height="20" label="AO" left="0"
-         mouse_opaque="true" name="AO" shortcut="alt|q" width="155">
+         mouse_opaque="true" name="AO" shortcut="control|shift|o" width="155">
       <on_click function="AO" userdata="" />
     </menu_item_check>
 

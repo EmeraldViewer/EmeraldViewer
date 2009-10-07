@@ -154,6 +154,28 @@
         <key>Value</key>
         <string></string>
       </map>
+      <key>EmeraldAODefaultRun</key>
+      <map>
+        <key>Comment</key>
+        <string>Default run anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultJump</key>
+      <map>
+        <key>Comment</key>
+        <string>Default jump anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
       <key>EmeraldAODefaultGroundSit</key>
       <map>
         <key>Comment</key>
