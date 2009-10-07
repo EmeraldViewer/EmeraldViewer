@@ -287,6 +287,7 @@ void LLTextBox::draw()
 		gl_rect_2d_offset_local(getLocalRect(), 2, FALSE);
 	}
 
+	/*
 	if( mBorderDropShadowVisible )
 	{
 		static LLColor4 color_drop_shadow = LLUI::sColorsGroup->getColor("ColorDropShadow");
@@ -294,6 +295,7 @@ void LLTextBox::draw()
 		gl_drop_shadow(0, getRect().getHeight(), getRect().getWidth(), 0,
 			color_drop_shadow, drop_shadow_tooltip);
 	}
+	*/
 
 	if (mBackgroundVisible)
 	{

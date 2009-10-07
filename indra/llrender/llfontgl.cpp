@@ -649,7 +649,7 @@ S32 LLFontGL::render(const LLWString &wstr,
 			cur_render_y = cur_y;
 		}
 	}
-	gGL.end();
+	//gGL.end();
 
 	if (right_x)
 	{
@@ -663,6 +663,7 @@ S32 LLFontGL::render(const LLWString &wstr,
 		gGL.vertex2f(start_x, cur_y - (mDescender));
 		gGL.vertex2f(cur_x, cur_y - (mDescender));
 		gGL.end();
+		gGL.begin(LLRender::QUADS);
 	}
 
 	// *FIX: get this working in all alignment cases, etc.
