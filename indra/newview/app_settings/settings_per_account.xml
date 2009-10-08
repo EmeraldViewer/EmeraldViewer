@@ -187,6 +187,127 @@
         <key>Value</key>
         <string></string>
       </map>
+      <key>EmeraldAODefaultCrouch</key>
+      <map>
+        <key>Comment</key>
+        <string>Default crouch anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultCrouchWalk</key>
+      <map>
+        <key>Comment</key>
+        <string>Default crouchwalk anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultFall</key>
+      <map>
+        <key>Comment</key>
+        <string>Default fall anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultHover</key>
+      <map>
+        <key>Comment</key>
+        <string>Default hover anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultFly</key>
+      <map>
+        <key>Comment</key>
+        <string>Default fly anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultFlySlow</key>
+      <map>
+        <key>Comment</key>
+        <string>Default flyslow anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultFlyUp</key>
+      <map>
+        <key>Comment</key>
+        <string>Default flyup anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultFlyDown</key>
+      <map>
+        <key>Comment</key>
+        <string>Default flydown anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultLand</key>
+      <map>
+        <key>Comment</key>
+        <string>Default land anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultStandUp</key>
+      <map>
+        <key>Comment</key>
+        <string>Default standup anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
+      <key>EmeraldAODefaultPreJump</key>
+      <map>
+        <key>Comment</key>
+        <string>Default prejump anim</string>
+        <key>Persist</key>
+        <integer>1</integer>
+        <key>Type</key>
+        <string>String</string>
+        <key>Value</key>
+        <string></string>
+      </map>
       <key>EmeraldInstantMessageResponseFriends</key>
       <map>
         <key>Comment</key>
