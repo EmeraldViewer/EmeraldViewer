@@ -594,32 +594,39 @@ void LLFloaterAO::init()
 	overrideloader.orig_id = ANIM_AGENT_FLY;					overrideloader.ao_id = LLUUID::null; overrideloader.state = STATE_AGENT_FLY;			mAOOverrides.push_back(overrideloader);
 	overrideloader.orig_id = ANIM_AGENT_FLYSLOW;				overrideloader.ao_id = LLUUID::null; overrideloader.state = STATE_AGENT_FLYSLOW;		mAOOverrides.push_back(overrideloader);
 
-	LLUUID configncitem = (LLUUID)gSavedPerAccountSettings.getString("EmeraldAOConfigNotecardID");
 	BOOL success = FALSE;
-	if (configncitem.notNull())
+
+	if(LLStartUp::getStartupState() >= STATE_INVENTORY_SEND)
 	{
-		const LLInventoryItem* item = gInventory.getItem(configncitem);
-		if(item)
+		if(gInventory.isEverythingFetched())
 		{
-			if (gAgent.allowOperation(PERM_COPY, item->getPermissions(),GP_OBJECT_MANIPULATE) || gAgent.isGodlike())
+			LLUUID configncitem = (LLUUID)gSavedPerAccountSettings.getString("EmeraldAOConfigNotecardID");
+			if (configncitem.notNull())
 			{
-				if(!item->getAssetUUID().isNull())
+				const LLInventoryItem* item = gInventory.getItem(configncitem);
+				if(item)
 				{
-					LLUUID* new_uuid = new LLUUID(configncitem);
-					LLHost source_sim = LLHost::invalid;
-					invfolderid = item->getParentUUID();
-					gAssetStorage->getInvItemAsset(source_sim,
-													gAgent.getID(),
-													gAgent.getSessionID(),
-													item->getPermissions().getOwner(),
-													LLUUID::null,
-													item->getUUID(),
-													item->getAssetUUID(),
-													item->getType(),
-													&onNotecardLoadComplete,
-													(void*)new_uuid,
-													TRUE);
-					success = TRUE;
+					if (gAgent.allowOperation(PERM_COPY, item->getPermissions(),GP_OBJECT_MANIPULATE) || gAgent.isGodlike())
+					{
+						if(!item->getAssetUUID().isNull())
+						{
+							LLUUID* new_uuid = new LLUUID(configncitem);
+							LLHost source_sim = LLHost::invalid;
+							invfolderid = item->getParentUUID();
+							gAssetStorage->getInvItemAsset(source_sim,
+															gAgent.getID(),
+															gAgent.getSessionID(),
+															item->getPermissions().getOwner(),
+															LLUUID::null,
+															item->getUUID(),
+															item->getAssetUUID(),
+															item->getType(),
+															&onNotecardLoadComplete,
+															(void*)new_uuid,
+															TRUE);
+							success = TRUE;
+						}
+					}
 				}
 			}
 		}
@@ -866,17 +873,20 @@ void LLFloaterAO::onClickReloadCard(void* user_data)
 
 void LLFloaterAO::onClickOpenCard(void* user_data)
 {
-	LLUUID configncitem = (LLUUID)gSavedPerAccountSettings.getString("EmeraldAOConfigNotecardID");
-	if (configncitem.notNull())
+	if(gInventory.isEverythingFetched())
 	{
-		const LLInventoryItem* item = gInventory.getItem(configncitem);
-		if(item)
+		LLUUID configncitem = (LLUUID)gSavedPerAccountSettings.getString("EmeraldAOConfigNotecardID");
+		if (configncitem.notNull())
 		{
-			if (gAgent.allowOperation(PERM_COPY, item->getPermissions(),GP_OBJECT_MANIPULATE) || gAgent.isGodlike())
+			const LLInventoryItem* item = gInventory.getItem(configncitem);
+			if(item)
 			{
-				if(!item->getAssetUUID().isNull())
-				open_notecard((LLViewerInventoryItem*)item, std::string("Note: ") + item->getName(), LLUUID::null, FALSE);
-//				open_notecard((LLViewerInventoryItem*)item, std::string("Note: ") + item->getName(), LLUUID::null, FALSE, LLUUID::null, FALSE);
+				if (gAgent.allowOperation(PERM_COPY, item->getPermissions(),GP_OBJECT_MANIPULATE) || gAgent.isGodlike())
+				{
+					if(!item->getAssetUUID().isNull())
+					open_notecard((LLViewerInventoryItem*)item, std::string("Note: ") + item->getName(), LLUUID::null, FALSE);
+	//				open_notecard((LLViewerInventoryItem*)item, std::string("Note: ") + item->getName(), LLUUID::null, FALSE, LLUUID::null, FALSE);
+				}
 			}
 		}
 	}

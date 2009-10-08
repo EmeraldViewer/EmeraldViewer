@@ -97,7 +97,7 @@
   follows="bottom|left"
 		/>
   <check_box bottom_delta="-20" control_name="EmeraldAOStandRandomize" enabled="true"
- follows="left|top" font="SansSerifSmall" height="16" initial_value="false" label="randomize" left="10"
+ follows="left|top" font="SansSerifSmall" height="16" initial_value="false" label="Randomize Stand Order" left="10"
  mouse_opaque="true" name="EmeraldAOStandRandomize" radio_style="false" width="200" />
   <check_box bottom_delta="-20" control_name="EmeraldAONoStandsInMouselook" enabled="true"
 	 follows="left|top" font="SansSerifSmall" height="16" initial_value="true" label="Disable Stands in Mouselook" left="10"
