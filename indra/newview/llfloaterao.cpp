@@ -184,7 +184,6 @@ struct struct_overrides
 };
 std::vector<struct_overrides> mAOOverrides;
 
-
 struct struct_stands
 {
 	LLUUID ao_id;
@@ -222,9 +221,10 @@ void LLFloaterAO::show(void*)
 {
     if (!sInstance)
 	sInstance = new LLFloaterAO();
-
-		sInstance->open();
+	updateLayout(sInstance);
 	init();
+
+	sInstance->open();
 }
 
 BOOL LLFloaterAO::postBuild()
@@ -260,6 +260,9 @@ BOOL LLFloaterAO::postBuild()
 	{
 		childSetValue("ao_nc_text","Not logged in");
 	}
+	childSetAction("more_btn", onClickMore, this);
+	childSetAction("less_btn", onClickLess, this);
+
 	childSetAction("reloadcard",onClickReloadCard,this);
 	childSetAction("opencard",onClickOpenCard,this);
 	childSetAction("prevstand",onClickPrevStand,this);
@@ -456,6 +459,63 @@ void LLFloaterAO::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 	}
 }
 
+void LLFloaterAO::updateLayout(LLFloaterAO* floater)
+{
+	if (floater)
+	{
+		BOOL advanced = gSavedSettings.getBOOL( "EmeraldAOAdvanced");
+		if (advanced)
+		{
+			floater->reshape(610,380); //view->getRect().getWidth(), view->getUIWinHeightLong());
+		}
+		else
+		{
+			floater->reshape(200,380); //view->getRect().getWidth(), view->getUIWinHeightShort());
+		}
+		
+		floater->childSetVisible("more_btn", !advanced);
+		floater->childSetVisible("less_btn", advanced);
+
+		floater->childSetVisible("tabcontainer", advanced);
+		floater->childSetVisible("tabdefaultanims", advanced);
+
+		floater->childSetVisible("textdefaultwalk", advanced);
+		floater->childSetVisible("textdefaultrun", advanced);
+		floater->childSetVisible("textdefaultjump", advanced);
+		floater->childSetVisible("textdefaultsit", advanced);
+		floater->childSetVisible("textdefaultgsit", advanced);
+		floater->childSetVisible("textdefaultcrouch", advanced);
+		floater->childSetVisible("textdefaultcrouchwalk", advanced);
+		floater->childSetVisible("textdefaultfall", advanced);
+		floater->childSetVisible("textdefaulthover", advanced);
+		floater->childSetVisible("textdefaultfly", advanced);
+		floater->childSetVisible("textdefaultflyslow", advanced);
+		floater->childSetVisible("textdefaultflyup", advanced);
+		floater->childSetVisible("textdefaultflydown", advanced);
+		floater->childSetVisible("textdefaultland", advanced);
+		floater->childSetVisible("textdefaultstandup", advanced);
+		floater->childSetVisible("textdefaultprejump", advanced);
+
+
+		floater->childSetVisible("walks", advanced);
+		floater->childSetVisible("runs", advanced);
+		floater->childSetVisible("jumps", advanced);
+		floater->childSetVisible("sits", advanced);
+		floater->childSetVisible("gsits", advanced);
+		floater->childSetVisible("crouchs", advanced);
+		floater->childSetVisible("crouchwalks", advanced);
+		floater->childSetVisible("falls", advanced);
+		floater->childSetVisible("hovers", advanced);
+		floater->childSetVisible("flys", advanced);
+		floater->childSetVisible("flyslows", advanced);
+		floater->childSetVisible("flyups", advanced);
+		floater->childSetVisible("flydowns", advanced);
+		floater->childSetVisible("lands", advanced);
+		floater->childSetVisible("standups", advanced);
+		floater->childSetVisible("prejumps", advanced);
+	}
+}
+
 void LLFloaterAO::init()
 {
 	mAOStands.clear();
@@ -576,6 +636,17 @@ void LLFloaterAO::init()
 
 }
 
+void LLFloaterAO::onClickMore(void* data)
+{
+	gSavedSettings.setBOOL( "EmeraldAOAdvanced", TRUE );
+	updateLayout(sInstance);
+}
+void LLFloaterAO::onClickLess(void* data)
+{
+	gSavedSettings.setBOOL( "EmeraldAOAdvanced", FALSE );
+	updateLayout(sInstance);
+}
+
 void LLFloaterAO::onClickRun(LLUICtrl *, void*)
 {
 	run();
@@ -594,7 +665,7 @@ void LLFloaterAO::run()
 		else
 		{
 			mAOStandTimer =	new AOStandTimer();
-	}
+		}
 	}
 	else
 	{
@@ -810,6 +881,7 @@ void LLFloaterAO::onClickOpenCard(void* user_data)
 		}
 	}
 }
+
 struct AOAssetInfo
 {
 	std::string path;
@@ -1021,8 +1093,8 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 							}
 							else if (mcomboBox_walks->selectByValue(gSavedPerAccountSettings.getString("EmeraldAODefaultWalk")))
 							{
-							iter->ao_id = getAssetIDByName(gSavedPerAccountSettings.getString("EmeraldAODefaultWalk"));
-						}
+								iter->ao_id = getAssetIDByName(gSavedPerAccountSettings.getString("EmeraldAODefaultWalk"));
+							}
 						}
 						else if (STATE_AGENT_RUN == iter->state)
 						{
@@ -1056,9 +1128,9 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 								mcomboBox_sits->removeall();
 							}
 							else if (mcomboBox_sits->selectByValue(gSavedPerAccountSettings.getString("EmeraldAODefaultSit")))
-						{
-							iter->ao_id = getAssetIDByName(gSavedPerAccountSettings.getString("EmeraldAODefaultSit"));
-						}
+							{
+								iter->ao_id = getAssetIDByName(gSavedPerAccountSettings.getString("EmeraldAODefaultSit"));
+							}
 						}
 						else if (STATE_AGENT_GROUNDSIT == iter->state)
 						{
@@ -1069,7 +1141,7 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 							}
 							else if (mcomboBox_gsits->selectByValue(gSavedPerAccountSettings.getString("EmeraldAODefaultGroundSit")))
 							{
-							iter->ao_id = getAssetIDByName(gSavedPerAccountSettings.getString("EmeraldAODefaultGroundSit"));
+								iter->ao_id = getAssetIDByName(gSavedPerAccountSettings.getString("EmeraldAODefaultGroundSit"));
 							}
 						}
 						else if (STATE_AGENT_CROUCH == iter->state)

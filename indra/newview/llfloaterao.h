@@ -69,6 +69,7 @@ public:
 
 	static void onClickRun(LLUICtrl *, void*);
 	static void run();
+	static void updateLayout(LLFloaterAO* floater);
 
 	static BOOL loadAnims();
 
@@ -88,6 +89,9 @@ public:
 
 	static int GetStateFromAnimID(const LLUUID& id);
 	static int GetStateFromToken(std::string strtoken);
+
+	static void onClickLess(void* data) ;
+	static void onClickMore(void* data) ;
 
 	static void onClickPrevStand(void* userdata);
 	static void onClickNextStand(void* userdata);
