@@ -73,6 +73,8 @@ BOOL LLAgent::setLookAt(ELookAtType target_type, LLViewerObject *object, LLVecto
 {
 	if(!gSavedSettings.getBOOL("EmeraldBroadcastPointers"))
 	{
+		if(!mLookAt || mLookAt->isDead())
+			return FALSE;
 		position.clearVec();
 		return mLookAt->setLookAt(LOOKAT_TARGET_NONE, mAvatarObject, position);
 	}

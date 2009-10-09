@@ -68,6 +68,7 @@ const F32 PIXEL_CORRECTION_DISTANCE = 0.01f;
 const F32 PAD_UVY = 0.5f; // half of vertical padding between glyphs in the glyph texture
 const F32 DROP_SHADOW_SOFT_STRENGTH = 0.3f;
 
+/*
 F32 llfont_round_x(F32 x)
 {
 	//return llfloor((x-LLFontGL::sCurOrigin.mX)/LLFontGL::sScaleX+0.5f)*LLFontGL::sScaleX+LLFontGL::sCurOrigin.mX;
@@ -81,6 +82,7 @@ F32 llfont_round_y(F32 y)
 	//return llfloor(y+0.5f);
 	return y;
 }
+*/
 
 // static
 U8 LLFontGL::getStyleFromString(const std::string &style)
@@ -649,7 +651,7 @@ S32 LLFontGL::render(const LLWString &wstr,
 			cur_render_y = cur_y;
 		}
 	}
-	//gGL.end();
+	gGL.end();
 
 	if (right_x)
 	{
@@ -663,7 +665,6 @@ S32 LLFontGL::render(const LLWString &wstr,
 		gGL.vertex2f(start_x, cur_y - (mDescender));
 		gGL.vertex2f(cur_x, cur_y - (mDescender));
 		gGL.end();
-		gGL.begin(LLRender::QUADS);
 	}
 
 	// *FIX: get this working in all alignment cases, etc.
@@ -1102,20 +1103,16 @@ void LLFontGL::removeEmbeddedChar( llwchar wc ) const
 void LLFontGL::renderQuad(const LLRectf& screen_rect, const LLRectf& uv_rect, F32 slant_amt) const
 {
 	gGL.texCoord2f(uv_rect.mRight, uv_rect.mTop);
-	gGL.vertex2f(llfont_round_x(screen_rect.mRight), 
-				llfont_round_y(screen_rect.mTop));
+	gGL.vertex2f(screen_rect.mRight, screen_rect.mTop);
 
 	gGL.texCoord2f(uv_rect.mLeft, uv_rect.mTop);
-	gGL.vertex2f(llfont_round_x(screen_rect.mLeft), 
-				llfont_round_y(screen_rect.mTop));
+	gGL.vertex2f(screen_rect.mLeft, screen_rect.mTop);
 
 	gGL.texCoord2f(uv_rect.mLeft, uv_rect.mBottom);
-	gGL.vertex2f(llfont_round_x(screen_rect.mLeft + slant_amt), 
-				llfont_round_y(screen_rect.mBottom));
+	gGL.vertex2f(screen_rect.mLeft + slant_amt, screen_rect.mBottom);
 
 	gGL.texCoord2f(uv_rect.mRight, uv_rect.mBottom);
-	gGL.vertex2f(llfont_round_x(screen_rect.mRight + slant_amt), 
-				llfont_round_y(screen_rect.mBottom));
+	gGL.vertex2f(screen_rect.mRight + slant_amt, screen_rect.mBottom);
 }
 
 void LLFontGL::drawGlyph(const LLRectf& screen_rect, const LLRectf& uv_rect, const LLColor4& color, U8 style, F32 drop_shadow_strength) const

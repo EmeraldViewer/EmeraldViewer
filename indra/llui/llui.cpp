@@ -138,7 +138,6 @@ void gl_state_for_2d(S32 width, S32 height)
 	glOrtho(0.0f, llmax(window_width, 1.f), 0.0f, llmax(window_height,1.f), -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gGL.begin(LLRender::QUADS);
 	stop_glerror();
 }
 
@@ -155,7 +154,6 @@ void gl_draw_x(const LLRect& rect, const LLColor4& color)
 		gGL.vertex2i( rect.mLeft,		rect.mBottom );
 		gGL.vertex2i( rect.mRight,	rect.mTop );
 	gGL.end();
-	gGL.begin(LLRender::QUADS);
 }
 
 
@@ -191,12 +189,12 @@ void gl_rect_2d(S32 left, S32 top, S32 right, S32 bottom, BOOL filled )
 	// Counterclockwise quad will face the viewer
 	if( filled )
 	{
-		//gGL.begin( LLRender::QUADS );
+		gGL.begin( LLRender::QUADS );
 			gGL.vertex2i(left, top);
 			gGL.vertex2i(left, bottom);
 			gGL.vertex2i(right, bottom);
 			gGL.vertex2i(right, top);
-		//gGL.end();
+		gGL.end();
 	}
 	else
 	{
@@ -221,7 +219,6 @@ void gl_rect_2d(S32 left, S32 top, S32 right, S32 bottom, BOOL filled )
 				gGL.vertex2i(left, top);
 				gGL.vertex2i(right, top);
 			gGL.end();
-			gGL.begin(LLRender::QUADS);
 		}
 		else
 		{
@@ -234,7 +231,6 @@ void gl_rect_2d(S32 left, S32 top, S32 right, S32 bottom, BOOL filled )
 				gGL.vertex2i(right, top);
 				gGL.vertex2i(left, top);
 			gGL.end();
-			gGL.begin(LLRender::QUADS);
 		}
 	}
 	stop_glerror();
@@ -269,7 +265,7 @@ void gl_drop_shadow(S32 left, S32 top, S32 right, S32 bottom, const LLColor4 &st
 	LLColor4 end_color = start_color;
 	end_color.mV[VALPHA] = 0.f;
 
-	//gGL.begin(LLRender::QUADS);
+	gGL.begin(LLRender::QUADS);
 
 	// Right edge, CCW faces screen
 	gGL.color4fv(start_color.mV);
@@ -314,7 +310,7 @@ void gl_drop_shadow(S32 left, S32 top, S32 right, S32 bottom, const LLColor4 &st
 	gGL.vertex2i( right+lines-1,	top-1 );
 	gGL.vertex2i( right,			top );
 
-	//gGL.end();
+	gGL.end();
 	stop_glerror();
 }
 
@@ -335,7 +331,6 @@ void gl_line_2d(S32 x1, S32 y1, S32 x2, S32 y2 )
 		gGL.vertex2i(x1, y1);
 		gGL.vertex2i(x2, y2);
 	gGL.end();
-	gGL.begin(LLRender::QUADS);
 }
 
 void gl_line_2d(S32 x1, S32 y1, S32 x2, S32 y2, const LLColor4 &color )
@@ -357,7 +352,6 @@ void gl_line_2d(S32 x1, S32 y1, S32 x2, S32 y2, const LLColor4 &color )
 		gGL.vertex2i(x1, y1);
 		gGL.vertex2i(x2, y2);
 	gGL.end();
-	gGL.begin(LLRender::QUADS);
 }
 
 void gl_triangle_2d(S32 x1, S32 y1, S32 x2, S32 y2, S32 x3, S32 y3, const LLColor4& color, BOOL filled)
@@ -378,7 +372,6 @@ void gl_triangle_2d(S32 x1, S32 y1, S32 x2, S32 y2, S32 x3, S32 y3, const LLColo
 	gGL.vertex2i(x2, y2);
 	gGL.vertex2i(x3, y3);
 	gGL.end();
-	gGL.begin(LLRender::QUADS);
 }
 
 void gl_corners_2d(S32 left, S32 top, S32 right, S32 bottom, S32 length, F32 max_frac)
@@ -508,7 +501,7 @@ void gl_draw_scaled_image_with_border(S32 x, S32 y, S32 width, S32 height, LLIma
 
 		gGL.color4fv(color.mV);
 		
-		//gGL.begin(LLRender::QUADS);
+		gGL.begin(LLRender::QUADS);
 		{
 			// draw bottom left
 			gGL.texCoord2f(uv_rect.mLeft, uv_rect.mBottom);
@@ -627,7 +620,7 @@ void gl_draw_scaled_image_with_border(S32 x, S32 y, S32 width, S32 height, LLIma
 			gGL.texCoord2f(scale_rect_uv.mRight, uv_rect.mTop);
 			gGL.vertex2i(draw_scale_rect.mRight, height);
 		}
-		//gGL.end();
+		gGL.end();
 	}
 	gGL.popMatrix();
 
@@ -668,7 +661,7 @@ void gl_draw_scaled_rotated_image(S32 x, S32 y, S32 width, S32 height, F32 degre
 
 		gGL.color4fv(color.mV);
 		
-		//gGL.begin(LLRender::QUADS);
+		gGL.begin(LLRender::QUADS);
 		{
 			gGL.texCoord2f(uv_rect.mRight, uv_rect.mTop);
 			gGL.vertex2i(width, height );
@@ -682,7 +675,7 @@ void gl_draw_scaled_rotated_image(S32 x, S32 y, S32 width, S32 height, F32 degre
 			gGL.texCoord2f(uv_rect.mRight, uv_rect.mBottom);
 			gGL.vertex2i(width, 0);
 		}
-		//gGL.end();
+		gGL.end();
 	}
 	gGL.popMatrix();
 }
@@ -706,7 +699,7 @@ void gl_draw_scaled_image_inverted(S32 x, S32 y, S32 width, S32 height, LLImageG
 
 		gGL.color4fv(color.mV);
 		
-		//gGL.begin(LLRender::QUADS);
+		gGL.begin(LLRender::QUADS);
 		{
 			gGL.texCoord2f(uv_rect.mRight, uv_rect.mBottom);
 			gGL.vertex2i(width, height );
@@ -720,7 +713,7 @@ void gl_draw_scaled_image_inverted(S32 x, S32 y, S32 width, S32 height, LLImageG
 			gGL.texCoord2f(uv_rect.mRight, uv_rect.mTop);
 			gGL.vertex2i(width, 0);
 		}
-		//gGL.end();
+		gGL.end();
 	}
 	gGL.popMatrix();
 }
@@ -747,7 +740,6 @@ void gl_stippled_line_3d( const LLVector3& start, const LLVector3& end, const LL
 		gGL.vertex3fv( end.mV );
 	}
 	gGL.end();
-	gGL.begin(LLRender::QUADS);
 
 	LLUI::setLineWidth(1.f);
 }
@@ -810,7 +802,6 @@ void gl_arc_2d(F32 center_x, F32 center_y, F32 radius, S32 steps, BOOL filled, F
 			x = x_new;
 		}
 		gGL.end();
-		gGL.begin(LLRender::QUADS);
 	}
 	gGL.popMatrix();
 }
@@ -850,7 +841,6 @@ void gl_circle_2d(F32 center_x, F32 center_y, F32 radius, S32 steps, BOOL filled
 			x = x_new;
 		}
 		gGL.end();
-		gGL.begin(LLRender::QUADS);
 	}
 	gGL.popMatrix();
 }
@@ -875,7 +865,6 @@ void gl_deep_circle( F32 radius, F32 depth, S32 steps )
 		}
 	}
 	gGL.end();
-	gGL.begin(LLRender::QUADS);
 }
 
 void gl_ring( F32 radius, F32 width, const LLColor4& center_color, const LLColor4& side_color, S32 steps, BOOL render_center )
@@ -931,7 +920,6 @@ void gl_rect_2d_checkerboard(const LLRect& rect)
 	LLGLEnable polygon_stipple(GL_POLYGON_STIPPLE);
 	gl_rect_2d(rect);
 	gGL.flush();
-	gGL.begin(LLRender::QUADS);
 }
 
 
@@ -970,7 +958,6 @@ void gl_washer_2d(F32 outer_radius, F32 inner_radius, S32 steps, const LLColor4&
 		}
 	}
 	gGL.end();
-	gGL.begin(LLRender::QUADS);
 }
 
 // Draws the area between two concentric circles, like
@@ -1007,7 +994,6 @@ void gl_washer_segment_2d(F32 outer_radius, F32 inner_radius, F32 start_radians,
 		}
 	}
 	gGL.end();
-	gGL.begin(LLRender::QUADS);
 }
 
 // Draws spokes around a circle.
@@ -1044,12 +1030,11 @@ void gl_washer_spokes_2d(F32 outer_radius, F32 inner_radius, S32 count, const LL
 		}
 	}
 	gGL.end();
-	gGL.begin(LLRender::QUADS);
 }
 
 void gl_rect_2d_simple_tex( S32 width, S32 height )
 {
-	//gGL.begin( LLRender::QUADS );
+	gGL.begin( LLRender::QUADS );
 
 		gGL.texCoord2f(1.f, 1.f);
 		gGL.vertex2i(width, height);
@@ -1063,17 +1048,17 @@ void gl_rect_2d_simple_tex( S32 width, S32 height )
 		gGL.texCoord2f(1.f, 0.f);
 		gGL.vertex2i(width, 0);
 	
-	//gGL.end();
+	gGL.end();
 }
 
 void gl_rect_2d_simple( S32 width, S32 height )
 {
-	//gGL.begin( LLRender::QUADS );
+	gGL.begin( LLRender::QUADS );
 		gGL.vertex2i(width, height);
 		gGL.vertex2i(0, height);
 		gGL.vertex2i(0, 0);
 		gGL.vertex2i(width, 0);
-	//gGL.end();
+	gGL.end();
 }
 
 void gl_segmented_rect_2d_tex(const S32 left, 
@@ -1110,7 +1095,7 @@ void gl_segmented_rect_2d_tex(const S32 left,
 	LLVector2 width_vec((F32)width, 0.f);
 	LLVector2 height_vec(0.f, (F32)height);
 
-	//gGL.begin(LLRender::QUADS);
+	gGL.begin(LLRender::QUADS);
 	{
 		// draw bottom left
 		gGL.texCoord2f(0.f, 0.f);
@@ -1229,7 +1214,7 @@ void gl_segmented_rect_2d_tex(const S32 left,
 		gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
 		gGL.vertex2fv((width_vec - border_width_right + height_vec).mV);
 	}
-	//gGL.end();
+	gGL.end();
 
 	gGL.popMatrix();
 }
@@ -1278,7 +1263,7 @@ void gl_segmented_rect_2d_fragment_tex(const S32 left,
 	LLVector2 x_min;
 	LLVector2 x_max;
 
-	//gGL.begin(LLRender::QUADS);
+	gGL.begin(LLRender::QUADS);
 	{
 		if (start_fragment < middle_start)
 		{
@@ -1419,7 +1404,7 @@ void gl_segmented_rect_2d_fragment_tex(const S32 left,
 			gGL.vertex2fv((x_min + height_vec).mV);
 		}
 	}
-	//gGL.end();
+	gGL.end();
 
 	gGL.popMatrix();
 }
@@ -1435,7 +1420,7 @@ void gl_segmented_rect_3d_tex(const LLVector2& border_scale, const LLVector3& bo
 	LLVector3 bottom_border_height = ((edges & (~(U32)ROUNDED_RECT_TOP)) != 0) ? border_height : LLVector3::zero;
 
 
-	//gGL.begin(LLRender::QUADS);
+	gGL.begin(LLRender::QUADS);
 	{
 		// draw bottom left
 		gGL.texCoord2f(0.f, 0.f);
@@ -1554,7 +1539,7 @@ void gl_segmented_rect_3d_tex(const LLVector2& border_scale, const LLVector3& bo
 		gGL.texCoord2f(1.f - border_scale.mV[VX], 1.f);
 		gGL.vertex3fv((width_vec - right_border_width + height_vec).mV);
 	}
-	//gGL.end();
+	gGL.end();
 
 }
 

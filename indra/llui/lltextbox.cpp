@@ -79,7 +79,8 @@ void LLTextBox::initDefaults()
 	mHasHover = FALSE;
 	mBackgroundVisible = FALSE;
 	mBorderVisible = FALSE;
-	mFontStyle = LLFontGL::DROP_SHADOW_SOFT;
+	//mFontStyle = LLFontGL::DROP_SHADOW_SOFT;
+	mFontStyle = LLFontGL::NORMAL;
 	mBorderDropShadowVisible = FALSE;
 	mUseEllipses = FALSE;
 	mLineSpacing = 0;
