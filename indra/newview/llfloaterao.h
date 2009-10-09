@@ -67,7 +67,8 @@ public:
 	static void show(void*);
 	static void init();
 
-	static void onClickRun(LLUICtrl *, void*);
+	static void onClickToggleAO(LLUICtrl *, void*);
+	static void onClickToggleSits(LLUICtrl *, void*);
 	static void run();
 	static void updateLayout(LLFloaterAO* floater);
 
@@ -88,6 +89,7 @@ public:
 	static LLUUID GetAnimID(const LLUUID& id);
 
 	static int GetStateFromAnimID(const LLUUID& id);
+	static LLUUID GetAnimIDFromState(const int state);
 	static int GetStateFromToken(std::string strtoken);
 
 	static void onClickLess(void* data) ;
@@ -112,6 +114,7 @@ private:
 	static void AOItemDrop(LLViewerInventoryItem* item);
 	static void onSpinnerCommit(LLUICtrl* ctrl, void* userdata);
 	static void onComboBoxCommit(LLUICtrl* ctrl, void* userdata);
+	static BOOL SetDefault(void *userdata, LLUUID ao_id, std::string defaultanim);
 
 	BOOL					mDirty;
 

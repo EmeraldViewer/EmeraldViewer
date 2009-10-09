@@ -444,50 +444,42 @@ Recommended Settings are:
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="CmdLine" left="1" mouse_opaque="true" name="CmdLine" width="418">
 <button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?" name="EmeraldHelp_CmdLine" tool_tip="Click here for help regarding the settings in this page." right="490" width="18" />
-      <check_box bottom_delta="-20" enabled="true"
+      <check_box bottom="-25" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Enable usage of chat bar as a command line" left="5" mouse_opaque="true"
            name="chat_cmd_toggle" radio_style="false" width="270" control_name="EmeraldCmdLine" />
-      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="10" name="loltxt2" width="512">
-        Teleport to a position within the region
-(usage: cmd x y z) (ex: cmd 128 192 50)
+      <text bottom_delta="-30" follows="left|top" font="SansSerifSmall" height="16" left_delta="10" name="loltxt2" width="512">
+        Teleport within sim (usage: cmd x y z)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLinePos" control_name="EmeraldCmdLinePos" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt3" width="512">
-        Teleport to terrain ground level
-(usage: cmd) (ex: cmd)
+        Teleport to ground (usage: cmd)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineGround" control_name="EmeraldCmdLineGround" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt4" width="512">
-        Teleport to a particular height
-(usage: cmd z) (ex: cmd 100)
+        Teleport to altitude (usage: cmd z)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineHeight" control_name="EmeraldCmdLineHeight" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt5" width="512">
-        Teleport home
-(usage: cmd) (ex: cmd)
+        Teleport home (usage: cmd)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineTeleportHome" control_name="EmeraldCmdLineTeleportHome" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt6" width="512">
-        Rez a platform (diam. optional, 0-30m)
-(usage: cmd diameter) (ex: cmd 25)
-
-
-
+        Rez a platform (usage: cmd 0 - 30)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineRezPlatform" control_name="EmeraldCmdLineRezPlatform" width="200" />
@@ -511,10 +503,9 @@ Recommended Settings are:
           auto_resize="false"
           tool_tip="How big do you want the platform to appear to be?" />
       <text bottom_delta="-15" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt7" width="512">
-        Teleport to a region by name
-(usage: cmd simname) (ex: cmd Ahern)
+        Teleport to sim x (usage: cmd simname)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineMapTo" control_name="EmeraldCmdLineMapTo" width="200" />
@@ -522,55 +513,56 @@ Recommended Settings are:
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Use same position between sims" left_delta="0" mouse_opaque="true"
            name="toggle" radio_style="false" width="270" control_name="EmeraldMapToKeepPos" />
-<view_border bevel_style="none" border_thickness="1" bottom_delta="0" follows="top|left" height="310" left="230" name="EmDivisor" width="0" />
-	<text bottom_delta="290" follows="left|top" font="SansSerifSmall" height="16" left_delta="10" name="loltxt8" width="512">
-        Calculate expressions
-(usage: cmd expressions) (ex:cmd SIN(2+2))
+    	<text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt8" width="512">
+        Calc. expressions (usage: cmd SIN(2+2))
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
             follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
             max_length="256" mouse_opaque="true"
             tool_tip="" name="EmeraldCmdLineCalc" control_name="EmeraldCmdLineCalc" width="200" />
-      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt9" width="512">
-        Change Draw Distance
-(usage: cmd meters) (ex:cmd 256)
+      <view_border bevel_style="none" border_thickness="1" bottom_delta="0" follows="top|left" height="310" left="230" name="EmDivisor" width="0" />
+      <text bottom_delta="288" follows="left|top" font="SansSerifSmall" height="16" left_delta="10" name="loltxt9" width="512">
+        Change Draw Distance (usage: cmd meters)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineDrawDistance" control_name="EmeraldCmdLineDrawDistance" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt10" width="512">
-        Teleport to your camera position
-(usage: cmd) (ex:cmd)
+        Teleport to cam position (usage: cmd)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdTeleportToCam" control_name="EmeraldCmdTeleportToCam" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt11" width="512">
-        Retrieve the avatar name from a key
-(usage: cmd key) (ex:cmd avatar-key)
+        Get avatar name from key (usage: cmd key)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineKeyToName" control_name="EmeraldCmdLineKeyToName" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt12" width="512">
-        Offer a teleport to your location
-(usage: cmd key) (ex:cmd avatar-key)
+        Offer teleport to avatar (usage: cmd key)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="EmeraldCmdLineOfferTp" control_name="EmeraldCmdLineOfferTp" width="200" />
       <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt13" width="512">
-        Teleport to an avatar
-(usage: cmd name) (ex:cmd First Last)
+        Teleport to avatar (usage: cmd name)
       </text>
-      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-30"
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
            max_length="256" mouse_opaque="true"
            tool_tip="The syntax of this command allows partial names and is not case sensitive. Better results if used while the Radar is open." name="EmeraldCmdLineTP2" control_name="EmeraldCmdLineTP2" width="200" />
+      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt14" width="512">
+        Turn AO on/off (usage: cmd on/off)
+      </text>
+      <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20"
+           follows="left|top" font="SansSerifSmall" height="20" left_delta="0"
+           max_length="256" mouse_opaque="true"
+          tool_tip="" name="EmeraldCmdLineAO" control_name="EmeraldCmdLineAO" width="200" />
     </panel>
     <panel border="true" bottom="-580" follows="left|top|right|bottom" height="525"
            label="Avatar" left="1" mouse_opaque="true" name="wat!" width="418">

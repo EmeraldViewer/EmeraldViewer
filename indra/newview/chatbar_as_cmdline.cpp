@@ -51,6 +51,7 @@
 #include "llworld.h"
 #include "llworldmap.h"
 #include "llfloateravatarlist.h"
+#include "llfloaterao.h"
 #include "llviewerobjectlist.h"
 #include "llvoavatar.h"
 
@@ -101,9 +102,6 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 			}
 			else if(command == gSavedSettings.getString("EmeraldCmdLineDrawDistance"))
 			{
-                std::istringstream i(revised_text);
-                std::string command;
-                i >> command;
                 int drawDist;
                 if(i >> drawDist)
                 {
@@ -120,13 +118,28 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				gAgent.teleportViaLocation(gAgent.getCameraPositionGlobal());
 				return false;
             }
+			else if(command == gSavedSettings.getString("EmeraldCmdLineAO"))
+            {
+				std::string status;
+                if(i >> status)
+                {
+					if (status == "on" )
+					{
+						gSavedSettings.setBOOL("EmeraldAOEnabled",TRUE);
+						LLFloaterAO::run();
+					}
+					else if (status == "off" )
+					{
+						gSavedSettings.setBOOL("EmeraldAOEnabled",FALSE);
+						LLFloaterAO::run();
+					}
+				}
+				return false;
+            }
 			else if(command == gSavedSettings.getString("EmeraldCmdLineKeyToName"))
             {
-                std::istringstream istream(revised_text);
-                std::string command;
-                istream >> command;
                 LLUUID targetKey;
-                if(istream >> targetKey)
+                if(i >> targetKey)
                 {
                     std::string object_name;
                     gCacheName->getFullName(targetKey, object_name);
