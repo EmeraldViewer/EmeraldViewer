@@ -2944,13 +2944,11 @@ void LLVOAvatar::idleUpdateBoobEffect()
 	if(mFirstIdleUpdateBoobGravRan != true)
 		return;
 
-	//check to make sure mActualBoobGrav is a valid number
-	if(mActualBoobGrav < -5.f || mActualBoobGrav > 5.f)
-		return;
-
 	if (mBoobBounceTimer.getElapsedTimeF32() - mLastDisplacement > 0.02f) // cap updates to 50fps
 		mLastDisplacement = mBoobBounceTimer.getElapsedTimeF32();
 	else
+		return;
+	if(mActualBoobGrav == -53.f)
 		return;
 
 	LLVisualParam *param;
@@ -2962,8 +2960,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 	LLVector3 Pos = mChestp->getWorldPosition();
 
-	F32 originWeight = (mActualBoobGrav + 1.5f) / 3.5f;
-	originWeight = mActualBoobGrav;
+	F32 originWeight = mActualBoobGrav;
 
 	// Convert values from percent to real value
 	F32 zInfluence		= sBoobZInfluence/100.f*50.f;
@@ -3021,8 +3018,8 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 	}
 
-	if(getAppearanceFlag() || sBoobToggle != TRUE)
-		if(mBoobDisplacement != mActualBoobGrav && abs(mActualBoobGrav-53.0f)>0.01f && !mAppearanceAnimating)
+	else if(getAppearanceFlag() || sBoobToggle != TRUE &&
+		!mAppearanceAnimating && mBoobDisplacement != mActualBoobGrav)
 		{
 			llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << " for " << getFullname() << llendl;
 			mBoobDisplacement = mActualBoobGrav;

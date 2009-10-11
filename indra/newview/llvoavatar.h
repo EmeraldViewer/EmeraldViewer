@@ -520,7 +520,7 @@ private:
 
 public:
 	F32				getActualBoobGrav() { return mActualBoobGrav; }
-	void			setActualBoobGrav(F32 grav) { mActualBoobGrav = grav; mFirstIdleUpdateBoobGravRan = true; }
+	void			setActualBoobGrav(F32 grav) { mActualBoobGrav = llclamp(grav,-5.f,5.f); mFirstIdleUpdateBoobGravRan = true; }
 
 	static F32		sBoobMass;
 	static F32		sBoobHardness;
