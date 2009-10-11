@@ -523,24 +523,6 @@ void LLFloaterAO::init()
 	mAOTokens.clear();
 	mAOOverrides.clear();
 
-	if (mcomboBox_stands) mcomboBox_stands->clear();
-	if (mcomboBox_walks) mcomboBox_walks->clear();
-	if (mcomboBox_runs) mcomboBox_runs->clear();
-	if (mcomboBox_jumps) mcomboBox_jumps->clear();
-	if (mcomboBox_sits) mcomboBox_sits->clear();
-	if (mcomboBox_gsits) mcomboBox_gsits->clear();
-	if (mcomboBox_crouchs) mcomboBox_cwalks->clear();
-	if (mcomboBox_cwalks) mcomboBox_cwalks->clear();
-	if (mcomboBox_falls) mcomboBox_falls->clear();
-	if (mcomboBox_hovers) mcomboBox_hovers->clear();
-	if (mcomboBox_flys) mcomboBox_flys->clear();
-	if (mcomboBox_flyslows) mcomboBox_flyslows->clear();
-	if (mcomboBox_flyups) mcomboBox_flyups->clear();
-	if (mcomboBox_flydowns) mcomboBox_flydowns->clear();
-	if (mcomboBox_lands) mcomboBox_lands->clear();
-	if (mcomboBox_standups) mcomboBox_standups->clear();
-	if (mcomboBox_prejumps) mcomboBox_prejumps->clear();
-
 	struct_tokens tokenloader;
 	tokenloader.token = 
 	tokenloader.token = "[ Sitting On Ground ]";	tokenloader.state = STATE_AGENT_GROUNDSIT; mAOTokens.push_back(tokenloader);    // 0
@@ -944,6 +926,29 @@ void LLFloaterAO::onNotecardLoadComplete(LLVFS *vfs,const LLUUID& asset_uuid,LLA
 				llinfos << "ao nc decode success" << llendl;
 				std::string card = edit->getText();
 				edit->die();
+
+				if (mcomboBox_stands)
+				{
+					mcomboBox_stands->clear();
+					mcomboBox_stands->removeall();
+				}
+				if (mcomboBox_walks) mcomboBox_walks->clear();
+				if (mcomboBox_runs) mcomboBox_runs->clear();
+				if (mcomboBox_jumps) mcomboBox_jumps->clear();
+				if (mcomboBox_sits) mcomboBox_sits->clear();
+				if (mcomboBox_gsits) mcomboBox_gsits->clear();
+				if (mcomboBox_crouchs) mcomboBox_cwalks->clear();
+				if (mcomboBox_cwalks) mcomboBox_cwalks->clear();
+				if (mcomboBox_falls) mcomboBox_falls->clear();
+				if (mcomboBox_hovers) mcomboBox_hovers->clear();
+				if (mcomboBox_flys) mcomboBox_flys->clear();
+				if (mcomboBox_flyslows) mcomboBox_flyslows->clear();
+				if (mcomboBox_flyups) mcomboBox_flyups->clear();
+				if (mcomboBox_flydowns) mcomboBox_flydowns->clear();
+				if (mcomboBox_lands) mcomboBox_lands->clear();
+				if (mcomboBox_standups) mcomboBox_standups->clear();
+				if (mcomboBox_prejumps) mcomboBox_prejumps->clear();
+
 
 				struct_stands loader;
 
