@@ -2377,9 +2377,12 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			}
 			else
 			{
-// [RLVa:KB] - Checked: 2009-09-10 (RLVa-1.0.3a)
-				if ( (rlv_handler_t::isEnabled()) && (info->mDesc.find(RLV_PUTINV_PREFIX) == 1) && (gRlvHandler.getSharedRoot()) )
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-09-10 (RLVa-1.0.3a)
+				if ( (rlv_handler_t::isEnabled()) && (dialog == IM_TASK_INVENTORY_OFFERED) &&
+					 (info->mDesc.find(RLV_PUTINV_PREFIX) == 1) && (gRlvHandler.getSharedRoot()) )
+				{
 					LLFirstUse::warnRlvGiveToRLV();
+				}
 // [/RLVa:KB]
 
 				inventory_offer_handler(info, dialog == IM_TASK_INVENTORY_OFFERED);
@@ -3038,7 +3041,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		color.setVec(1.f,1.f,1.f,1.f);
 		msg->getStringFast(_PREHASH_ChatData, _PREHASH_Message, mesg);
 
-// [RLVa:KB] - Checked: 2009-08-04 (RLVa-1.0.1d) | Modified: RLVa-1.0.1d
+// [RLVa:KB] - Checked: 2009-10-06 (RLVa-1.0.4d) | Modified: RLVa-1.0.4d
 		if ( (rlv_handler_t::isEnabled()) && 
 			 (CHAT_TYPE_START != chat.mChatType) && (CHAT_TYPE_STOP != chat.mChatType) && (CHAT_TYPE_OWNER != chat.mChatType) )
 		{
@@ -3048,7 +3051,8 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 			// Filtering "rules":
 			//   avatar  => filter all avie text (unless it's this avie or they're an exemption)
 			//   objects => filter everything except attachments this avie owns
-			if ( ((CHAT_SOURCE_AGENT == chat.mSourceType) && (from_id != gAgent.getID())) || (!is_owned_by_me) || (!is_attachment) )
+			if ( ( (CHAT_SOURCE_AGENT == chat.mSourceType) && (from_id != gAgent.getID()) ) || 
+				 ( (CHAT_SOURCE_OBJECT == chat.mSourceType) && ((!is_owned_by_me) || (!is_attachment)) ) )
 			{
 				if (!rlvIsEmote(mesg))
 				{
@@ -5642,7 +5646,7 @@ void process_script_question(LLMessageSystem *msg, void **user_data)
 // [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.0e
 		S32 rlvQuestionsOther = questions;
 
-		if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour("acceptpermission")) )
+		if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_ACCEPTPERMISSION)) )
 		{
 			LLViewerObject* pObj = gObjectList.findObject(taskid);
 			if (pObj)
@@ -6017,7 +6021,7 @@ bool handle_lure_callback(const LLSD& notification, const LLSD& response)
 			for (LLSD::array_const_iterator it = notification["payload"]["ids"].beginArray(); 
 					it != notification["payload"]["ids"].endArray(); ++it)
 			{
-				if (!gRlvHandler.isException(RLV_BHVR_SENDIM, *it))
+				if (!gRlvHandler.isException(RLV_BHVR_SENDIM, it->asUUID()))
 				{
 					text = rlv_handler_t::cstrHidden;
 					break;
@@ -6073,7 +6077,7 @@ void handle_lure(LLDynamicArray<LLUUID>& ids)
 		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC))
 		{
 			const LLRelationship* pBuddyInfo = LLAvatarTracker::instance().getBuddyInfo(*it);
-			if ( (!gRlvHandler.isException(RLV_BHVR_TPLURE, *it)) &&
+			if ( (!gRlvHandler.isException(RLV_BHVR_TPLURE, *it, RLV_CHECK_PERMISSIVE)) &&
 				 ((!pBuddyInfo) || (!pBuddyInfo->isOnline()) || (!pBuddyInfo->isRightGrantedTo(LLRelationship::GRANT_MAP_LOCATION))) )
 			{
 				return;
