@@ -197,7 +197,6 @@ Empfohlene Eisntellungen:
       </text>
       <line_editor tool_tip="" name="EmeraldCmdLineMapTo"/>
       <check_box label="Zielposition ist die Ursprungsposition" name="toggle"/>
-<view_border name="EmDivisor"/>
 	<text name="loltxt8">
         Formel berechnen
 (z.b.:Befehl SIN(2+2))
@@ -222,11 +221,15 @@ Empfohlene Eisntellungen:
 (z.b.:Befehl Avatar-UUID)
       </text>
       <line_editor tool_tip="" name="EmeraldCmdLineOfferTp"/>
-      <text bottom_delta="-18" follows="left|top" font="SansSerifSmall" height="16" left_delta="0" name="loltxt13" width="512">
+      <text name="loltxt13">
         Teleport to an avatar
 (usage: cmd name) (ex:cmd First Last)
       </text>
       <line_editor tool_tip=" Befehl versteht auch nur Teile des Namens und andere Gross/Kleinschreibung. Liefert bessere Ergebnisse wenn das Radar offen ist." name="EmeraldCmdLineTP2"/>
+      <text name="loltxt14" width="512">
+        AO An/Aus (usage: cmd on/off)
+      </text>
+      <line_editor tool_tip="" name="EmeraldCmdLineAO"/>
     </panel>
     <panel label="Avatar" name="wat!">
     <button label="?" name="EmeraldHelp_Avatar" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
