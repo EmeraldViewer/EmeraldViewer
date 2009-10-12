@@ -191,12 +191,6 @@ static bool handleAvatarBoobVelMaxChanged(const LLSD& newvalue)
 	return true;
 }
 
-static bool handleAvatarBoobZInfluenceChanged(const LLSD& newvalue)
-{
-	LLVOAvatar::sBoobZInfluence = (F32) newvalue.asReal();
-	return true;
-}
-
 static bool handleAvatarBoobFrictionChanged(const LLSD& newvalue)
 {
 	LLVOAvatar::sBoobFriction = (F32) newvalue.asReal();
