@@ -552,8 +552,8 @@ BOOL LLWearable::isDirty()
 			U8 a = F32_to_U8( param->getWeight(), param->getMinWeight(), param->getMaxWeight() );
 			if(param->getID() == 507)
 			{
-				if(avatar->getAppearanceFlag() == false)
-				a = F32_to_U8( avatar->getActualBoobGrav(), param->getMinWeight(), param->getMaxWeight() );
+					weight = get_if_there(mVisualParamMap, param->getID(), avatar->getActualBoobGrav());
+					weight = llclamp( weight, param->getMinWeight(), param->getMaxWeight() );
 			}
 			U8 b = F32_to_U8( weight,             param->getMinWeight(), param->getMaxWeight() );
 			if( a != b  )
@@ -652,7 +652,7 @@ void LLWearable::writeToAvatar( BOOL set_by_user )
 			llwarns << "-------------------------------- " << llendl;
 
 				avatar->setActualBoobGrav(weight);
-				continue;
+				//continue;
 			}
 			// only animate with user-originated changes
 			if (set_by_user)
@@ -747,7 +747,7 @@ void LLWearable::removeFromAvatar( EWearableType type, BOOL set_by_user )
 			llwarns << "-------------------------------- " << llendl;
 			llwarns << "remove From Avatar " << llendl;
 			llwarns << "-------------------------------- " << llendl;
-			if(param->getID() != 507)
+			//if(param->getID() != 507)
 				avatar->setVisualParamWeight( param_id, param->getDefaultWeight(), set_by_user );
 		}
 	}
@@ -853,7 +853,7 @@ void LLWearable::copyDataFrom( LLWearable* src )
 			if(id == 507)
 			{
 				 // ZOMG: from saving new shape
-				weight = get_if_there(src->mVisualParamMap, id, avatar->getActualBoobGrav() );
+				//weight = get_if_there(src->mVisualParamMap, id, avatar->getActualBoobGrav() );
 			}
 			mVisualParamMap[id] = weight;
 		}

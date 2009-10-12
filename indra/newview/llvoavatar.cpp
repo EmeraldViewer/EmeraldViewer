@@ -2955,7 +2955,6 @@ void LLVOAvatar::idleUpdateBoobEffect()
 	param = getVisualParam(105); //boob size
 	F32 boobSize = param->getCurrentWeight();
 	param = getVisualParam(507);
-
 	ESex avatar_sex = getSex();
 
 	LLVector3 Pos = mChestp->getWorldPosition();
@@ -2964,7 +2963,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 	// Convert values from percent to real value
 	F32 zInfluence		= sBoobZInfluence/100.f*50.f;
-	F32 zMax			= sBoobZMax/100.f*3.f;
+	//F32 zMax			= sBoobZMax/100.f*3.f;
 	F32 velMax			= sBoobVelMax/100.f*0.01f; // was 0.1 max
 	F32 boobMass		= sBoobMass/100.f*20.f;
 	F32 boobHardness	= sBoobHardness/100.f*1.0f;
@@ -3009,27 +3008,26 @@ void LLVOAvatar::idleUpdateBoobEffect()
 		//llwarns << getFullname() << " friction = " << friction << llendl;
 
 		// clamp both 'just in case'
-		mBoobDisplacement	= llclamp(mBoobDisplacement, -5.f, 5.f);
-		mBoobGravity		= llclamp(mBoobGravity, -5.f, 5.f);
+		mBoobDisplacement	= llclamp(mBoobDisplacement, -1.5f, 2.0f);
+		mBoobGravity		= llclamp(mBoobGravity, -1.5f, 2.0f);
 						
-		param->setWeight(llclamp(mBoobDisplacement, -zMax, zMax), FALSE);
+		param->setWeight(llclamp(mBoobDisplacement, -1.5f, 2.0f), FALSE);
 		param->apply(avatar_sex);
 		updateVisualParams();
 
 	}
 
-	else if(getAppearanceFlag() || sBoobToggle != TRUE &&
-		!mAppearanceAnimating && mBoobDisplacement != mActualBoobGrav)
-		{
+	if(getAppearanceFlag() && mBoobDisplacement != mActualBoobGrav)
+	{
 			llwarns << "RETURNING TO ACTUAL BOOB GRAV " << mActualBoobGrav << " for " << getFullname() << llendl;
 			mBoobDisplacement = mActualBoobGrav;
-			param->setWeight(llclamp(mActualBoobGrav, -zMax, zMax), FALSE);
+			param->setWeight(llclamp(mActualBoobGrav, -1.5f, 2.0f), FALSE);
 			param->apply(avatar_sex);
 			updateVisualParams();
 			//if (mIsSelf)
 //				gAgent.sendAgentSetAppearance();
 			//dirtyMesh();
-		}
+	}
 
 	mLastTime = mBoobBounceTimer.getElapsedTimeF32();
 	mLastChestPos = mChestp->getWorldPosition();

@@ -4312,6 +4312,8 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 	gSavedSettings.setBOOL("ThirdPersonBtnState", FALSE);
 	gSavedSettings.setBOOL("BuildBtnState", FALSE);
 
+	mAvatarObject->setAppearanceFlag(true);
+
 	if (camera_animate)
 	{
 		startCameraAnimation();

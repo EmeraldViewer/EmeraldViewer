@@ -5707,7 +5707,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>35.0</real>
+    <real>61.0</real>
   </map>
    <key>EmeraldBoobHardness</key>
   <map>
@@ -5718,7 +5718,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>62</real>
+    <real>23</real>
   </map>
     <key>EmeraldBreastPhysicsToggle</key>
     <map>
@@ -5731,17 +5731,6 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
-  <key>EmeraldBoobZMax</key>
-  <map>
-    <key>Comment</key>
-    <string>Furthest boobs can go along the z axis</string>
-    <key>Persist</key>
-    <integer>1</integer>
-    <key>Type</key>
-    <string>F32</string>
-    <key>Value</key>
-    <real>51</real>
-  </map>
   <key>EmeraldBoobVelMax</key>
   <map>
     <key>Comment</key>
@@ -5751,7 +5740,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>40</real>
+    <real>83</real>
   </map>
   <key>EmeraldBoobFriction</key>
   <map>
@@ -5762,7 +5751,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>40</real>
+    <real>58</real>
   </map>
   <key>EmeraldBoobFrictionFraction</key>
   <map>
@@ -5773,18 +5762,7 @@
     <key>Type</key>
     <string>F32</string>
     <key>Value</key>
-    <real>12</real>
-  </map>
-   <key>EmeraldBoobZInfluence</key>
-  <map>
-    <key>Comment</key>
-    <string>Enable/Disable Breast Physics</string>
-    <key>Persist</key>
-    <integer>1</integer>
-    <key>Type</key>
-    <string>F32</string>
-    <key>Value</key>
-    <real>20.0</real>
+    <real>17</real>
   </map>
     <key>FloaterFindRect2</key>
     <map>
