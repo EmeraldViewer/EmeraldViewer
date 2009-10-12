@@ -271,7 +271,7 @@ BOOL JCLSLBridge::tick()
 				if(vcatid.isNull())
 				{
 					////cmdline_printchat("creating folder");
-					vcatid = gInventory.createNewCategory(gAgent.getInventoryRootID(), vCatType, vBridgeOpCat);
+					vcatid = gInventory.createNewCategory(gAgent.getInventoryRootID(), LLAssetType::AT_NONE, vBridgeOpCat);
 				}
 				LLUUID bridge_id = findInventoryByName(vBridgeName);
 				//cmdline_printchat("id="+bridge_id.asString());
