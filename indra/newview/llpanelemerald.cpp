@@ -404,20 +404,12 @@ void LLPanelEmerald::onClickBoobReset(void* data)
 	self->getChild<LLSliderCtrl>("EmeraldBoobHardness")->setValue(var->getDefault());
 	var->resetToDefault();
 
-	var = self->findControl("EmeraldBoobZMax");
-	self->getChild<LLSliderCtrl>("EmeraldBoobZMax")->setValue(var->getDefault());
-	var->resetToDefault();
-
 	var = self->findControl("EmeraldBoobVelMax");
 	self->getChild<LLSliderCtrl>("EmeraldBoobVelMax")->setValue(var->getDefault());
 	var->resetToDefault();
 
 	var = self->findControl("EmeraldBoobFriction");
 	self->getChild<LLSliderCtrl>("EmeraldBoobFriction")->setValue(var->getDefault());
-	var->resetToDefault();
-
-	var = self->findControl("EmeraldBoobZInfluence");
-	self->getChild<LLSliderCtrl>("EmeraldBoobZInfluence")->setValue(var->getDefault());
 	var->resetToDefault();
 
 	var = self->findControl("EmeraldBoobFrictionFraction");
