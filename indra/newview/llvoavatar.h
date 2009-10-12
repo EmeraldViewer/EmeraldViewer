@@ -49,8 +49,6 @@
 #include "llwearable.h"
 #include "llvoavatardefines.h"
 
-#include "emeraldboobutils.h"
-
 extern const LLUUID ANIM_AGENT_BODY_NOISE;
 extern const LLUUID ANIM_AGENT_BREATHE_ROT;
 extern const LLUUID ANIM_AGENT_EDITING;
@@ -511,24 +509,27 @@ private:
 	//--------------------------------------------------------------------
 
 private:
-	bool			mFirstSetActualBoobGravRan;
+	LLVector3		mLastChestPos;
+	F32				mBoobGravity;
+	F32				mBoobDisplacement;
+	F32				mLastDisplacement;
+	F32				mLastTime;
+	F32				mActualBoobGrav;
+	bool			mFirstIdleUpdateBoobGravRan;
 	LLFrameTimer	mBoobBounceTimer;
-	EmeraldAvatarLocalBoobConfig mLocalBoobConfig;
-	EmeraldBoobState mBoobState;
 
 public:
-	F32				getActualBoobGrav() { return mLocalBoobConfig.actualBoobGrav; }
-	void			setActualBoobGrav(F32 grav)
-	{
-		mLocalBoobConfig.actualBoobGrav = grav;
-		if(!mFirstSetActualBoobGravRan)
-		{
-			mBoobState.boobGrav = grav;
-			mFirstSetActualBoobGravRan = true;
-		}
-	}
+	F32				getActualBoobGrav() { return mActualBoobGrav; }
+	void			setActualBoobGrav(F32 grav) { mActualBoobGrav = llclamp(grav,-5.f,5.f); mFirstIdleUpdateBoobGravRan = true; }
 
-	static EmeraldGlobalBoobConfig sBoobConfig;
+	static F32		sBoobMass;
+	static F32		sBoobHardness;
+	static F32		sBoobZMax;
+	static F32		sBoobVelMax;
+	static F32		sBoobZInfluence;
+	static F32		sBoobFriction;
+	static F32		sBoobFrictionFraction;
+	static BOOL		sBoobToggle;
 
 	//--------------------------------------------------------------------
 	// Attachments

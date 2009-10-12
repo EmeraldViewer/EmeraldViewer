@@ -36,7 +36,7 @@
 #define vBridgeName "#LSL<->Client Bridge v0.01"
 #define vBridgeOpCat "#Emerald"
 
-void //cmdline_printchat(std::string message);
+//void cmdline_printchat(std::string message);
 
 //static
 U8 JCLSLBridge::sBridgeStatus;

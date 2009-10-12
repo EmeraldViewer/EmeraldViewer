@@ -175,51 +175,49 @@ static bool handleAvMorphTimeChanged(const LLSD& newvalue)
 
 static bool handleAvatarBoobMassChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.mass = EmeraldBoobUtils::convertMass((F32) newvalue.asReal());
+	LLVOAvatar::sBoobMass = (F32) newvalue.asReal();
 	return true;
 }
 
 static bool handleAvatarBoobHardnessChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.hardness = EmeraldBoobUtils::convertHardness((F32) newvalue.asReal());
+	LLVOAvatar::sBoobHardness = (F32) newvalue.asReal();
 	return true;
 }
 
 static bool handleAvatarBoobZMaxChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.zMax = EmeraldBoobUtils::convertZMax((F32) newvalue.asReal());
+	LLVOAvatar::sBoobZMax = (F32) newvalue.asReal();
 	return true;
 }
 
 static bool handleAvatarBoobVelMaxChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.velMax = EmeraldBoobUtils::convertVelMax((F32) newvalue.asReal());
-	LLVOAvatar::sBoobConfig.velMin = LLVOAvatar::sBoobConfig.frictionFraction*LLVOAvatar::sBoobConfig.velMax;
+	LLVOAvatar::sBoobVelMax = (F32) newvalue.asReal();
 	return true;
 }
 
 static bool handleAvatarBoobZInfluenceChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.zInfluence = EmeraldBoobUtils::convertZInfluence((F32) newvalue.asReal());
+	LLVOAvatar::sBoobZInfluence = (F32) newvalue.asReal();
 	return true;
 }
 
 static bool handleAvatarBoobFrictionChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.friction = EmeraldBoobUtils::convertFriction((F32) newvalue.asReal());
+	LLVOAvatar::sBoobFriction = (F32) newvalue.asReal();
 	return true;
 }
 
 static bool handleAvatarBoobFrictionFractionChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.frictionFraction = EmeraldBoobUtils::convertFrictionFraction((F32) newvalue.asReal());
-	LLVOAvatar::sBoobConfig.velMin = LLVOAvatar::sBoobConfig.frictionFraction*LLVOAvatar::sBoobConfig.velMax;
+	LLVOAvatar::sBoobFrictionFraction = (F32) newvalue.asReal();
 	return true;
 }
 
 static bool handleAvatarBoobToggleChanged(const LLSD& newvalue)
 {
-	LLVOAvatar::sBoobConfig.enabled = (BOOL) newvalue.asReal();
+	LLVOAvatar::sBoobToggle = (BOOL) newvalue.asReal();
 	return true;
 }
 
