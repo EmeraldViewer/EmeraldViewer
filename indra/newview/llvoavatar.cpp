@@ -1022,9 +1022,9 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
 	// grab the boob savedparams (prob a better place for this)
 	sBoobMass				= gSavedSettings.getF32("EmeraldBoobMass");
 	sBoobHardness			= gSavedSettings.getF32("EmeraldBoobHardness");
-	sBoobZMax				= gSavedSettings.getF32("EmeraldBoobZMax");
+	//sBoobZMax				= gSavedSettings.getF32("EmeraldBoobZMax");
 	sBoobVelMax				= gSavedSettings.getF32("EmeraldBoobVelMax");
-	sBoobZInfluence			= gSavedSettings.getF32("EmeraldBoobZInfluence");
+	//sBoobZInfluence			= gSavedSettings.getF32("EmeraldBoobZInfluence");
 	sBoobFriction			= gSavedSettings.getF32("EmeraldBoobFriction");
 	sBoobFrictionFraction	= gSavedSettings.getF32("EmeraldBoobFrictionFraction");
 	sBoobToggle				= gSavedSettings.getBOOL("EmeraldBreastPhysicsToggle");
