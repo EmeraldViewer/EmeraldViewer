@@ -2989,7 +2989,7 @@ void LLVOAvatar::idleUpdateBoobEffect()
 
 		//llwarns << "boobvel = " << boobVel << llendl;
 		//if  movement's negligable, just return. Prevents super slight jiggling.
-		 if(abs(boobVel) <= minVel)
+		 if(fabs(boobVel) <= minVel)
 			 boobVel = 0.0f;
 
 		boobVel *=	zInfluence * (llclamp(boobSize, 0.0f, 0.5f) / 0.5f);
