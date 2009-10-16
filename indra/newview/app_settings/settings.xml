@@ -82,6 +82,17 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
+		<key>mm_alwaysRezWithLandGroup</key>
+		<map>
+			<key>Comment</key>
+			<string>Attempts to rez objects in the lands group if you're apart of it</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>ColorllFunction</key>
 		<map>
 			<key>Comment</key>
