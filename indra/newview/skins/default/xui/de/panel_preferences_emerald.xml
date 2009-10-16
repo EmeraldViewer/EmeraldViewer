@@ -88,6 +88,7 @@ Empfohlene Eisntellungen:
     </panel>
     <panel label="IM" name="Misc">
     <button label="?" name="EmeraldHelp_IM" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+    <button name="otr_help_btn" label="Was ist OTR?"/>
       <!--[$PLOTR$]-->
       <radio_group name="EmeraldUseOTR">
         <radio_item name="0" tool_tip="Bestehe auf OTR in IMs">
@@ -103,8 +104,8 @@ Empfohlene Eisntellungen:
           OTR nicht benutzen
         </radio_item>
       </radio_group>
-      <button name="otr_help_btn" label="Was ist OTR?"/>
       <check_box name="EmeraldOTRInTypingStop-toggle" tool_tip="Sende alle OTR verschlüsselte Nachrichten als IM_TYPING_STOP Packete.  Inkompatible mit älteren OTR Versionen." label="Benutze typing_stop für OTR"/>
+      <check_box label="Vertikale IM Reiter (benötigt Neustart)" name="vertical-imtabs-toggle"/>
       <view_border name="OTRBorder"/>      
       <!--[/$PLOTR$]-->
       <check_box label="Eingehende IM vorankündigen" name="EmeraldInstantMessageAnnounceIncoming"/>
@@ -128,12 +129,10 @@ Empfohlene Eisntellungen:
       <text name="im_give_disp_rect_txt">
         Aktuelles Objekt: ITEM
       </text>
-      <check_box label="Vertikale IM Reiter (benötigt Neustart)" name="vertical-imtabs-toggle"/>
+      
     </panel>
     <panel label="Chat" name="Chat">
     <button label="?" name="EmeraldHelp_Chat" tool_tip="Click here for help regarding the settings in this page."/>
-      <panel name="scanner_options">
-      </panel>
       <check_box label="Radar Infos im Chat anzeigen" name="radar_chat_toggle"/>
       <check_box label="Info wenn Avatar Region betritt/verlässt" name="radar_chat_sim_toggle"/>
       <check_box label="Info wenn Avatar Sichtweite betritt/verlässt" name="radar_chat_draw_toggle"/>
@@ -159,7 +158,8 @@ Empfohlene Eisntellungen:
         <check_box label="Escape setzt Kamera zurück auf Standard im Kameramodus (STRG-1)" name="EmResetCamOnEscape-toggle" tool_tip="Deaktivieren verhindert das sich die Kamera zurücksetzt wenn Escape gedrückt wurde ."/>
         <check_box label="Aktiviere Minimap Rotation" name="MinimapRotate"/>
         <check_box label="Suchleiste anzeigen" name="Search_bar-toggle"/>
-        <check_box label="Aktiviere Restrained Life [RLV] Funktionen(benötigt Neustart)" name="rlv-toggle"/>
+        <check_box label="Objekte wenn möglich mit der passenden Land Gruppe rezzen" name="grouplandrez"/>
+        <check_box label="Aktiviere Restrained Life [RLVa] Funktionen(benötigt Neustart)" name="rlv-toggle"/>
         <view_border name="EmDivisorBridge"/>
         <check_box label="Aktiviere LSL-Client Brücke" name="EmeraldBuildBridge"/>
         <check_box label="Radar nutzt Brücke" name="EmeraldUseBridgeRadar"/>
