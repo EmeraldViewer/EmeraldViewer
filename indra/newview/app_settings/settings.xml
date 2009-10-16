@@ -23,21 +23,6 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
-		<key>ColorllFunction</key>
-		<map>
-			<key>Comment</key>
-			<string>Color for llFunction builtins in the script editor.</string>
-			<key>Persist</key>
-			<integer>0</integer>
-			<key>Type</key>
-			<string>Color3</string>
-			<key>Value</key>
-			<array>
-				<real>0.5</real>
-				<real>0.0</real>
-				<real>0.15</real>
-			</array>
-		</map>
 		<key>zmm_deffov</key>
 		<map>
 			<key>Comment</key>
@@ -3484,7 +3469,7 @@
 			<key>Comment</key>
 			<string>Turn on Animation Overrider</string>
 			<key>Persist</key>
-			<integer>0</integer>
+			<integer>1</integer>
 			<key>Type</key>
 			<string>Boolean</string>
 			<key>Value</key>
