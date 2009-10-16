@@ -290,7 +290,10 @@ void LLOverlayBar::refresh()
 		(gAgent.getTeleportState() == LLAgent::TELEPORT_MOVING) ||
 		(gAgent.getTeleportState() == LLAgent::TELEPORT_START))
 	{
-		teleporting = TRUE;
+		//teleporting = TRUE;
+// [RLVa:KB] - Checked: 2009-10-15 (RLVa-1.0.5e)
+		teleporting = gRlvHandler.getCanCancelTp();	// TRUE when RLVa disabled or not teleporting in response to @accepttp and/or @tpto
+// [/RLVa:KB]
 	}
 	else
 	{

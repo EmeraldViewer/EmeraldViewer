@@ -3300,7 +3300,7 @@ void process_teleport_start(LLMessageSystem *msg, void**)
 //	if (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL)
 // [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Added: RLVa-0.2.0b
 	// Emerald specific: disable cancel *only* due to RLV restrictions
-	if ( (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL) && (!gRlvHandler.getCanCancelTp()) )
+	if ( /*(teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL) &&*/ (!gRlvHandler.getCanCancelTp()) )
 // [/RLVa:KB]
 	{
 		gViewerWindow->setProgressCancelButtonVisible(FALSE);
@@ -3340,7 +3340,7 @@ void process_teleport_progress(LLMessageSystem* msg, void**)
 //	if (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL)
 // [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-07 (RLVa-1.0.0d) | Added: RLVa-0.2.0b
 	// Emerald specific: disable cancel *only* due to RLV restrictions
-	if ( (teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL) && (!gRlvHandler.getCanCancelTp()) )
+	if ( /*(teleport_flags & TELEPORT_FLAGS_DISABLE_CANCEL) &&*/ (!gRlvHandler.getCanCancelTp()) )
 // [/RLVa:KB]
 	{
 		gViewerWindow->setProgressCancelButtonVisible(FALSE);
