@@ -42,6 +42,6 @@ const S32 LL_VERSION_BUILD = 553;
 const S32 LL_VERSION_BUILD = EMERALD_SVN_VERSION;
 #endif
 
-const char * const LL_CHANNEL = "GreenLife Emerald Viewer";
+const char * const LL_CHANNEL = "Emerald Viewer";
 
 #endif
