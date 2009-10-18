@@ -434,7 +434,6 @@ Simulator damit man per Script darauf zugreifen kann.
       <slider name="EmeraldBoobZMax" label="Brust max Z:" tool_tip=""/>
       <slider name="EmeraldBoobVelMax" label="Brust max vel:" tool_tip=""/>
       <slider name="EmeraldBoobFriction" label="Brust Reibung:" tool_tip=""/>
-      <slider name="EmeraldBoobZInfluence" label="Brust Z Einfluss:" tool_tip=""/>
       <button label="Standard" name="EmeraldBreastReset" tool_tip="Setzt die Einstellungen auf Standardwerte zurück"/>
       <check_box label="Aktiviere neue Glanz Berechnung" name="EmeraldNewShiny"/>
       <check_box label="Aktiviere Schatten Berechnung" name="EmeraldShadowsON"/>
