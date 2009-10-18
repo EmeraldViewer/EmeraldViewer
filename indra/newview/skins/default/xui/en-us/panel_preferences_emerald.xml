@@ -1090,11 +1090,6 @@ from the Emerald viewer into the simulator for access via scripts.
              increment="1" label="Breast friction:"
              label_width="100" max_val="100" min_val="1" mouse_opaque="true"
              show_text="true" width="250" auto_resize="false" tool_tip=""/>
-      <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobZInfluence" control_name="EmeraldBoobZInfluence"
-             decimal_digits="0" enabled="true" follows="left|top" height="18"
-             increment="1" label="Breast Z influence:"
-             label_width="100" max_val="100" min_val="1" mouse_opaque="true"
-             show_text="true" width="250" auto_resize="false" tool_tip=""/>
       <slider bottom_delta="-20" left_delta="0" name="EmeraldBoobFrictionFraction" control_name="EmeraldBoobFrictionFraction"
              decimal_digits="0" enabled="true" follows="left|top" height="18"
              increment="1" label="Breast min vel:"
