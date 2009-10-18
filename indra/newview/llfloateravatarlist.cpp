@@ -1252,7 +1252,7 @@ void LLFloaterAvatarList::processBridgeReply(std::vector<LLUUID> avatars, LLSD b
 
 		std::string toParse = bridgeResponce[i].asString();
 		
-		llinfos << "trying to parse " << toParse.c_str() << llendl;
+//		llinfos << "trying to parse " << toParse.c_str() << llendl;
 		
 		LLVector3d v;
 		char * pch = strtok ((char *)toParse.c_str()," ,<>");
@@ -1271,7 +1271,7 @@ void LLFloaterAvatarList::processBridgeReply(std::vector<LLUUID> avatars, LLSD b
 		S32 count = sscanf( toParseOut.c_str(), "%lf %lf %lf", v.mdV + 0, v.mdV + 1, v.mdV + 2 );
 		if( 3 == count )
 		{
-			llinfos << "setting new height" << llendl;
+//			llinfos << "setting new height" << llendl;
 			entry->mPosition =v;
 		}
 	}
