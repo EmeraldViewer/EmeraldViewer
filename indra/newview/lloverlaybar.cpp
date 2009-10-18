@@ -292,7 +292,7 @@ void LLOverlayBar::refresh()
 	{
 		//teleporting = TRUE;
 // [RLVa:KB] - Checked: 2009-10-15 (RLVa-1.0.5e)
-		teleporting = gRlvHandler.getCanCancelTp();	// TRUE when RLVa disabled or not teleporting in response to @accepttp and/or @tpto
+		teleporting = (!rlv_handler_t::isEnabled()) || (gRlvHandler.getCanCancelTp());
 // [/RLVa:KB]
 	}
 	else
