@@ -1431,7 +1431,7 @@ if (LINUX)
       DEPENDS ${VIEWER_BINARY_NAME}
       )
 
-  set(product GreenLife-${ARCH}-${viewer_VERSION})
+  set(product Emerald-${ARCH}-${viewer_VERSION})
 
   add_custom_command(
       OUTPUT ${product}.tar.bz2
