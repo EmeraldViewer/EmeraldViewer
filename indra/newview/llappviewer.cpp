@@ -3399,26 +3399,34 @@ void LLAppViewer::idle()
 		if(canSend)
 		{
 			//theGenius Indigo - Joystick data is streamed inworld on a specific channel
-			if(LLViewerJoystick::streamEnabled)
+			LLViewerJoystick* joystick = LLViewerJoystick::getInstance(); //You need this here! ~tG
+			if(joystick)
 			{
-				if(JSstream_update_time > (1.0f / llmax(LLViewerJoystick::streamRefresh, 0.0001f)))
+				if(LLViewerJoystick::streamEnabled)
 				{
-					LLViewerJoystick::getInstance()->cansend(); //Allow data to be sent on the next joystick scan
-					JSstream_update_timer.reset();
+					if(JSstream_update_time > (1.0f / llmax(LLViewerJoystick::streamRefresh, 0.0001f)))
+					{
+						joystick->cansend(); //Allow data to be sent on the next joystick scan
+						JSstream_update_timer.reset();
+					}
 				}
 			}
-			if(GUS::Enabled)
+			GUS* GussyWussy = GUS::getInstance(); //This is for Laura =P
+			if(GussyWussy)
 			{
-				if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
+				if(GUS::Enabled)
 				{
-					if(GUS::getInstance()->streamData())GUS_update_timer.reset();
-					GUS::getInstance()->FELimiter_dec();
-				}
-				if(GUS::FEEnabled)
-				{
-					if(GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
+					if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
 					{
-						if(GUS::getInstance()->fastEvent())GUS_FE_update_timer.reset();
+						if(GussyWussy->streamData())GUS_update_timer.reset();
+						GussyWussy->FELimiter_dec();
+					}
+					if(GUS::FEEnabled)
+					{
+						if(GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
+						{
+							if(GussyWussy->fastEvent())GUS_FE_update_timer.reset();
+						}
 					}
 				}
 			}

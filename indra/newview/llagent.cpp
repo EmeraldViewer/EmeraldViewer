@@ -136,6 +136,7 @@
 #include "llviewerjoystick.h"
 #include "llfollowcam.h"
 #include "llfloaterteleporthistory.h"
+#include "greenlife_utility_stream.h"
 
 using namespace LLVOAvatarDefines;
 
@@ -6236,7 +6237,13 @@ void LLAgent::teleportRequest(
 
 	// Set last region data for teleport history
 	gAgent.setLastRegionData(regionp->getName(),gAgent.getPositionAgent());
-	if(regionp && teleportCore())
+
+	if(regionp && regionp->getHandle() == region_handle && gSavedSettings.getBOOL("EmeraldMoveLockDCT"))
+	{
+		gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);
+		GUS::whisper(gSavedSettings.getS32("EmeraldMoveLockDCTChannel"),  GUS::sVec3(pos_local));
+	}
+	else if(regionp && teleportCore())
 	{
 		llinfos << "TeleportRequest: '" << region_handle << "':" << pos_local
 				<< llendl;
@@ -6357,6 +6364,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 
 	LLViewerRegion* regionp = getRegion();
 	LLSimInfo* info = LLWorldMap::getInstance()->simInfoFromPosGlobal(pos_global);
+	bool isLocal = regionp->getHandle() == to_region_handle_global((F32)pos_global.mdV[VX], (F32)pos_global.mdV[VY]);
 	if(regionp && info)
 	{
 		U32 x_pos;
@@ -6368,8 +6376,17 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global)
 			(F32)(pos_global.mdV[VZ]));
 		teleportRequest(info->mHandle, pos_local);
 	}
+	else if(regionp && isLocal && gSavedSettings.getBOOL("EmeraldMoveLockDCT"))
+	{
+		F32 width = regionp->getWidth();
+		LLVector3 pos_local(fmod((F32)pos_global.mdV[VX], width),
+				  fmod((F32)pos_global.mdV[VY], width),
+				  (F32)pos_global.mdV[VZ]);
+		gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);
+		GUS::whisper(gSavedSettings.getS32("EmeraldMoveLockDCTChannel"),  GUS::sVec3(pos_local));
+	}
 	else if(regionp && 
-		teleportCore(regionp->getHandle() == to_region_handle_global((F32)pos_global.mdV[VX], (F32)pos_global.mdV[VY])))
+		teleportCore(isLocal))
 	{
 		llwarns << "Using deprecated teleportlocationrequest." << llendl; 
 		// send the message

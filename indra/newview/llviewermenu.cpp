@@ -2493,7 +2493,10 @@ bool handle_go_to()
 	}
 	else
 	{
-		if(gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc"))
+		bool calc = gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc");
+		bool movelockdct = gSavedSettings.getBOOL("EmeraldMoveLockDCT");
+		bool mldctoffset = gSavedSettings.getBOOL("EmeraldMoveLockDCTOffset");
+		if(calc && ((!movelockdct)||(movelockdct && mldctoffset))) // almost XOR o.o (also hax 'n' voodoo magic) ~tG
 		{
 			//Chalice - Add half the av height.
 			LLVOAvatar* avatarp = gAgent.getAvatarObject();

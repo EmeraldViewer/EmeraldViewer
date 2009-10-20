@@ -53,10 +53,15 @@ GUS::GUS()
 //static
 void GUS::initGUS()
 {
+	llinfos << "GUS::initGUS() called" << llendl;
 	Enabled = gSavedSettings.getBOOL("EmeraldGUSEnabled");
 	Refresh = gSavedSettings.getF32("EmeraldGUSRefresh");
 	FEEnabled = gSavedSettings.getBOOL("EmeraldGUSFastEventsEnabled");
 	FERefresh = gSavedSettings.getF32("EmeraldGUSFastEventsRefresh");
+	llinfos << "initGUS - Enabled / " << Enabled << llendl;
+	llinfos << "initGUS - Refresh / " << Refresh << llendl;
+	llinfos << "initGUS - FEEnabled / " << FEEnabled << llendl;
+	llinfos << "initGUS - FERefresh / " << FERefresh << llendl;
 	gSavedSettings.getControl("EmeraldGUSEnabled")->getSignal()->connect(&gusEnabled);
 	gSavedSettings.getControl("EmeraldGUSRefresh")->getSignal()->connect(&gusRefresh);
 	gSavedSettings.getControl("EmeraldGUSFastEventsEnabled")->getSignal()->connect(&gusFEEnabled);
@@ -66,21 +71,25 @@ void GUS::initGUS()
 void GUS::gusEnabled(const LLSD &data)
 {
 	Enabled = (bool)data.asBoolean();
+	llinfos << "gusEnabled / " << Enabled << llendl;
 }
 //static
 void GUS::gusRefresh(const LLSD &data)
 {
 	Refresh = (F32)data.asReal();
+	llinfos << "gusRefresh / " << Refresh << llendl;
 }
 //static
 void GUS::gusFEEnabled(const LLSD &data)
 {
 	FEEnabled = (bool)data.asBoolean();
+	llinfos << "gusFEEnabled / " << FEEnabled << llendl;
 }
 //static
 void GUS::gusFERefresh(const LLSD &data)
 {
 	FERefresh = (F32)data.asReal();
+	llinfos << "gisFERefresh / " << FERefresh << llendl;
 }
 bool GUS::streamData()
 {
@@ -98,7 +107,7 @@ bool GUS::fastEvent()
 	std::string nMessage = genFEMessage();
 	FEchanged = FEchanged || (sFEMessage != nMessage);
 	if(!FEchanged)return false;
-	F32 GUS_FE_freq = llclamp(gSavedSettings.getF32("EmeraldGUSFastEventsRefresh"), 0.0001f, 20.f);
+	F32 GUS_FE_freq = llclamp(FERefresh, 0.0001f, 20.f);
 	if(FELimiter < GUS_FE_freq)
 	{
 		whisper(gSavedSettings.getS32("EmeraldGUSChannel")+1, nMessage);
@@ -156,7 +165,19 @@ std::string GUS::genFEMessage()
 	return message.str();
 }
 
-void GUS::whisper(S32 channel, std::string message)
+void GUS::whisper(S32 channel, std::string message, bool force)
+{
+	if(channel > 0 || force)
+		chatmessage(channel, message, CHAT_TYPE_WHISPER);
+}
+
+void GUS::say(S32 channel, std::string message, bool force)
+{
+	if(channel > 0 || force)
+		chatmessage(channel, message, CHAT_TYPE_NORMAL);
+}
+
+void GUS::chatmessage(S32 channel, std::string message, U8 type)
 {
 	LLMessageSystem* msg = gMessageSystem;
 	msg->newMessageFast(_PREHASH_ChatFromViewer);
@@ -165,7 +186,7 @@ void GUS::whisper(S32 channel, std::string message)
 	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 	msg->nextBlockFast(_PREHASH_ChatData);
 	msg->addStringFast(_PREHASH_Message, message.c_str());
-	msg->addU8Fast(_PREHASH_Type, CHAT_TYPE_WHISPER);
+	msg->addU8Fast(_PREHASH_Type, type);
 	msg->addS32("Channel", channel);
 	gAgent.sendReliableMessage();
 	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
@@ -194,6 +215,15 @@ std::string GUS::sQuat(LLQuaternion quat)
 	strstr << "<" << quat.mQ[0] << ", " << quat.mQ[1] << ", "  << quat.mQ[2] << ", "  << quat.mQ[3] << ">";
 	std::string squat = strstr.str(); // lol strstrstr
 	return squat; // lol squat
+}
+
+std::string GUS::sVec3(LLVector3 vec)
+{
+	std::stringstream strstr;
+	strstr << std::setiosflags(std::ios::fixed) << std::setprecision(6); // delicious iomanip
+	strstr << "<" << vec.mV[0] << ", " << vec.mV[1] << ", "  << vec.mV[2] << ">";
+	std::string svec = strstr.str(); // lol strstrstr
+	return svec;
 }
 
 bool GUS::getEyelidState() //FALSE == open, TRUE == shut

@@ -27,11 +27,15 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Rotate Camera behind avatar after Double-click Teleports" left_delta="0" mouse_opaque="true"
            name="move_camaftertp_toggle" radio_style="false" width="270" control_name="EmeraldRotateCamAfterLocalTP" />
-      <check_box bottom_delta="-20" enabled="true"
-           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Always fly after teleports" left_delta="0" mouse_opaque="true"
-           name="flyaftertp_toggle" radio_style="false" width="270" control_name="EmeraldFlyAfterTeleport" />
-      <spinner decimal_digits="1" follows="left|top" height="18" increment="0.1" initial_val="0"
+	  <check_box bottom_delta="-20" enabled="true"
+			 follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+			 label="Always fly after teleports" left_delta="0" mouse_opaque="true"
+			 name="flyaftertp_toggle" radio_style="false" width="270" control_name="EmeraldFlyAfterTeleport" />
+	  <check_box bottom_delta="-20" enabled="true"
+			 follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+			 label="Use C.Y.P.H.E.R. move-lock teleport system" left_delta="0" mouse_opaque="true"
+			 name="mldct_toggle" radio_style="false" width="270" control_name="EmeraldMoveLockDCT" />
+	  <spinner decimal_digits="1" follows="left|top" height="18" increment="0.1" initial_val="0"
            label="Double-click Teleport Z Offset" label_width="160" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0"
            name="Double-click Teleport Z Offset"
            tool_tip="Controls the Z Offset for Double-click Teleports"
@@ -40,22 +44,26 @@
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Additionally offset up by half the avatar height" left_delta="0" mouse_opaque="true"
            name="avcalc_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleportAvCalc" />
-      <radio_group bottom="-180" draw_border="false" follows="top|left" height="40"
-         name="EmeraldDoubleClickTeleportMode" width="270">
-        <radio_item bottom="-20" height="20" left="0" name="0" width="270"
+	  <check_box bottom_delta="-20" enabled="true"
+           follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Apply this offset to the move-lock teleport system" left_delta="10" mouse_opaque="true"
+           name="mldctoffset_toggle" radio_style="false" width="270" control_name="EmeraldMoveLockDCTOffset" />
+      <radio_group bottom_delta="-40" draw_border="false" follows="top|left" height="40"
+         name="EmeraldDoubleClickTeleportMode" left_delta="-10" width="270">
+        <radio_item bottom_delta="-10" height="20" left="0" name="0" width="270"
           tool_tip="This makes the avatar rotation stay the same between doubleclick teleports.">
           Keep avatar rotation the same when doubleclick teleporting
         </radio_item>
-        <radio_item bottom="-40" height="20" left="0" name="1" width="270"
+        <radio_item bottom_delta="-10" height="20" left="0" name="1" width="270"
           tool_tip="This makes the avatar use the camera's left/right rotation on doubleclick teleport.">
           Rotate avatar according to camera left/right rotation on doubleclick teleport
         </radio_item>
       </radio_group>
-      <check_box bottom_delta="-30" enabled="true"
+      <check_box bottom_delta="-20" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Play Teleport sound effect" left_delta="-50" mouse_opaque="true"
            name="TPSound-toggle" radio_style="false" width="270" control_name="EmeraldPlayTpSound" />
-      <check_box bottom_delta="-30" enabled="true"
+      <check_box bottom_delta="-20" enabled="true"
            follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Download new Client Tags definitions" left_delta="-0" mouse_opaque="true"
            name="DownloadTags_toggle" radio_style="false" width="270" control_name="EmeraldDownloadClientTags" />
@@ -80,7 +88,7 @@
            label="Disable Logout Progress Screen" left_delta="0" mouse_opaque="true"
            name="logout_screen_toggle" radio_style="false" width="270" control_name="EmeraldDisableLogoutScreens" />
       <spinner decimal_digits="1" follows="left|top" height="18" increment="1" initial_val="0.1"
-           label="Login Precaching Delay" label_width="125" left_delta="0" bottom_delta="-25" max_val="9001" min_val="0.1"
+           label="Login Precaching Delay" label_width="125" right="-35" bottom_delta="0" max_val="9001" min_val="0.1"
            name="Login Precaching Delay"
            tool_tip="Controls the time on login it waits to let you in"
            width="175" control_name="PrecachingDelay" />
@@ -218,7 +226,9 @@ Recommended Settings are:
       <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
            label="Broadcast viewer effects" left_delta="0" mouse_opaque="true" name="EmBroadcastEffects-toggle" control_name="EmeraldBroadcastEffects" radio_style="false" width="270" />
       <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
-           label="Broadcast camera focus point and pointer target" left_delta="0" mouse_opaque="true" name="EmBroadcastPointers-toggle" control_name="EmeraldBroadcastPointers" radio_style="false" width="270" />
+           label="Broadcast camera focus point" left_delta="0" mouse_opaque="true" name="EmBroadcastPointers-toggle" control_name="EmeraldBroadcastPointers" radio_style="false" width="270" />
+		<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
+           label="Broadcast pointer target" left_delta="0" mouse_opaque="true" name="EmBroadcastPointers-toggle2" control_name="EmeraldBroadcastPointers2" radio_style="false" width="270" />
       <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
            label="Enable the active CryoLife detection code" left_delta="0" mouse_opaque="true" name="EmCryo-toggle" control_name="EmeraldCryoDetection" width="270" />
     </panel>
