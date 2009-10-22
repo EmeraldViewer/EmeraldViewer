@@ -6546,6 +6546,19 @@ The URL you clicked cannot be opened from this web browser.
   </notification>
   <notification
    icon="notify.tga"
+   name="QueryEmeraldNCreatorExport"
+   type="alertmodal">
+    You are exporting an item that you are not the creator of; You
+    should always make sure you have the rights to export content.
+    <form name="form">
+      <button
+       index="0"
+       name="Ok"
+       text="Ok"/>
+    </form>
+  </notification>
+  <notification
+   icon="notify.tga"
    name="EmeraldStealth"
    type="alertmodal">
     This will go through your settings and disable any features that may be used to determine what client you are running.

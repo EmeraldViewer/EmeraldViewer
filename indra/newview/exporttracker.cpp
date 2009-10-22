@@ -51,6 +51,8 @@
 
 #include "llviewertexteditor.h"
 
+#include "llfirstuse.h"
+
 JCExportTracker* JCExportTracker::sInstance;
 LLSD JCExportTracker::data;
 U32 JCExportTracker::totalprims;
@@ -334,6 +336,15 @@ bool JCExportTracker::serializeSelection()
 		LLSelectNode* selectNode = *iter;
 		LLViewerObject* object = selectNode->getObject();
 		if(object)catfayse.put(object);
+	}
+	BOOL creators_identical;
+	LLUUID CreatorID;
+	std::string creator_name;
+	creators_identical = LLSelectMgr::getInstance()->selectGetCreator(CreatorID,
+													  creator_name);
+	if(!creators_identical || (CreatorID.notNull() && CreatorID != gAgent.getID()))
+	{
+		LLFirstUse::EmeraldNCreatorExport();
 	}
 	return serialize(catfayse);
 }
