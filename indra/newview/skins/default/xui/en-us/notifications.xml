@@ -6861,16 +6861,17 @@ Channel Password: You can set up a channel to have a password by (/msg ChanServ)
 Breast Physics
 This enables you and other avatar's breasts to have actual physics applied to them. You can use these settings to fine-tune the physics to match your personal taste.
 
+-Mass
+   A higher value will seemingly increase the total effect
 -Rebound
    Controls how quickly the breasts will come to rest after any movement.
--Friction
-   This controls the internal friction. Brings the breasts to a halt. Higher the number, quicker they stop.
 -Max Vel
    The amount of "momentum" they can recieve. Lower for less bounce
 -Min Vel
    Percentage of the Max Vel that doesn't effect boob physics.
--Mass
-   A higher value will seemingly increase the total effect
+-Friction
+   This controls the internal friction. Brings the breasts to a halt. Higher the number, quicker they stop.
+ 
 
   </notification>
 

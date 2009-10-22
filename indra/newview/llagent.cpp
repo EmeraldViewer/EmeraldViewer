@@ -7573,6 +7573,10 @@ void LLAgent::sendAgentSetAppearance()
 			F32 param_value;
 			if(param->getID() == 507)
 				param_value = mAvatarObject->getActualBoobGrav();
+			if(param->getID() == 795)
+				param_value = mAvatarObject->getActualButtGrav();
+			if(param->getID() == 157)
+				param_value = mAvatarObject->getActualFatGrav();
 			else
 				param_value = param->getWeight();
 			const U8 new_weight = F32_to_U8(param_value, param->getMinWeight(), param->getMaxWeight());

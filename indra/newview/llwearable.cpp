@@ -550,9 +550,22 @@ BOOL LLWearable::isDirty()
 			weight = llclamp( weight, param->getMinWeight(), param->getMaxWeight() );
 			
 			U8 a = F32_to_U8( param->getWeight(), param->getMinWeight(), param->getMaxWeight() );
+			//boob
 			if(param->getID() == 507)
 			{
 					weight = get_if_there(mVisualParamMap, param->getID(), avatar->getActualBoobGrav());
+					weight = llclamp( weight, param->getMinWeight(), param->getMaxWeight() );
+			}
+			//butt
+			if(param->getID() == 795)
+			{
+					weight = get_if_there(mVisualParamMap, param->getID(), avatar->getActualButtGrav());
+					weight = llclamp( weight, param->getMinWeight(), param->getMaxWeight() );
+			}
+			//fat
+			if(param->getID() == 157)
+			{
+					weight = get_if_there(mVisualParamMap, param->getID(), avatar->getActualFatGrav());
 					weight = llclamp( weight, param->getMinWeight(), param->getMaxWeight() );
 			}
 			U8 b = F32_to_U8( weight,             param->getMinWeight(), param->getMaxWeight() );
@@ -646,13 +659,17 @@ void LLWearable::writeToAvatar( BOOL set_by_user )
 			if(param_id == 507)
 			{
 				 //ZOMG: When switching shapes from inventory
-
-			llwarns << "-------------------------------- " << llendl;
-			llwarns << "write To Avatar for  " << avatar->getFullname() << llendl;
-			llwarns << "-------------------------------- " << llendl;
-
 				avatar->setActualBoobGrav(weight);
-				//continue;
+			}
+			if(param_id == 795)
+			{
+				 //ZOMG: When switching shapes from inventory
+				avatar->setActualButtGrav(weight);
+			}
+			if(param_id == 157)
+			{
+				 //ZOMG: When switching shapes from inventory
+				avatar->setActualFatGrav(weight);
 			}
 			// only animate with user-originated changes
 			if (set_by_user)
@@ -798,6 +815,14 @@ void LLWearable::readFromAvatar()
 			if(param->getID() == 507)
 			{
 				avatar->setActualBoobGrav(param->getWeight());
+			}
+			if(param->getID() == 795)
+			{
+				avatar->setActualButtGrav(param->getWeight());
+			}
+			if(param->getID() == 157)
+			{
+				avatar->setActualFatGrav(param->getWeight());
 			}
 			mVisualParamMap[param->getID()] = param->getWeight();
 		}
