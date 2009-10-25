@@ -6371,9 +6371,19 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 	LLVector3 offset1 = LLVector3(0.f,0.f,go_to?zo:0.f);
 	offset1 += (go_to && vel)?gAgent.getVelocity() * 0.25:LLVector3();
 	LLVector3 offset2 = LLVector3(0.f,0.f,go_to?gAgent.getAvatarObject()->getScale().mV[2] / 2:0.f);
-	if(tp)
+	if(regionp && tp)
 	{
-		if((regionp && info) || go_to)
+		if(go_to)
+		{
+			U64 handle = to_region_handle(pos_global);
+			F32 width = regionp->getWidth();
+			LLVector3 pos(fmod((F32)pos_global.mdV[VX], width),
+						  fmod((F32)pos_global.mdV[VY], width),
+						  (F32)pos_global.mdV[VZ]);
+			pos += offset1+(calc?offset2:LLVector3());
+			teleportRequest(handle, pos);
+		}
+		else if(info)
 		{
 			U32 x_pos;
 			U32 y_pos;
@@ -6384,8 +6394,8 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 				(F32)(pos_global.mdV[VZ]));
 			pos_local += offset1+(calc?offset2:LLVector3());
 			teleportRequest(info->mHandle, pos_local);
-		}else if(regionp && 
-		teleportCore(isLocal))
+		}
+		else if(teleportCore(isLocal))
 		{
 			llwarns << "Using deprecated teleportlocationrequest." << llendl; 
 			// send the message
