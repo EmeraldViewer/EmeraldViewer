@@ -130,7 +130,7 @@ struct EmeraldBoobInputs
 	F32 elapsedTime;
 	bool appearanceFlag;
 	bool appearanceAnimating;
-	F32 type;
+	S32 type;
 
 	EmeraldBoobInputs()
 		: chestPosition(0.0f,0.0f,0.0f),
@@ -138,7 +138,7 @@ struct EmeraldBoobInputs
 			elapsedTime(0.0f),
 			appearanceFlag(false),
 			appearanceAnimating(false),
-			type(0.0f)
+			type(0)
 	{
 	}
 

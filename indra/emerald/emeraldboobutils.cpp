@@ -82,20 +82,21 @@ EmeraldBoobState EmeraldBoobUtils::idleUpdate(const EmeraldGlobalBoobConfig &con
 	if(!config.enabled || inputs.appearanceFlag || inputs.appearanceAnimating)
 		return newState;
 
-	if(inputs.type == 0.0f)
+	if(inputs.type == 0)
 	{
 		newState.boobGrav = localConfig.actualBoobGrav;
 		avatarLocalMass = (llclamp(localConfig.boobSize, 0.0f, 0.5f) / 0.5f);
 	}
-	if(inputs.type == 1.0f)
+	if(inputs.type == 1)
 	{
 		newState.boobGrav = localConfig.actualButtGrav;
-		partMod = 0.5f;
+		partMod = 1.5f;
 		avatarLocalMass = llclamp(localConfig.actualButtGrav, 0.0f, 0.5f) / 0.5f;
 	}
-	if(inputs.type == 2.0f)
+	if(inputs.type == 2)
 	{
 		newState.boobGrav = localConfig.actualFatGrav;
+		partMod = 1.3f;
 		avatarLocalMass = localConfig.actualFatGrav;
 	}
 
@@ -169,12 +170,16 @@ EmeraldBoobState EmeraldBoobUtils::idleUpdate(const EmeraldGlobalBoobConfig &con
 		totalNewAmplitude+=newAmplitude;
 	}
 	//std::cout << "Total new amplitude: " << totalNewAmplitude << std::endl;
-	if(inputs.type == 0.0f)
+	/*
+	if(inputs.type == 0)
 		newState.boobGrav = localConfig.actualBoobGrav + totalNewAmplitude;
-	if(inputs.type == 1.0f)
+	if(inputs.type == 1)
 		newState.boobGrav = localConfig.actualButtGrav + totalNewAmplitude;
-	if(inputs.type == 2.0f)
+	if(inputs.type == 2)
 		newState.boobGrav = localConfig.actualFatGrav + totalNewAmplitude;
+	*/
+
+	newState.boobGrav = totalNewAmplitude;
 
 
 	newState.boobGrav = llclamp(newState.boobGrav, -1.5f, 2.0f);

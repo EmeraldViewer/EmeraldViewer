@@ -412,8 +412,8 @@ void LLPanelEmerald::onClickBoobReset(void* data)
 	self->getChild<LLSliderCtrl>("EmeraldBoobFriction")->setValue(var->getDefault());
 	var->resetToDefault();
 
-	var = self->findControl("EmeraldBoobFrictionFraction");
-	self->getChild<LLSliderCtrl>("EmeraldBoobFrictionFraction")->setValue(var->getDefault());
+	var = self->findControl("EmeraldBoobVelMin");
+	self->getChild<LLSliderCtrl>("EmeraldBoobVelMin")->setValue(var->getDefault());
 	var->resetToDefault();
 }
 
