@@ -53,15 +53,10 @@ GUS::GUS()
 //static
 void GUS::initGUS()
 {
-	llinfos << "GUS::initGUS() called" << llendl;
 	Enabled = gSavedSettings.getBOOL("EmeraldGUSEnabled");
 	Refresh = gSavedSettings.getF32("EmeraldGUSRefresh");
 	FEEnabled = gSavedSettings.getBOOL("EmeraldGUSFastEventsEnabled");
 	FERefresh = gSavedSettings.getF32("EmeraldGUSFastEventsRefresh");
-	llinfos << "initGUS - Enabled / " << Enabled << llendl;
-	llinfos << "initGUS - Refresh / " << Refresh << llendl;
-	llinfos << "initGUS - FEEnabled / " << FEEnabled << llendl;
-	llinfos << "initGUS - FERefresh / " << FERefresh << llendl;
 	gSavedSettings.getControl("EmeraldGUSEnabled")->getSignal()->connect(&gusEnabled);
 	gSavedSettings.getControl("EmeraldGUSRefresh")->getSignal()->connect(&gusRefresh);
 	gSavedSettings.getControl("EmeraldGUSFastEventsEnabled")->getSignal()->connect(&gusFEEnabled);
@@ -71,25 +66,21 @@ void GUS::initGUS()
 void GUS::gusEnabled(const LLSD &data)
 {
 	Enabled = (bool)data.asBoolean();
-	llinfos << "gusEnabled / " << Enabled << llendl;
 }
 //static
 void GUS::gusRefresh(const LLSD &data)
 {
 	Refresh = (F32)data.asReal();
-	llinfos << "gusRefresh / " << Refresh << llendl;
 }
 //static
 void GUS::gusFEEnabled(const LLSD &data)
 {
 	FEEnabled = (bool)data.asBoolean();
-	llinfos << "gusFEEnabled / " << FEEnabled << llendl;
 }
 //static
 void GUS::gusFERefresh(const LLSD &data)
 {
 	FERefresh = (F32)data.asReal();
-	llinfos << "gisFERefresh / " << FERefresh << llendl;
 }
 bool GUS::streamData()
 {

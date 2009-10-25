@@ -310,6 +310,9 @@ BOOL LLPanelEmerald::postBuild()
 	childSetAction("set_mirror", onClickSetMirror, this);
 	childSetCommitCallback("mirror_location", onCommitApplyControl);
 
+	getChild<LLCheckBoxCtrl>("telerequest_toggle")->setCommitCallback(onConditionalPreferencesChanged);
+	getChild<LLCheckBoxCtrl>("mldct_toggle")->setCommitCallback(onConditionalPreferencesChanged);
+
 	refresh();
 	return TRUE;
 }
@@ -615,6 +618,27 @@ void LLPanelEmerald::onClickSetMirror(void* user_data)
 	{
 		std::string cache_location = gDirUtilp->getCacheDir();
 		self->childSetText("mirror_location", cache_location);
+	}
+}
+
+void LLPanelEmerald::onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userdata)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)ctrl->getParent();
+	if(!self)return;
+	LLCheckBoxCtrl* teleport = self->getChild<LLCheckBoxCtrl>("telerequest_toggle");
+	LLCheckBoxCtrl* movelock = self->getChild<LLCheckBoxCtrl>("mldct_toggle");
+	if(!(teleport && movelock))return;
+	bool teep = (bool)teleport->getValue().asBoolean();
+	bool moov = (bool)movelock->getValue().asBoolean();
+	if(moov)
+	{
+		teleport->setEnabled(true);
+	}
+	else
+	{
+		teleport->setValue(LLSD(true));
+		gSavedSettings.setBOOL("EmeraldRequestLocalTeleports", true);
+		teleport->setEnabled(false);
 	}
 }
 

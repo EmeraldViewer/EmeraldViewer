@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <llsd>
 	<map>
 		<key>InventorySearchType</key>
@@ -5036,7 +5036,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string></string>
+			<string/>
 		</map>
 		<key>EmeraldInvMirrorGestures</key>
 		<map>
@@ -5137,7 +5137,6 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
-
 		<key>WarnEmeraldBuildBridge</key>
 		<map>
 			<key>Comment</key>
@@ -5739,17 +5738,17 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
-    <key>EmeraldBreastSportsBra</key>
-    <map>
-      <key>Comment</key>
-      <string>allows disabling the physics for 1 av, in case their outfit looks wrong with it on</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>0</integer>
-    </map>
+		<key>EmeraldBreastSportsBra</key>
+		<map>
+			<key>Comment</key>
+			<string>allows disabling the physics for 1 av, in case their outfit looks wrong with it on</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>EmeraldBoobVelMax</key>
 		<map>
 			<key>Comment</key>
@@ -6696,6 +6695,17 @@
 			<string>S32</string>
 			<key>Value</key>
 			<real>90000</real>
+		</map>
+		<key>EmeraldRequestLocalTeleports</key>
+		<map>
+			<key>Comment</key>
+			<string>:3</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<real>1</real>
 		</map>
 		<key>EmeraldMoveLockDCTOffset</key>
 		<map>
@@ -9316,7 +9326,6 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
-
 		<key>RenderShadowGaussian</key>
 		<map>
 			<key>Comment</key>
@@ -9332,7 +9341,6 @@
 				<real>0.0</real>
 			</array>
 		</map>
-
 		<key>RenderShadowNearDist</key>
 		<map>
 			<key>Comment</key>
@@ -9510,7 +9518,6 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
-
 		<key>RenderAnimateTrees</key>
 		<map>
 			<key>Comment</key>
@@ -13467,7 +13474,7 @@
 			<key>Type</key>
 			<string>LLSD</string>
 			<key>Value</key>
-			<map></map>
+			<map/>
 		</map>
 		<key>VFSOldSize</key>
 		<map>
@@ -13610,7 +13617,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string></string>
+			<string/>
 		</map>
 		<key>VivoxDebugVoiceAccountServerURI</key>
 		<map>
@@ -13621,7 +13628,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string></string>
+			<string/>
 		</map>
 		<key>vivoxProductionServerName</key>
 		<map>
@@ -13877,7 +13884,7 @@
 			<integer>1</integer>
 		</map>
 		<key>WarnEmeraldOTR</key>
-    <map>
+		<map>
 			<key>Comment</key>
 			<string>Enables OTR info dialog</string>
 			<key>Persist</key>
@@ -13887,17 +13894,17 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
-    <key>WarnEmeraldNCreatorExport</key>EmeraldNCreatorExport
-    <map>
-      <key>Comment</key>
-      <string>warns on creatorfayse</string>
-      <key>Persist</key>
-      <integer>1</integer>
-      <key>Type</key>
-      <string>Boolean</string>
-      <key>Value</key>
-      <integer>1</integer>
-    </map>
+		<key>WarnEmeraldNCreatorExport</key>
+		<map>
+			<key>Comment</key>
+			<string>warns on creatorfayse</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
 		<key>WarnEmeraldRadarChat</key>
 		<map>
 			<key>Comment</key>
