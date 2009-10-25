@@ -347,6 +347,8 @@ void LLPanelEmerald::refresh()
 		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamColorFile"));
 	}
 
+	//epic hax (TODO: make this less hax)
+	onConditionalPreferencesChanged(getChild<LLComboBox>("telerequest_toggle"), NULL);
 
 	//mSkin = gSavedSettings.getString("SkinCurrent");
 	//getChild<LLRadioGroup>("skin_selection")->setValue(mSkin);
@@ -628,7 +630,7 @@ void LLPanelEmerald::onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userd
 	LLCheckBoxCtrl* teleport = self->getChild<LLCheckBoxCtrl>("telerequest_toggle");
 	LLCheckBoxCtrl* movelock = self->getChild<LLCheckBoxCtrl>("mldct_toggle");
 	if(!(teleport && movelock))return;
-	bool teep = (bool)teleport->getValue().asBoolean();
+	//bool teep = (bool)teleport->getValue().asBoolean();
 	bool moov = (bool)movelock->getValue().asBoolean();
 	if(moov)
 	{
