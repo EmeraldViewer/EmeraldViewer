@@ -348,7 +348,7 @@ void LLPanelEmerald::refresh()
 	}
 
 	//epic hax (TODO: make this less hax)
-	onConditionalPreferencesChanged(getChild<LLComboBox>("telerequest_toggle"), NULL);
+	onConditionalPreferencesChanged(getChild<LLCheckBoxCtrl>("telerequest_toggle"), NULL);
 
 	//mSkin = gSavedSettings.getString("SkinCurrent");
 	//getChild<LLRadioGroup>("skin_selection")->setValue(mSkin);
