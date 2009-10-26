@@ -4310,7 +4310,8 @@ void LLTextEditor::setTextEditorParameters(LLXMLNodePtr node)
 // Refactoring note: We may eventually want to replace this with boost::regex or 
 // boost::tokenizer capabilities since we've already fixed at least two JIRAs
 // concerning logic issues associated with this function.
-S32 LLTextEditor::findHTMLToken(const std::string &line, S32 pos, BOOL reverse) const
+
+S32 LLTextEditor::findHTMLToken(const std::string &line, S32 pos, BOOL reverse, const char *end_delims) const
 {
     // Marks the beginning of a URL.
 	std::string openers=" \t\n('\"[{<>";
@@ -4318,6 +4319,8 @@ S32 LLTextEditor::findHTMLToken(const std::string &line, S32 pos, BOOL reverse) 
 	std::string closers=" \t\n";
     // List of crap we want to remove from the end of URLs.
     std::string removeAtEnd = ".,;'\"!?";
+    if( end_delims != NULL )
+        removeAtEnd += end_delims;
 
 	if (reverse)
 	{
@@ -4341,6 +4344,11 @@ S32 LLTextEditor::findHTMLToken(const std::string &line, S32 pos, BOOL reverse) 
 	}		
 }
 
+S32 LLTextEditor::findHTMLToken(const std::string &line, S32 pos, BOOL reverse) const
+{
+    return findHTMLToken(line,pos,reverse,NULL);
+}
+
 BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 {
 	  
@@ -4352,7 +4360,10 @@ BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 	if (m1 >= 0) //Easy match.
 	{
 		*begin = findHTMLToken(line, m1, TRUE);
-		*end   = findHTMLToken(line, m1, FALSE);
+        if( *begin > 0 && line.substr(*begin-1,1) == "(" )
+		    *end   = findHTMLToken(line, m1, FALSE, ")" );
+        else
+		    *end   = findHTMLToken(line, m1, FALSE);
 		
 		//Load_url only handles http and https so don't hilite ftp, smb, etc.
 		m2 = line.substr(*begin,(m1 - *begin)).find("http");
@@ -4435,7 +4446,10 @@ BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 				
 				strpos = (*end + 1) - *begin;
 								
-				*end = findHTMLToken(line,(*begin + strpos),FALSE);
+                if( *begin > 0 && line.substr(*begin,1) == "(" )
+				    *end = findHTMLToken(line,(*begin + strpos),FALSE,")");
+                else
+				    *end = findHTMLToken(line,(*begin + strpos),FALSE);
 				url = line.substr(*begin,*end - *begin);
 			}
 		}
