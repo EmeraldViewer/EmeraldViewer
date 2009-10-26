@@ -76,7 +76,7 @@ F32 EmeraldBoobUtils::convertVelMin(F32 displayVelMin)
 EmeraldBoobState EmeraldBoobUtils::idleUpdate(const EmeraldGlobalBoobConfig &config, const EmeraldAvatarLocalBoobConfig &localConfig, const EmeraldBoobState &oldState, const EmeraldBoobInputs &inputs)
 {
 	EmeraldBoobState newState;
-	F32 avatarLocalMass;
+	F32 avatarLocalMass = 0.0f;
 	F32 partMod = 1.f;
 
 	if(!config.enabled || inputs.appearanceFlag || inputs.appearanceAnimating)
