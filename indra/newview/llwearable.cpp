@@ -842,14 +842,20 @@ void LLWearable::readFromAvatar()
 	{
 		if( (((LLViewerVisualParam*)param)->getWearableType() == mType) && (param->getGroup() == VISUAL_PARAM_GROUP_TWEAKABLE ) )
 		{
-			/*
+			
+			//pretty sure is right
 			if(param->getID() == 507)
 				avatar->setActualBoobGrav(param->getWeight());
 			if(param->getID() == 151)
 				avatar->setActualButtGrav(param->getWeight());
 			if(param->getID() == 157)
 				avatar->setActualFatGrav(param->getWeight());
-			*/
+			
+			//if(param->getID() == 507)
+			//{
+			//	llwarns << "current = " << avatar->getActualBoobGrav() << llendl;
+			//	llwarns << "param weight = " << param->getWeight() << llendl;
+			//}
 				
 
 			mVisualParamMap[param->getID()] = param->getWeight();
@@ -903,18 +909,25 @@ void LLWearable::copyDataFrom( LLWearable* src )
 		{
 			S32 id = param->getID();
 			F32 weight = get_if_there(src->mVisualParamMap, id, param->getDefaultWeight() );
-			llwarns << "------------------------------" << llendl;
-			llwarns << "copydatafrom" << llendl;
-			llwarns << "------------------------------" << llendl;
+			//llwarns << "------------------------------" << llendl;
+			//llwarns << "copydatafrom" << llendl;
+			//llwarns << "------------------------------" << llendl;
 			
-			/*
+			//if(id == 507)
+			//{
+			//	llwarns << "weight = " << weight << llendl;
+			//	llwarns << "actual = " << avatar->getActualBoobGrav() << llendl;
+			//	llwarns << "mVisualParamMap[id] = " << mVisualParamMap[id] << llendl;
+			//}
+
+			//pretty sure right
 			if(id == 507)
 				avatar->setActualBoobGrav(weight);
 			if(id == 795)
 				avatar->setActualButtGrav(weight);
 			if(id == 157)
 				avatar->setActualFatGrav(weight);
-			*/
+			
 			
 
 			mVisualParamMap[id] = weight;
