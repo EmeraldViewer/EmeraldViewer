@@ -4312,34 +4312,32 @@ void LLTextEditor::setTextEditorParameters(LLXMLNodePtr node)
 // concerning logic issues associated with this function.
 S32 LLTextEditor::findHTMLToken(const std::string &line, S32 pos, BOOL reverse) const
 {
+    // Marks the beginning of a URL.
 	std::string openers=" \t\n('\"[{<>";
-	std::string closers=" \t\n)'\"]}><;";
+    // Marks the end of a URL.
+	std::string closers=" \t\n";
+    // List of crap we want to remove from the end of URLs.
+    std::string removeAtEnd = ".,;'\"!?";
 
 	if (reverse)
 	{
-		for (int index=pos; index >= 0; index--)
-		{
-			char c = line[index];
-			S32 m2 = openers.find(c);
-			if (m2 >= 0)
-			{
-				return index+1;
-			}
-		}
-		return 0; // index is -1, don't want to return that. 
+        int index;
+        // Find preceeding whitespace or beginning of line.
+		for( index=pos; index>=0 && (S32)openers.find(line[index])<0; index-- );
+		return index+1;
 	} 
 	else
 	{
-		for (int index=pos; index<(S32)line.length(); index++)
-		{
-			char c = line[index];
-			S32 m2 = closers.find(c);
-			if (m2 >= 0)
-			{
-				return index;
-			}
-		} 
-		return line.length();
+        int index;
+        S32 len = line.length();
+        // Find next whitespace or EOL.
+		for( index=pos; index<len && (S32)closers.find(line[index])<0; index++ );
+        // Back up over any punctuation crap at the end.
+        for( ; index>pos && (S32)removeAtEnd.find(line[index-1])>=0; index-- );
+        // Note: Due to LL weirdness, we return the index right after the
+        //  last character when we're searching to the right, instead of
+        //  the position of the last character.
+		return index;
 	}		
 }
 
