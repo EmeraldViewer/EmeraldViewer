@@ -2493,7 +2493,7 @@ bool handle_go_to()
 	}
 	else
 	{
-		gAgent.teleportViaLocation(pos);
+		gAgent.teleportViaLocation(pos, true);
 	}
 	return true;
 }
