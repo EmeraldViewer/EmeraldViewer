@@ -74,7 +74,6 @@ private:
 	static void beamUpdateCall(LLUICtrl* ctrl, void* userdata);
 	static void onClickSetMirror(void*);
     static void onClickOtrHelp(void* data); // [$PLOTR$/]
-	static void onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userdata);
 	//static void onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data);
 	//static void onCommitAvatarEffectsChange(LLUICtrl* caller, void* user_data);
 	//static void onCommitAutoResponse(LLUICtrl* caller, void* user_data);

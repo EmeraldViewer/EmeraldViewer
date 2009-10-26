@@ -2493,7 +2493,20 @@ bool handle_go_to()
 	}
 	else
 	{
-		gAgent.teleportViaLocation(pos, true);
+		bool calc = gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc");
+		bool movelockdct = gSavedSettings.getBOOL("EmeraldMoveLockDCT");
+		bool mldctoffset = gSavedSettings.getBOOL("EmeraldMoveLockDCTOffset");
+		if(calc && ((!movelockdct)||(movelockdct && mldctoffset))) // almost XOR o.o (also hax 'n' voodoo magic) ~tG
+		{
+			//Chalice - Add half the av height.
+			LLVOAvatar* avatarp = gAgent.getAvatarObject();
+			LLVector3 autoOffSet = avatarp->getScale();
+			pos.mdV[2]=pos.mdV[2] + (autoOffSet.mV[2] / 2.0);
+		}
+		LLVector3d got( 0.0f, 0.0f, gSavedSettings.getF32("EmeraldDoubleClickZOffset"));
+		got += pos;
+		if(gSavedSettings.getBOOL("EmeraldVelocityDoubleClickTeleport"))got += ((LLVector3d)gAgent.getVelocity() * 0.25);
+		gAgent.teleportViaLocation(got);
 	}
 	return true;
 }
