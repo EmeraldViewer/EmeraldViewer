@@ -4446,7 +4446,7 @@ BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 				
 				strpos = (*end + 1) - *begin;
 								
-                if( *begin > 0 && line.substr(*begin,1) == "(" )
+                if( *begin > 0 && line.substr(*begin-1,1) == "(" )
 				    *end = findHTMLToken(line,(*begin + strpos),FALSE,")");
                 else
 				    *end = findHTMLToken(line,(*begin + strpos),FALSE);
