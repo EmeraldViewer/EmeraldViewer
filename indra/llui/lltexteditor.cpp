@@ -4357,6 +4357,11 @@ BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 		//Load_url only handles http and https so don't hilite ftp, smb, etc.
 		m2 = line.substr(*begin,(m1 - *begin)).find("http");
 		m3 = line.substr(*begin,(m1 - *begin)).find("secondlife");
+
+        // Hackery for chat namespace URI whitespace. We just use the whole
+        //  rest of the line. <_<
+        if( m3 >= 0 && line.substr(m1,13) == ":///app/chat/" )
+            *end = line.length();
 	
 		std::string badneighbors=".,<>?';\"][}{=-+_)(*&^%$#@!~`\t\r\n\\";
 	
