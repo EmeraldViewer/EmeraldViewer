@@ -1732,6 +1732,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		
 		if(session_id != computed_session_id)
 		{
+		/*
 			LL_WARNS("Check SessionID") << "Invalid session id used by " << name
 				<< " offline=" << offline
 				<< " session_id=" << session_id.asString()
@@ -1739,6 +1740,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 				<< " dialog=" << dialog
 				<< " computedSessionID=" << computed_session_id.asString()
 				<< LL_ENDL;
+				*/
 			session_id = computed_session_id;
 			/*if(!gIMMgr->hasSession(correct_session))
 			{
