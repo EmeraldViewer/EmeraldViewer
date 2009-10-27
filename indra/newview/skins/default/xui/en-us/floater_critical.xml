@@ -1,13 +1,7 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<floater can_close="false" can_drag_on_left="false" can_minimize="false"
-     can_resize="false" height="500" min_height="100" min_width="100"
-     name="modal container" title="" width="600">
-	<button bottom="15" font="SansSerif" halign="center" height="20" label="Continue"
-	     label_selected="Continue" left="484" mouse_opaque="true" name="Continue"
-	     width="100" />
-	<button bottom="15" font="SansSerif" halign="center" height="20" label="Cancel"
-	     label_selected="Cancel" left="16" mouse_opaque="true" name="Cancel"
-	     width="100" />
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<floater can_close="false" can_drag_on_left="false" can_minimize="false" can_resize="false" height="500" min_height="100" min_width="100" name="modal container" title="" width="600">
+	<button bottom="15" font="SansSerif" halign="center" height="20" label="Continue" label_selected="Continue" left="484" mouse_opaque="true" name="Continue" width="100"/>
+	<button bottom="15" font="SansSerif" halign="center" height="20" label="Cancel" label_selected="Cancel" left="16" mouse_opaque="true" name="Cancel" width="100"/>
 	<!-- No title text here because our "critical message" is usually the
 	community standards. JC -->
 	<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false" bottom="-35" drop_shadow_visible="true" follows="left|top" font="SansSerif" h_pad="0" halign="left" height="20" left="20" mouse_opaque="true" name="tos_heading" v_pad="0" width="552">
