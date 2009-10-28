@@ -434,8 +434,13 @@ Response Text: (Use #f for recipient's first name,
          name="Search_bar-toggle" radio_style="false" width="270" control_name="ShowSearchBar" />
       <check_box bottom_delta="-20" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16"
-         label="Always rez objects under the land group if possible." left_delta="0" mouse_opaque="true"
+         label="Always rez objects under the land group if possible" left_delta="0" mouse_opaque="true"
          name="grouplandrez" radio_style="false" width="270" control_name="mm_alwaysRezWithLandGroup" />
+      <check_box bottom_delta="-20" enabled="true"
+         follows="left|top" font="SansSerifSmall" height="16"
+         label="Ignore camera constraints" left_delta="0" mouse_opaque="true"
+         name="em_cameraconstraints" radio_style="false" width="270" control_name="EmeraldIgnoreSimulatorCameraConstraints"
+         tool_tip="When enabled, allows the camera to zoom or pan through walls/prims. Original behavior is to clamp the camera at a surface." />
       <check_box bottom_delta="-40" enabled="true"
          follows="left|top" font="SansSerifSmall" height="16" initial_value="false"
          label="Enable Restrained Life [RLVa] features" left_delta="0" mouse_opaque="true"
