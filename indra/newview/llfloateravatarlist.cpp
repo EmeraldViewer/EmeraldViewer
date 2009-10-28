@@ -586,6 +586,7 @@ BOOL LLFloaterAvatarList::postBuild()
 	mAvatarList->setDoubleClickCallback(onDoubleClick);
 	mAvatarList->sortByColumn("distance", TRUE);
 	mDataRequestTimer.start();
+	mUpdateThrottleTimer.start();
 	refreshAvatarList();
 
 	//LLMessageSystem *msg = gMessageSystem;
@@ -601,6 +602,10 @@ void LLFloaterAvatarList::updateAvatarList()
 //	LLVOAvatar *avatarp;
 
 	if( sInstance != this ) return;
+
+	if ( mUpdateThrottleTimer.getElapsedTimeF32() < 0.25)
+		return;
+	mUpdateThrottleTimer.reset();
 
 	//llinfos << "avatar list refresh: updating map" << llendl;
 

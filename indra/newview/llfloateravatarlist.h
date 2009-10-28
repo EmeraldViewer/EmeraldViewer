@@ -742,6 +742,7 @@ private:
 	 * @brief Used to delay avatar data requests
 	 */
 	LLTimer mDataRequestTimer;
+	LLTimer mUpdateThrottleTimer;
 
 	/**
 	 * @brief Avatar the camera is focused on
