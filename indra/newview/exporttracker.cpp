@@ -360,7 +360,11 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 		
 	if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
 		return false; // User canceled save.
-		
+	// Gross magical value that is 128kbit/s
+	// Sim appears to drop requests if they come in faster than this. *sigh*
+	gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
+	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+
 	destination = file_picker.getFirstFile();
 
 	//destination = destination.substr(0,destination.find_last_of("."));
@@ -424,6 +428,9 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 	{
 		data = total;
 	}
+
+	gMessageSystem->mPacketRing.setOutBandwidth(0.0);
+	gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
 
 	return success;
 
