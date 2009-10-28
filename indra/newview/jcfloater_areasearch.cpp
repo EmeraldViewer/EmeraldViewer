@@ -263,7 +263,11 @@ void JCFloaterAreaSearch::results()
 	S32 i;
 	S32 total = gObjectList.getNumObjects();
 
-	gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
+	F32 throttle = gSavedSettings.getF32("OutBandwidth");
+	if(throttle < 128000.)
+	{
+		gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
+	}
 	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 
 	LLViewerRegion* our_region = gAgent.getRegion();
@@ -312,9 +316,18 @@ void JCFloaterAreaSearch::results()
 
 void JCFloaterAreaSearch::close(bool app)
 {
+	F32 throttle = gSavedSettings.getF32("OutBandwidth");
+	if(throttle != 0.)
+	{
+		gMessageSystem->mPacketRing.setOutBandwidth(throttle);
+		gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+	}
+	else
+	{
+		gMessageSystem->mPacketRing.setOutBandwidth(0.0);
+		gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
+	}
 
-	gMessageSystem->mPacketRing.setOutBandwidth(0.0);
-	gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
 	if(app)
 	{
 		LLFloater::close(app);
