@@ -263,6 +263,9 @@ void JCFloaterAreaSearch::results()
 	S32 i;
 	S32 total = gObjectList.getNumObjects();
 
+	gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
+	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+
 	LLViewerRegion* our_region = gAgent.getRegion();
 	for (i = 0; i < total; i++)
 	{
@@ -309,6 +312,9 @@ void JCFloaterAreaSearch::results()
 
 void JCFloaterAreaSearch::close(bool app)
 {
+
+	gMessageSystem->mPacketRing.setOutBandwidth(0.0);
+	gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
 	if(app)
 	{
 		LLFloater::close(app);
@@ -324,6 +330,7 @@ void JCFloaterAreaSearch::close(bool app)
 // static
 void JCFloaterAreaSearch::processObjectPropertiesFamily(LLMessageSystem* msg, void** user_data)
 {
+	if(!sInstance) return;
 	LLUUID id;
 
 	U32 request_flags;
