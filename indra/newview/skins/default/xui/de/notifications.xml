@@ -3079,6 +3079,13 @@ Klicken Sie auf „Akzeptieren“, um dem Chat beizutreten, oder auf „Ablehnen
       <button name="No" text="Nein"/>
     </form>
   </notification>
+  <notification name="QueryEmeraldNCreatorExport">
+    Sie exportieren ein Objekt dessen Ersteller sie nicht sind;
+    Sie sollten immer sicher sein das sie die nötigen Rechte dazu haben.
+    <form name="form">
+      <button name="Ok" text="Ok"/>
+    </form>
+  </notification>
   <notification name="EmeraldStealth">
     Deaktiviert alle Funktionen durch die andere erkennen können das sie Emerald benutzen.
     Es gibt keine Warnung wenn sie einzelne Funktionen selber wieder reaktivieren durch die Emerald erkannt werden kann!

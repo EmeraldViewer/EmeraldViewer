@@ -5,17 +5,20 @@
 		<column name="Description" label="Beschreibung"/>
 		<column name="Owner" label="Eigentümer"/>
 		<column name="Group" label="Gruppe"/>
-		<column name="Pay" label="Zahlen"/>
-		<column name="Buy" label="Kaufen"/>
 	</scroll_list>
-	<button label="Neu laden" name="Reload"/>
 	<check_box name="touch_only" label="gescriptete Objekte mit Touch"/>
 	<check_box name="scripted" label="gescriptete Objekte"/>
-	<check_box name="physical" label="physikalische Objekte"/>
 	<check_box name="sounds" label="Audio Quelle/n"/>
 	<check_box name="particles" label="Partikel Quelle/n"/>
-	<check_box name="payable" label="Bezahlbares Objekt"/>
-	<check_box name="buyable" label="Kaufbares Objekt"/>
+  <check_box name="animations" label="Animation Quelle/n"/>
+	<check_box name="payable" label="Bezahlbares Objekt/e"/>
+  <check_box name="temporary" label="Temporäre Objekt/e"/>
+  <check_box name="sculpted" label="Sculpted Objekt/e"/>
+  <check_box name="flexible" label="Flexible Objekt/e"/>
+  <check_box name="phantom" label="Phantom Objekt/e"/>
+  <check_box name="attachment" label="Attachment"/>
+  <check_box name="hudattachment" label="HUD Attachment"/>
+  <check_box name="inventoryadd" label="Inventory Add"/>
 	<line_editor tool_tip="" name="Name query chunk" label="Name query chunk"/>
 	<line_editor tool_tip="" name="Description query chunk" label="Description query chunk"/>
 	<line_editor tool_tip="" name="Owner query chunk" label="Owner query chunk"/>

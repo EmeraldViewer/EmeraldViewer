@@ -9,8 +9,10 @@
       <check_box label="Velocity Interpolate Double-click Teleports" name="login_screen_toggle1"/>
       <check_box label="Drehe Kamera hinter Avatar nach Doppelklick Teleport" name="move_camaftertp_toggle"/>
       <check_box label="Immer fliegen nach Teleport" name="flyaftertp_toggle"/>
+      <check_box label="Benutze C.Y.P.H.E.R. move-lock Teleport System" name="mldct_toggle"/>
       <spinner label="Doppelklick Teleport Z Abweichung" name="Double-click Teleport Z Offset" tool_tip="Option zum einstellen der Z Abweichung nach Doppelklick Teleport"/>
       <check_box label="Halbe Avatarhöhe als extra Abweichung" name="avcalc_toggle"/>
+      <check_box label="Nutze die Abweichung für das move-lock Teleport System." name="mldctoffset_toggle"/>
       <radio_group name="EmeraldDoubleClickTeleportMode">
         <radio_item name="0" tool_tip="Keine Änderung der Rotation nach Doppelklick Teleport.">
           Keine Änderung der Rotation nach Doppelklick Teleport.
@@ -114,10 +116,10 @@ Empfohlene Eisntellungen:
       <check_box label="Automatische Antwort an Stumgeschaltete" name="EmeraldInstantMessageResponseMuted" />
       <check_box label="Automatische Antwort an jeden" name="EmeraldInstantMessageResponseAnyone"/>
       <check_box label="sobald jemand anfängt zu schreiben" name="EmeraldInstantMessageShowOnTyping"/>
-      <check_box label="IM die eine automatische Antwort erhalten hat nicht anzeigen" name="EmeraldInstantMessageShowResponded"/>      
-      <check_box label="Automatische Antwort bei jeder Nachricht und nicht nur bei der ersten" name="EmeraldInstantMessageResponseRepeat"/>
+      <check_box label="nicht anzeigen nach automatischer Antwort" name="EmeraldInstantMessageShowResponded"/>      
+      <check_box label="Automatische Antwort bei jeder Nachricht" name="EmeraldInstantMessageResponseRepeat"/>
       <text name="text_box1">
-        Automatische Antwort: (Benutze #f für den Vornamen, #l für Nachnamen, #t für Uhrzeit)
+        Autom. Antwort: (#f = Vorname, #l = Nachname, #t = Uhrzeit)
       </text>
       <text_editor name="im_response"/>
       <check_box label="Objekt mit der automatischen Antwort versenden" name="EmeraldInstantMessageResponseItem"/>
@@ -152,13 +154,14 @@ Empfohlene Eisntellungen:
         <button label="?" name="EmeraldHelp_Misc" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
         <check_box label="Fliegen immer erlauben" name="alwaysflytoggle"/>
         <check_box label="Aktiviere STRG-Alt-P für phantom" name="allowphantomtoggle"/>
-        <check_box label="Aktiviere STRG-Alt-S um überall auf den Boden zu sitzen" name="allowsittoggle"/>
+        <check_box label="Aktiviere STRG-Alt-S um überall zu sitzen (Boden)" name="allowsittoggle"/>
         <check_box label="Blockiere automatisches sitzen bei Linksklick" name="sit-click-toggle"/>
         <check_box label="Zeige Avatarname bei Blickziel Markierung" name="EmShowLookAtNames-toggle"/>
         <check_box label="Escape setzt Kamera zurück auf Standard im Kameramodus (STRG-1)" name="EmResetCamOnEscape-toggle" tool_tip="Deaktivieren verhindert das sich die Kamera zurücksetzt wenn Escape gedrückt wurde ."/>
         <check_box label="Aktiviere Minimap Rotation" name="MinimapRotate"/>
         <check_box label="Suchleiste anzeigen" name="Search_bar-toggle"/>
         <check_box label="Objekte wenn möglich mit der passenden Land Gruppe rezzen" name="grouplandrez"/>
+        <check_box label="Ignoriere Kamera Einschränkungen" name="em_cameraconstraints" tool_tip="Erlaubt der Kamera durch Prims zu zoomen oder schwenken. Normales Verhalten ist die Kamera an Oberflächen fest zu klemmen."/>
         <check_box label="Aktiviere Restrained Life [RLVa] Funktionen(benötigt Neustart)" name="rlv-toggle"/>
         <view_border name="EmDivisorBridge"/>
         <check_box label="Aktiviere LSL-Client Brücke" name="EmeraldBuildBridge"/>
@@ -350,7 +353,7 @@ Empfohlene Eisntellungen:
     <panel label="IRC" name="IRC">
 <button label="?" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <text name="IRC-colors">
-        Farben die für die Anzeige von IRC Nachrichten verwendet werden:
+  Farben die für die Anzeige von IRC Nachrichten verwendet werden:
       </text>
       <color_swatch label="Channel" name="colorswatch" tool_tip="Click to open Color Picker"/>
       <color_swatch label="Action" name="colorswatch" tool_tip="Click to open Color Picker"/>
@@ -434,6 +437,7 @@ Simulator damit man per Script darauf zugreifen kann.
       <slider name="EmeraldBoobZMax" label="Brust max Z:" tool_tip=""/>
       <slider name="EmeraldBoobVelMax" label="Brust max vel:" tool_tip=""/>
       <slider name="EmeraldBoobFriction" label="Brust Reibung:" tool_tip=""/>
+      <slider name="EmeraldBoobVelMin" label="Brust min vel:" tool_tip=""/>
       <button label="Standard" name="EmeraldBreastReset" tool_tip="Setzt die Einstellungen auf Standardwerte zurück"/>
       <check_box label="Aktiviere neue Glanz Berechnung" name="EmeraldNewShiny"/>
       <check_box label="Aktiviere Schatten Berechnung" name="EmeraldShadowsON"/>
