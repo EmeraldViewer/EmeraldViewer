@@ -1203,6 +1203,18 @@ BOOL LLTextEditor::handleMouseDown(S32 x, S32 y, MASK mask)
 }
 
 
+BOOL LLTextEditor::handleMiddleMouseDown(S32 x, S32 y, MASK mask)
+{
+	setFocus( TRUE );
+	if( canPastePrimary() )
+	{
+		setCursorAtLocalPos( x, y, TRUE );
+		pastePrimary();
+	}
+	return TRUE;
+}
+
+
 BOOL LLTextEditor::handleHover(S32 x, S32 y, MASK mask)
 {
 	BOOL handled = FALSE;
@@ -1324,6 +1336,9 @@ BOOL LLTextEditor::handleMouseUp(S32 x, S32 y, MASK mask)
 			setCursorAtLocalPos( x, y, TRUE );
 			endSelection();
 
+			// take selection to primary clipboard
+			updatePrimary();
+
 			updateScrollFromCursor();
 		}
 		
@@ -1331,6 +1346,9 @@ BOOL LLTextEditor::handleMouseUp(S32 x, S32 y, MASK mask)
 		{
 			handleMouseUpOverSegment( x, y, mask );
 		}
+
+		// take selection to 'primary' clipboard
+		updatePrimary();
 
 		handled = TRUE;
 	}
@@ -1394,8 +1412,12 @@ BOOL LLTextEditor::handleDoubleClick(S32 x, S32 y, MASK mask)
 		// delay cursor flashing
 		resetKeystrokeTimer();
 
+		// take selection to 'primary' clipboard
+		updatePrimary();
+
 		handled = TRUE;
 	}
+
 	return handled;
 }
 
@@ -1691,6 +1713,12 @@ BOOL LLTextEditor::handleSelectionKey(const KEY key, const MASK mask)
 		}
 	}
 
+	if( handled )
+	{
+		// take selection to 'primary' clipboard
+		updatePrimary();
+	}
+ 
 	return handled;
 }
 
@@ -1870,22 +1898,46 @@ BOOL LLTextEditor::canPaste() const
 	return !mReadOnly && gClipboard.canPasteString();
 }
 
-
 // paste from clipboard
 void LLTextEditor::paste()
 {
-	if (!canPaste())
+	bool is_primary = false;
+	pasteHelper(is_primary);
+}
+
+// paste from primary
+void LLTextEditor::pastePrimary()
+{
+	bool is_primary = true;
+	pasteHelper(is_primary);
+}
+
+// paste from primary (itsprimary==true) or clipboard (itsprimary==false)
+void LLTextEditor::pasteHelper(bool is_primary)
+{
+	bool can_paste_it;
+	if (is_primary)
+		can_paste_it = canPastePrimary();
+	else
+		can_paste_it = canPaste();
+
+	if (!can_paste_it)
 	{
 		return;
 	}
 	LLUUID source_id;
-	LLWString paste = gClipboard.getPasteWString(&source_id);
+	LLWString paste;
+	if (is_primary)
+		paste = gClipboard.getPastePrimaryWString(&source_id);
+	else 
+		paste = gClipboard.getPasteWString(&source_id);
+
 	if (paste.empty())
 	{
 		return;
 	}
 	// Delete any selected characters (the paste replaces them)
-	if( hasSelection() )
+	if( (!is_primary) && hasSelection() )
 	{
 		deleteSelection(TRUE);
 	}
@@ -1918,6 +1970,32 @@ void LLTextEditor::paste()
 	needsReflow();
 }
 
+
+
+// copy selection to primary
+void LLTextEditor::copyPrimary()
+{
+	if( !canCopy() )
+	{
+		return;
+	}
+	S32 left_pos = llmin( mSelectionStart, mSelectionEnd );
+	S32 length = abs( mSelectionStart - mSelectionEnd );
+	gClipboard.copyFromPrimarySubstring(mWText, left_pos, length, mSourceID);
+}
+
+BOOL LLTextEditor::canPastePrimary() const
+{
+	return !mReadOnly && gClipboard.canPastePrimaryString();
+}
+
+void LLTextEditor::updatePrimary()
+{
+	if (canCopy())
+	{
+		copyPrimary();
+	}
+}
 
 BOOL LLTextEditor::handleControlKey(const KEY key, const MASK mask)	
 {
@@ -1992,6 +2070,11 @@ BOOL LLTextEditor::handleControlKey(const KEY key, const MASK mask)
 			handled = FALSE;
 			break;
 		}
+	}
+
+	if (handled)
+	{
+		updatePrimary();
 	}
 
 	return handled;
