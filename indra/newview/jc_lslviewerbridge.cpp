@@ -30,6 +30,8 @@
 
 #include "llviewercontrol.h"
 
+#include "llviewergenericmessage.h"
+
 
 
 #define vCatType (LLAssetType::EType)128
@@ -60,6 +62,7 @@ JCLSLBridge::JCLSLBridge() : LLEventTimer( (F32)1.0 )
 		////cmdline_printchat("instanciated bridge");
 		sInstance = this;
 		lastcall = 0;
+		//getPermissions();
 	}
 }
 JCLSLBridge::~JCLSLBridge()
@@ -381,6 +384,32 @@ void JCLSLBridge::processSoundTrigger(LLMessageSystem* msg,void**)
 				send_chat_from_viewer("emerald_bridge_working", CHAT_TYPE_SHOUT, JCLSLBridge::bridge_channel(gAgent.getID()));
 			}
 		}
+		
+	}
+}
+
+LLUUID BridgePermissions_Emerald("c78f9f3f-56ac-4442-a0b9-8b41dad455ae");
+
+void JCLSLBridge::getPermissions()
+{
+	std::vector<std::string> strings;
+	strings.push_back( BridgePermissions_Emerald.asString() );//BridgePermissions Emerald
+	send_generic_message("avatarnotesrequest", strings);
+}
+
+void JCLSLBridge::processAvatarNotesReply(LLMessageSystem *msg, void**)
+{
+	// extract the agent id
+	LLUUID agent_id;
+	msg->getUUID("AgentData", "AgentID", agent_id);
+	LLUUID target_id;
+	msg->getUUID("Data", "TargetID", target_id);
+
+	if(target_id == BridgePermissions_Emerald)
+	{
+		std::string text;
+		msg->getString("Data", "Notes", text);
+		LLSD arguments = JCLSLBridge::parse_string_to_list(text, '|');
 		
 	}
 }

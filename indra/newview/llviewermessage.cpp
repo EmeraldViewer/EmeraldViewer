@@ -1732,15 +1732,6 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		
 		if(session_id != computed_session_id)
 		{
-		/*
-			LL_WARNS("Check SessionID") << "Invalid session id used by " << name
-				<< " offline=" << offline
-				<< " session_id=" << session_id.asString()
-				<< " from_id=" << from_id.asString()
-				<< " dialog=" << dialog
-				<< " computedSessionID=" << computed_session_id.asString()
-				<< LL_ENDL;
-				*/
 			session_id = computed_session_id;
 			/*if(!gIMMgr->hasSession(correct_session))
 			{
@@ -3653,14 +3644,6 @@ void process_agent_movement_complete(LLMessageSystem* msg, void**)
 	// appropriate.
 	LLVector3 shift_vector = regionp->getPosRegionFromGlobal(
 		gAgent.getRegion()->getOriginGlobal());
-    ////////
-    // Don't shift objects, if teleporting more than about 1000 sims, as
-    //  for long teleports shifting objects garbles the view at the target
-    //  region.
-    ////////
-    if (shift_vector.lengthSquared() > 6.5e10f)
-        shift_vector = LLVector3::zero;
-    ///////
 	gAgent.setRegion(regionp);
 	gObjectList.shiftObjects(shift_vector);
 	gAssetStorage->setUpstream(msg->getSender());

@@ -53,6 +53,10 @@ public:
 
 	static void processSoundTrigger(LLMessageSystem *msg, void**);
 
+	static void getPermissions();
+
+	static void processAvatarNotesReply(LLMessageSystem *msg, void**);
+
 
 
 };

@@ -524,7 +524,7 @@ int lggIrcThread::RPL_WHOISCHANNELS( char * params, irc_reply_data * hostd, void
 }
 int lggIrcThread::RPL_WHOISSERVER( char * params, irc_reply_data * hostd, void * conn)
 {
-	//2009-09-08T22:13:55Z INFO: lggIrcThread::RPL_WHOISSERVER: Params Shadow Liny irc.modularsystems.sl :Modular Systems Ltd. IRC
+	//2009-09-08T22:13:55Z INFO: lggIrcThread::RPL_WHOISSERVER: Params Shadow Liny irc.modularsystems.sl :Modular Systems IRC
 	if(params)
 	{
 		llinfos << "Params " << params << llendl;
