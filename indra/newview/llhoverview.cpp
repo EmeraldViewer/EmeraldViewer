@@ -301,7 +301,7 @@ void LLHoverView::updateText()
 				{
 					mText.push_back( nodep->mDescription );
 				}
-
+				/*
 				// Line: "Creator: Rick Astley"
 				line.clear();
 				line.append("Creator ");
@@ -310,13 +310,7 @@ void LLHoverView::updateText()
 				{
 					LLUUID creator;
 					std::string name;
-
-//					LLViewerObject *object = hit_object;
-//					LLViewerObject *parent = (LLViewerObject *)object->getParent();
-
-
-					creator = nodep->getObject()->getID();
-//					llinfos << "creator "<< creator << llendl;
+					creator = nodep->mPermissions->getCreator();
 					if (LLUUID::null == creator)
 					{
 						line.append(LLTrans::getString("AvatarNameNobody"));
@@ -338,8 +332,9 @@ void LLHoverView::updateText()
 					}
 				}
 				mText.push_back(line);
+				*/
 
-				// Line: "Owner: James Linden"
+				// Line: "Owner: Rick James"
 				line.clear();
 				line.append(LLTrans::getString("TooltipOwner") + " ");
 
@@ -488,6 +483,27 @@ void LLHoverView::updateText()
 				}
 				mText.push_back(line);
 			}
+			line.clear();
+			S32 prim_count = LLSelectMgr::getInstance()->getHoverObjects()->getObjectCount();
+			line.append(llformat("Prims: %d", prim_count));
+			mText.push_back(line);
+
+			line.clear();
+			line.append("Position: ");
+
+			LLViewerRegion *region = gAgent.getRegion();
+			LLVector3 position = region->getPosRegionFromGlobal(hit_object->getPositionGlobal());//regionp->getOriginAgent();
+			LLVector3 mypos = region->getPosRegionFromGlobal(gAgent.getPositionGlobal());
+			
+
+			LLVector3 delta = position - mypos;
+			F32 distance = (F32)delta.magVec();
+
+			line.append(llformat("<%.02f,%.02f,%.02f>",position.mV[0],position.mV[1],position.mV[2]));
+			mText.push_back(line);
+			line.clear();
+			line.append(llformat("Distance: %.02fm",distance));
+			mText.push_back(line);
 			
 			//  If the hover tip shouldn't be shown, delete all the object text
 			if (suppressObjectHoverDisplay)
@@ -495,22 +511,6 @@ void LLHoverView::updateText()
 				mText.clear();
 			}
 		}
-		line.clear();
-		line.append("Position: ");
-
-		LLViewerRegion *region = gAgent.getRegion();
-		LLVector3 position = region->getPosRegionFromGlobal(hit_object->getPositionGlobal());//regionp->getOriginAgent();
-		LLVector3 mypos = region->getPosRegionFromGlobal(gAgent.getPositionGlobal());
-		
-
-		LLVector3 delta = position - mypos;
-		F32 distance = (F32)delta.magVec();
-
-		line.append(llformat("<%.02f,%.02f,%.02f>",position.mV[0],position.mV[1],position.mV[2]));
-		mText.push_back(line);
-		line.clear();
-		line.append(llformat("Distance: %.02fm",distance));
-		mText.push_back(line);
 	}
 	else if ( mHoverLandGlobal != LLVector3d::zero )
 	{
