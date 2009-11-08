@@ -110,7 +110,7 @@ void JCAssetComparer::onClickObjPickerA(void *userdata)
 {
 	JCAssetComparer *self = (JCAssetComparer*)userdata;
 	LLToolObjPicker::getInstance()->setExitCallback(JCAssetComparer::closePickToolA, self);
-	LLToolMgr:getInstance()->setTransientTool(LLToolObjPicker::getInstance());
+	LLToolMgr::getInstance()->setTransientTool(LLToolObjPicker::getInstance());
 	self->childSetText("object_a_name", LLStringUtil::null);
 	self->childSetText("owner_a_name", LLStringUtil::null);
 	LLButton* pick_btn = self->getChild<LLButton>("pick_a_btn");
