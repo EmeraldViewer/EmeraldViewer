@@ -265,69 +265,87 @@ void LLTexLayerSetBuffer::postRender(BOOL success)
 
 BOOL LLTexLayerSetBuffer::render()
 {
-	U8* baked_bump_data = NULL;
-
-	// Default color mask for tex layer render
-	gGL.setColorMask(true, true);
-
-	// do we need to upload, and do we have sufficient data to create an uploadable composite?
-	// When do we upload the texture if gAgent.mNumPendingQueries is non-zero?
-	BOOL upload_now = (gAgent.mNumPendingQueries == 0 && mNeedsUpload && mTexLayerSet->isLocalTextureDataFinal());
 	BOOL success = TRUE;
-
-	// Composite bump
-	if( mBumpTex.notNull() )
+	if(!gSavedSettings.getBOOL("RenderAvatarInvisible"))
 	{
-		// Composite the bump data
-		success &= mTexLayerSet->renderBump( mOrigin.mX, mOrigin.mY, mWidth, mHeight );
-		stop_glerror();
+		U8* baked_bump_data = NULL;
 
-		if (success)
+		// Default color mask for tex layer render
+		gGL.setColorMask(true, true);
+
+		// do we need to upload, and do we have sufficient data to create an uploadable composite?
+		// When do we upload the texture if gAgent.mNumPendingQueries is non-zero?
+		BOOL upload_now = (gAgent.mNumPendingQueries == 0 && mNeedsUpload && mTexLayerSet->isLocalTextureDataFinal());
+
+		// Composite bump
+		if( mBumpTex.notNull() )
 		{
-			LLGLSUIDefault gls_ui;
-
-			// read back into texture (this is done externally for the color data)
-			gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, mBumpTex->getTexName());
+			// Composite the bump data
+			success &= mTexLayerSet->renderBump( mOrigin.mX, mOrigin.mY, mWidth, mHeight );
 			stop_glerror();
 
-			glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mOrigin.mX, mOrigin.mY, mWidth, mHeight);
-			stop_glerror();
-
-			// if we need to upload the data, read it back into a buffer
-			if( upload_now )
+			if (success)
 			{
-				baked_bump_data = new U8[ mWidth * mHeight * 4 ];
-				glReadPixels(mOrigin.mX, mOrigin.mY, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, baked_bump_data );
+				LLGLSUIDefault gls_ui;
+
+				// read back into texture (this is done externally for the color data)
+				gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, mBumpTex->getTexName());
 				stop_glerror();
+
+				glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mOrigin.mX, mOrigin.mY, mWidth, mHeight);
+				stop_glerror();
+
+				// if we need to upload the data, read it back into a buffer
+				if( upload_now )
+				{
+					baked_bump_data = new U8[ mWidth * mHeight * 4 ];
+					glReadPixels(mOrigin.mX, mOrigin.mY, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, baked_bump_data );
+					stop_glerror();
+				}
 			}
 		}
+
+		// Composite the color data
+		LLGLSUIDefault gls_ui;
+		success &= mTexLayerSet->render( mOrigin.mX, mOrigin.mY, mWidth, mHeight );
+		gGL.flush();
+
+		if( upload_now )
+		{
+			if (!success)
+			{
+				delete [] baked_bump_data;
+				llinfos << "Failed attempt to bake " << mTexLayerSet->getBodyRegion() << llendl;
+				mUploadPending = FALSE;
+			}
+			else
+			{
+				readBackAndUpload(baked_bump_data);
+			}
+		}
+
+		// reset GL state
+		gGL.setColorMask(true, true);
+		gGL.setSceneBlendType(LLRender::BT_ALPHA);
+
+		// we have valid texture data now
+		mTexture->setGLTextureCreated(true);
 	}
-
-	// Composite the color data
-	LLGLSUIDefault gls_ui;
-	success &= mTexLayerSet->render( mOrigin.mX, mOrigin.mY, mWidth, mHeight );
-	gGL.flush();
-
-	if( upload_now )
+	else
 	{
-		if (!success)
+		LLVOAvatar* avatar = gAgent.getAvatarObject();
+		
+		if(avatar)
 		{
-			delete [] baked_bump_data;
-			llinfos << "Failed attempt to bake " << mTexLayerSet->getBodyRegion() << llendl;
-			mUploadPending = FALSE;
-		}
-		else
-		{
-			readBackAndUpload(baked_bump_data);
+			avatar->setCompositeUpdatesEnabled(FALSE);
+			for (U32 i = 0; i < BAKED_NUM_INDICES ; i++ )
+			{
+				avatar->setNewBakedTexture(LLVOAvatarDefines::getTextureIndex((LLVOAvatarDefines::EBakedTextureIndex)i), IMG_INVISIBLE);
+			}
+			avatar->dirtyMesh();
+			success = TRUE;
 		}
 	}
-
-	// reset GL state
-	gGL.setColorMask(true, true);
-	gGL.setSceneBlendType(LLRender::BT_ALPHA);
-
-	// we have valid texture data now
-	mTexture->setGLTextureCreated(true);
 	mNeedsUpdate = FALSE;
 
 	return success;
