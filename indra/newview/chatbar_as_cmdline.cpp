@@ -89,11 +89,13 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 						if (i >> z)
 						{
 							LLVector3 agentPos = gAgent.getPositionAgent();
-							LLViewerRegion* agentRegion = gAgent.getRegion();
-							if(agentRegion)
+							LLViewerRegion* agentRegionp = gAgent.getRegion();
+							if(agentRegionp)
 							{
 								LLVector3 targetPos(x,y,z);
-								gAgent.teleportRequest(agentRegion->getHandle(),targetPos);
+								LLVector3d pos_global = from_region_handle(agentRegionp->getHandle());
+								pos_global += LLVector3d((F64)targetPos.mV[0],(F64)targetPos.mV[1],(F64)targetPos.mV[2]);
+								gAgent.teleportViaLocation(pos_global);
 								return false;
 							}
 						}
@@ -190,14 +192,9 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				LLVector3 agentPos = gAgent.getPositionAgent();
 				U64 agentRegion = gAgent.getRegion()->getHandle();
 				LLVector3 targetPos(agentPos.mV[0],agentPos.mV[1],LLWorld::getInstance()->resolveLandHeightAgent(agentPos));
-				if(gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc"))
-				{
-					//Chalice - Hax. We want to add half the av height.
-					LLVOAvatar* avatarp = gAgent.getAvatarObject();
-					LLVector3 autoOffSet = avatarp->getScale();
-					targetPos.mV[2]=targetPos.mV[2] + (autoOffSet.mV[2] / 2.0);
-				}
-				gAgent.teleportRequest(agentRegion,targetPos);
+				LLVector3d pos_global = from_region_handle(agentRegion);
+				pos_global += LLVector3d((F64)targetPos.mV[0],(F64)targetPos.mV[1],(F64)targetPos.mV[2]);
+				gAgent.teleportViaLocation(pos_global, true);
 				return false;
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineHeight"))
 			{
@@ -207,7 +204,9 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					LLVector3 agentPos = gAgent.getPositionAgent();
 					U64 agentRegion = gAgent.getRegion()->getHandle();
 					LLVector3 targetPos(agentPos.mV[0],agentPos.mV[1],z);
-					gAgent.teleportRequest(agentRegion,targetPos);
+					LLVector3d pos_global = from_region_handle(agentRegion);
+					pos_global += LLVector3d((F64)targetPos.mV[0],(F64)targetPos.mV[1],(F64)targetPos.mV[2]);
+					gAgent.teleportViaLocation(pos_global);
 					return false;
 				}
 			}else if(command == gSavedSettings.getString("EmeraldCmdLineTeleportHome"))
