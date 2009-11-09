@@ -502,9 +502,6 @@ BOOL LLLineEditor::handleDoubleClick(S32 x, S32 y, MASK mask)
 	// delay cursor flashing
 	mKeystrokeTimer.reset();
 
-	// take selection to 'primary' clipboard
-	updatePrimary();
-
 	return TRUE;
 }
 
@@ -587,17 +584,6 @@ BOOL LLLineEditor::handleMouseDown(S32 x, S32 y, MASK mask)
 	return TRUE;
 }
 
-BOOL LLLineEditor::handleMiddleMouseDown(S32 x, S32 y, MASK mask)
-{
-       // llinfos << "MiddleMouseDown" << llendl;
-	setFocus( TRUE );
-	if( canPastePrimary() )
-	{
-		setCursorAtLocalPos(x);
-		pastePrimary();
-	}
-	return TRUE;
-}
 
 BOOL LLLineEditor::handleHover(S32 x, S32 y, MASK mask)
 {
@@ -692,9 +678,6 @@ BOOL LLLineEditor::handleMouseUp(S32 x, S32 y, MASK mask)
 	{
 		// delay cursor flashing
 		mKeystrokeTimer.reset();
-
-		// take selection to 'primary' clipboard
-		updatePrimary();
 	}
 
 	return handled;
@@ -898,12 +881,7 @@ BOOL LLLineEditor::handleSelectionKey(KEY key, MASK mask)
 		}
 	}
 
-	if(handled)
-	{
-		// take selection to 'primary' clipboard
-		updatePrimary();
-	}
- 
+
 	return handled;
 }
 
@@ -976,42 +954,20 @@ BOOL LLLineEditor::canPaste() const
 	return !mReadOnly && gClipboard.canPasteString(); 
 }
 
+
+// paste from clipboard
 void LLLineEditor::paste()
 {
-	bool is_primary = false;
-	pasteHelper(is_primary);
-}
-
-void LLLineEditor::pastePrimary()
-{
-	bool is_primary = true;
-	pasteHelper(is_primary);
-}
-
-// paste from primary (is_primary==true) or clipboard (is_primary==false)
-void LLLineEditor::pasteHelper(bool is_primary)
-{
-	bool can_paste_it;
-	if (is_primary)
-		can_paste_it = canPastePrimary();
-	else
-		can_paste_it = canPaste();
-
-	if (can_paste_it)
+	if (canPaste())
 	{
-		LLWString paste;
-		if (is_primary)
-			paste = gClipboard.getPastePrimaryWString();
-		else 
-			paste = gClipboard.getPasteWString();
-
+		LLWString paste = gClipboard.getPasteWString();
 		if (!paste.empty())
 		{
 			// Prepare for possible rollback
 			LLLineEditorRollback rollback(this);
 			
 			// Delete any selected characters
-			if ((!is_primary) && hasSelection())
+			if (hasSelection())
 			{
 				deleteSelection();
 			}
@@ -1047,7 +1003,7 @@ void LLLineEditor::pasteHelper(bool is_primary)
 				clean_string = clean_string.substr(0, wchars_that_fit);
 				reportBadKeystroke();
 			}
- 
+
 			mText.insert(getCursor(), clean_string);
 			setCursor( getCursor() + (S32)clean_string.length() );
 			deselect();
@@ -1068,30 +1024,7 @@ void LLLineEditor::pasteHelper(bool is_primary)
 	}
 }
 
-// copy selection to primary
-void LLLineEditor::copyPrimary()
-{
-	if( canCopy() )
-	{
-		S32 left_pos = llmin( mSelectionStart, mSelectionEnd );
-		S32 length = abs( mSelectionStart - mSelectionEnd );
-		gClipboard.copyFromPrimarySubstring( mText.getWString(), left_pos, length );
-	}
-}
-
-BOOL LLLineEditor::canPastePrimary() const
-{
-	return !mReadOnly && gClipboard.canPastePrimaryString(); 
-}
-
-void LLLineEditor::updatePrimary()
-{
-	if(canCopy() )
-	{
-		copyPrimary();
-	}
-}
-
+	
 BOOL LLLineEditor::handleSpecialKey(KEY key, MASK mask)	
 {
 	BOOL handled = FALSE;
