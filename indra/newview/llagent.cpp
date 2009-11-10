@@ -81,6 +81,7 @@
 #include "llfloatermap.h"
 #include "llfloatermute.h"
 #include "llfloatersnapshot.h"
+#include "llfloaterstats.h"
 #include "llfloatertools.h"
 #include "llfloaterworldmap.h"
 #include "llgroupmgr.h"
@@ -566,7 +567,7 @@ void LLAgent::resetView(BOOL reset_camera, BOOL change_camera)
 //-----------------------------------------------------------------------------
 void LLAgent::onAppFocusGained()
 {
-	if (CAMERA_MODE_MOUSELOOK == mCameraMode)
+	if (CAMERA_MODE_MOUSELOOK == mCameraMode && gSavedSettings.getBOOL("LeaveMouselookOnFocus"))
 	{
 		changeCameraToDefault();
 		LLToolMgr::getInstance()->clearSavedTool();
@@ -2889,6 +2890,7 @@ static const LLFloaterView::skip_list_t& get_skip_list()
 {
 	static LLFloaterView::skip_list_t skip_list;
 	skip_list.insert(LLFloaterMap::getInstance());
+	skip_list.insert(LLFloaterStats::getInstance());
 	return skip_list;
 }
 
@@ -6160,7 +6162,7 @@ bool LLAgent::teleportCore(bool is_local)
 	if(TELEPORT_NONE != mTeleportState)
 	{
 		llwarns << "Attempt to teleport when already teleporting." << llendl;
-		return false;
+		//return false; //This seems to fix getting stuck in TPs in the first place. --Liny
 	}
 
 #if 0
@@ -6237,7 +6239,6 @@ void LLAgent::teleportRequest(
 
 	// Set last region data for teleport history
 	gAgent.setLastRegionData(regionp->getName(),gAgent.getPositionAgent());
-
 	if(regionp && teleportCore())
 	{
 		llinfos << "TeleportRequest: '" << region_handle << "':" << pos_local

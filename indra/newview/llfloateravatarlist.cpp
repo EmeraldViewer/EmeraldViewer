@@ -958,32 +958,21 @@ void LLFloaterAvatarList::refreshAvatarList()
 			element["columns"][LIST_AGE]["color"] = getAvatarColor(ent, distance, CT_AGE).getValue();
 		}
 
-		//element["columns"][LIST_SCORE]["column"] = "score";
-		//element["columns"][LIST_SCORE]["type"] = "text";
+		element["columns"][LIST_SIM]["column"] = "samesim";
+		element["columns"][LIST_SIM]["type"] = "text";
 
-		//icon = "";
-		//switch(avscore_status)
-		//{
-		//	case DATA_UNKNOWN:
-		//		icon = /*gViewerArt.getString(*/"info_unknown.tga"/*)*/;
-		//		break;
-		//	case DATA_REQUESTING:
-		//		icon = /*gViewerArt.getString(*/"info_fetching.tga"/*)*/;
-		//		break;
-		//	case DATA_ERROR:
-		//		icon =  /*gViewerArt.getString(*/"info_error.tga"/*)*/;
-		//	case DATA_RETRIEVED:
-		//		//element["columns"][LIST_SCORE]["value"] = avscore.Score;
-		//		element["columns"][LIST_SCORE]["color"] = getAvatarColor(ent, distance, CT_SCORE).getValue();
-		//		break;
-		//}
+		icon = "";
+		if(gAgent.getRegion()->pointInRegionGlobal(position))
+		{
+			icon = "account_id_green.tga";
+		}
 		
-		//if (!icon.empty() )
-		//{	
-		//	element["columns"][LIST_SCORE].erase("color");
-		//	element["columns"][LIST_SCORE]["type"] = "icon";
-		//	element["columns"][LIST_SCORE]["value"] = icon;
-		//}
+		if (!icon.empty() )
+		{	
+			element["columns"][LIST_SIM].erase("color");
+			element["columns"][LIST_SIM]["type"] = "icon";
+			element["columns"][LIST_SIM]["value"] = icon;
+		}
 	
 
 		// Get an icon for the payment data

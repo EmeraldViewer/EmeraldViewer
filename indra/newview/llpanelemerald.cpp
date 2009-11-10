@@ -306,6 +306,7 @@ BOOL LLPanelEmerald::postBuild()
 	childSetValue("EmeraldInstantMessageResponseItem", gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageResponseItem"));
 	childSetValue("EmeraldInstantMessageAnnounceIncoming", gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceIncoming"));
 	childSetValue("EmeraldInstantMessageAnnounceStealFocus", gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"));
+	childSetValue("EmeraldShadowsON", gSavedSettings.getBOOL("EmeraldShadowsToggle"));
 
 	childSetAction("set_mirror", onClickSetMirror, this);
 	childSetCommitCallback("mirror_location", onCommitApplyControl);
@@ -382,6 +383,26 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceIncoming", childGetValue("EmeraldInstantMessageAnnounceIncoming").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceStealFocus", childGetValue("EmeraldInstantMessageAnnounceStealFocus").asBoolean());
 	gSavedSettings.setBOOL("EmeraldDoubleClickTeleportMode", childGetValue("EmeraldDoubleClickTeleportMode").asBoolean());
+	if((gSavedSettings.getU32("RenderQualityPerformance")>=3) && childGetValue("EmeraldShadowsON").asBoolean())
+	{
+		gSavedSettings.setBOOL("RenderUseFBO", childGetValue("EmeraldShadowsON").asBoolean());
+		gSavedSettings.setBOOL("RenderDeferred", childGetValue("EmeraldShadowsON").asBoolean());
+	}
+	else if(!childGetValue("EmeraldShadowsON").asBoolean())
+	{
+		if(gSavedSettings.getBOOL("RenderDeferred"))
+		{
+			gSavedSettings.setBOOL("RenderDeferred", childGetValue("EmeraldShadowsON").asBoolean());
+			gSavedSettings.setBOOL("RenderUseFBO", childGetValue("EmeraldShadowsON").asBoolean());
+		}
+	}
+	else if((gSavedSettings.getU32("RenderQualityPerformance")<3) && childGetValue("EmeraldShadowsON").asBoolean())
+	{
+		//TODO: Add a popup notice saying that settings aren't on ultra and maybe ask if the user wants to change settings to ultra before attempting to turn on shadows. --Liny
+		childSetValue("EmeraldShadowsON",false);
+		llwarns<<"Attempt to enable shadow rendering while graphics settings not on ultra!"<<llendl;
+	}
+	gSavedSettings.setBOOL("EmeraldShadowsToggle", childGetValue("EmeraldShadowsON").asBoolean());
 	gSavedSettings.setU32("EmeraldUseOTR", (U32)childGetValue("EmeraldUseOTR").asReal());
 	gLggBeamMaps.forceUpdate();
 }
