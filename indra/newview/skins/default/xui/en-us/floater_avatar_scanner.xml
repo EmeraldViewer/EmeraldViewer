@@ -41,7 +41,7 @@
 		<column name="age" label="Age" width="50"/>
 		<!-- <column name="payment_data" label="Payment" width="80"/> -->
 		<!-- TrustNet Score -->
-    <!-- <column name="score" label="Score" width="60"/> -->
+    <column name="samesim" label="Sim" width="20"/>
 		<!-- Payment data icons -->
 		<column name="payment_data" label="" width="20" />
 		<!-- What the avatar is doing: producing sounds, rezzing, particles, etc -->
