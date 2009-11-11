@@ -3769,7 +3769,18 @@
 		<key>EmeraldBroadcastPointers</key>
 		<map>
 			<key>Comment</key>
-			<string>Disable to prevent broadcasting your Lookat and Pointat target (Enabled by default)</string>
+			<string>Disable to prevent broadcasting your Lookat target (Enabled by default)</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
+		<key>EmeraldBroadcastPointers2</key>
+		<map>
+			<key>Comment</key>
+			<string>Disable to prevent broadcasting your Pointat target (Enabled by default)</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
