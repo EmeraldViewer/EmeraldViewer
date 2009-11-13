@@ -8006,7 +8006,7 @@ void LLVOAvatar::setNewBakedTexture( ETextureIndex te, const LLUUID& uuid )
 
 	//	dumpAvatarTEs( "setNewBakedTexture() send" );
 	// RN: throttle uploads
-	if (!hasPendingBakedUploads())
+	//if (!hasPendingBakedUploads())//update bit by bit better than delaying
 	{
 		gAgent.sendAgentSetAppearance();
 	}

@@ -557,6 +557,37 @@ void LLTexLayerSetBuffer::readBackAndUpload(U8* baked_bump_data)
 	delete [] baked_bump_data;
 }
 
+class TextureRetryTimer : public LLEventTimer
+{
+public:
+    TextureRetryTimer(LLTexLayerSet* buff);
+    virtual ~TextureRetryTimer();
+
+    //function to be called at the supplied frequency
+    virtual BOOL tick();
+    LLTexLayerSet* buffp;
+};
+TextureRetryTimer::TextureRetryTimer(LLTexLayerSet* buff) : LLEventTimer( (F32)2.5 )
+{
+    buffp = buff;
+    //printchat("init fake");
+};
+TextureRetryTimer::~TextureRetryTimer()
+{
+}
+
+BOOL TextureRetryTimer::tick()
+{
+	LLTexLayerSetBuffer* curr_layerset_buffer =
+				buffp->hasComposite()?buffp->getComposite():NULL;
+	if(curr_layerset_buffer)
+	{
+		llinfos << "Retrying baked upload." << llendl;
+		curr_layerset_buffer->requestUpload();
+	}else llinfos << "Retry failed, buffer does not exist" << llendl;
+	return TRUE;
+}
+
 
 // static
 void LLTexLayerSetBuffer::onTextureUploadComplete(const LLUUID& uuid, void* userdata, S32 result, LLExtStat ext_status) // StoreAssetData callback (not fixed)
@@ -606,6 +637,7 @@ void LLTexLayerSetBuffer::onTextureUploadComplete(const LLUUID& uuid, void* user
 					{
 						llinfos << "Baked upload failed. Reason: " << result << llendl;
 						// *FIX: retry upload after n seconds, asset server could be busy
+						new TextureRetryTimer(baked_upload_data->mLayerSet);
 					}
 				}
 				else
