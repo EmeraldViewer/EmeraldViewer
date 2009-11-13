@@ -125,6 +125,14 @@ std::string GUS::genMessage()
 			cmds.push_back(sQuat(getEyeRot()));
 		}
 	}
+
+	//send look at pos maybeh
+	if(gSavedSettings.getBOOL("EmeraldGUSLookAt"))
+	{
+			cmds.push_back("LOOKAT");
+			cmds.push_back(getLookAtString());
+		
+	}
 	
 	for(p = cmds.begin(); p != cmds.end(); p++)
 	{
@@ -228,4 +236,17 @@ bool GUS::getEyelidState() //FALSE == open, TRUE == shut
 		weight = avatarp->getVisualParam("Blink_Left")->getWeight();
 	}
 	return (weight!=0.f);
+}
+std::string GUS::getLookAtString()
+{
+	LLVOAvatar* avatarp= gAgent.getAvatarObject();
+	if(avatarp)
+	{
+		if( avatarp->getAnimationData("LookAtPoint"))
+		{
+			LLVector3* pos = (LLVector3*) avatarp->getAnimationData("LookAtPoint");
+			return llformat("<%.6f, %.6f, %.6f>",(F32)(pos->mV[VX]),(F32)(pos->mV[VY]),(F32)(pos->mV[VZ]));
+		}
+	}
+	return "NULL";
 }

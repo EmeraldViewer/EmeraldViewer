@@ -6652,7 +6652,18 @@
 			<key>Value</key>
 			<real>20.0</real>
 		</map>
-		<key>EmeraldGUSEyeRot</key>
+    <key>EmeraldGUSLookAt</key>
+    <map>
+      <key>Comment</key>
+      <string>Stream avatar look at position using the Greenlife Utility Stream (GUS)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <real>0</real>
+    </map>
+    <key>EmeraldGUSEyeRot</key>
 		<map>
 			<key>Comment</key>
 			<string>Stream avatar eyeball mesh rotation using the Greenlife Utility Stream (GUS)</string>

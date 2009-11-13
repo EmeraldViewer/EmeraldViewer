@@ -79,4 +79,5 @@ class GUS : public LLSingleton<GUS>
 	private:
 		LLQuaternion getEyeRot();
 		bool getEyelidState();
+		std::string getLookAtString();
 };
