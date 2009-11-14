@@ -21,15 +21,15 @@
 					 name="telerequest_toggle" radio_style="false" width="270" control_name="EmeraldRequestLocalTeleports"
 					 tool_tip="Actually send teleport requests to the server (Enabled by default)"/>
 				<check_box bottom_delta="-15" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Enable use of move-lock teleport system" left_delta="0"
+					 initial_value="false" label="Use llMoveToTarget instead of map teleport (Requires Bridge)" left_delta="0"
 					 mouse_opaque="true" name="mldct_toggle" radio_style="false" width="270" control_name="EmeraldMoveLockDCT"
 					 tool_tip="Whisper teleport destination on a private channel (Disabled by default)"/>
 				<spinner decimal_digits="0" follows="left|top" height="18" increment="1" initial_val="0"
-					 label="Channel" label_width="50" left_delta="250" bottom_delta="0" max_val="99999"
+					 label="" label_width="50" left_delta="350" bottom_delta="0" max_val="99999"
 					 min_val="1" name="mldct_channel" tool_tip="Channel to announce teleport destination vector"
-					 width="110" control_name="EmeraldMoveLockDCTChannel"/>
+					 width="80" control_name="EmeraldMoveLockDCTChannel"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Velocity Interpolate Double-click Teleports" left_delta="-300"
+					 initial_value="false" label="Velocity Interpolate Double-click Teleports" left="10"
 					 mouse_opaque="true" name="login_screen_toggle1" radio_style="false" width="270" control_name="EmeraldVelocityDoubleClickTeleport"/>
 				<check_box bottom_delta="-15" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Rotate Camera behind avatar after Double-click Teleports"
@@ -363,17 +363,20 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 				<check_box bottom_delta="-40" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Enable Restrained Life [RLVa] features" left_delta="0"
 					 mouse_opaque="true" name="rlv-toggle" radio_style="false" width="270" control_name="RestrainedLife"/>
-				<view_border bevel_style="none" border_thickness="1" bottom="-100" follows="top|left" height="60"
+				<view_border bevel_style="none" border_thickness="1" bottom="-120" follows="top|left" height="80"
 					 left="280" name="EmDivisorBridge" width="200"/>
-				<check_box bottom_delta="40" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom_delta="60" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Enable LSL-Client Bridge" left_delta="0" mouse_opaque="true"
 					 name="EmeraldBuildBridge" radio_style="false" width="270" control_name="EmeraldBuildBridge"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Radar use bridge" left_delta="0" mouse_opaque="true"
+					 initial_value="false" label="Radar use bridge" left_delta="10" mouse_opaque="true"
 					 name="EmeraldUseBridgeRadar" radio_style="false" width="270" control_name="EmeraldUseBridgeRadar"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="True online status in profiles" left_delta="0" mouse_opaque="true"
 					 name="EmeraldUseBridgeOnline" radio_style="false" width="270" control_name="EmeraldUseBridgeOnline"/>
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 initial_value="false" label="Use llMoveToTarget TP" left_delta="0" mouse_opaque="true"
+					 name="EmeraldMoveLockDCT" radio_style="false" width="270" control_name="EmeraldMoveLockDCT"/>
 			</panel>
 			<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="CmdLine"
 				 left="1" mouse_opaque="true" name="CmdLine" width="418">
@@ -509,10 +512,6 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 decimal_digits="0" enabled="true" follows="left|top" height="18" increment="1"
 					 initial_val="4" label="Beam updates/sec:" label_width="100" max_val="200" min_val="4"
 					 mouse_opaque="true" show_text="true" width="250" auto_resize="false" tool_tip="How many beam updates to send in a second. Default 40"/>
-				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Enable transmission of selection beam end position"
-					 left="15" mouse_opaque="true" name="lol-toggle!" radio_style="false" width="270"
-					 control_name="EmeraldParticleChat"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="true" label="Enable selection beam (turning off will hide the beam)"
 					 left="15" mouse_opaque="true" name="SLPartBeam" radio_style="false" width="270"
@@ -783,7 +782,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					THESE ARE AS COLUMNS; ADDITIONAL ROWS PER GUS / GUS-FE COLUMNS!
 			-->
 				<!-- GUS COLUMN -->
-				<panel name="gus_feature_column" left_delta="0" width="134" height="45" bottom_delta="-60"
+				<panel name="gus_feature_column" left_delta="0" width="134" height="65" bottom_delta="-80"
 					 border="true" mouse_opaque="true" bevel_style="in" background_visible="true" background_opaque="true"
 					 follows="top|left" bg_opaque_color="0,0,0,0.1" bg_alpha_color="blue" can_resize="false">
 					<text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="5"
@@ -792,9 +791,13 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 						 initial_value="false" label="Eyeball Rotation" left_delta="5" mouse_opaque="true"
 						 tool_tip="Enable streaming of the avatar mesh eyeball rotation; useful for prim-eyes for certain avatars..."
 						 name="Eyeball Rotation" radio_style="false" width="128" control_name="EmeraldGUSEyeRot"/>
+					<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+						 initial_value="false" label="LookAt Position" left_delta="0" mouse_opaque="true"
+						 tool_tip="Enable streaming of LookAt."
+						 name="LookAt Position" radio_style="false" width="128" control_name="EmeraldGUSLookAt"/>
 				</panel>
 				<!-- GUS-FE COLUMN -->
-				<panel name="gus-fe_feature_column" left_delta="146" width="134" height="45" bottom_delta="0"
+				<panel name="gus-fe_feature_column" left_delta="146" width="134" height="45" bottom_delta="20"
 					 border="true" mouse_opaque="true" bevel_style="in" background_visible="true" background_opaque="true"
 					 follows="top|left" bg_opaque_color="0,0,0,0.1" bg_alpha_color="blue" can_resize="false">
 					<text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="5"
@@ -807,6 +810,10 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 name="rofltxt3" width="512">        EXPERIMENTAL: The Greenlife Utility Stream is used for
 streaming information from the Emerald viewer into
 the simulator for scripts to access.</text>
+				<check_box bottom_delta="-60" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 initial_value="false" label="Enable transmission of selection beam end position"
+					 left="15" mouse_opaque="true" name="lol-toggle!" radio_style="false" width="270"
+					 control_name="EmeraldParticleChat"/>
 			</panel>
 			<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Inventory"
 				 left="1" mouse_opaque="true" name="Inventory" width="418">
