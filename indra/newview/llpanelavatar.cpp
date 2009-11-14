@@ -517,7 +517,7 @@ BOOL LLPanelAvatarPicks::postBuild(void)
 
 	//For pick import and export - RK
 	childSetAction("Import...",onClickImport,NULL);
-	childSetAction("Export...",onClickImport,NULL);
+	childSetAction("Export...",onClickExport,NULL);
 	return TRUE;
 }
 
