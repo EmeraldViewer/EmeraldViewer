@@ -6688,24 +6688,13 @@
 		<key>EmeraldMoveLockDCT</key>
 		<map>
 			<key>Comment</key>
-			<string>Enable magical move-lock teleporting system</string>
+			<string>Enable magical move-lock teleporting system (requires bridge)</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
 			<string>Boolean</string>
 			<key>Value</key>
 			<real>0</real>
-		</map>
-		<key>EmeraldMoveLockDCTChannel</key>
-		<map>
-			<key>Comment</key>
-			<string>Channel for magical move-lock teleporting system</string>
-			<key>Persist</key>
-			<integer>1</integer>
-			<key>Type</key>
-			<string>S32</string>
-			<key>Value</key>
-			<real>90000</real>
 		</map>
 		<key>EmeraldRequestLocalTeleports</key>
 		<map>
@@ -6717,17 +6706,6 @@
 			<string>Boolean</string>
 			<key>Value</key>
 			<real>1</real>
-		</map>
-		<key>EmeraldMoveLockDCTOffset</key>
-		<map>
-			<key>Comment</key>
-			<string>Apply teleport position offset for move-lock teleporting system</string>
-			<key>Persist</key>
-			<integer>1</integer>
-			<key>Type</key>
-			<string>Boolean</string>
-			<key>Value</key>
-			<real>0</real>
 		</map>
 		<key>FlyingAtExit</key>
 		<map>

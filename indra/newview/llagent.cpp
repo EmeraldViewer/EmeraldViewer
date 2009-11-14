@@ -138,6 +138,7 @@
 #include "llfollowcam.h"
 #include "llfloaterteleporthistory.h"
 #include "greenlife_utility_stream.h"
+#include "jc_lslviewerbridge.h"
 
 using namespace LLVOAvatarDefines;
 
@@ -6366,9 +6367,8 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 	bool isLocal = regionp->getHandle() == to_region_handle_global((F32)pos_global.mdV[VX], (F32)pos_global.mdV[VY]);
 	bool tp = gSavedSettings.getBOOL("EmeraldRequestLocalTeleports");
 	bool ml = gSavedSettings.getBOOL("EmeraldMoveLockDCT");
-	tp = tp || !(tp || ml) || !isLocal; //o.o
+	tp = tp || !(tp || ml) || !isLocal; //o.o//wtf
 	bool calc = gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc");
-	bool mlo = gSavedSettings.getBOOL("EmeraldMoveLockDCTOffset");
 	bool vel = gSavedSettings.getBOOL("EmeraldVelocityDoubleClickTeleport");
 	//ternary get
 	F32 zo = gSavedSettings.getF32("EmeraldDoubleClickZOffset");
@@ -6442,9 +6442,11 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 		LLVector3 pos_local(fmod((F32)pos_global.mdV[VX], width),
 							fmod((F32)pos_global.mdV[VY], width),
 							(F32)pos_global.mdV[VZ]);
-		pos_local += offset1+(mlo?offset2:LLVector3());
+		pos_local += offset1;
 		gAgent.setControlFlags(AGENT_CONTROL_STAND_UP); //GIT UP
-		GUS::whisper(gSavedSettings.getS32("EmeraldMoveLockDCTChannel"),  GUS::sVec3(pos_local));
+		
+		//lgg make it use da bridgeGUS::whisper(gSavedSettings.getS32("EmeraldMoveLockDCTChannel"),  GUS::sVec3(pos_local));
+		JCLSLBridge::bridgetolsl("move|"+GUS::sVec3(pos_local),NULL);
 	}
 }
 
