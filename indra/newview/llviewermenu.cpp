@@ -120,6 +120,7 @@
 #include "llfloaterland.h"
 #include "llfloaterlandholdings.h"
 #include "llfloatermap.h"
+#include "llfloatermotd.h"
 #include "llfloatermute.h"
 #include "llfloateropenobject.h"
 #include "llfloaterpermissionsmgr.h"
@@ -5834,6 +5835,10 @@ class LLShowFloater : public view_listener_t
 		else if (floater_name == "help tutorial")
 		{
 			LLFloaterHUD::showHUD();
+		}
+		else if (floater_name == "message of the day")
+		{
+			LLFloaterMOTD::showInstance();
 		}
 		else if (floater_name == "complaint reporter")
 		{
