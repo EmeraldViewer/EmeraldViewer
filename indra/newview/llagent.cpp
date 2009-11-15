@@ -6445,7 +6445,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 		pos_local += offset1;
 		gAgent.setControlFlags(AGENT_CONTROL_STAND_UP); //GIT UP
 		
-		//lgg make it use da bridgeGUS::whisper(gSavedSettings.getS32("EmeraldMoveLockDCTChannel"),  GUS::sVec3(pos_local));
+		GUS::whisper(gSavedSettings.getS32("EmeraldMoveLockDCTChannel"),  GUS::sVec3(pos_local)); //Keep for third party movelocks
 		JCLSLBridge::bridgetolsl("move|"+GUS::sVec3(pos_local),NULL);
 	}
 }
