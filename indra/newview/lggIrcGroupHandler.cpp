@@ -318,7 +318,7 @@ void lggIrcGroupHandler::startUpIRCListener(lggIrcData dat)
 }
 void lggIrcGroupHandler::endDownIRCListener(LLUUID id)
 {
-	lggIrcThread* remove;
+	lggIrcThread* remove = NULL;
 	
 	for(std::list<lggIrcThread*>::iterator it = activeThreads.begin(); it != activeThreads.end(); it++)
 	{
