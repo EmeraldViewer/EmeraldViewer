@@ -5862,8 +5862,9 @@ void process_teleport_failed(LLMessageSystem *msg, void**)
 			args["REASON"] = reason;
 		}
 	}
-
-	LLNotifications::instance().add("CouldNotTeleportReason", args);
+    
+	if(!gSavedSettings.getBOOL("EmeraldMoveLockDCT"))//dont throw error when move to target on
+		LLNotifications::instance().add("CouldNotTeleportReason", args);
 
 	if( gAgent.getTeleportState() != LLAgent::TELEPORT_NONE )
 	{

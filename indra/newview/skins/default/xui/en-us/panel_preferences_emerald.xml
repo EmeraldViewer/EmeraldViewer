@@ -26,7 +26,7 @@
 					 tool_tip="Whisper teleport destination on a private channel (Disabled by default)"/>
 				<spinner decimal_digits="0" follows="left|top" height="18" increment="1" initial_val="0"
 					 label="" label_width="50" left_delta="350" bottom_delta="0" max_val="2147483647"
-					 min_val="-2147483646" name="mldct_channel" tool_tip="Channel to announce teleport destination vector"
+					 min_val="1" name="mldct_channel" tool_tip="Channel to announce teleport destination vector"
 					 width="80" control_name="EmeraldMoveLockDCTChannel"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Velocity Interpolate Double-click Teleports" left="10"
