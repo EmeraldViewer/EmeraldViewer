@@ -65,6 +65,7 @@ private:
 	static void onNoStealth(void* data);
 	static void onClickVoiceRevertDebug(void* data);
 	static void onRefresh(void* data);
+	static void onKeywordAllertButton(void * data);
 	static void onBeamDelete(void* data);
 	static void onBeamColorDelete(void* data);
 	static void onCommitApplyControl(LLUICtrl* caller, void* user_data);

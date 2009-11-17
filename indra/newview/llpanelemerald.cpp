@@ -65,6 +65,7 @@
 #include "llweb.h" // [$PLOTR$/]
 #include "lggBeamColorMapFloater.h"
 #include "llsliderctrl.h"
+#include "mfdkeywordfloater.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -209,6 +210,9 @@ BOOL LLPanelEmerald::postBuild()
 	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
 	getChild<LLButton>("EmeraldPrefs_Stealth")->setClickedCallback(onStealth, this);
 	getChild<LLButton>("EmeraldPrefs_FullFeatures")->setClickedCallback(onNoStealth, this);
+
+
+	getChild<LLButton>("keyword_allert")->setClickedCallback(onKeywordAllertButton,this);
 	
 
 	getChild<LLButton>("BeamColor_new")->setClickedCallback(onCustomBeamColor, this);
@@ -448,6 +452,10 @@ void LLPanelEmerald::onCustomBeam(void* data)
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
 	LggBeamMap::show(true, data);
 
+}
+void LLPanelEmerald::onKeywordAllertButton(void * data)
+{
+	MfdKeywordFloaterStart::show(true,data);
 }
 void LLPanelEmerald::onCustomBeamColor(void* data)
 {

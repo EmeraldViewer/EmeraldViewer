@@ -99,6 +99,7 @@ set(viewer_SOURCE_FILES
 	jcfloater_areasearch.cpp
 	jc_asset_comparer.cpp
 	jcobjectpropertylist.cpp
+	mfdKeywordFloater.cpp
 	lggBeamMapFloater.cpp
 	lggBeamColorMapFloater.cpp
 	lggBeamsColors.cpp
@@ -539,11 +540,12 @@ set(viewer_HEADER_FILES
     jcfloater_animation_list.h
     jcfloater_areasearch.h
     jcobjectpropertylist.h
-	exporttracker.h
+    mfdKeywordFloater.h
+    exporttracker.h
     lggBeamMaps.h
     lggBeamMapFloater.h
-	lggBeamColorMapFloater.h
-	lggBeamsColors.h
+    lggBeamColorMapFloater.h
+    lggBeamsColors.h
     lggFloaterIrcEdit.h
     lggFloaterIrc.h
     lggIrcGroupHandler.h

@@ -85,6 +85,7 @@
 #include "otr_wrapper.h"
 #include "otr_floater_smp_dialog.h"
 #include "otr_floater_smp_progress.h"
+#include "mfdkeywordfloater.h"
 #endif // USE_OTR // [/$PLOTR$]
 
 //
@@ -1646,8 +1647,15 @@ BOOL LLFloaterIMPanel::inviteToSession(const LLDynamicArray<LLUUID>& ids)
 	return TRUE;
 }
 
-void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, const LLColor4& color, bool log_to_file, const LLUUID& source, const std::string& name)
+void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, LLColor4 color, bool log_to_file, const LLUUID& source, const std::string& name)
 {
+	//mfd key word alert
+	if(MfdKeywordFloaterStart::hasKeyword(utf8msg,2))
+	{
+		if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
+			color= gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+	}
+
 	// start tab flashing when receiving im for background session from user
 	if (source != LLUUID::null)
 	{
