@@ -1647,15 +1647,16 @@ BOOL LLFloaterIMPanel::inviteToSession(const LLDynamicArray<LLUUID>& ids)
 	return TRUE;
 }
 
-void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, LLColor4 color, bool log_to_file, const LLUUID& source, const std::string& name)
+void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, LLColor4 incolor, bool log_to_file, const LLUUID& source, const std::string& name)
 {
 	//mfd key word alert
 	if(MfdKeywordFloaterStart::hasKeyword(utf8msg,2))
 	{
 		if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
-			color= gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+			incolor= gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
 	}
-
+	
+	const LLColor4& color = incolor;
 	// start tab flashing when receiving im for background session from user
 	if (source != LLUUID::null)
 	{
