@@ -2586,7 +2586,7 @@ void LLFloaterIMPanel::showOtrStatus()
 
 void LLFloaterIMPanel::otrLogMessage(std::string message)
 {
-    addHistoryLine(message, gSavedSettings.getColor("SystemChatColor"), true, gAgent.getID());
+    addHistoryLine(message, gSavedSettings.getColor("SystemChatColor"), true, mOtherParticipantUUID);
 }
 
 void LLFloaterIMPanel::otrLogMessageGetstring(const char *message_name)
