@@ -102,7 +102,7 @@ void JCLSLBridge::bridgetolsl(std::string cmd, JCBridgeCallback* cb)
 	if(sBridgeStatus == ACTIVE)
 	{
 		std::string chat = llformat("%d",registerCB(cb)) + "|"+cmd;
-		send_chat_from_viewer(chat, CHAT_TYPE_SHOUT, JCLSLBridge::bridge_channel(gAgent.getID()));
+		send_chat_from_viewer(chat, CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
 	}else
 	{
 		////cmdline_printchat("bridge not active");
