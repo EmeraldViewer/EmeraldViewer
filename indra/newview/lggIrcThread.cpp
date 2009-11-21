@@ -381,12 +381,15 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 
 		if(hostd->target && hostd->nick)
 		{
-			if(!strcmp(hostd->target,getChannel().c_str()))
+			string::size_type pos = std::string(&params[1]).find_first_of(" \001", 1);
+			string command = std::string(&params[1]).substr(1, pos - 1);
+			if(command == "VERSION")
 			{
-				//if(strstr(&params[1],"ACTION"))
-					//if(std::string(&params[1]).find_first_of("ACTION")!=std::string::npos)
-				string::size_type pos = std::string(&params[1]).find_first_of(" \001", 1);
-				string command = std::string(&params[1]).substr(1, pos - 1);
+				//displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
+				msg("CTCP version reply \""+ stripColorCodes(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)) +"\" from "+std::string(hostd->nick));
+			}
+			else if(!strcmp(hostd->target,getChannel().c_str()))
+			{
 				if (command == "ACTION")
 				{
 					actionDisp(std::string(hostd->nick),(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)));
@@ -600,7 +603,7 @@ int lggIrcThread::RPL_ENDOFWHOIS( char * params, irc_reply_data * hostd, void * 
 
 
 
-int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, void * conn)
+int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, void * connn)
 {
 	//[20:10]  KICK Params: #emerald Emerald-User354541ac :test and host: 507F089C.80FD756D.8FBBEBA0.IP and ident: lgg and nick lgg and target (null) 
 	//msg( llformat("KICK Params: %s and host: %s and ident: %s and nick %s and target %s ",params,hostd->host,hostd->ident,hostd->nick,hostd->target).c_str());
@@ -619,13 +622,27 @@ int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, vo
 			if(gSavedSettings.getBOOL("EmeraldIRC_ShowKick"))
 			if(iss >> twho)
 			{
-				
-				if(iss >> twhy)
+				if(!strcmp(twho.c_str(),conn->current_nick()) && gSavedSettings.getBOOL("EmeraldIRC_AutoReJoin"))
 				{
-					msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
-				}else
+					if(iss >> twhy)
+					{
+						msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}else
+					{
+						msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}
+					msg(llformat("Attempting to rejoin %s.",getChannel().c_str()));
+					join();
+				}
+				else if(gSavedSettings.getBOOL("EmeraldIRC_ShowKick"))
 				{
-					msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					if(iss >> twhy)
+					{
+						msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}else
+					{
+						msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}
 				}
 			}
 		}
@@ -769,8 +786,8 @@ void lggIrcThread::sendChat(std::string chat)
 	if(command == "/help")
 	{
 		msg(std::string("\"/join\" will attempt to re-join the current channel.\n\"/msg NICK MSG\" will send a private MSG to NICK\n\"/kick NICK [REASON]\" will kick NICK from that chat (if you have op rights)\n\"/nick NEWNICK\" will change your current nick to NEWNICK"));
-	}else
-	if(command == "/kick")
+	}
+	else if(command == "/kick")
 	{
 		std::string targetNick;
 		if(i >> targetNick)
@@ -780,36 +797,41 @@ void lggIrcThread::sendChat(std::string chat)
 			{
 				conn->kick((char *)getChannel().c_str(),(char *)targetNick.c_str(),(char *)reason.c_str());
 				//msg(llformat("You have kicked %s from this chat. (%s)",targetNick.c_str(),reason.c_str()));
-			}else
+			}
+			else
 			{
 				conn->kick((char *)getChannel().c_str(),(char *)targetNick.c_str());
 				msg(llformat("You have kicked %s from this chat.",targetNick.c_str()));
 			}
 		}
-	}else
-	if(command == "/nick")
+	}
+	else if(command == "/nick")
 	{
 		std::string targetNick;
 		if(i >> targetNick)
 		{
 			conn->nick((char*)targetNick.c_str());
 			//msg(llformat("Changing your nickname to %s",targetNick.c_str()));
-		}else
+		}
+		else
 		{
 			msg("Invalid format for /nick, format is \"/nick NEWNICK\"");
 		}
 		
-	}else	if(command == "/join")
+	}
+	else if(command == "/join")
 	{
 		msg(llformat("Attempting to rejoin %s, if you wish to join a different channel, please make a new irc group",getChannel().c_str()));
 		join();
-	}else	if(command == "/me")
+	}
+	else if(command == "/me")
 	{
 		// WARNING: Liandra made ugly ANSI C hax here. >_>
         std::string toSend = llformat("%cACTION%s%c", (char)1, chat.substr(3).c_str(), (char)1 );
 		actionDisp(std::string(conn->current_nick()),chat.substr(4).c_str());
 		conn->privmsg((char*)getChannel().c_str(),(char*)toSend.c_str());
-	}else if(command == "/msg")
+	}
+	else if(command == "/msg")
 	{
 		std::string theTarget,theMsg;
 		if(i >> theTarget)
@@ -819,15 +841,30 @@ void lggIrcThread::sendChat(std::string chat)
 				theMsg = chat.substr(5+theTarget.length()+1);
 				conn->privmsg((char*)theTarget.c_str(),(char *)theMsg.c_str());
 				msg(llformat("Send Private Message to %s : %s",theTarget.c_str(),theMsg.c_str()));
-			}else
+			}
+			else
 			{
 				msg("No Message Specified");
 			}
-		}else
+		}
+		else
 		{
 			msg("No target name specified");
 		}
-	}else if(command == "/slap")
+	}
+	else if(command == "/version")
+	{
+		std::string theTarget,theMsg;
+		if(i >> theTarget)
+		{
+			conn->privmsg((char*)theTarget.c_str(),"\001VERSION\001");
+		}
+		else
+		{
+			msg("No target name specified");
+		}
+	}
+	else if(command == "/slap")
 	{
 		std::string theTarget;
 		if(i >> theTarget)
@@ -835,11 +872,13 @@ void lggIrcThread::sendChat(std::string chat)
 			std::string toSend = llformat("%cACTION slaps %s with a goldfish%c", (char)1, theTarget.c_str(), (char)1 );
 			conn->privmsg((char*)getChannel().c_str(),(char *)toSend.c_str());
 			actionDisp(std::string(conn->current_nick()),llformat("slaps %s with a goldfish",theTarget.c_str()));
-		}else
+		}
+		else
 		{
 			msg("No target name specified");
 		}
-	}else if(command.substr(0,1)=="/")
+	}
+	else if(command.substr(0,1)=="/")
 	{
 		conn->raw((char *)std::string(chat.substr(1)+"\r\n").c_str());
 	}
@@ -1034,9 +1073,9 @@ void lggIrcThread::msg(std::string message, LLColor4 color, bool notify)
 void lggIrcThread::msg(std::string message, std::string name, LLColor4 color, bool notify)
 {
 	LLUUID uid;
-	uid.generate(name.substr(1)+"lgg"+getChannel().c_str());
+	uid.generate(name+"lgg"+getChannel().c_str());
 
-	llinfos << "Generating Disp uuid from |" << name.substr(1) << "| and |" << getChannel().c_str() << "| it was " << uid.asString() << llendl;
+	llinfos << "Generating Disp uuid from |" << name << "| and |" << getChannel().c_str() << "| it was " << uid.asString() << llendl;
 
 
 	floater  = gIMMgr->findFloaterBySession(getMID());

@@ -4598,6 +4598,17 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
+		<key>EmeraldIRC_AutoReJoin</key>
+		<map>
+			<key>Comment</key>
+			<string>Automaticly accempt to reconnect to the channel you were just in if kicked. Some networks dont like this and may ban you for doing so, be carefull.</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>EmeraldKeepUnpackedCacheFiles</key>
 		<map>
 			<key>Comment</key>
