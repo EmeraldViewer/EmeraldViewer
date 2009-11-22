@@ -233,10 +233,11 @@ BOOL JCLSLBridge::tick()
 					break;
 				}
 				//cmdline_printchat("initializing");//<< llendl;
-				if(gInventory.isEverythingFetched())
+				LLUUID item_id = findInventoryByName(vBridgeName);
+				if(gInventory.isEverythingFetched() || item_id.notNull())
 				{
 					//cmdline_printchat("inv is fetched");//<< llendl;
-					LLUUID item_id = findInventoryByName(vBridgeName);
+					
 					if(item_id.notNull())
 					{
 						//cmdline_printchat("id="+item_id.asString());

@@ -86,7 +86,7 @@ default
             recieve(message);
             return;
         }
-        //send(llDumpList2String([listenReq,channel,name,id,message],"|"));
+        send(llDumpList2String([listenReq,channel,name,id,message],"|"));
     }
     
     run_time_permissions(integer p)
