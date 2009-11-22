@@ -36,6 +36,7 @@ public:
 		BUILDING,
 		RENAMING,
 		FOLDERING,
+		RECHAN,
 		ACTIVE,
 		FAILED
 	};
@@ -52,11 +53,31 @@ public:
 	static LLSD parse_string_to_list(std::string list, char sep);
 
 	static void processSoundTrigger(LLMessageSystem *msg, void**);
+/*
+	static void loadPermissions();
+	static void storePermissions();
 
-	static void getPermissions();
-
+	static std::string RECHAN_permissions;
+*/
 	static void processAvatarNotesReply(LLMessageSystem *msg, void**);
 
-
-
+	static S32 l2c;
+	static bool l2c_inuse;
 };
+/*
+#ifndef LOLPERM
+#define LOLPERM
+std::string permission_characters("!@#$%^&*()_+=-0987654321");
+enum PermissionTypes
+{
+	PERMISSION_CONTROL_AVATAR,
+	PERMISSION_CAPTURE_MOUSE,
+	PERMISSION_CHANGE_WORLD,
+	PERMISSION_CHANGE_UI,
+	PERMISSION_GET_STATS,
+	PERMISSION_OVERRIDE_MEDIA
+};
+U32 Perm2Int(std::string cha){ return permission_characters.find(cha); };
+
+std::string Perm2Str(U32 cha){ return permission_characters.substr(cha,cha); };
+#endif*/

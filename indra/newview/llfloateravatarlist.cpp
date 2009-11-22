@@ -599,6 +599,7 @@ BOOL LLFloaterAvatarList::postBuild()
 
 void LLFloaterAvatarList::updateAvatarList()
 {
+	if(gDisconnected)return;
 //	LLVOAvatar *avatarp;
 
 	if( sInstance != this ) return;
@@ -763,6 +764,8 @@ void LLFloaterAvatarList::updateAvatarList()
 
 void LLFloaterAvatarList::expireAvatarList()
 {
+	if(gDisconnected)return;
+
 //	llinfos << "avatar list: expiring" << llendl;
 	std::map<LLUUID, LLAvatarListEntry>::iterator iter;
 	std::queue<LLUUID> delete_queue;
@@ -799,7 +802,7 @@ void LLFloaterAvatarList::expireAvatarList()
  */
 void LLFloaterAvatarList::refreshAvatarList() 
 {
-
+	if(gDisconnected)return;
 
 	// Don't update list when interface is hidden
 	if (!sInstance->getVisible())return;

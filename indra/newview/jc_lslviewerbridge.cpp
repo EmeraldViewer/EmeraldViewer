@@ -35,10 +35,10 @@
 
 
 #define vCatType (LLAssetType::EType)128
-#define vBridgeName "#LSL<->Client Bridge v0.02"
+#define vBridgeName "#LSL<->Client Bridge v0.04"
 #define vBridgeOpCat "#Emerald"
 
-//void cmdline_printchat(std::string message);
+void cmdline_printchat(std::string message);
 
 //static
 U8 JCLSLBridge::sBridgeStatus;
@@ -51,6 +51,9 @@ U32 JCLSLBridge::lastcall;
 
 std::map<U32,JCBridgeCallback*> JCLSLBridge::callback_map;
 
+S32 JCLSLBridge::l2c;
+bool JCLSLBridge::l2c_inuse;
+
 JCLSLBridge::JCLSLBridge() : LLEventTimer( (F32)1.0 )
 {
 	if(sInstance)
@@ -62,6 +65,8 @@ JCLSLBridge::JCLSLBridge() : LLEventTimer( (F32)1.0 )
 		////cmdline_printchat("instanciated bridge");
 		sInstance = this;
 		lastcall = 0;
+		l2c = 0;
+		l2c_inuse = false;
 		//getPermissions();
 	}
 }
@@ -92,6 +97,36 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				callback_fire(call, arguments);
 				return true;
 			}
+		}else if(clip == "rotat")
+		{
+			LLViewerObject* obj = gObjectList.findObject(source_id);
+			if(obj)
+			{
+				if(obj->isAttachment())
+				{
+					if(owner_id == gAgent.getID())
+					{
+						std::string rot = message.substr(5);
+						LLQuaternion rotation;
+						if(LLQuaternion::parseQuat(rot,&rotation))
+						{
+							//cmdline_printchat("script rotating!");
+							gAgent.getAvatarObject()->setRotation(rotation,TRUE);
+						}else
+						{
+							//cmdline_printchat("script rotate failed");
+						}
+					}
+				}
+			}
+		}else if(message.substr(0,3) == "l2c")
+		{
+			std::string lolnum = message.substr(3);
+			//cmdline_printchat("num="+lolnum);
+			l2c = atoi(lolnum.c_str());
+			//cmdline_printchat("rnum="+llformat("%d",l2c));
+			l2c_inuse = true;
+			return true;
 		}
 	}
 	return false;
@@ -99,13 +134,13 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
 void JCLSLBridge::bridgetolsl(std::string cmd, JCBridgeCallback* cb)
 {
-	if(sBridgeStatus == ACTIVE)
+	if(sBridgeStatus == RECHAN)
 	{
 		std::string chat = llformat("%d",registerCB(cb)) + "|"+cmd;
 		send_chat_from_viewer(chat, CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
 	}else
 	{
-		////cmdline_printchat("bridge not active");
+		////cmdline_printchat("bridge not RECHAN");
 		delete cb;
 	}
 }
@@ -128,9 +163,12 @@ std::string md5hash(const std::string &text, U32 thing)
 
 S32 JCLSLBridge::bridge_channel(LLUUID user)
 {
-	std::string tmps = md5hash(user.asString(),1);
-	int i = (int)strtol((tmps.substr(0, 7) + "\n").c_str(),(char **)NULL,16);
-	return (S32)i;
+	if(l2c == 0 || l2c_inuse == false)
+	{
+		std::string tmps = md5hash(user.asString(),1);
+		int i = (int)strtol((tmps.substr(0, 7) + "\n").c_str(),(char **)NULL,16);
+		return (S32)i;
+	}else return l2c;
 }
 
 class ObjectBNameMatches : public LLInventoryCollectFunctor
@@ -209,7 +247,7 @@ BOOL JCLSLBridge::tick()
 							if(isworn(bridge->getUUID()))
 							{
 								//cmdline_printchat("bridge is already worn");//<< llendl;
-								sBridgeStatus = ACTIVE;
+								sBridgeStatus = RECHAN;
 							}else if(bridge->isComplete())
 							{
 								//cmdline_printchat("bridge is complete, attaching");//<< llendl;
@@ -226,7 +264,7 @@ BOOL JCLSLBridge::tick()
 								msg->addStringFast(_PREHASH_Name, bridge->getName());
 								msg->addStringFast(_PREHASH_Description, bridge->getDescription());
 								msg->sendReliable(gAgent.getRegionHost());
-								sBridgeStatus = ACTIVE;
+								sBridgeStatus = RECHAN;
 							}
 						}
 					}else
@@ -282,15 +320,25 @@ BOOL JCLSLBridge::tick()
 				if(bridge)
 				{
 					move_inventory_item(gAgent.getID(),gAgent.getSessionID(),bridge->getUUID(),vcatid,vBridgeName, NULL);
-					sBridgeStatus = ACTIVE;
+					sBridgeStatus = RECHAN;
 					////cmdline_printchat("moving to folder");
 				}
 			}
 			break;
-		case ACTIVE:
-			LLUUID bridge = findInventoryByName(vBridgeName);
-			//if(bridge)
+		case RECHAN:
 			{
+				{
+					if(l2c == 0)
+					{
+						send_chat_from_viewer("-1|l2c", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
+						sBridgeStatus = ACTIVE;
+					}
+				}
+			}
+		case ACTIVE:
+			{
+				LLUUID bridge = findInventoryByName(vBridgeName);
+				//if(bridge)
 				//LLVOAvatar* avatar = gAgent.getAvatarObject();
 				if(bridge.isNull() || !isworn(bridge))
 				{
@@ -298,7 +346,6 @@ BOOL JCLSLBridge::tick()
 					sBridgeStatus = UNINITIALIZED;
 				}
 			}
-			break;
 		}
 	}
 	return FALSE;
@@ -373,7 +420,7 @@ void JCLSLBridge::processSoundTrigger(LLMessageSystem* msg,void**)
 		
 		if(sound_id == LLUUID("420d76ad-c82b-349d-7b81-f00d0ca0f38f"))
 		{
-			if(sBridgeStatus == ACTIVE)
+			if(sBridgeStatus == RECHAN)
 			{
 				send_chat_from_viewer("emerald_bridge_rdy", CHAT_TYPE_SHOUT, JCLSLBridge::bridge_channel(gAgent.getID()));
 			}else if(sBridgeStatus == FAILED)
@@ -387,16 +434,29 @@ void JCLSLBridge::processSoundTrigger(LLMessageSystem* msg,void**)
 		
 	}
 }
-
+/*
 LLUUID BridgePermissions_Emerald("c78f9f3f-56ac-4442-a0b9-8b41dad455ae");
 
-void JCLSLBridge::getPermissions()
+void JCLSLBridge::loadPermissions()
 {
 	std::vector<std::string> strings;
 	strings.push_back( BridgePermissions_Emerald.asString() );//BridgePermissions Emerald
 	send_generic_message("avatarnotesrequest", strings);
 }
 
+void JCLSLBridge::storePermissions()
+{
+	LLMessageSystem *msg = gMessageSystem;
+	msg->newMessage("AvatarNotesUpdate");
+	msg->nextBlock("AgentData");
+	msg->addUUID("AgentID", gAgent.getID());
+	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->nextBlock("Data");
+	msg->addUUID("TargetID", BridgePermissions_Emerald);
+	msg->addString("Notes", "");//RECHAN_permissions);
+	gAgent.sendReliableMessage();
+}
+*/
 void JCLSLBridge::processAvatarNotesReply(LLMessageSystem *msg, void**)
 {
 	// extract the agent id
@@ -405,11 +465,11 @@ void JCLSLBridge::processAvatarNotesReply(LLMessageSystem *msg, void**)
 	LLUUID target_id;
 	msg->getUUID("Data", "TargetID", target_id);
 
-	if(target_id == BridgePermissions_Emerald)
+	/*if(target_id == BridgePermissions_Emerald)
 	{
 		std::string text;
 		msg->getString("Data", "Notes", text);
-		LLSD arguments = JCLSLBridge::parse_string_to_list(text, '|');
-		
-	}
+		//LLSD arguments = JCLSLBridge::parse_string_to_list(text, '|');
+		//RECHAN_permissions = text;//arguments;
+	}*/
 }

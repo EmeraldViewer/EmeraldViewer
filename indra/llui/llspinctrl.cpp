@@ -165,7 +165,10 @@ void LLSpinCtrl::onUpBtn( void *userdata )
 	if( self->getEnabled() )
 	{
 		// use getValue()/setValue() to force reload from/to control
-		F32 val = (F32)self->getValue().asReal() + self->mIncrement;
+		F32 inc = self->mIncrement;
+		if(gKeyboard->getKeyDown(KEY_CONTROL))inc = inc * 0.10;
+		else if(gKeyboard->getKeyDown(KEY_SHIFT))inc = inc * 0.01;
+		F32 val = (F32)self->getValue().asReal() + inc;
 		val = clamp_precision(val, self->mPrecision);
 		val = llmin( val, self->mMaxValue );
 		
@@ -198,7 +201,10 @@ void LLSpinCtrl::onDownBtn( void *userdata )
 
 	if( self->getEnabled() )
 	{
-		F32 val = (F32)self->getValue().asReal() - self->mIncrement;
+		F32 inc = self->mIncrement;
+		if(gKeyboard->getKeyDown(KEY_CONTROL))inc = inc * 0.10;
+		else if(gKeyboard->getKeyDown(KEY_SHIFT))inc = inc * 0.01;
+		F32 val = (F32)self->getValue().asReal() - inc;
 		val = clamp_precision(val, self->mPrecision);
 		val = llmax( val, self->mMinValue );
 
