@@ -6,10 +6,12 @@
     <button label="?" name="EmeraldHelp_TeleportLogin" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <check_box label="Doppelklick Teleport" name="double_click_tp_toggle"/>
       <check_box label="Doppelklick Autopilot" name="double_click_ap_toggle"/>
+      <check_box label="Nutze lokale TP Anfragen" name="telerequest_toggle" tool_tip="Sendet tp Anfragen an den Server(standardmässig aktiviert)"/>
+      <check_box label="Nutze llMoveToTarget anstatt TP(benötigt LSL-Brücke)" name="mldct_toggle"tool_tip="Flüstert TP Ziel auf einem privaten Channel(standardmässig deaktiviert)"/>
+      <spinner label="Channel" name="mldct_channel" tool_tip="Channel zum flüstern des TP Ziel"/>
       <check_box label="Velocity Interpolate Double-click Teleports" name="login_screen_toggle1"/>
       <check_box label="Drehe Kamera hinter Avatar nach Doppelklick Teleport" name="move_camaftertp_toggle"/>
       <check_box label="Immer fliegen nach Teleport" name="flyaftertp_toggle"/>
-      <check_box label="Benutze C.Y.P.H.E.R. move-lock Teleport System" name="mldct_toggle"/>
       <spinner label="Doppelklick Teleport Z Abweichung" name="Double-click Teleport Z Offset" tool_tip="Option zum einstellen der Z Abweichung nach Doppelklick Teleport"/>
       <check_box label="Halbe Avatarhöhe als extra Abweichung" name="avcalc_toggle"/>
       <check_box label="Nutze die Abweichung für das move-lock Teleport System." name="mldctoffset_toggle"/>
@@ -149,6 +151,7 @@ Empfohlene Eisntellungen:
       <check_box label="Chat Verlauf Zeitstempel mit Sekunden" name="EmeraldAddSecondsInHistory-toggle"/>
       <check_box label="Wenn 'Gruppenmitteilungen erhalten' deaktiviert ist, Gruppen Chat auch deaktivieren" name="EmeraldMuteGroupWhenNoticesDisabled-toggle"/>
       <check_box label="Deaktiviere alle Gruppen Chats" name="EmeraldMuteAllGroups-toggle"/>
+      <button name="keyword_allert" label="Bearbeite Stichwort Alarm" tool_tip="Bearbeite ausstehende Warnungen."/>
       </panel>
       <panel label="Verschiedenes" name="AvatarEffects">
         <button label="?" name="EmeraldHelp_Misc" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -161,12 +164,12 @@ Empfohlene Eisntellungen:
         <check_box label="Aktiviere Minimap Rotation" name="MinimapRotate"/>
         <check_box label="Suchleiste anzeigen" name="Search_bar-toggle"/>
         <check_box label="Objekte wenn möglich mit der passenden Land Gruppe rezzen" name="grouplandrez"/>
-        <check_box label="Ignoriere Kamera Einschränkungen" name="em_cameraconstraints" tool_tip="Erlaubt der Kamera durch Prims zu zoomen oder schwenken. Normales Verhalten ist die Kamera an Oberflächen fest zu klemmen."/>
         <check_box label="Aktiviere Restrained Life [RLVa] Funktionen(benötigt Neustart)" name="rlv-toggle"/>
         <view_border name="EmDivisorBridge"/>
         <check_box label="Aktiviere LSL-Client Brücke" name="EmeraldBuildBridge"/>
         <check_box label="Radar nutzt Brücke" name="EmeraldUseBridgeRadar"/>
         <check_box label="Online Status in Profilen" name="EmeraldUseBridgeOnline"/>
+        <check_box label="Nutze llMoveToTarget TP" name="EmeraldMoveLockDCT"/>
     </panel>
     <panel label="Befehlszeile" name="CmdLine">
     <button label="?" name="EmeraldHelp_CmdLine" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -250,7 +253,6 @@ Empfohlene Eisntellungen:
 <button name="EmeraldBeamPrev_Emerald" label=""/>
 <view_border name="EmDivisor2"/>
 <slider name="EmeraldMaxBeamsPerSecond" label="Updates/sec:" tool_tip="Wieviele Updates pro Sekunde gesendet werden. Standard 40"/>
-      <check_box label="Sende Zielposition per Chat" name="lol-toggle!"/>
       <check_box label="Zeige Auswahleffekt(deaktiviert wird kein Effekt mehr angezeigt)" name="SLPartBeam"/>
       <combo_box name="BeamColor_combo" tool_tip="Select the color preset for the selection beam"/>
       <combo_box name="EmeraldBeamShape_combo" tool_tip="Wähle die Form des Effekts aus"/>      
@@ -373,6 +375,7 @@ Empfohlene Eisntellungen:
       <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowKick"/>
       <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowNick"/>
       <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowSystem"/>
+      <check_box label="Auto Re-Join" tool_tip="Automatisch Verbindung wieder herstellen nach rauswurf oder Verbindungsabbruch. Einige Netzwerke tolerieren das nicht!" name="EmeraldIRC_AutoReJoin"/>
     </panel>
     <panel label="Utility Stream" name="Utility Stream">
     <button label="?" name="EmeraldHelp_UtilityStream" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -393,6 +396,7 @@ Empfohlene Eisntellungen:
 			GUS Variablen:
 			</text>
 			<check_box label="Augapfel Rotation" tool_tip="Aktiviere senden der Augapfel Rotation, nützlich für Avatare mit Prim Augen." name="Eyeball Rotation"/>
+      <check_box label="Blickziel Position" tool_tip="Sende Blickziel Daten." name="LookAt Position"/>
 			</panel>
 			<!-- GUS-FE COLUMN -->
 			<panel name="gus-fe_feature_column">
@@ -402,9 +406,10 @@ Empfohlene Eisntellungen:
 			<check_box label="Augenlid Status" tool_tip="Aktiviere senden des Augenlid Status, nützlich für Avatare mit Prim Augen." name="Eyelid State"/>
 			</panel>
 			<text name="rofltxt3">
-					EXPERIMENTAL: Greenlife Utility Stream sendet Daten vom Viewer in den
+					EXPERIMENTAL: sendet Daten vom Viewer in den
 Simulator damit man per Script darauf zugreifen kann.
 			</text>
+      <check_box label="Sende Zielposition per Chat" name="lol-toggle!"/>
 		</panel>
     <panel label="Inventar" name="Inventory">
     <button label="?" name="EmeraldHelp_Inventory" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
