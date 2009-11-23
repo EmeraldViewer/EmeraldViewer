@@ -1650,10 +1650,13 @@ BOOL LLFloaterIMPanel::inviteToSession(const LLDynamicArray<LLUUID>& ids)
 void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, LLColor4 incolor, bool log_to_file, const LLUUID& source, const std::string& name)
 {
 	//mfd key word alert
-	if(MfdKeywordFloaterStart::hasKeyword(utf8msg,2))
+	if(gAgent.getID() != source)
 	{
-		if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
-			incolor= gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+		if(MfdKeywordFloaterStart::hasKeyword(utf8msg,2))
+		{
+			if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
+				incolor= gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+		}
 	}
 	
 	const LLColor4& color = incolor;

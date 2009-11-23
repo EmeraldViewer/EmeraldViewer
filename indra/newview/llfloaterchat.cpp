@@ -532,10 +532,13 @@ LLColor4 get_text_color(const LLChat& chat)
 		}
 	}
 
-	if(MfdKeywordFloaterStart::hasKeyword(chat.mText,1))
+	if(gAgent.getID() != chat.mFromID)
 	{
-		if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
-			text_color = gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+		if(MfdKeywordFloaterStart::hasKeyword(chat.mText,1))
+		{
+			if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
+				text_color = gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+		}
 	}
 	return text_color;
 }
