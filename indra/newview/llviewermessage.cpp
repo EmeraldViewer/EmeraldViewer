@@ -1620,7 +1620,10 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		char my_uuid[UUID_STR_SIZE];
 		char their_uuid[UUID_STR_SIZE];
 
-		if (gOTR && (IM_NOTHING_SPECIAL == dialog || ((IM_TYPING_STOP == dialog) && (message != "typing"))))
+        if (gOTR &&
+            ((IM_NOTHING_SPECIAL == dialog) ||
+             ((IM_TYPING_STOP == dialog) &&
+              (! ((message == "typing") || (message == "cryo::ping"))))))
 		{
 			// only try OTR for 1 on 1 IM's or special tagged typing_stop packets
 			gAgent.getID().toString(&(my_uuid[0]));
