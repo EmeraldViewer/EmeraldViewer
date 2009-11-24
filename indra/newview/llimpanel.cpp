@@ -85,7 +85,7 @@
 #include "otr_wrapper.h"
 #include "otr_floater_smp_dialog.h"
 #include "otr_floater_smp_progress.h"
-#include "mfdkeywordfloater.h"
+#include "mfdKeywordFloater.h"
 #endif // USE_OTR // [/$PLOTR$]
 
 //

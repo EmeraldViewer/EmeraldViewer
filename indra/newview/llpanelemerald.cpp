@@ -65,7 +65,7 @@
 #include "llweb.h" // [$PLOTR$/]
 #include "lggBeamColorMapFloater.h"
 #include "llsliderctrl.h"
-#include "mfdkeywordfloater.h"
+#include "mfdKeywordFloater.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
