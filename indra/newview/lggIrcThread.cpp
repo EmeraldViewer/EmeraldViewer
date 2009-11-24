@@ -857,7 +857,7 @@ void lggIrcThread::sendChat(std::string chat)
 		std::string theTarget,theMsg;
 		if(i >> theTarget)
 		{
-			conn->privmsg((char*)theTarget.c_str(),"\001VERSION\001");
+			conn->privmsg((char*)theTarget.c_str(),(char*)"\001VERSION\001");
 		}
 		else
 		{
