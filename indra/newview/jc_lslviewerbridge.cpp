@@ -168,7 +168,7 @@ void JCLSLBridge::bridgetolsl(std::string cmd, JCBridgeCallback* cb)
 	if(sBridgeStatus == ACTIVE)
 	{
 		std::string chat = llformat("%d",registerCB(cb)) + "|"+cmd;
-		send_chat_from_viewer(chat, CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
+		send_chat_from_viewer(chat, CHAT_TYPE_WHISPER, l2c_inuse ? l2c : JCLSLBridge::bridge_channel(gAgent.getID()));
 	}else
 	{
 		////cmdline_printchat("bridge not RECHAN");
@@ -360,11 +360,11 @@ BOOL JCLSLBridge::tick()
 		case RECHAN:
 			{
 				{
-					//if(l2c == 0)
-					{
+					//if(l2c == 0) is this really needed ._. 
+					//{
 						send_chat_from_viewer("-1|l2c", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
 						sBridgeStatus = ACTIVE;
-					}
+					//}
 				}
 			}
 		case ACTIVE:
