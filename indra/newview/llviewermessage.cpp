@@ -1077,6 +1077,8 @@ bool LLOfferInfo::inventory_offer_callback(const LLSD& notification, const LLSD&
 	LLChat chat;
 	std::string log_message;
 	S32 button = LLNotification::getSelectedOption(notification, response);
+	if(button <0)button=IOR_BUSY;//lgg hack to make busy decline workk . how did this break before?
+	//llinfos << "doing the inv offer call back, the button is " << button << " . " << llendl;
 
 	// For muting, we need to add the mute, then decline the offer.
 	// This must be done here because:
@@ -1267,6 +1269,8 @@ bool LLOfferInfo::inventory_offer_callback(const LLSD& notification, const LLSD&
 			chat.mMuted = TRUE;
 		}
 		LLFloaterChat::addChatHistory(chat);
+		
+		//llinfos << "Made it to close, trying to add the msg " << chat.mText << " .oh yeah, busy is  " << busy << " ." << llendl;
 
 		// If it's from an agent, we have to fetch the item to throw
 		// it away. If it's from a task or group, just denying the 
@@ -6713,6 +6717,7 @@ void invalid_message_callback(LLMessageSystem* msg,
 
 void LLOfferInfo::forceResponse(InventoryOfferResponse response)
 {
+	//lgg repsnce being sent is 3 which doesnt line up...
 	LLNotification::Params params("UserGiveItem");
 	params.functor(boost::bind(&LLOfferInfo::inventory_offer_callback, this, _1, _2));
 	LLNotifications::instance().forceResponse(params, response);
