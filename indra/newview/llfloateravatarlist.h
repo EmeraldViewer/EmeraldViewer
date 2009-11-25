@@ -576,6 +576,7 @@ private:
 
 public:
 	static LLFloaterAvatarList* getInstance(){ return sInstance; }
+	static void lookAtAvatar(LLUUID &uuid);
 private:
 	// when a line editor loses keyboard focus, it is committed.
 	// commit callbacks are named onCommitWidgetName by convention.
@@ -640,7 +641,7 @@ private:
 	static void onClickGetKey(void *userdata);
 
 	static void onDoubleClick(void *userdata);
-	static void lookAtAvatar(LLUUID &uuid);
+	//static void lookAtAvatar(LLUUID &uuid);
 
 	static void onClickFreeze(void *userdata);
 	static void onClickEject(void *userdata);
