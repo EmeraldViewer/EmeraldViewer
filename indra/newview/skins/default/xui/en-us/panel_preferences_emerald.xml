@@ -510,7 +510,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 image_unselected="beam_emerald.png" image_hover_selected="beam_emerald.png" image_hover_unselected="beam_emerald.png"/>
 				<view_border bevel_style="none" border_thickness="1" bottom_delta="-10" follows="top|left" height="140"
 					 left="250" name="EmDivisor2" width="0"/>
-				<slider bottom_delta="-30" left="100" name="EmeraldMaxBeamsPerSecond" control_name="EmeraldMaxBeamsPerSecond"
+				<slider bottom_delta="-30" left="10" name="EmeraldMaxBeamsPerSecond" control_name="EmeraldMaxBeamsPerSecond"
 					 decimal_digits="0" enabled="true" follows="left|top" height="18" increment="1"
 					 initial_val="4" label="Beam updates/sec:" label_width="100" max_val="200" min_val="4"
 					 mouse_opaque="true" show_text="true" width="250" auto_resize="false" tool_tip="How many beam updates to send in a second. Default 40"/>
@@ -518,13 +518,13 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 initial_value="true" label="Enable selection beam (turning off will hide the beam)"
 					 left="15" mouse_opaque="true" name="SLPartBeam" radio_style="false" width="270"
 					 control_name="ShowSelectionBeam"/>
-				<combo_box allow_text_entry="false" bottom_delta="185" left_delta="50" follows="left|top" height="18"
+				<combo_box allow_text_entry="false" bottom_delta="165" left_delta="50" follows="left|top" height="18"
 					 left="10" max_chars="20" mouse_opaque="true" name="BeamColor_combo" width="170"
 					 control_name="EmeraldBeamColorFile" tool_tip="Select the color preset for the selection beam"/>
 				<combo_box allow_text_entry="false" bottom_delta="-0" left_delta="195" follows="left|top" height="18"
 					 left="10" max_chars="20" mouse_opaque="true" name="EmeraldBeamShape_combo" width="170"
 					 control_name="EmeraldBeamShape" tool_tip="Select the shape for the particle beam"/>
-				<slider bottom_delta="-125" left_delta="30" name="EmeraldBeamShapeScale" control_name="EmeraldBeamShapeScale"
+				<slider bottom_delta="-145" left_delta="30" name="EmeraldBeamShapeScale" control_name="EmeraldBeamShapeScale"
 					 decimal_digits="1" enabled="true" follows="left|top" height="18" increment="0.1"
 					 initial_val="1" label="Scale:" label_width="35" max_val="4" min_val="0.1"
 					 mouse_opaque="true" show_text="true" width="150" auto_resize="false" tool_tip="Change the scale of the shape used for the Emerald Shaped Beam"/>
