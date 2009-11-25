@@ -926,7 +926,7 @@ bool LLNetMap::mmsetcustom::handleEvent(LLPointer<LLEvent> event, const LLSD& us
 {
 	LLNetMap *self = mPtr;
 	//if(self->mClosestAgentAtLastRightClick){
-		mm_setcolor(self->mClosestAgentAtLastRightClick,LLColor4(1.0,1.0,1.0,1.0));
+		mm_setcolor(self->mClosestAgentAtLastRightClick,gSavedSettings.getColor4("mm_customminimapcolor"));
 	//}
 	return true;
 }

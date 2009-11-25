@@ -23,6 +23,33 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
+		<key>mm_customminimapcolor</key>
+		<map>
+			<key>Comment</key>
+			<string>Custom minimap color</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Color4</string>
+			<key>Value</key>
+			<array>
+				<real>1.0</real>
+				<real>1.0</real>
+				<real>1.0</real>
+				<real>1.0</real>
+			</array>
+		</map>
+		<key>mm_fastminimap</key>
+		<map>
+			<key>Comment</key>
+			<string>Skips object drawing on the minimap when true</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>zmm_deffov</key>
 		<map>
 			<key>Comment</key>
