@@ -637,7 +637,7 @@ void LLTexLayerSetBuffer::onTextureUploadComplete(const LLUUID& uuid, void* user
 					{
 						llinfos << "Baked upload failed. Reason: " << result << llendl;
 						// *FIX: retry upload after n seconds, asset server could be busy
-						//new TextureRetryTimer(baked_upload_data->mLayerSet);
+						new TextureRetryTimer(baked_upload_data->mLayerSet);
 					}
 				}
 				else
@@ -654,7 +654,7 @@ void LLTexLayerSetBuffer::onTextureUploadComplete(const LLUUID& uuid, void* user
 		// Baked texture failed to upload, but since we didn't set the new baked texture, it means that they'll
 		// try and rebake it at some point in the future (after login?)
 		llwarns << "Baked upload failed" << llendl;
-		//new TextureRetryTimer(baked_upload_data->mLayerSet);
+		new TextureRetryTimer(baked_upload_data->mLayerSet);
 	}
 
 	delete baked_upload_data;
