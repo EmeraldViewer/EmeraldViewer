@@ -165,7 +165,7 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
 void JCLSLBridge::bridgetolsl(std::string cmd, JCBridgeCallback* cb)
 {
-	if(sBridgeStatus == RECHAN)
+	if(sBridgeStatus == ACTIVE)
 	{
 		std::string chat = llformat("%d",registerCB(cb)) + "|"+cmd;
 		send_chat_from_viewer(chat, CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
