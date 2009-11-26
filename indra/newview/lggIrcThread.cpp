@@ -69,6 +69,7 @@ Ok, here is how this is suposed to work.
 #include "llfloaterchatterbox.h"
 #include "llfloater.h"
 #include "llversionviewer.h"
+#include "lltimer.h"
 
 
 //static
@@ -387,6 +388,14 @@ int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, 
 			{
 				//displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
 				msg("CTCP version reply \""+ stripColorCodes(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)) +"\" from "+std::string(hostd->nick));
+			}
+			else if(command == "PING")
+			{
+				//displayPrivateIm(std::string(&params[1]),std::string(hostd->nick));
+				F64 temp = atof(stripColorCodes(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)).c_str());
+				temp = LLTimer::getTotalSeconds() - temp;
+				msg("Ping reply from "+std::string(hostd->nick)+" in "+llformat("%.2f",temp)+" seconds.");
+				//msg("CTCP version reply \""+ stripColorCodes(std::string(&params[1]).substr(pos + 1, (std::string(&params[1]).length() - pos) - 2)) +"\" from "+std::string(hostd->nick));
 			}
 			else if(!strcmp(hostd->target,getChannel().c_str()))
 			{
@@ -864,6 +873,19 @@ void lggIrcThread::sendChat(std::string chat)
 			msg("No target name specified");
 		}
 	}
+	else if(command == "/ping")
+    {
+        std::string theTarget,theMsg;
+        if(i >> theTarget)
+        {
+            conn->privmsg((char*)theTarget.c_str(),(char*)llformat("\001PING %.2f\001", LLTimer::getTotalSeconds()).c_str());
+        }
+        else
+        {
+            msg("No target name specified");
+        }
+        //msg(llformat("%.2f", LLTimer::getTotalSeconds()));
+    }
 	else if(command == "/slap")
 	{
 		std::string theTarget;

@@ -91,7 +91,7 @@ default
     
     run_time_permissions(integer p)
     {
-        if(p)llTakeControls(DEBUG_CHANNEL,1,1);
+        if(p)llTakeControls(1024,1,1);
     }
     
     dataserver(key id, string data) 
