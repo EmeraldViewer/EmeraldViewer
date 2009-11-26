@@ -3518,7 +3518,7 @@
 			<key>Comment</key>
 			<string>Overrides sit animations.</string>
 			<key>Persist</key>
-			<integer>0</integer>
+			<integer>1</integer>
 			<key>Type</key>
 			<string>Boolean</string>
 			<key>Value</key>
@@ -3529,7 +3529,7 @@
 			<key>Comment</key>
 			<string>Disables stand anims during mouselook</string>
 			<key>Persist</key>
-			<integer>0</integer>
+			<integer>1</integer>
 			<key>Type</key>
 			<string>Boolean</string>
 			<key>Value</key>
@@ -3551,7 +3551,7 @@
 			<key>Comment</key>
 			<string>Randomize stand anims</string>
 			<key>Persist</key>
-			<integer>0</integer>
+			<integer>1</integer>
 			<key>Type</key>
 			<string>Boolean</string>
 			<key>Value</key>
