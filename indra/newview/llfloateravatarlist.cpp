@@ -56,6 +56,10 @@
 #include "jc_lslviewerbridge.h"
 #include "v3dmath.h"
 
+#include "llfloaterregioninfo.h"
+
+void cmdline_printchat(std::string message);
+
 // Timeouts
 /**
  * @brief How long to keep showing an activity, in seconds
@@ -538,11 +542,11 @@ BOOL LLFloaterAvatarList::postBuild()
 
 	// Hide them until some other way is found
 	// Users may not expect to find a Ban feature on the Eject button
-	childSetVisible("refresh_btn", false);
-	childSetVisible("ban_btn", false);
-	childSetVisible("unban_btn", false);
+	//childSetVisible("refresh_btn", false);
+	//childSetVisible("ban_btn", false);
+	//childSetVisible("unban_btn", false);
 	//childSetVisible("unmute_btn", false);
-	childSetVisible("estate_ban_btn", false);
+	//childSetVisible("estate_ban_btn", false);
 
 	// Set callbacks
 	//childSetAction("refresh_btn", onClickRefresh, this);
@@ -567,7 +571,10 @@ BOOL LLFloaterAvatarList::postBuild()
 	childSetAction("unmute_btn", onClickUnmute, this);
 	childSetAction("ar_btn", onClickAR, this);
 	childSetAction("teleport_btn", onClickTeleport, this);
-	childSetAction("estate_eject_btn", onClickEjectFromEstate, this);
+	childSetAction("estate_kick_btn", onClickKickFromEstate, this);
+	childSetAction("estate_ban_btn", onClickBanFromEstate, this);
+	childSetAction("estate_tph_btn", onClickTPHFromEstate, this);
+	childSetAction("estate_gtfo_btn", onClickGTFOFromEstate, this);
 
 	childSetCommitCallback("agealert", onClickAgeAlert,this);
 	childSetValue("agealert",gSavedSettings.getBOOL("EmeraldAvatarAgeAlert"));
@@ -1861,22 +1868,109 @@ static void send_estate_ban(const LLUUID& agent)
 	gAgent.sendReliableMessage();
 }
 */
+std::string keyasname(LLUUID id)
+{
+	std::string ret;
+	gCacheName->getFullName(id,ret);
+	return ret;
+}
 
-static void cmd_freeze(const LLUUID& avatar, const std::string &name)      { send_freeze(avatar, true); }
-static void cmd_unfreeze(const LLUUID& avatar, const std::string &name)    { send_freeze(avatar, false); }
-static void cmd_eject(const LLUUID& avatar, const std::string &name)       { send_eject(avatar, false); }
-static void cmd_ban(const LLUUID& avatar, const std::string &name)         { send_eject(avatar, true); }
-static void cmd_profile(const LLUUID& avatar, const std::string &name)     { LLFloaterAvatarInfo::showFromDirectory(avatar); }
+static void cmd_freeze(const LLUUID& avatar, const std::string &name)
+{
+	cmdline_printchat("Moderation: Freezing "+ keyasname(avatar)+".");
+	send_freeze(avatar, true);
+}
+static void cmd_unfreeze(const LLUUID& avatar, const std::string &name)
+{
+	cmdline_printchat("Moderation: Unfreezing "+ keyasname(avatar)+".");
+	send_freeze(avatar, false);
+}
+static void cmd_eject(const LLUUID& avatar, const std::string &name)
+{
+	cmdline_printchat("Moderation: Ejecting "+ keyasname(avatar)+".");
+	send_eject(avatar, false);
+}
+static void cmd_ban(const LLUUID& avatar, const std::string &name)
+{
+	cmdline_printchat("Moderation: Ejecting and banning "+ keyasname(avatar)+".");
+	send_eject(avatar, true);
+}
+static void cmd_profile(const LLUUID& avatar, const std::string &name)
+{
+	LLFloaterAvatarInfo::showFromDirectory(avatar);
+}
 //static void cmd_mute(const LLUUID&avatar, const std::string &name)         { LLMuteList::getInstance()->add(LLMute(avatar, name, LLMute::AGENT)); }
 //static void cmd_unmute(const LLUUID&avatar, const std::string &name)       { LLMuteList::getInstance()->remove(LLMute(avatar, name, LLMute::AGENT)); }
-static void cmd_estate_eject(const LLUUID &avatar, const std::string &name){ send_estate_message("teleporthomeuser", avatar); }
-/* Apparently not in use
+
+
+typedef std::vector<std::string> strings_t;
+static void sendEstateOwnerMessage(
+	LLMessageSystem* msg,
+	const std::string& request,
+	const LLUUID& invoice,
+	const strings_t& strings)
+{
+	llinfos << "Sending estate request '" << request << "'" << llendl;
+	msg->newMessage("EstateOwnerMessage");
+	msg->nextBlockFast(_PREHASH_AgentData);
+	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->addUUIDFast(_PREHASH_TransactionID, LLUUID::null); //not used
+	msg->nextBlock("MethodData");
+	msg->addString("Method", request);
+	msg->addUUID("Invoice", invoice);
+	if(strings.empty())
+	{
+		msg->nextBlock("ParamList");
+		msg->addString("Parameter", NULL);
+	}
+	else
+	{
+		strings_t::const_iterator it = strings.begin();
+		strings_t::const_iterator end = strings.end();
+		for(; it != end; ++it)
+		{
+			msg->nextBlock("ParamList");
+			msg->addString("Parameter", *it);
+		}
+	}
+	msg->sendReliable(gAgent.getRegion()->getHost());
+}
+
+static void cmd_estate_eject(const LLUUID &avatar, const std::string &name)
+{
+	cmdline_printchat("Moderation: Kicking "+ keyasname(avatar)+" from estate.");
+	strings_t strings;
+	strings.push_back(avatar.asString());
+	sendEstateOwnerMessage(gMessageSystem, "kickestate", LLFloaterRegionInfo::getLastInvoice(), strings);
+}
+
 static void cmd_estate_ban(const LLUUID &avatar, const std::string &name)
 {
-	send_estate_message("teleporthomeuser", avatar); // Kick first, just to be sure
-	send_estate_ban(avatar);
+	cmdline_printchat("Moderation: Banning "+ keyasname(avatar)+" from estate.");
+	//send_estate_message("teleporthomeuser", avatar); // Kick first, just to be sure
+	LLPanelEstateInfo::sendEstateAccessDelta(ESTATE_ACCESS_BANNED_AGENT_ADD | ESTATE_ACCESS_ALLOWED_AGENT_REMOVE | ESTATE_ACCESS_NO_REPLY, avatar);
 }
-*/
+
+static void cmd_tph_estate(const LLUUID &avatar, const std::string &name)
+{
+	cmdline_printchat("Moderation: Teleporting "+ keyasname(avatar)+" home.");
+	//send_estate_message("teleporthomeuser", avatar); // Kick first, just to be sure
+	//sendEstateAccessDelta(ESTATE_ACCESS_BANNED_AGENT_ADD | ESTATE_ACCESS_ALLOWED_AGENT_REMOVE, avatar);
+	strings_t strings;
+	// [0] = our agent id
+	// [1] = target agent id
+	std::string buffer;
+	gAgent.getID().toString(buffer);
+	strings.push_back(buffer);
+	avatar.toString(buffer);
+	strings.push_back(strings_t::value_type(buffer));
+	LLUUID invoice(LLFloaterRegionInfo::getLastInvoice());
+
+	sendEstateOwnerMessage(gMessageSystem, "teleporthomeuser", invoice, strings);
+}
+
+
 
 void LLFloaterAvatarList::doCommand(void (*func)(const LLUUID &avatar, const std::string &name))
 {
@@ -1961,7 +2055,7 @@ void LLFloaterAvatarList::callbackEject(const LLSD& notification, const LLSD& re
 	}
 	else if ( option == 1 )
 	{
-		avlist->doCommand(cmd_ban);
+		//avlist->doCommand(cmd_ban);
 	}
 }
 
@@ -1978,6 +2072,18 @@ void LLFloaterAvatarList::callbackEjectFromEstate(const LLSD& notification, cons
 	}
 }
 
+void LLFloaterAvatarList::callbackBanFromEstate(const LLSD& notification, const LLSD& response)
+{/*
+	S32 option = LLNotification::getSelectedOption(notification, response);
+
+	LLFloaterAvatarList *avlist = LLFloaterAvatarList::sInstance;
+
+	if ( option == 0 )
+	{
+		avlist->doCommand(cmd_estate_ban);
+	}*/
+}
+
 //static
 void LLFloaterAvatarList::callbackIdle(void *userdata) {
 	if ( LLFloaterAvatarList::sInstance != NULL ) {
@@ -1988,19 +2094,29 @@ void LLFloaterAvatarList::callbackIdle(void *userdata) {
 void LLFloaterAvatarList::onClickFreeze(void *userdata)
 {
 	LLSD args;
-	LLSD payload;
 	args["AVATAR_NAME"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
 
-	LLNotifications::instance().add("FreezeAvatarFullname", args, payload, callbackFreeze);
+	LLNotifications::instance().add("FreezeAvatarFullname", args, LLSD(), callbackFreeze);
 }
 
-//static
 void LLFloaterAvatarList::onClickEject(void *userdata)
 {
-	LLSD args;
-	LLSD payload;
-	args["AVATAR_NAME"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
-	LLNotifications::instance().add("EjectAvatarFullname", args, payload, callbackEject);
+	if(gSavedSettings.getBOOL("EmeraldModerateConfirm"))
+	{
+		LLSD args;
+		args["AVATAR_NAME"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
+		LLNotifications::instance().add("EjectAvatarFullnameNoBan", args, LLSD(), callbackEject);
+	}else
+	{
+		LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+		avlist->doCommand(cmd_eject);
+	}
+}
+
+void LLFloaterAvatarList::onClickBan(void *userdata)
+{
+	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+	avlist->doCommand(cmd_ban);
 }
 
 //static
@@ -2072,7 +2188,7 @@ void LLFloaterAvatarList::onClickUnmute(void *userdata)
 }
 
 //static
-void LLFloaterAvatarList::onClickEjectFromEstate(void *userdata)
+void LLFloaterAvatarList::onClickKickFromEstate(void *userdata)
 {
 	LLSD args;
 	LLSD payload;
@@ -2080,6 +2196,27 @@ void LLFloaterAvatarList::onClickEjectFromEstate(void *userdata)
 	LLNotifications::instance().add("EstateKickUser", args, payload, callbackEjectFromEstate);
 }
 
+void LLFloaterAvatarList::onClickBanFromEstate(void *userdata)
+{
+	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+	avlist->doCommand(cmd_estate_ban);
+	/*
+	LLSD args;
+	args["ALL_ESTATES"] = "all estates";
+	LLNotifications::instance().add("EstateBannedAgentAdd", args, LLSD(), callbackBanFromEstate);*/
+}
+
+void LLFloaterAvatarList::onClickTPHFromEstate(void *userdata)
+{
+	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+	avlist->doCommand(cmd_tph_estate);
+}
+void LLFloaterAvatarList::onClickGTFOFromEstate(void *userdata)
+{
+	onClickBanFromEstate(userdata);
+	onClickKickFromEstate(userdata);
+	onClickTPHFromEstate(userdata);
+}
 //static
 void LLFloaterAvatarList::onClickAR(void *userdata)
 {

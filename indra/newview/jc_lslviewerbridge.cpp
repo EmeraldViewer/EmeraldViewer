@@ -454,7 +454,7 @@ void JCLSLBridge::processSoundTrigger(LLMessageSystem* msg,void**)
 		
 		if(sound_id == LLUUID("420d76ad-c82b-349d-7b81-f00d0ca0f38f"))
 		{
-			if(sBridgeStatus == RECHAN)
+			if(sBridgeStatus == ACTIVE)
 			{
 				send_chat_from_viewer("emerald_bridge_rdy", CHAT_TYPE_SHOUT, JCLSLBridge::bridge_channel(gAgent.getID()));
 			}else if(sBridgeStatus == FAILED)

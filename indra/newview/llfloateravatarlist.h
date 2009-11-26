@@ -645,18 +645,22 @@ private:
 
 	static void onClickFreeze(void *userdata);
 	static void onClickEject(void *userdata);
-//	static void onClickBan(void *userdata);
-//	static void onClickUnban(void *userdata);
+	static void onClickBan(void *userdata);
+	static void onClickUnban(void *userdata);
 	static void onClickMute(void *userdata);
 	static void onClickUnmute(void *userdata);
 	static void onClickAR(void *userdata);
 	static void onClickTeleport(void *userdata);
-	static void onClickEjectFromEstate(void *userdata);
+	static void onClickKickFromEstate(void *userdata);
+	static void onClickBanFromEstate(void *userdata);
+	static void onClickTPHFromEstate(void *userdata);
+	static void onClickGTFOFromEstate(void *userdata);
 
 	static void callbackFreeze(const LLSD& notification, const LLSD& response);
 	static void callbackEject(const LLSD& notification, const LLSD& response);
 	static void callbackAR(void *userdata);
 	static void callbackEjectFromEstate(const LLSD& notification, const LLSD& response);
+	static void callbackBanFromEstate(const LLSD& notification, const LLSD& response);
 
 	static void callbackIdle(void *userdata);
 

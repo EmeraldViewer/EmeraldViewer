@@ -499,6 +499,7 @@ void handle_debug_avatar_textures(void*);
 void handle_grab_texture(void*);
 BOOL enable_grab_texture(void*);
 void handle_dump_region_object_cache(void*);
+void handle_dump_object_nv(void*);
 
 BOOL menu_ui_enabled(void *user_data);
 BOOL menu_check_control( void* user_data);
@@ -1049,6 +1050,8 @@ void init_debug_world_menu(LLMenuGL* menu)
 									   (void*)"FixedWeather"));
 	menu->append(new LLMenuItemCallGL("Dump Region Object Cache",
 		&handle_dump_region_object_cache, NULL, NULL));
+	menu->append(new LLMenuItemCallGL("Dump Object NVPairs",
+		&handle_dump_object_nv, NULL, NULL));
 	menu->createJumpKeys();
 }
 bool toasted;
@@ -3022,6 +3025,19 @@ void handle_dump_region_object_cache(void*)
 	if (regionp)
 	{
 		regionp->dumpCache();
+	}
+}
+
+void handle_dump_object_nv(void*)
+{
+	LLViewerRegion* regionp = gAgent.getRegion();
+	if (regionp)
+	{
+		LLViewerObject* objectp = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		if(objectp)
+		{
+			objectp->printNameValuePairs();
+		}
 	}
 }
 
