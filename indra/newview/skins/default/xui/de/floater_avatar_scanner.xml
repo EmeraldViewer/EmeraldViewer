@@ -44,16 +44,20 @@
 		</panel>
 		<panel label="Moderation" name="land_tab">
 			<!-- Upper row -->
-			<button name="freeze_btn" label="Einfrieren" tool_tip="markierten Avatar einfrieren"/>
-			<button name="eject_btn" label="Kick" tool_tip="markierten Avatar von der Parzelle werfen"/>
 			<button name="mute_btn" label="Stummschalten" tool_tip="markierten Avatar stumm schalten"/>
+			<button name="eject_btn" label="Kick" tool_tip="markierten Avatar von der Parzelle werfen"/>						
+			<button name="freeze_btn" label="Einfrieren" tool_tip="markierten Avatar einfrieren"/>
 			<button name="ar_btn" label="AR" tool_tip="Abuse Report wegen markierten Avatar schreiben"/>
-			<!-- middle row -->
-			<button name="estate_eject_btn" label="Estate Kick" tool_tip="markierten Avatar vom Estate werfen"/>
 			<button name="unmute_btn" label="nicht Stummschalten" tool_tip="stummschalten aufheben"/>
-			<button name="ban_btn" label="Bann" tool_tip="markierten Avatar auf Parzelle bannen"/>
-			<!-- lower row-->
-			<button name="estate_ban_btn" label="Estate Bann" tool_tip="markierten Avatar auf Estate bannen"/>
+      <button name="ban_btn" label="Bann" tool_tip="markierten Avatar auf Parzelle bannen"/>			
+			<!-- middle row -->
+			<button name="estate_tph_btn" label="Estate TP Home" tool_tip="Teleportiert den Avatar nach hause"/>
+      <button name="estate_kick_btn" label="Estate Kick" tool_tip="markierten Avatar vom Estate werfen."/>
+      <!-- lower row-->
+      <button name="estate_ban_btn" label="Estate Bann" tool_tip="markierten Avatar auf Estate bannen"/>
+      <button name="estate_gtfo_btn" label="Estate GTFO" tool_tip="Bann, Rauswurf und nach hause tpen"/>
+      <check_box label="Auf alle Estates anwenden" name="modeb"	tool_tip="ausgewählte Aktion wird auf alle Estates angewendet"/>
+      <check_box label="Aktionen bestätigen" name="modec" tool_tip="Aktionen bestätigen"/>
 		</panel>
 		<panel label="Custom" name="custom_tab">
 			<!--Custom tools, upper row-->

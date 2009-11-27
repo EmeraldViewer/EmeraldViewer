@@ -221,7 +221,7 @@
 			tool_tip="Apply estate actions to all estates" visible="false" />
 
       <check_box height="16" label="Confirm Actions" left_delta="0"
-      bottom_delta="-22" name="modeb" width="200" follows="bottom|left" radio_style="false" control_name="EmeraldModerateConfirm"
+      bottom_delta="-22" name="modec" width="200" follows="bottom|left" radio_style="false" control_name="EmeraldModerateConfirm"
 			tool_tip="Confirm actions" visible="false"/>
       
 		</panel>

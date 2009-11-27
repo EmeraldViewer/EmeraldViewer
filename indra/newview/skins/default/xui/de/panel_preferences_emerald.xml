@@ -346,11 +346,6 @@ Empfohlene Eisntellungen:
       
     </panel>
     </tab_container>
-
-
-
-
-
   <tab_container label="Seite 2" name="tab2">
     <panel label="IRC" name="IRC">
 <button label="?" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -376,6 +371,7 @@ Empfohlene Eisntellungen:
       <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowNick"/>
       <check_box label="" tool_tip="Show this messages in the window?" name="EmIRC_ShowSystem"/>
       <check_box label="Auto Re-Join" tool_tip="Automatisch Verbindung wieder herstellen nach rauswurf oder Verbindungsabbruch. Einige Netzwerke tolerieren das nicht!" name="EmeraldIRC_AutoReJoin"/>
+      <check_box label="Auto Connect" tool_tip="Automatisch mit IRC verbinden beim Login." name="EmeraldIRC_AutoConnect"/>
     </panel>
     <panel label="Utility Stream" name="Utility Stream">
     <button label="?" name="EmeraldHelp_UtilityStream" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>

@@ -757,7 +757,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 name="EmeraldIRC_AutoReJoin"/>
         <check_box bottom_delta="-35" left="25" enabled="true" follows="right|top" font="SansSerifSmall"
 					 height="16" label="Auto Connect at login" mouse_opaque="true" control_name="EmeraldIRC_AutoConnect" tool_tip="Automaticly connect to any IRC networks that you have set to auto connect to upon startup."
-					 name="EmeraldIRC_AutoReJoin"/>
+					 name="EmeraldIRC_AutoConnect"/>
 			</panel>
 			<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Utility Stream"
 				 left="1" mouse_opaque="true" name="Utility Stream" width="418">
