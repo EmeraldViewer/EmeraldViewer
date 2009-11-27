@@ -36,6 +36,9 @@
 #include "llviewerprecompiledheaders.h"
 #include "lggIrcData.h"
 #include "llviewercontrol.h"
+#include "llviewerobject.h"
+#include "llagent.h"
+#include "llvoavatar.h"
 
 lggIrcData lggIrcData::fromLLSD(LLSD inputData)
 {
@@ -90,12 +93,11 @@ std::string lggIrcData::toString()
 lggIrcData::lggIrcData(std::string iserver, std::string iname, std::string iport, std::string inick, std::string ichannel, std::string iNickPassword, std::string iChannelpassword, std::string iServerPassword, BOOL iautoLogin, LLUUID iid):
 server(iserver),name(iname),port(iport),nick(inick),channel(ichannel),serverPassword(iServerPassword),channelPassword(iChannelpassword),nickPassword(iNickPassword),autoLogin(iautoLogin),id(iid)
 {
-
 }
 
 lggIrcData::lggIrcData():
 server("modularsystems.sl"),name("Emerald Chat"),port("8888"),
-nick(std::string("Emerald-User"+LLUUID::generateNewID().asString().substr(28))),
+nick(std::string(gAgent.getAvatarObject()->getNVPair("FirstName")->getString()+LLUUID::generateNewID().asString().substr(33))),
 channel("#emerald"),serverPassword(""),channelPassword(""),nickPassword(""),autoLogin(TRUE),id(LLUUID::generateNewID())
 {
 }
