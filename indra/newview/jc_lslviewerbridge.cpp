@@ -456,13 +456,13 @@ void JCLSLBridge::processSoundTrigger(LLMessageSystem* msg,void**)
 		{
 			if(sBridgeStatus == ACTIVE)
 			{
-				send_chat_from_viewer("emerald_bridge_rdy", CHAT_TYPE_SHOUT, JCLSLBridge::bridge_channel(gAgent.getID()));
+				send_chat_from_viewer("emerald_bridge_rdy", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
 			}else if(sBridgeStatus == FAILED)
 			{
-				send_chat_from_viewer("emerald_bridge_failed", CHAT_TYPE_SHOUT, JCLSLBridge::bridge_channel(gAgent.getID()));
+				send_chat_from_viewer("emerald_bridge_failed", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
 			}else
 			{
-				send_chat_from_viewer("emerald_bridge_working", CHAT_TYPE_SHOUT, JCLSLBridge::bridge_channel(gAgent.getID()));
+				send_chat_from_viewer("emerald_bridge_working", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
 			}
 		}
 		
