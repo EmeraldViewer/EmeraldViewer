@@ -60,6 +60,8 @@
 #include "lltextparser.h"
 #include <queue>
 
+#include "llmenugl.h"
+
 // 
 // Globals
 //
@@ -255,6 +257,7 @@ LLTextEditor::LLTextEditor(
 	LLUICtrl( name, rect, TRUE, NULL, NULL, FOLLOWS_TOP | FOLLOWS_LEFT ),
 	mTextIsUpToDate(TRUE),
 	mMaxTextByteLength( max_length ),
+	mPopupMenuHandle(),
 	mBaseDocIsPristine(TRUE),
 	mPristineCmd( NULL ),
 	mLastCmd( NULL ),
@@ -340,6 +343,24 @@ LLTextEditor::LLTextEditor(
 
 	mParseHTML=FALSE;
 	mHTML.clear();
+
+
+	// make the popup menu available
+	//LLMenuGL* menu = LLUICtrlFactory::getInstance()->buildMenu("menu_texteditor.xml", parent_view);
+	LLMenuGL* menu = new LLMenuGL("wot");
+	/*if (!menu)
+	{
+		menu = new LLMenuGL(LLStringUtil::null);
+	}*/
+	menu->append(new LLMenuItemCallGL("Cut", context_cut, NULL, this));
+	menu->append(new LLMenuItemCallGL("Copy", context_copy, NULL, this));
+	menu->append(new LLMenuItemCallGL("Paste", context_paste, NULL, this));
+	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
+	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
+	//menu->setBackgroundColor(gColors.getColor("MenuPopupBgColor"));
+	menu->setCanTearOff(FALSE);
+	menu->setVisible(FALSE);
+	mPopupMenuHandle = menu->getHandle();
 }
 
 
@@ -358,6 +379,34 @@ LLTextEditor::~LLTextEditor()
 	std::for_each(mSegments.begin(), mSegments.end(), DeletePointer());
 
 	std::for_each(mUndoStack.begin(), mUndoStack.end(), DeletePointer());
+
+	LLView::deleteViewByHandle(mPopupMenuHandle);
+}
+
+void LLTextEditor::context_cut(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->cut();
+}
+void LLTextEditor::context_copy(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->copy();
+}
+void LLTextEditor::context_paste(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->paste();
+}
+void LLTextEditor::context_delete(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->doDelete();
+}
+void LLTextEditor::context_selectall(void* data)
+{
+	LLTextEditor* line = (LLTextEditor*)data;
+	if(line)line->selectAll();
 }
 
 void LLTextEditor::setTrackColor( const LLColor4& color )
@@ -1127,6 +1176,15 @@ BOOL LLTextEditor::handleMouseDown(S32 x, S32 y, MASK mask)
 {
 	BOOL	handled = FALSE;
 
+	// SL-51858: Key presses are not being passed to the Popup menu.
+	// A proper fix is non-trivial so instead just close the menu.
+	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
+	if (menu && menu->isOpen())
+	{
+		LLMenuGL::sMenuContainer->hideMenus();
+	}
+
+
 	// Let scrollbar have first dibs
 	handled = LLView::childrenHandleMouseDown(x, y, mask) != NULL;
 
@@ -1399,6 +1457,19 @@ BOOL LLTextEditor::handleDoubleClick(S32 x, S32 y, MASK mask)
 	return handled;
 }
 
+BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
+{
+	setFocus(TRUE);
+
+	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
+	if (menu)
+	{
+		menu->buildDrawLabels();
+		menu->updateParent(LLMenuGL::sMenuContainer);
+		LLMenuGL::showPopup(this, menu, x, y);
+	}
+	return TRUE;
+}
 
 // Allow calling cards to be dropped onto text fields.  Append the name and
 // a carriage return.
@@ -2165,6 +2236,14 @@ BOOL LLTextEditor::handleKeyHere(KEY key, MASK mask )
 	BOOL	return_key_hit = FALSE;
 	BOOL	text_may_have_changed = TRUE;
 
+	// SL-51858: Key presses are not being passed to the Popup menu.
+	// A proper fix is non-trivial so instead just close the menu.
+	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
+	if (menu && menu->isOpen())
+	{
+		LLMenuGL::sMenuContainer->hideMenus();
+	}
+
 	if ( gFocusMgr.getKeyboardFocus() == this )
 	{
 		// Special case for TAB.  If want to move to next field, report
@@ -2260,6 +2339,13 @@ BOOL LLTextEditor::handleUnicodeCharHere(llwchar uni_char)
 
 	if ( gFocusMgr.getKeyboardFocus() == this )
 	{
+		// SL-51858: Key presses are not being passed to the Popup menu.
+		// A proper fix is non-trivial so instead just close the menu.
+		LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
+		if (menu && menu->isOpen())
+		{
+			LLMenuGL::sMenuContainer->hideMenus();
+		}
 		// Handle most keys only if the text editor is writeable.
 		if( !mReadOnly )
 		{
