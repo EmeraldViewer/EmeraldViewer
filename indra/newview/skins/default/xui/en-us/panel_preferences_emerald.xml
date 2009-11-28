@@ -13,29 +13,25 @@
 				<check_box bottom="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Double-click Teleport" left="10" mouse_opaque="true"
 					 name="double_click_tp_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleport"/>
-				<check_box bottom_delta="-0" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Double-click Autopilot" left_delta="200" mouse_opaque="true"
 					 name="double_click_ap_toggle" radio_style="false" width="270" control_name="DoubleClickAutoPilot"/>
-				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Send local teleport requests" left_delta="-150" mouse_opaque="true"
-					 name="telerequest_toggle" radio_style="false" width="270" control_name="EmeraldRequestLocalTeleports"
-					 tool_tip="Actually send teleport requests to the server (Enabled by default)"/>
-				<check_box bottom_delta="-15" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Use llMoveToTarget instead of map teleport (Requires Bridge)" left_delta="0"
-					 mouse_opaque="true" name="mldct_toggle" radio_style="false" width="270" control_name="EmeraldMoveLockDCT"
+				<check_box bottom_delta="-40" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 initial_value="false" label="Send teleport destination coordinates to channel" left_delta="-200"
+					 mouse_opaque="true" name="mldct_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleportChat"
 					 tool_tip="Whisper teleport destination on a private channel (Disabled by default)"/>
 				<spinner decimal_digits="0" follows="left|top" height="18" increment="1" initial_val="0"
-					 label="" label_width="50" left_delta="350" bottom_delta="0" max_val="2147483647"
+					 label="" label_width="50" left_delta="285" bottom_delta="0" max_val="2147483647"
 					 min_val="1" name="mldct_channel" tool_tip="Channel to announce teleport destination vector"
-					 width="80" control_name="EmeraldMoveLockDCTChannel"/>
+					 width="80" control_name="EmeraldDoubleClickTeleportChannel"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Velocity Interpolate Double-click Teleports" left="10"
 					 mouse_opaque="true" name="login_screen_toggle1" radio_style="false" width="270" control_name="EmeraldVelocityDoubleClickTeleport"/>
-				<check_box bottom_delta="-15" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Rotate Camera behind avatar after Double-click Teleports"
 					 left_delta="0" mouse_opaque="true" name="move_camaftertp_toggle" radio_style="false"
 					 width="270" control_name="EmeraldRotateCamAfterLocalTP"/>
-				<check_box bottom_delta="-15" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Always fly after teleports" left_delta="0" mouse_opaque="true"
 					 name="flyaftertp_toggle" radio_style="false" width="270" control_name="EmeraldFlyAfterTeleport"/>
 				<spinner decimal_digits="1" follows="left|top" height="18" increment="0.1" initial_val="0"
@@ -45,12 +41,8 @@
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Additionally offset up by half the avatar height" left_delta="0"
 					 mouse_opaque="true" name="avcalc_toggle" radio_style="false" width="270" control_name="EmeraldDoubleClickTeleportAvCalc"/>
-				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Apply this offset to the move-lock teleport system"
-					 left_delta="10" mouse_opaque="true" name="mldctoffset_toggle" radio_style="false"
-					 width="270" control_name="EmeraldMoveLockDCTOffset"/>
 				<radio_group bottom_delta="-45" draw_border="false" follows="top|left" height="40" name="EmeraldDoubleClickTeleportMode"
-					 left_delta="-10" width="270">
+					 width="270">
 					<radio_item bottom_delta="-10" height="20" left="0" name="0" width="270"
 						 tool_tip="This makes the avatar rotation stay the same between doubleclick teleports.">          Keep avatar rotation the same when doubleclick teleporting</radio_item>
 					<radio_item bottom_delta="-10" height="20" left="0" name="1" width="270"
@@ -510,7 +502,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 image_unselected="beam_emerald.png" image_hover_selected="beam_emerald.png" image_hover_unselected="beam_emerald.png"/>
 				<view_border bevel_style="none" border_thickness="1" bottom_delta="-10" follows="top|left" height="140"
 					 left="250" name="EmDivisor2" width="0"/>
-				<slider bottom_delta="-30" left="10" name="EmeraldMaxBeamsPerSecond" control_name="EmeraldMaxBeamsPerSecond"
+				<slider bottom_delta="-30" left="100" name="EmeraldMaxBeamsPerSecond" control_name="EmeraldMaxBeamsPerSecond"
 					 decimal_digits="0" enabled="true" follows="left|top" height="18" increment="1"
 					 initial_val="4" label="Beam updates/sec:" label_width="100" max_val="200" min_val="4"
 					 mouse_opaque="true" show_text="true" width="250" auto_resize="false" tool_tip="How many beam updates to send in a second. Default 40"/>
@@ -518,13 +510,13 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 initial_value="true" label="Enable selection beam (turning off will hide the beam)"
 					 left="15" mouse_opaque="true" name="SLPartBeam" radio_style="false" width="270"
 					 control_name="ShowSelectionBeam"/>
-				<combo_box allow_text_entry="false" bottom_delta="165" left_delta="50" follows="left|top" height="18"
+				<combo_box allow_text_entry="false" bottom_delta="185" left_delta="50" follows="left|top" height="18"
 					 left="10" max_chars="20" mouse_opaque="true" name="BeamColor_combo" width="170"
 					 control_name="EmeraldBeamColorFile" tool_tip="Select the color preset for the selection beam"/>
 				<combo_box allow_text_entry="false" bottom_delta="-0" left_delta="195" follows="left|top" height="18"
 					 left="10" max_chars="20" mouse_opaque="true" name="EmeraldBeamShape_combo" width="170"
 					 control_name="EmeraldBeamShape" tool_tip="Select the shape for the particle beam"/>
-				<slider bottom_delta="-145" left_delta="30" name="EmeraldBeamShapeScale" control_name="EmeraldBeamShapeScale"
+				<slider bottom_delta="-125" left_delta="30" name="EmeraldBeamShapeScale" control_name="EmeraldBeamShapeScale"
 					 decimal_digits="1" enabled="true" follows="left|top" height="18" increment="0.1"
 					 initial_val="1" label="Scale:" label_width="35" max_val="4" min_val="0.1"
 					 mouse_opaque="true" show_text="true" width="150" auto_resize="false" tool_tip="Change the scale of the shape used for the Emerald Shaped Beam"/>

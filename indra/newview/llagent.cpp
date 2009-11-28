@@ -6365,16 +6365,21 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 	LLViewerRegion* regionp = getRegion();
 	LLSimInfo* info = LLWorldMap::getInstance()->simInfoFromPosGlobal(pos_global);
 	bool isLocal = regionp->getHandle() == to_region_handle_global((F32)pos_global.mdV[VX], (F32)pos_global.mdV[VY]);
-	bool tp = gSavedSettings.getBOOL("EmeraldRequestLocalTeleports");
 	bool ml = gSavedSettings.getBOOL("EmeraldMoveLockDCT");
-	tp = tp || !(tp || ml) || !isLocal; //o.o//wtf
+	bool tpchat = gSavedSettings.getBOOL("EmeraldDoubleClickTeleportChat");
 	bool calc = gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc");
 	bool vel = gSavedSettings.getBOOL("EmeraldVelocityDoubleClickTeleport");
-	//ternary get
+
 	F32 zo = gSavedSettings.getF32("EmeraldDoubleClickZOffset");
-	LLVector3 offset1 = LLVector3(0.f,0.f,go_to?zo:0.f);
-	offset1 += (go_to && vel)?gAgent.getVelocity() * 0.25:LLVector3();
-	LLVector3 offset2 = LLVector3(0.f,0.f,go_to?gAgent.getAvatarObject()->getScale().mV[2] / 2:0.f);
+	LLVector3 offset = LLVector3(0.f,0.f,0.f);
+	if(go_to)
+	{
+		offset = LLVector3(0.f,0.f,zo);
+		if(vel)
+			offset += gAgent.getVelocity() * 0.25;
+	}
+	if(calc)
+		offset += LLVector3(0.f,0.f,gAgent.getAvatarObject()->getScale().mV[2] / 2);
 	if(regionp && tp)
 	{
 		if(go_to)
@@ -6384,7 +6389,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 			LLVector3 pos(fmod((F32)pos_global.mdV[VX], width),
 						  fmod((F32)pos_global.mdV[VY], width),
 						  (F32)pos_global.mdV[VZ]);
-			pos += offset1+(calc?offset2:LLVector3());
+			pos += offset;
 			teleportRequest(handle, pos);
 		}
 		else if(info)
@@ -6396,7 +6401,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 				(F32)(pos_global.mdV[VX] - x_pos),
 				(F32)(pos_global.mdV[VY] - y_pos),
 				(F32)(pos_global.mdV[VZ]));
-			pos_local += offset1+(calc?offset2:LLVector3());
+			pos_local += offset;
 			teleportRequest(info->mHandle, pos_local);
 		}
 		else if(teleportCore(isLocal))
@@ -6414,7 +6419,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 			LLVector3 pos(fmod((F32)pos_global.mdV[VX], width),
 						  fmod((F32)pos_global.mdV[VY], width),
 						  (F32)pos_global.mdV[VZ]);
-			pos += offset1+(calc?offset2:LLVector3());
+			pos += offset;
 			F32 region_x = (F32)(pos_global.mdV[VX]);
 			F32 region_y = (F32)(pos_global.mdV[VY]);
 			U64 region_handle = to_region_handle_global(region_x, region_y);
@@ -6435,18 +6440,21 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 			msg->addVector3Fast(_PREHASH_LookAt, look_at);
 			sendReliableMessage();
 		}
-	}
-	if(regionp && isLocal && ml)
-	{
-		F32 width = regionp->getWidth();
-		LLVector3 pos_local(fmod((F32)pos_global.mdV[VX], width),
+		if(isLocal)
+		{
+			F32 width = regionp->getWidth();
+			LLVector3 pos_local(fmod((F32)pos_global.mdV[VX], width),
 							fmod((F32)pos_global.mdV[VY], width),
 							(F32)pos_global.mdV[VZ]);
-		pos_local += offset1;
-		gAgent.setControlFlags(AGENT_CONTROL_STAND_UP); //GIT UP
-		
-		GUS::whisper(gSavedSettings.getS32("EmeraldMoveLockDCTChannel"),  GUS::sVec3(pos_local)); //Keep for third party movelocks
-		JCLSLBridge::bridgetolsl("move|"+GUS::sVec3(pos_local),NULL);
+			pos_local += offset;
+			if(tpchat)
+				GUS::whisper(gSavedSettings.getS32("EmeraldDoubleClickTeleportChannel"),  GUS::sVec3(pos_local)); //keep this to deactivate movelocks.
+			if(ml)
+			{
+				gAgent.setControlFlags(AGENT_CONTROL_STAND_UP); //GIT UP
+				JCLSLBridge::bridgetolsl("move|"+GUS::sVec3(pos_local),NULL);
+			}
+		}
 	}
 }
 

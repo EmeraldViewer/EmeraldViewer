@@ -6767,7 +6767,18 @@
 			<key>Value</key>
 			<real>0</real>
 		</map>
-		<key>EmeraldMoveLockDCTChannel</key>
+		<key>EmeraldDoubleClickTeleportChat</key>
+		<map>
+			<key>Comment</key>
+			<string>Send TP destination coordinates to channel?</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<real>0</real>
+		</map>
+		<key>EmeraldDoubleClickTeleportChannel</key>
 		<map>
 			<key>Comment</key>
 			<string>Channel for magical move-lock teleporting system</string>
@@ -6777,17 +6788,6 @@
 			<string>S32</string>
 			<key>Value</key>
 			<real>90000</real>
-		</map>
-		<key>EmeraldRequestLocalTeleports</key>
-		<map>
-			<key>Comment</key>
-			<string>:3</string>
-			<key>Persist</key>
-			<integer>1</integer>
-			<key>Type</key>
-			<string>Boolean</string>
-			<key>Value</key>
-			<real>1</real>
 		</map>
 		<key>FlyingAtExit</key>
 		<map>
