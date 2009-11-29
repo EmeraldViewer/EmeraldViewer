@@ -6380,7 +6380,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 	}
 	if(calc)
 		offset += LLVector3(0.f,0.f,gAgent.getAvatarObject()->getScale().mV[2] / 2);
-	if(regionp && tp)
+	if(regionp /*&& tp*/)
 	{
 		if(go_to)
 		{
