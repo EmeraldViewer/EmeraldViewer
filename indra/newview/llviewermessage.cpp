@@ -1767,7 +1767,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			if(avatarp->mCheckingCryolife < 2 && avatarp->mIsCryolife == FALSE)
 			{
 				boost::regex re(
-					".* \\d+\\.\\d+\\.\\d+ \\(\\d+\\) \\w{3,5} \\d+ \\d+ \\d+:\\d+:\\d+ \\(Cryolife\\) <.+,.+,.+>:.+"
+					".* \\d+\\.\\d+\\.\\d+ \\(\\d+\\) \\w{3,5} \\d+ \\d+ \\d+:\\d+:\\d+ \\(.*\\) <.+,.+,.+>:.+"
 					, boost::regex_constants::icase);
 				if(boost::regex_match(message,re))
 				{
