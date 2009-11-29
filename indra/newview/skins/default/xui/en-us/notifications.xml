@@ -6874,6 +6874,12 @@ This enables you and other avatar's breasts to have actual physics applied to th
  
 
   </notification>
+  <notification
+	   icon="notifytip.tga"
+	   name="NoShadows"
+	   type="notifytip">
+Shadows can't be enabled due to your graphics settings being set to low. Please make sure that your settings are set to ultra with all shader options enabled.
+  </notification>
 
 </notifications>
 

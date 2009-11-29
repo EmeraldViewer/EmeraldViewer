@@ -387,7 +387,7 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceIncoming", childGetValue("EmeraldInstantMessageAnnounceIncoming").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceStealFocus", childGetValue("EmeraldInstantMessageAnnounceStealFocus").asBoolean());
 	gSavedSettings.setBOOL("EmeraldDoubleClickTeleportMode", childGetValue("EmeraldDoubleClickTeleportMode").asBoolean());
-	if((gSavedSettings.getU32("RenderQualityPerformance")>=3) && childGetValue("EmeraldShadowsON").asBoolean())
+	if(((gSavedSettings.getU32("RenderQualityPerformance")>=3) && gSavedSettings.getBOOL("WindLightUseAtmosShaders") && gSavedSettings.getBOOL("VertexShaderEnable")) && childGetValue("EmeraldShadowsON").asBoolean())
 	{
 		gSavedSettings.setBOOL("RenderUseFBO", childGetValue("EmeraldShadowsON").asBoolean());
 		gSavedSettings.setBOOL("RenderDeferred", childGetValue("EmeraldShadowsON").asBoolean());
@@ -400,10 +400,10 @@ void LLPanelEmerald::apply()
 			gSavedSettings.setBOOL("RenderUseFBO", childGetValue("EmeraldShadowsON").asBoolean());
 		}
 	}
-	else if((gSavedSettings.getU32("RenderQualityPerformance")<3) && childGetValue("EmeraldShadowsON").asBoolean())
+	else if(((gSavedSettings.getU32("RenderQualityPerformance")<3) && !gSavedSettings.getBOOL("WindLightUseAtmosShaders") && !gSavedSettings.getBOOL("VertexShaderEnable")) && childGetValue("EmeraldShadowsON").asBoolean())
 	{
-		//TODO: Add a popup notice saying that settings aren't on ultra and maybe ask if the user wants to change settings to ultra before attempting to turn on shadows. --Liny
 		childSetValue("EmeraldShadowsON",false);
+		LLNotifications::instance().add("NoShadows");
 		llwarns<<"Attempt to enable shadow rendering while graphics settings not on ultra!"<<llendl;
 	}
 	gSavedSettings.setBOOL("EmeraldShadowsToggle", childGetValue("EmeraldShadowsON").asBoolean());

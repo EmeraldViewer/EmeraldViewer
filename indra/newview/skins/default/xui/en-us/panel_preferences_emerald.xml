@@ -488,9 +488,6 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Render Avatar Invisible" left_delta="0" mouse_opaque="true" name="RenderAvInvisible"
 					 radio_style="false" width="270" control_name="RenderAvatarInvisible"/>
-				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 label="Emerald Clothing Mode" left_delta="0" mouse_opaque="true" name="WATTTT" radio_style="false"
-					 width="270" control_name="EmeraldClothingMode"/>
 				<text font="SansSerifSmall" name="BeamPrefs" follows="left|top" left="150" bottom="-150">        Selection beam particle effects</text>
 				<view_border bevel_style="none" border_thickness="1" bottom_delta="-5" follows="top|left" height="0"
 					 left="5" name="EmDivisor" width="480"/>

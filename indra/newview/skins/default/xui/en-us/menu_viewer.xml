@@ -992,11 +992,6 @@
       <on_click function="ShowFloater" userdata="assetcompare" />
       <on_check function="FloaterVisible" userdata="assetcompare" />
     </menu_item_check>
-    <menu_item_check bottom="-166" enabled="false" height="20" label="Clothing Layers" left="0"
-		     mouse_opaque="true" name="Clothing Layers" width="155">
-      <on_click function="ShowFloater" userdata="clothinglayer" />
-      <on_check function="FloaterVisible" userdata="clothinglayer" />
-    </menu_item_check>
 		<menu_item_check bottom="-186" enabled="true" height="20" label="Avatar List" left="0"
 		     mouse_opaque="true" name="Avatar List" shortcut="control|shift|a" width="155">
 			<on_click function="Emerald.ToggleAvatarList" userdata="avatars" />
