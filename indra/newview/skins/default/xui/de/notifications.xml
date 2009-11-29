@@ -3296,4 +3296,7 @@ Sollte das Problem fortbestehen, finden Sie weitere Hilfestellung unter: http://
     - Z Einfluss
       Kontrolliert den Einfluss der Avatar Bewegung. Höherer Wert erhöht den Effekt.
   </notification>
+  <notification name="NoShadows">
+  Schatten können nicht aktiviert werden da ihre Grafik Einstellungen zu niedrig sind. Stellen sie sicher das ihre Einstellungen auf Ultra sind und alle Schatten Optionen aktiviert.
+  </notification>
 </notifications>

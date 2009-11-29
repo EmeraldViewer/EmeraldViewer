@@ -6,15 +6,13 @@
     <button label="?" name="EmeraldHelp_TeleportLogin" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <check_box label="Doppelklick Teleport" name="double_click_tp_toggle"/>
       <check_box label="Doppelklick Autopilot" name="double_click_ap_toggle"/>
-      <check_box label="Nutze lokale TP Anfragen" name="telerequest_toggle" tool_tip="Sendet tp Anfragen an den Server(standardmässig aktiviert)"/>
-      <check_box label="Nutze llMoveToTarget anstatt TP(benötigt LSL-Brücke)" name="mldct_toggle"tool_tip="Flüstert TP Ziel auf einem privaten Channel(standardmässig deaktiviert)"/>
+      <check_box label="Sende TP Ziel Koordinaten per Channel" name="mldct_toggle"tool_tip="Flüstert TP Ziel auf einem privaten Channel(standardmässig deaktiviert)"/>
       <spinner label="Channel" name="mldct_channel" tool_tip="Channel zum flüstern des TP Ziel"/>
       <check_box label="Velocity Interpolate Double-click Teleports" name="login_screen_toggle1"/>
       <check_box label="Drehe Kamera hinter Avatar nach Doppelklick Teleport" name="move_camaftertp_toggle"/>
       <check_box label="Immer fliegen nach Teleport" name="flyaftertp_toggle"/>
       <spinner label="Doppelklick Teleport Z Abweichung" name="Double-click Teleport Z Offset" tool_tip="Option zum einstellen der Z Abweichung nach Doppelklick Teleport"/>
       <check_box label="Halbe Avatarhöhe als extra Abweichung" name="avcalc_toggle"/>
-      <check_box label="Nutze die Abweichung für das move-lock Teleport System." name="mldctoffset_toggle"/>
       <radio_group name="EmeraldDoubleClickTeleportMode">
         <radio_item name="0" tool_tip="Keine Änderung der Rotation nach Doppelklick Teleport.">
           Keine Änderung der Rotation nach Doppelklick Teleport.
@@ -244,7 +242,6 @@ Empfohlene Eisntellungen:
       <spinner label="Z" name="Z Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
       <spinner label="Agent updates pro Sekunde:" name="EmAgentUpdatesValue" tool_tip="Gibt an wieviel Updates pro Sekunde gesendet werden sollen. Standard 10/s" />
       <check_box label="Avatar unsichtbar rendern" name="RenderAvInvisible"/>
-      <check_box label="Emerald Kleidungs Modus" name="WATTTT"/>
 <text name="BeamPrefs">
 		Auswahlpartikeleffekt
 	</text>
