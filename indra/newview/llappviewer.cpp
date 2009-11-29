@@ -2905,6 +2905,19 @@ bool LLAppViewer::initCache()
 			gSavedSettings.setS32("LocalCacheVersion", cache_version);
 		}
 	}
+	std::string invcache = gSavedSettings.getString("EmeraldPurgeInvCache");
+	if(invcache != "")
+	{
+		gSavedSettings.setString("EmeraldPurgeInvCache","");
+		std::string agent_id_str = invcache;
+		std::string inventory_filename;
+		std::string path(gDirUtilp->getExpandedFilename(LL_PATH_CACHE, agent_id_str));
+		inventory_filename = llformat("%s.inv", path.c_str());
+		std::string gzip_filename(inventory_filename);
+		gzip_filename.append(".gz");
+		LLFile::remove(inventory_filename);
+		LLFile::remove(gzip_filename);
+	}
 	
 	// We have moved the location of the cache directory over time.
 	migrateCacheDirectory();

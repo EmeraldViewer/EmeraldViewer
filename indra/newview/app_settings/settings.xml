@@ -3760,6 +3760,17 @@
 			<key>Value</key>
 			<string>Emerald</string>
 		</map>
+    <key>EmeraldPurgeInvCache</key>
+    <map>
+      <key>Comment</key>
+      <string>agent id to purge, if purge is desired</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string></string>
+    </map>
 		<key>EmeraldBeamColorFile</key>
 		<map>
 			<key>Comment</key>
