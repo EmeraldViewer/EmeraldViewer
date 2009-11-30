@@ -533,6 +533,7 @@ BOOL LLFloaterAvatarList::postBuild()
 	mTracking = FALSE;
 	mTrackByLocation = FALSE;
 	mARLastFrame = 0;
+	mlastBridgeCallTime = gFrameTimeSeconds;
 
 	// Create interface from XML
 	//gUICtrlFactory->buildFloater(this, "floater_avatar_scanner.xml");
@@ -1137,6 +1138,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		if( (timeNow - mlastBridgeCallTime) > 20)
 		{
 			mlastBridgeCallTime = timeNow;
+			//llinfos << "Sending data to the bridge: " << toSendToBridge << llendl;
 			JCLSLBridge::bridgetolsl("pos"+toSendToBridge, new LggPosCallback(avatarsToSendToBridge));
 
 		}
@@ -1253,10 +1255,10 @@ void LLFloaterAvatarList::processBridgeReply(std::vector<LLUUID> avatars, LLSD b
 		}
 
 		LLAvatarListEntry *entry = &self->mAvatars[avatars[i]];
-
+ 
 		std::string toParse = bridgeResponce[i].asString();
 		
-//		llinfos << "trying to parse " << toParse.c_str() << llendl;
+		//llinfos << "Recieved Bridge Responce to radar: " << toParse.c_str() << llendl;
 		
 		LLVector3d v;
 		char * pch = strtok ((char *)toParse.c_str()," ,<>");
