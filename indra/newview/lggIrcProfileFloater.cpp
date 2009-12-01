@@ -143,20 +143,10 @@ void lggIrcProfileFloater::onClickIM(void* data)
 
 	LLUUID uid;
 	uid.generate(self->myLLSDdata["NICK"].asString()+"lgg"+self->myLLSDdata["RCHANNEL"].asString());
-	
 
-	LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
-			
-	if(!gIMMgr->hasSession(computed_session_id))
-	{
-		make_ui_sound("UISndNewIncomingIMSession");
-		gIMMgr->addSession(
+	make_ui_sound("UISndNewIncomingIMSession");
+	gIMMgr->addSession(
 		llformat("%s",self->myLLSDdata["NICK"].asString().c_str()),IM_PRIVATE_IRC,uid);
-	}else
-	{
-
-		
-	}
 	
 	self->close();
 }
