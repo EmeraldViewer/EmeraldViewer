@@ -6380,7 +6380,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 	}
 	if(calc)
 		offset += LLVector3(0.f,0.f,gAgent.getAvatarObject()->getScale().mV[2] / 2);
-	if(regionp /*&& tp*/)
+	if(regionp)
 	{
 		if(go_to)
 		{
@@ -6434,9 +6434,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 				look_at=avatarp->getRotation().packToVector3();
 			}
 			else
-			{
 				look_at = LLViewerCamera::getInstance()->getAtAxis();
-			}
 			msg->addVector3Fast(_PREHASH_LookAt, look_at);
 			sendReliableMessage();
 		}

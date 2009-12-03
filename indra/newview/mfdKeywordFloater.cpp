@@ -228,6 +228,8 @@ void MfdKeywordFloaterStart::show(BOOL showin, void * data)
 bool containsKeyWord(std::string source)
 {
 	std::string s = gSavedPerAccountSettings.getString("EmeraldKeywords");
+	LLStringUtil::toLower(s);
+	LLStringUtil::toLower(source);
 	boost::regex re(",");
 	boost::sregex_token_iterator i(s.begin(), s.end(), re, -1);
 	boost::sregex_token_iterator j;

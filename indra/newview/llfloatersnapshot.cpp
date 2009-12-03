@@ -1278,6 +1278,7 @@ void LLFloaterSnapshot::Impl::updateControls(LLFloaterSnapshot* floater)
 	floater->childSetVisible("freeze_frame_check",		is_advance);
 	floater->childSetVisible("auto_snapshot_check",		is_advance);
 	floater->childSetVisible("image_quality_slider",	is_advance && show_slider);
+	floater->childSetVisible("temp_check",				is_advance);
 
 	LLSnapshotLivePreview* previewp = getPreviewView(floater);
 	BOOL got_bytes = previewp && previewp->getDataSize() > 0;

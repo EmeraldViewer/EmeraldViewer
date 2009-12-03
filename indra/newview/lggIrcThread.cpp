@@ -523,7 +523,7 @@ int lggIrcThread::RPL_WHOISUSER( char * params, irc_reply_data * hostd, void * c
 				if( i >> whoR.user)
 					if(i>>whoR.host)
 						if(i>>us)
-							if(i>>whoR.realName)
+							while(i>>whoR.realName)
 							{
 								//do nothing.. stupid warnings.. uhm..
 								us = "";
@@ -628,7 +628,6 @@ int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, vo
 			istringstream iss(paramstring);
 			iss >> twho;//first part we dont need
 			
-			if(gSavedSettings.getBOOL("EmeraldIRC_ShowKick"))
 			if(iss >> twho)
 			{
 				if(!strcmp(twho.c_str(),conn->current_nick()) && gSavedSettings.getBOOL("EmeraldIRC_AutoReJoin"))

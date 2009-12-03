@@ -1801,7 +1801,7 @@ static void send_eject(const LLUUID& avatar_id, bool ban)
 		msg->sendReliable( avatar->getRegion()->getHost() );
 	}
 }
-
+/* ?? Deprecated?
 static void send_estate_message(
 	const char* request,
 	const LLUUID &target)
@@ -1834,8 +1834,8 @@ static void send_estate_message(
 
 	msg->sendReliable(gAgent.getRegion()->getHost());
 }
-
-/* Apparently not in use
+*/
+/* ?? Depcrecated? Apparently not in use
 static void send_estate_ban(const LLUUID& agent)
 {
 	LLUUID invoice;
