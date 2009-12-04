@@ -6,7 +6,7 @@
 
 #include "llviewerprecompiledheaders.h"
 
-#include "llfloaterao.h"
+#include "floaterao.h"
 
 #include "llagent.h"
 #include "llvoavatar.h"

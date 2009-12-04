@@ -5,7 +5,7 @@
  */
 
 #include "llviewerprecompiledheaders.h"
-#include "llfloaterassetbrowser.h"
+#include "floaterassetbrowser.h"
 #include "llinventoryview.h"
 #include "llinventorymodel.h"
 #include "llviewerimagelist.h"

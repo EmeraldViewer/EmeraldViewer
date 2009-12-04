@@ -17,7 +17,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llavatarconstants.h"
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 
 #include "lluictrlfactory.h"
 #include "llviewerwindow.h"
