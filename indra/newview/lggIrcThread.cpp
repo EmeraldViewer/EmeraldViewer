@@ -630,7 +630,7 @@ int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, vo
 			
 			if(iss >> twho)
 			{
-				if(!strcmp(twho.c_str(),conn->current_nick()) && gSavedSettings.getBOOL("EmeraldIRC_AutoReJoin"))
+				if((strcmp(twho.c_str(),conn->current_nick()) == 0) && gSavedSettings.getBOOL("EmeraldIRC_AutoReJoin"))
 				{
 					if(iss >> twhy)
 					{
