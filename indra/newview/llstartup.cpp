@@ -185,14 +185,14 @@
 #include "llwaterparammanager.h"
 #include "llagentlanguage.h"
 
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 #include "jcfloater_animation_list.h"
 #include "jcfloater_areasearch.h"
 #include "exporttracker.h"
 #include "llfloaterteleporthistory.h"
 #include "jc_lslviewerbridge.h"
 #include "wlfPanel_AdvSettings.h"
-#include "llfloaterao.h"
+#include "floaterao.h"
 #if LL_LIBXUL_ENABLED
 #include "llmozlib.h"
 #endif // LL_LIBXUL_ENABLED

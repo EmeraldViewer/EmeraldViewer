@@ -2,7 +2,7 @@
 #include "llagent.h"
 #include "lldrawpoolalpha.h"
 #include "llfirstuse.h"
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 #include "llfloaterbeacons.h"
 #include "llfloaterchat.h"
 #include "llfloaterdaycycle.h"

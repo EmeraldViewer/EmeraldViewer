@@ -50,8 +50,8 @@
 #include "llurldispatcher.h"
 #include "llworld.h"
 #include "llworldmap.h"
-#include "llfloateravatarlist.h"
-#include "llfloaterao.h"
+#include "floateravatarlist.h"
+#include "floaterao.h"
 #include "llviewerobjectlist.h"
 #include "llvoavatar.h"
 

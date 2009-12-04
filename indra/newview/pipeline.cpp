@@ -94,7 +94,7 @@
 #include "llvopartgroup.h"
 #include "llworld.h"
 #include "llcubemap.h"
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 #include "lldebugmessagebox.h"
 #include "llviewershadermgr.h"
 #include "llviewerjoystick.h"

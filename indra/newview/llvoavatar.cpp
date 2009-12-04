@@ -75,7 +75,7 @@
 #include "lldriverparam.h"
 #include "lleditingmotion.h"
 #include "llemote.h"
-#include "llfloaterao.h"
+#include "floaterao.h"
 #include "llfirstuse.h"
 #include "llheadrotmotion.h"
 #include "llhudeffecttrail.h"
@@ -114,7 +114,7 @@
 #include "llviewermessage.h"
 #include "llsdserialize.h" // client resolver
 #include "lggBeamMaps.h"
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 
 #include "boost/lexical_cast.hpp"
 

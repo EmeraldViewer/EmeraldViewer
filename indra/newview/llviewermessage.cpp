@@ -139,7 +139,7 @@
 
 #include "llfloaterfriends.h"
 
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 
 #include "jc_lslviewerbridge.h"
 

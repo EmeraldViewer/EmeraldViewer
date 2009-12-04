@@ -41,7 +41,7 @@
 #include "llfocusmgr.h"
 #include "llrender.h"
 
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 
 #include "llagent.h"
 #include "llcallingcard.h"

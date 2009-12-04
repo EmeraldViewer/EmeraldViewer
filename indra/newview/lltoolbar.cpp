@@ -66,7 +66,7 @@
 #include "llfloatermute.h"
 #include "llimpanel.h"
 #include "llscrolllistctrl.h"
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 
 #if LL_DARWIN
 

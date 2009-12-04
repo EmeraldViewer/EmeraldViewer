@@ -88,7 +88,7 @@ include_directories(
 )
 
 set(viewer_SOURCE_FILES
-	llfloaterao.cpp
+	floaterao.cpp
 	importtracker.cpp
 	exporttracker.cpp
 	chatbar_as_cmdline.cpp
@@ -108,7 +108,7 @@ set(viewer_SOURCE_FILES
 	lggFloaterIrcEdit.cpp
 	lggFloaterIrc.cpp
 	lggBeamMaps.cpp
-	llfloaterassetbrowser.cpp
+	floaterassetbrowser.cpp
 	lggIrcThread.cpp
     llagent.cpp
     llagentaccess.cpp
@@ -174,7 +174,7 @@ set(viewer_SOURCE_FILES
     llfloateranimpreview.cpp
     llfloaterauction.cpp
     llfloateravatarinfo.cpp
-	llfloateravatarlist.cpp
+	floateravatarlist.cpp
     llfloateravatarpicker.cpp
     llfloateravatartextures.cpp
     llfloaterbeacons.cpp
@@ -534,7 +534,7 @@ set(viewer_HEADER_FILES
     importtracker.h
     IRC.h
 	jc_lslviewerbridge.h
-	llfloaterao.h
+	floaterao.h
     jcfloater_animation_list.h
     jcfloater_areasearch.h
     jcobjectpropertylist.h
@@ -550,7 +550,7 @@ set(viewer_HEADER_FILES
 	lggIrcProfileFloater.h
     lggIrcThread.h
     lggIrcData.h
-	llfloaterassetbrowser.h
+	floaterassetbrowser.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -617,7 +617,7 @@ set(viewer_HEADER_FILES
     llfloateranimpreview.h
     llfloaterauction.h
     llfloateravatarinfo.h
-	llfloateravatarlist.h
+	floateravatarlist.h
     llfloateravatarpicker.h
     llfloateravatartextures.h
     llfloaterbeacons.h

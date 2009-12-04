@@ -81,7 +81,7 @@
 #include "llface.h"
 #include "llfirstuse.h"
 #include "llfloater.h"
-#include "llfloaterao.h"
+#include "floaterao.h"
 #include "llfloaterabout.h"
 #include "llfloaterbuycurrency.h"
 #include "llfloateractivespeakers.h"
@@ -220,9 +220,9 @@
 #include "llfloaternotificationsconsole.h"
 
 #include "lltexlayer.h"
-#include "llfloateravatarlist.h"
+#include "floateravatarlist.h"
 #include "jcfloater_animation_list.h"
-#include "llfloaterassetbrowser.h"
+#include "floaterassetbrowser.h"
 #include "jcfloater_areasearch.h"
 #include "jc_asset_comparer.h"
 
