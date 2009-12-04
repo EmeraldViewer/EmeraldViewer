@@ -134,7 +134,7 @@ typedef enum e_radar_alert_type
 } ERadarAlertType;
 void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool entering)
 {
-	if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts") && (strcmp(name.c_str(),"(???) (???)") == 0))
+	if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts") && (strcmp(name.c_str(),"(???) (???)") == 1))
 	{
 		// [RLVa:KB] - Alternate: Emerald-370
 		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
@@ -190,7 +190,9 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 }
 
 LLAvatarListEntry::LLAvatarListEntry(const LLUUID& id, const std::string &name, const LLVector3d &position, BOOL isLinden) :
-		mID(id), mName(name), mTime(time(NULL)), mPosition(position), mDrawPosition(), mAlert(FALSE), mMarked(FALSE), mFocused(FALSE), mIsLinden(isLinden), mActivityType(ACTIVITY_NEW), mAccountTitle(""),
+		mID(id), mName(name), mTime(time(NULL)), mPosition(position), mDrawPosition(), mAlert(FALSE), mMarked(FALSE), mFocused(FALSE), 
+
+mIsLinden(isLinden), mActivityType(ACTIVITY_NEW), mAccountTitle(""),
 			mUpdateTimer(), mActivityTimer(), mFrame(gFrameCount), mInSimFrame(U32_MAX), mInDrawFrame(U32_MAX), mInChatFrame(U32_MAX)
 {
 }
@@ -708,7 +710,9 @@ void LLFloaterAvatarList::updateAvatarList()
 				if ( mAvatars.count( avid ) > 0 )
 				{
 					// Avatar already in list, update position
-					mAvatars[avid].setPosition(position, (avatarp->getRegion() == gAgent.getRegion()), true, (position - mypos).magVec() < 20.0);
+					mAvatars[avid].setPosition(position, (avatarp->getRegion() == gAgent.getRegion()), true, (position - 
+
+mypos).magVec() < 20.0);
 				}
 				else
 				{
@@ -747,7 +751,9 @@ void LLFloaterAvatarList::updateAvatarList()
 				if ( mAvatars.count( avid ) > 0 )
 				{
 					// Avatar already in list, update position
-					mAvatars[avid].setPosition(position, gAgent.getRegion()->pointInRegionGlobal(position), false, (position - mypos).magVec() < 20.0);
+					mAvatars[avid].setPosition(position, gAgent.getRegion()->pointInRegionGlobal(position), false, (position - 
+
+mypos).magVec() < 20.0);
 				}
 				else
 				{
@@ -1902,7 +1908,9 @@ static void cmd_profile(const LLUUID& avatar, const std::string &name)
 	LLFloaterAvatarInfo::showFromDirectory(avatar);
 }
 //static void cmd_mute(const LLUUID&avatar, const std::string &name)         { LLMuteList::getInstance()->add(LLMute(avatar, name, LLMute::AGENT)); }
-//static void cmd_unmute(const LLUUID&avatar, const std::string &name)       { LLMuteList::getInstance()->remove(LLMute(avatar, name, LLMute::AGENT)); }
+//static void cmd_unmute(const LLUUID&avatar, const std::string &name)       { LLMuteList::getInstance()->remove(LLMute(avatar, name, LLMute::AGENT)); 
+
+}
 
 
 typedef std::vector<std::string> strings_t;
