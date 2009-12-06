@@ -528,6 +528,8 @@ bool rlvHandleShowNameTagsChanged(const LLSD& newvalue)
 
 ////////////////////////////////////////////////////////////////////////////
 
+LLColor4 DefaultListText;
+
 void settings_setup_listeners()
 {
 	gSavedSettings.getControl("FirstPersonAvatarVisible")->getSignal()->connect(boost::bind(&handleRenderAvatarMouselookChanged, _1));
@@ -688,6 +690,7 @@ void settings_setup_listeners()
 	if (gSavedSettings.controlExists(RLV_SETTING_SHOWNAMETAGS))
 		gSavedSettings.getControl(RLV_SETTING_SHOWNAMETAGS)->getSignal()->connect(boost::bind(&rlvHandleShowNameTagsChanged, _1));
 // [/RLVa:KB]
+	DefaultListText = gColors.getColor("DefaultListText").getValue();
 }
 
 template <> eControlType get_control_type<U32>(const U32& in, LLSD& out) 

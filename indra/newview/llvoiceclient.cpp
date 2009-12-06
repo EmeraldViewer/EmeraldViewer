@@ -1624,7 +1624,9 @@ void LLVoiceClient::stateMachine()
 		
 		//MARK: stateStart
 		case stateStart:
-			if(gSavedSettings.getBOOL("CmdLineDisableVoice"))
+			{
+			static BOOL locked = gSavedSettings.getBOOL("CmdLineDisableVoice");
+			if(locked)
 			{
 				// Voice is locked out, we must not launch the vivox daemon.
 				setState(stateJail);
@@ -1768,6 +1770,7 @@ void LLVoiceClient::stateMachine()
 				mRenderDeviceDirty = !mRenderDevice.empty();
 				
 				mMainSessionGroupHandle.clear();
+			}
 			}
 		break;
 
@@ -5808,7 +5811,8 @@ void LLVoiceClient::setVoiceEnabled(bool enabled)
 
 bool LLVoiceClient::voiceEnabled()
 {
-	return gSavedPerAccountSettings.getBOOL("EnableVoiceChat") && !gSavedSettings.getBOOL("CmdLineDisableVoice");
+	static BOOL cmddisabled = gSavedSettings.getBOOL("CmdLineDisableVoice");
+	return gSavedPerAccountSettings.getBOOL("EnableVoiceChat") && !cmddisabled;
 }
 
 void LLVoiceClient::setLipSyncEnabled(BOOL enabled)

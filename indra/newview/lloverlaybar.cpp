@@ -155,8 +155,8 @@ BOOL LLOverlayBar::postBuild()
 
 	gSavedSettings.getControl("wlfAdvSettingsPopup")->getSignal()->connect(&updateAdvSettingsPopup);
 	gSavedSettings.getControl("ChatVisible")->getSignal()->connect(&updateChatVisible);
-	gOverlayBar->childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
-	gOverlayBar->childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
+	childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
+	childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
 
 	return TRUE;
 }
