@@ -216,6 +216,7 @@ const F32 MIN_RADIUS_ALPHA_SIZZLE = 0.5f;
 
 const F64 CHAT_AGE_FAST_RATE = 3.0;
 
+
 // The agent instance.
 LLAgent gAgent;
 
@@ -224,6 +225,12 @@ LLAgent gAgent;
 //
 
 BOOL LLAgent::emeraldPhantom = 0;
+
+BOOL LLAgent::sFirstPersonBtnState;
+BOOL LLAgent::sMouselookBtnState;
+BOOL LLAgent::sThirdPersonBtnState;
+BOOL LLAgent::sBuildBtnState;
+BOOL LLAgent::EmeraldForceFly;
 
 const F32 LLAgent::TYPING_TIMEOUT_SECS = 5.f;
 
@@ -420,8 +427,15 @@ LLAgent::LLAgent() :
 	}
 
 	mFollowCam.setMaxCameraDistantFromSubject( MAX_CAMERA_DISTANCE_FROM_AGENT );
+
+	//EmeraldForceFly = gSavedSettings.getBOOL("EmeraldAlwaysFly");
+	//gSavedSettings.getControl("EmeraldAlwaysFly")->getSignal()->connect(&updateEmeraldForceFly);
 }
 
+void LLAgent::updateEmeraldForceFly(const LLSD &data)
+{
+	EmeraldForceFly = data.asBoolean();
+}
 // Requires gSavedSettings to be initialized.
 //-----------------------------------------------------------------------------
 // init()
@@ -452,6 +466,9 @@ void LLAgent::init()
 //	LLDebugVarMessageBox::show("Camera Lag", &CAMERA_FOCUS_HALF_LIFE, 0.5f, 0.01f);
 
 	mEffectColor = gSavedSettings.getColor4("EffectColor");
+
+	EmeraldForceFly = gSavedSettings.getBOOL("EmeraldAlwaysFly");
+	gSavedSettings.getControl("EmeraldAlwaysFly")->getSignal()->connect(&updateEmeraldForceFly);
 	
 	mInitialized = TRUE;
 }
@@ -765,7 +782,7 @@ BOOL LLAgent::canFly()
 // [/RLVa:KB]
 	if (isGodlike()) return TRUE;
 	//LGG always fly code
-	if(gSavedSettings.getBOOL("EmeraldAlwaysFly")) return TRUE;
+	if(EmeraldForceFly) return TRUE;
 	LLViewerRegion* regionp = getRegion();
 	if (regionp && regionp->getBlockFly()) return FALSE;
 	
@@ -4070,11 +4087,15 @@ void LLAgent::changeCameraToMouselook(BOOL animate)
 	mPauseRequest = NULL;
 
 	LLToolMgr::getInstance()->setCurrentToolset(gMouselookToolset);
-
-	gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
-	gSavedSettings.setBOOL("MouselookBtnState",		TRUE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState",	FALSE);
-	gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	
+	//gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
+	//gSavedSettings.setBOOL("MouselookBtnState",		TRUE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState",	FALSE);
+	//gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sMouselookBtnState = TRUE;
+	LLAgent::sThirdPersonBtnState = FALSE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	if (mAvatarObject.notNull())
 	{
@@ -4172,10 +4193,14 @@ void LLAgent::changeCameraToFollow(BOOL animate)
 			mAvatarObject->startMotion( ANIM_AGENT_BREATHE_ROT );
 		}
 
-		gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
-		gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
-		gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
-		gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+		//gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
+		//gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
+		//gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
+		//gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+		LLAgent::sFirstPersonBtnState = FALSE;
+		LLAgent::sMouselookBtnState = FALSE;
+		LLAgent::sThirdPersonBtnState = TRUE;
+		LLAgent::sBuildBtnState = FALSE;
 
 		// unpause avatar animation
 		mPauseRequest = NULL;
@@ -4223,10 +4248,14 @@ void LLAgent::changeCameraToThirdPerson(BOOL animate)
 		mAvatarObject->startMotion( ANIM_AGENT_BREATHE_ROT );
 	}
 
-	gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
-	gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
-	gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState",	FALSE);
+	//gSavedSettings.setBOOL("MouselookBtnState",		FALSE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState",	TRUE);
+	//gSavedSettings.setBOOL("BuildBtnState",			FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sMouselookBtnState = FALSE;
+	LLAgent::sThirdPersonBtnState = TRUE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	LLVector3 at_axis;
 
@@ -4314,10 +4343,14 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 		LLToolMgr::getInstance()->setCurrentToolset(gFaceEditToolset);
 	}
 
-	gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
-	gSavedSettings.setBOOL("MouselookBtnState", FALSE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState", FALSE);
-	gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
+	//gSavedSettings.setBOOL("MouselookBtnState", FALSE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState", FALSE);
+	//gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sMouselookBtnState = FALSE;
+	LLAgent::sThirdPersonBtnState = FALSE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	mAvatarObject->setAppearanceFlag(true);
 

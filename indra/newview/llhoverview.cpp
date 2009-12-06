@@ -740,10 +740,10 @@ void LLHoverView::draw()
 	const LLFontGL* fontp = LLResMgr::getInstance()->getRes(LLFONT_SANSSERIF_SMALL);
 
 	// Render text.
-	LLColor4 text_color = gColors.getColor("ToolTipTextColor");
+	static LLColor4 text_color = gColors.getColor("ToolTipTextColor");
 	// LLColor4 border_color = gColors.getColor("ToolTipBorderColor");
-	LLColor4 bg_color = gColors.getColor("ToolTipBgColor");
-	LLColor4 shadow_color = gColors.getColor("ColorDropShadow");
+	static LLColor4 bg_color = gColors.getColor("ToolTipBgColor");
+	static LLColor4 shadow_color = gColors.getColor("ColorDropShadow");
 
 	// Could decrease the alpha here. JC
 	//text_color.mV[VALPHA] = alpha;
@@ -785,7 +785,7 @@ void LLHoverView::draw()
 	LLGLSUIDefault gls_ui;
 
 	shadow_color.mV[VALPHA] = 0.7f * alpha;
-	S32 shadow_offset = gSavedSettings.getS32("DropShadowTooltip");
+	static S32 shadow_offset = gSavedSettings.getS32("DropShadowTooltip");
 	shadow_imagep->draw(LLRect(left + shadow_offset, top - shadow_offset, right + shadow_offset, bottom - shadow_offset), shadow_color);
 
 	bg_color.mV[VALPHA] = alpha;

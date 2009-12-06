@@ -782,7 +782,16 @@ public:
 	LLFrameTimer mDoubleTapRunTimer;
 	EDoubleTapRunMode mDoubleTapRunMode;
 
+	static BOOL sFirstPersonBtnState;
+	static BOOL sMouselookBtnState;
+	static BOOL sThirdPersonBtnState;
+	static BOOL sBuildBtnState;
+
 private:
+
+	static BOOL EmeraldForceFly;
+	static void	updateEmeraldForceFly(const LLSD &data);
+
 	static BOOL emeraldPhantom;
 	bool mbAlwaysRun; // should the avatar run by default rather than walk
 	bool mbRunning;	// is the avatar trying to run right now

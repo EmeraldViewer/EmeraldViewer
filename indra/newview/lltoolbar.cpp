@@ -98,6 +98,9 @@
 LLToolBar *gToolBar = NULL;
 S32 TOOL_BAR_HEIGHT = 20;
 
+BOOL LLToolBar::sShowToolBar;
+
+
 //
 // Statics
 //
@@ -180,6 +183,8 @@ BOOL LLToolBar::postBuild()
 
 	layoutButtons();
 
+	sShowToolBar = gSavedSettings.getBOOL("ShowToolBar");
+
 	return TRUE;
 }
 
@@ -228,7 +233,8 @@ BOOL LLToolBar::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 void LLToolBar::toggle(void*)
 {
 	BOOL show = gSavedSettings.getBOOL("ShowToolBar");                      
-	gSavedSettings.setBOOL("ShowToolBar", !show);                           
+	gSavedSettings.setBOOL("ShowToolBar", !show); 
+	sShowToolBar = show;
 	gToolBar->setVisible(!show);
 }
 
@@ -284,7 +290,7 @@ void LLToolBar::reshape(S32 width, S32 height, BOOL called_from_parent)
 // Per-frame updates of visibility
 void LLToolBar::refresh()
 {
-	BOOL show = gSavedSettings.getBOOL("ShowToolBar");
+	BOOL show = sShowToolBar;
 	BOOL mouselook = gAgent.cameraMouselook();
 	setVisible(show && !mouselook);
 
@@ -305,7 +311,8 @@ void LLToolBar::refresh()
 	{
 		build_mode = FALSE;
 	}
-	gSavedSettings.setBOOL("BuildBtnState", build_mode);
+	//gSavedSettings.setBOOL("BuildBtnState", build_mode);
+	LLAgent::sBuildBtnState = build_mode;
 
 // [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-10 (RLVa-1.0.0g)
 	// Called per-frame so this really can't be slow

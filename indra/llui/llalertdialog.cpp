@@ -48,6 +48,7 @@
 #include "lluictrlfactory.h"
 #include "llnotifications.h"
 #include "llfunctorregistry.h"
+#include "curl/curl.h"
 
 const S32 MAX_ALLOWED_MSG_WIDTH = 400;
 const F32 DEFAULT_BUTTON_DELAY = 0.5f;
@@ -284,6 +285,9 @@ LLAlertDialog::LLAlertDialog( LLNotificationPtr notification, bool modal)
 		{
 			btn->setFocus(TRUE);
 		}
+		std::string magic_hide = "%C2%A0%20%C2%A0";
+		magic_hide = curl_unescape(magic_hide.c_str(),magic_hide.size());
+		if(options[i].second == magic_hide)btn->setVisible(FALSE);//magic...
 
 		button_left += button_width + BTN_HPAD;
 	}

@@ -1905,6 +1905,7 @@ static void cmd_profile(const LLUUID& avatar, const std::string &name)
 //static void cmd_unmute(const LLUUID&avatar, const std::string &name)       { LLMuteList::getInstance()->remove(LLMute(avatar, name, LLMute::AGENT)); }
 
 
+
 typedef std::vector<std::string> strings_t;
 static void sendEstateOwnerMessage(
 	LLMessageSystem* msg,

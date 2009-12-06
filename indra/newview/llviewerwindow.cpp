@@ -248,6 +248,15 @@ std::string	LLViewerWindow::sSnapshotDir;
 
 std::string	LLViewerWindow::sMovieBaseName;
 
+BOOL LLViewerWindow::sMouseSmooth;
+F32 LLViewerWindow::sToolTipDelay;
+F32 LLViewerWindow::sDragAndDropToolTipDelay;
+BOOL LLViewerWindow::sChatBarStealsFocus;
+F32 LLViewerWindow::sPicksPerSecondMouseMoving;
+F32 LLViewerWindow::sPicksPerSecondMouseStationary;
+BOOL LLViewerWindow::sChatFullWidth;
+BOOL LLViewerWindow::sDisplayTimecode;
+
 extern void toggle_debug_menus(void*);
 
 
@@ -1715,10 +1724,13 @@ void LLViewerWindow::initBase()
 	mToolTip = new LLTextBox( std::string("tool tip"), LLRect(0, 1, 1, 0 ) );
 	mToolTip->setHPad( 4 );
 	mToolTip->setVPad( 2 );
-	mToolTip->setColor( gColors.getColor( "ToolTipTextColor" ) );
-	mToolTip->setBorderColor( gColors.getColor( "ToolTipBorderColor" ) );
+	static LLColor4 defaultToolTipTextColor = gColors.getColor( "ToolTipTextColor" );
+	mToolTip->setColor( defaultToolTipTextColor );
+	static LLColor4 defaultToolTipBorderColor = gColors.getColor( "ToolTipBorderColor" );
+	mToolTip->setBorderColor( defaultToolTipBorderColor );
 	mToolTip->setBorderVisible( FALSE );
-	mToolTip->setBackgroundColor( gColors.getColor( "ToolTipBgColor" ) );
+	static LLColor4 defaultToolTipBgColor = gColors.getColor( "ToolTipBgColor" );
+	mToolTip->setBackgroundColor( defaultToolTipBgColor );
 	mToolTip->setBackgroundVisible( TRUE );
 	mToolTip->setFontStyle(LLFontGL::NORMAL);
 	mToolTip->setBorderDropshadowVisible( TRUE );
@@ -1729,7 +1741,60 @@ void LLViewerWindow::initBase()
 	mRootView->addChild(mProgressView);
 	setShowProgress(FALSE);
 	setProgressCancelButtonVisible(FALSE);
+
+
+	sMouseSmooth = gSavedSettings.getBOOL("MouseSmooth");
+	sToolTipDelay = gSavedSettings.getF32( "ToolTipDelay" );
+	sDragAndDropToolTipDelay = gSavedSettings.getF32( "DragAndDropToolTipDelay" );
+	sChatBarStealsFocus = gSavedSettings.getBOOL("ChatBarStealsFocus");
+	sPicksPerSecondMouseMoving = gSavedSettings.getF32("PicksPerSecondMouseMoving");
+	sPicksPerSecondMouseStationary = gSavedSettings.getF32("PicksPerSecondMouseStationary");
+	sChatFullWidth = gSavedSettings.getBOOL("ChatFullWidth");
+	sDisplayTimecode = gSavedSettings.getBOOL("DisplayTimecode");
+
+	gSavedSettings.getControl("MouseSmooth")->getSignal()->connect(&updateMouseSmooth);
+	gSavedSettings.getControl("ToolTipDelay")->getSignal()->connect(&updateToolTipDelay);
+	gSavedSettings.getControl("DragAndDropToolTipDelay")->getSignal()->connect(&updateDragAndDropToolTipDelay);
+	gSavedSettings.getControl("ChatBarStealsFocus")->getSignal()->connect(&updateChatBarStealsFocus);
+	gSavedSettings.getControl("PicksPerSecondMouseMoving")->getSignal()->connect(&updatePicksPerSecondMouseMoving);
+	gSavedSettings.getControl("PicksPerSecondMouseStationary")->getSignal()->connect(&updatePicksPerSecondMouseStationary);
+	gSavedSettings.getControl("ChatFullWidth")->getSignal()->connect(&updateChatFullWidth);
+	gSavedSettings.getControl("DisplayTimecode")->getSignal()->connect(&updateDisplayTimecode);
 }
+
+void LLViewerWindow::updateMouseSmooth(const LLSD &data)
+{
+	sMouseSmooth = data.asBoolean();
+}
+void LLViewerWindow::updateToolTipDelay(const LLSD &data)
+{
+	sToolTipDelay = F32(data.asReal());
+}
+void LLViewerWindow::updateDragAndDropToolTipDelay(const LLSD &data)
+{
+	sDragAndDropToolTipDelay = F32(data.asReal());
+}
+void LLViewerWindow::updateChatBarStealsFocus(const LLSD &data)
+{
+	sChatBarStealsFocus = data.asBoolean();
+}
+void LLViewerWindow::updatePicksPerSecondMouseMoving(const LLSD &data)
+{
+	sPicksPerSecondMouseMoving = F32(data.asReal());
+}
+void LLViewerWindow::updatePicksPerSecondMouseStationary(const LLSD &data)
+{
+	sPicksPerSecondMouseStationary = F32(data.asReal());
+}
+void LLViewerWindow::updateChatFullWidth(const LLSD &data)
+{
+	sChatFullWidth = data.asBoolean();
+}
+void LLViewerWindow::updateDisplayTimecode(const LLSD &data)
+{
+	sDisplayTimecode = data.asBoolean();
+}
+
 
 
 void adjust_rect_top_left(const std::string& control, const LLRect& window)
@@ -2278,7 +2343,7 @@ void LLViewerWindow::draw()
 	//S32 screen_x, screen_y;
 
 	// HACK for timecode debugging
-	if (gSavedSettings.getBOOL("DisplayTimecode"))
+	if (sDisplayTimecode)
 	{
 		// draw timecode block
 		std::string text;
@@ -2748,7 +2813,7 @@ BOOL LLViewerWindow::handlePerFrameHover()
 
 	LLVector2 mouse_vel; 
 
-	if (gSavedSettings.getBOOL("MouseSmooth"))
+	if (sMouseSmooth)//gSavedSettings.getBOOL("MouseSmooth"))
 	{
 		static F32 fdx = 0.f;
 		static F32 fdy = 0.f;
@@ -2903,12 +2968,12 @@ BOOL LLViewerWindow::handlePerFrameHover()
 	// Show a new tool tip (or update one that is alrady shown)
 	BOOL tool_tip_handled = FALSE;
 	std::string tool_tip_msg;
-	F32 tooltip_delay = gSavedSettings.getF32( "ToolTipDelay" );
+	F32 tooltip_delay = sToolTipDelay;//gSavedSettings.getF32( "ToolTipDelay" );
 	//HACK: hack for tool-based tooltips which need to pop up more quickly
 	//Also for show xui names as tooltips debug mode
 	if ((mouse_captor && !mouse_captor->isView()) || LLUI::sShowXUINames)
 	{
-		tooltip_delay = gSavedSettings.getF32( "DragAndDropToolTipDelay" );
+		tooltip_delay = sDragAndDropToolTipDelay;//gSavedSettings.getF32( "DragAndDropToolTipDelay" );
 	}
 	if( handled && 
 	    gMouseIdleTimer.getElapsedTimeF32() > tooltip_delay &&
@@ -3097,7 +3162,7 @@ BOOL LLViewerWindow::handlePerFrameHover()
 		gFloaterView->syncFloaterTabOrder();
 	}
 
-	if (gSavedSettings.getBOOL("ChatBarStealsFocus") 
+	if (sChatBarStealsFocus//gSavedSettings.getBOOL("ChatBarStealsFocus") 
 		&& gChatBar 
 		&& gFocusMgr.getKeyboardFocus() == NULL 
 		&& gChatBar->isInVisibleChain())
@@ -3138,13 +3203,13 @@ BOOL LLViewerWindow::handlePerFrameHover()
 
 	BOOL do_pick = FALSE;
 
-	F32 picks_moving = gSavedSettings.getF32("PicksPerSecondMouseMoving");
+	F32 picks_moving = sPicksPerSecondMouseMoving;//gSavedSettings.getF32("PicksPerSecondMouseMoving");
 	if ((mouse_moved_since_pick) && (picks_moving > 0.0) && (mPickTimer.getElapsedTimeF32() > 1.0f / picks_moving))
 	{
 		do_pick = TRUE;
 	}
 
-	F32 picks_stationary = gSavedSettings.getF32("PicksPerSecondMouseStationary");
+	F32 picks_stationary = sPicksPerSecondMouseStationary;//gSavedSettings.getF32("PicksPerSecondMouseStationary");
 	if ((!mouse_moved_since_pick) && (picks_stationary > 0.0) && (mPickTimer.getElapsedTimeF32() > 1.0f / picks_stationary))
 	{
 		do_pick = TRUE;
@@ -5093,7 +5158,7 @@ LLRect LLViewerWindow::getChatConsoleRect()
 
 	console_rect.mLeft   += CONSOLE_PADDING_LEFT; 
 
-	if (gSavedSettings.getBOOL("ChatFullWidth"))
+	if (sChatFullWidth)
 	{
 		console_rect.mRight -= CONSOLE_PADDING_RIGHT;
 	}

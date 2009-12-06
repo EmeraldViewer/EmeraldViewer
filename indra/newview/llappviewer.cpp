@@ -281,6 +281,7 @@ BOOL gLogoutInProgress = FALSE;
 F32 LLAppViewer::sMainLoopTimeOutDefault = 0.f;
 BOOL LLAppViewer::sFreezeTime = FALSE;
 
+
 ////////////////////////////////////////////////////////////
 // Internal globals... that should be removed.
 static std::string gArgs;
@@ -1063,7 +1064,7 @@ bool LLAppViewer::mainLoop()
 			// Sleep and run background threads
 			{
 				LLFastTimer t2(LLFastTimer::FTM_SLEEP);
-				bool run_multiple_threads = gSavedSettings.getBOOL("RunMultipleThreads");
+				static bool run_multiple_threads = gSavedSettings.getBOOL("RunMultipleThreads");
 
 				// yield some time to the os based on command line option
 				if(mYieldTime >= 0)
@@ -1077,7 +1078,7 @@ bool LLAppViewer::mainLoop()
 						|| !gFocusMgr.getAppHasFocus())
 				{
 					// Sleep if we're not rendering, or the window is minimized.
-					S32 milliseconds_to_sleep = llclamp(gSavedSettings.getS32("BackgroundYieldTime"), 0, 1000);
+					static S32 milliseconds_to_sleep = llclamp(gSavedSettings.getS32("BackgroundYieldTime"), 0, 1000);
 					// don't sleep when BackgroundYieldTime set to 0, since this will still yield to other threads
 					// of equal priority on Windows
 					if (milliseconds_to_sleep > 0)
@@ -2333,9 +2334,12 @@ void LLAppViewer::cleanupSavedSettings()
 
 	gSavedSettings.setBOOL("FlyBtnState", FALSE);
 
-	gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
-	gSavedSettings.setBOOL("ThirdPersonBtnState", TRUE);
-	gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	//gSavedSettings.setBOOL("FirstPersonBtnState", FALSE);
+	//gSavedSettings.setBOOL("ThirdPersonBtnState", TRUE);
+	//gSavedSettings.setBOOL("BuildBtnState", FALSE);
+	LLAgent::sFirstPersonBtnState = FALSE;
+	LLAgent::sThirdPersonBtnState = TRUE;
+	LLAgent::sBuildBtnState = FALSE;
 
 	gSavedSettings.setBOOL("UseEnergy", TRUE);				// force toggle to turn off, since sends message to simulator
 
@@ -3325,7 +3329,7 @@ void LLAppViewer::idle()
 	// Smoothly weight toward current frame
 	gFPSClamped = (frame_rate_clamped + (4.f * gFPSClamped)) / 5.f;
 
-	F32 qas = gSavedSettings.getF32("QuitAfterSeconds");
+	static F32 qas = gSavedSettings.getF32("QuitAfterSeconds");
 	if (qas > 0.f)
 	{
 		if (gRenderStartTime.getElapsedTimeF32() > qas)
