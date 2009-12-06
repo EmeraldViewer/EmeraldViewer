@@ -155,6 +155,8 @@ BOOL LLOverlayBar::postBuild()
 
 	gSavedSettings.getControl("wlfAdvSettingsPopup")->getSignal()->connect(&updateAdvSettingsPopup);
 	gSavedSettings.getControl("ChatVisible")->getSignal()->connect(&updateChatVisible);
+	gOverlayBar->childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
+	gOverlayBar->childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
 
 	return TRUE;
 }
@@ -162,6 +164,8 @@ BOOL LLOverlayBar::postBuild()
 void LLOverlayBar::updateAdvSettingsPopup(const LLSD &data)
 {
 	sAdvSettingsPopup = data.asBoolean();
+	gOverlayBar->childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
+	gOverlayBar->childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
 }
 
 void LLOverlayBar::updateChatVisible(const LLSD &data)
@@ -355,12 +359,13 @@ void LLOverlayBar::refresh()
 		{
 			// update "remotes"
 			childSetVisible("media_remote_container", TRUE);
-			childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
-			childSetVisible("AdvSettings_container", sAdvSettingsPopup);//!gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
+			//childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
+			childSetVisible("AdvSettings_container", !sAdvSettingsPopup);//!gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
 			childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);//gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
 			childSetVisible("state_buttons", TRUE);
 		}
 	}
+	if(!in_mouselook)childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
 
 	// always let user toggle into and out of chatbar
 	childSetVisible("chat_bar", sChatVisible);//gSavedSettings.getBOOL("ChatVisible"));
