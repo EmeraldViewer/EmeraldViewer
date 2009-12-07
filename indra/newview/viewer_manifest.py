@@ -605,6 +605,8 @@ class LinuxManifest(ViewerManifest):
             self.path("wrapper.sh","secondlife")
             self.path("handle_secondlifeprotocol.sh")
             self.path("register_secondlifeprotocol.sh")
+            # Added utility script to grab Vivox and Kakadu components from within a Linden Lab client package ~N
+            self.path("fetch_bins.sh")
             self.end_prefix("linux_tools")
 
         # Create an appropriate gridargs.dat for this package, denoting required grid.
@@ -683,7 +685,7 @@ class Linux_i686Manifest(LinuxManifest):
 
         if self.prefix("../../libraries/i686-linux/lib_release_client", dst="lib"):
 #            self.path("libkdu_v42R.so", "libkdu.so")
-#            self.path("libfmod-3.75.so")
+            self.path("libfmod-3.75.so")
             self.path("libapr-1.so.0")
             self.path("libaprutil-1.so.0")
             self.path("libdb-4.2.so")
