@@ -1053,7 +1053,6 @@ void init_debug_world_menu(LLMenuGL* menu)
 		&handle_dump_object_nv, NULL, NULL));
 	menu->createJumpKeys();
 }
-bool toasted;
 
 void handle_export_menus_to_xml(void*)
 {
