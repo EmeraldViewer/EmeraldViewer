@@ -161,6 +161,9 @@ public:
 	void			appendHighlightedText(const std::string &new_text,  bool allow_undo, 
 										  bool prepend_newline,	 S32  highlight_part,
 										  LLStyleSP stylep);
+	void			appendSpellCheckText(const std::string &new_text,  bool allow_undo, 
+											bool prepend_newline,	 S32  highlight_part,
+											LLStyleSP stylep);
 	
 	// Removes text from the end of document
 	// Does not change highlight or cursor position.
@@ -333,6 +336,8 @@ protected:
 	S32				findHTMLToken(const std::string &line, S32 pos, BOOL reverse) const;
 	S32				findHTMLToken(const std::string &line, S32 pos, BOOL reverse, const char *end_delims) const;
 	BOOL			findHTML(const std::string &line, S32 *begin, S32 *end) const;
+	BOOL			findSpellError(const std::string &line, S32 *begin, S32 *end) const;
+	
 
 	// Abstract inner base class representing an undoable editor command.
 	// Concrete sub-classes can be defined for operations such as insert, remove, etc.

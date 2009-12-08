@@ -61,6 +61,8 @@
 #include <queue>
 
 #include "llmenugl.h"
+#include <boost/regex.hpp>
+#include "..\newview\lggHunSpell_wrapper.h"
 
 // 
 // Globals
@@ -3671,11 +3673,67 @@ void LLTextEditor::appendStyledText(const std::string &new_text,
 			}
 		}
 		if (part != (S32)LLTextParser::WHOLE) part=(S32)LLTextParser::END;
-		if (end < (S32)text.length()) appendHighlightedText(text,allow_undo, prepend_newline, part, stylep);		
+		if (end < (S32)text.length()) appendSpellCheckText(text,allow_undo, prepend_newline, part, stylep);		
 	}
-	else
+	
+	else 
 	{
-		appendHighlightedText(new_text, allow_undo, prepend_newline, part, stylep);
+		appendSpellCheckText(new_text, allow_undo, prepend_newline, part, stylep);
+	}
+}
+void LLTextEditor::appendSpellCheckText(const std::string &new_text, 
+										bool allow_undo, 
+										bool prepend_newline,
+										S32  part,
+										LLStyleSP stylep)
+{
+	if(true)//mSpellCheck)
+	{
+
+		S32 start=0,end=0;
+		std::string text = new_text;
+		while ( findSpellError(text, &start, &end) )
+		{
+			LLStyleSP spellError(new LLStyle);
+			spellError->setVisible(true);
+			spellError->setColor(LLColor4::red2);
+			if (stylep)
+			{
+				spellError->setFontName(stylep->getFontString());
+			}
+			spellError->mItalic = TRUE;
+			spellError->mUnderline = TRUE;
+
+			if (start > 0)
+			{
+				if (part == (S32)LLTextParser::WHOLE ||
+					part == (S32)LLTextParser::START)
+				{
+					part = (S32)LLTextParser::START;
+				}
+				else
+				{
+					part = (S32)LLTextParser::MIDDLE;
+				}
+				std::string subtext=text.substr(0,start);
+				appendHighlightedText(subtext,allow_undo, prepend_newline, part, stylep); 
+			}
+
+			spellError->setLinkHREF("spellError://"+text.substr(start,end-start));
+			appendText(text.substr(start, end-start),allow_undo, prepend_newline, spellError);
+			if (end < (S32)text.length()) 
+			{
+				text = text.substr(end,text.length() - end);
+				end=0;
+				part=(S32)LLTextParser::END;
+			}
+			else
+			{
+				break;
+			}
+		}
+		if (part != (S32)LLTextParser::WHOLE) part=(S32)LLTextParser::END;
+		if (end < (S32)text.length()) appendHighlightedText(text,allow_undo, prepend_newline, part, stylep);		
 	}
 }
 
@@ -4437,67 +4495,67 @@ S32 LLTextEditor::findHTMLToken(const std::string &line, S32 pos, BOOL reverse) 
 
 BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 {
-	  
+
 	S32 m1,m2,m3;
 	BOOL matched = FALSE;
-	
+
 	m1=line.find("://",*end);
-	
+
 	if (m1 >= 0) //Easy match.
 	{
 		*begin = findHTMLToken(line, m1, TRUE);
-        if( *begin > 0 && line.substr(*begin-1,1) == "(" )
-		    *end   = findHTMLToken(line, m1, FALSE, ")" );
-        else
-		    *end   = findHTMLToken(line, m1, FALSE);
-		
+		if( *begin > 0 && line.substr(*begin-1,1) == "(" )
+			*end   = findHTMLToken(line, m1, FALSE, ")" );
+		else
+			*end   = findHTMLToken(line, m1, FALSE);
+
 		//Load_url only handles http and https so don't hilite ftp, smb, etc.
 		m2 = line.substr(*begin,(m1 - *begin)).find("http");
 		m3 = line.substr(*begin,(m1 - *begin)).find("secondlife");
 
-        // Hackery for chat namespace URI whitespace. We just use the whole
-        //  rest of the line. <_<
-        if( m3 >= 0 && line.substr(m1,13) == ":///app/chat/" )
-            *end = line.length();
-	
+		// Hackery for chat namespace URI whitespace. We just use the whole
+		//  rest of the line. <_<
+		if( m3 >= 0 && line.substr(m1,13) == ":///app/chat/" )
+			*end = line.length();
+
 		std::string badneighbors=".,<>?';\"][}{=-+_)(*&^%$#@!~`\t\r\n\\";
-	
+
 		if (m2 >= 0 || m3>=0)
 		{
 			S32 bn = badneighbors.find(line.substr(m1+3,1));
-			
+
 			if (bn < 0)
 			{
 				matched = TRUE;
 			}
 		}
 	}
-/*	matches things like secondlife.com (no http://) needs a whitelist to really be effective.
+	/*	matches things like secondlife.com (no http://) needs a whitelist to really be effective.
 	else	//Harder match.
 	{
-		m1 = line.find(".",*end);
-		
-		if (m1 >= 0)
-		{
-			*end   = findHTMLToken(line, m1, FALSE);
-			*begin = findHTMLToken(line, m1, TRUE);
-			
-			m1 = line.rfind(".",*end);
+	m1 = line.find(".",*end);
 
-			if ( ( *end - m1 ) > 2 && m1 > *begin)
-			{
-				std::string badneighbors=".,<>/?';\"][}{=-+_)(*&^%$#@!~`";
-				m2 = badneighbors.find(line.substr(m1+1,1));
-				m3 = badneighbors.find(line.substr(m1-1,1));
-				if (m3<0 && m2<0)
-				{
-					matched = TRUE;
-				}
-			}
-		}
+	if (m1 >= 0)
+	{
+	*end   = findHTMLToken(line, m1, FALSE);
+	*begin = findHTMLToken(line, m1, TRUE);
+
+	m1 = line.rfind(".",*end);
+
+	if ( ( *end - m1 ) > 2 && m1 > *begin)
+	{
+	std::string badneighbors=".,<>/?';\"][}{=-+_)(*&^%$#@!~`";
+	m2 = badneighbors.find(line.substr(m1+1,1));
+	m3 = badneighbors.find(line.substr(m1-1,1));
+	if (m3<0 && m2<0)
+	{
+	matched = TRUE;
+	}
+	}
+	}
 	}
 	*/
-	
+
 	if (matched)
 	{
 		S32 strpos, strpos2;
@@ -4505,23 +4563,23 @@ BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 		std::string url     = line.substr(*begin,*end - *begin);
 		std::string slurlID = "slurl.com/secondlife/";
 		strpos = url.find(slurlID);
-		
+
 		if (strpos < 0)
 		{
 			slurlID="secondlife://";
 			strpos = url.find(slurlID);
 		}
-	
+
 		if (strpos < 0)
 		{
 			slurlID="sl://";
 			strpos = url.find(slurlID);
 		}
-	
+
 		if (strpos >= 0) 
 		{
 			strpos+=slurlID.length();
-			
+
 			while ( ( strpos2=url.find("/",strpos) ) == -1 ) 
 			{
 				if ((*end+2) >= (S32)line.length() || line.substr(*end,1) != " " )
@@ -4529,25 +4587,63 @@ BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 					matched=FALSE;
 					break;
 				}
-				
+
 				strpos = (*end + 1) - *begin;
-								
-                if( *begin > 0 && line.substr(*begin-1,1) == "(" )
-				    *end = findHTMLToken(line,(*begin + strpos),FALSE,")");
-                else
-				    *end = findHTMLToken(line,(*begin + strpos),FALSE);
+
+				if( *begin > 0 && line.substr(*begin-1,1) == "(" )
+					*end = findHTMLToken(line,(*begin + strpos),FALSE,")");
+				else
+					*end = findHTMLToken(line,(*begin + strpos),FALSE);
 				url = line.substr(*begin,*end - *begin);
 			}
 		}
 
 	}
-	
+
 	if (!matched)
 	{
 		*begin=*end=0;
 	}
 	return matched;
 }
+
+
+
+BOOL LLTextEditor::findSpellError(const std::string &line, S32 *begin, S32 *end) const
+{
+	S32 m1=0;
+	BOOL matched = FALSE;
+
+	//m1=line.find("://",*end);
+	m1 =0;
+	std::string toSearchIn = line.substr(*end);
+	boost::regex re("[\\]\\[\\\\ .,!?:()\\n\\r\\t\\d]+");
+	boost::sregex_token_iterator i(toSearchIn.begin(), toSearchIn.end(), re, -1);
+	boost::sregex_token_iterator j;
+
+	while((i != j)&&(matched!=TRUE))
+	{
+		if(glggHunSpell->isSpelledRight(*i))
+		{
+
+		}else
+		{
+			m1=line.find(*i,*end);
+			matched=TRUE;
+			*begin = m1;
+			*end = m1+std::string(*i).length();
+
+		}
+		*i++;
+	}
+
+	if (!matched)
+	{
+		*begin=*end=0;
+	}
+	return matched;
+}
+
 
 
 

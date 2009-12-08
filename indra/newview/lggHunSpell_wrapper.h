@@ -32,6 +32,7 @@ public:
 	void setNewDictionary(std::string newDict);
 	BOOL isSpelledRight(std::string wordToCheck);
 	std::vector<std::string> getSujestionList(std::string badWord);
+	S32 findNextError(std::string haystack, int startAt);
 
 private:
 	lggHunSpell_Wrapper();

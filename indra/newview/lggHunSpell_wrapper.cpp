@@ -56,11 +56,14 @@ void lggHunSpell_Wrapper::setNewDictionary(std::string newDict)
 }
 BOOL lggHunSpell_Wrapper::isSpelledRight(std::string wordToCheck)
 {
+	if(!myHunspell)return TRUE;
+	if(wordToCheck.length()<3)return TRUE;
 	return myHunspell->spell(wordToCheck.c_str());
 }
 std::vector<std::string> lggHunSpell_Wrapper::getSujestionList(std::string badWord)
 {
 	std::vector<std::string> toReturn;
+	if(!myHunspell)return toReturn;
 	char ** sujestionList;	
 	int numberOfSujestions = myHunspell->suggest(&sujestionList, badWord.c_str());	
 	if(numberOfSujestions <= 0)
