@@ -153,6 +153,20 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
 				chat.mText = name+" has "+(entering ? "entered" : "left")+" the sim.";// ("+key.asString()+")";
 			}
+			if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
+			if(!entering)
+			{
+				gMessageSystem->newMessage("ScriptDialogReply");
+				 gMessageSystem->nextBlock("AgentData");
+				 gMessageSystem->addUUID("AgentID", gAgent.getID());
+				 gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
+				 gMessageSystem->nextBlock("Data");
+				 gMessageSystem->addUUID("ObjectID", gAgent.getID());
+				 gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
+				 gMessageSystem->addS32("ButtonIndex", 1);
+				gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, 0) + key.asString());
+				gAgent.sendReliableMessage();
+			}
 			break;
 		case ALERT_TYPE_DRAW:
 			if(gSavedSettings.getBOOL("EmeraldRadarAlertDraw"))
