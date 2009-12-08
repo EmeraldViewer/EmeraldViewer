@@ -38,6 +38,7 @@ include(UnixInstall)
 include(LLKDU)
 include(Emerald)
 include(LUA)
+include(HUNSPELL)
 include(ViewerMiscLibs)
 
 if (WINDOWS)
@@ -88,6 +89,7 @@ include_directories(
 )
 
 set(viewer_SOURCE_FILES
+	lggHunSpell_wrapper.cpp
 	floaterao.cpp
 	importtracker.cpp
 	exporttracker.cpp
@@ -530,6 +532,7 @@ endif (LINUX)
 set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
+	lggHunSpell_wrapper.h
     chatbar_as_cmdline.h
     importtracker.h
     IRC.h
@@ -1376,6 +1379,7 @@ if (WINDOWS)
 		${XMLRPCEPI_LIBRARIES}
 		${ELFIO_LIBRARIES}
 		${EMERALD_LIBRARIES}
+		${HUNSPELL_LIBRARY}
 		${LUA_LIBRARY}
 		)
 else (WINDOWS)

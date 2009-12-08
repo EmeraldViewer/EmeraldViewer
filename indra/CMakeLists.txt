@@ -44,6 +44,7 @@ if (COMPILE_OTR)
     add_subdirectory(${LIBS_OPEN_PREFIX}libgpg-error)
     add_subdirectory(${LIBS_OPEN_PREFIX}libotr)
 endif (COMPILE_OTR)
+
 add_subdirectory(${LIBS_OPEN_PREFIX}llaudio)
 add_subdirectory(${LIBS_OPEN_PREFIX}llcharacter)
 add_subdirectory(${LIBS_OPEN_PREFIX}llcommon)

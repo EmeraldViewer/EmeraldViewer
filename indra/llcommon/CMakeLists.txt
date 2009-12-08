@@ -195,4 +195,6 @@ target_link_libraries(
     ${APR_LIBRARIES}
     ${EXPAT_LIBRARIES}
     ${ZLIB_LIBRARIES}
+    ${ASPELL_LIBRARIES}
+     
     )
