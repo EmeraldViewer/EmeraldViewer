@@ -699,7 +699,6 @@ void JCExportTracker::inventoryChanged(LLViewerObject* obj,
 									{
 										LLPermissions perm(((LLInventoryItem*)((LLInventoryObject*)(*it)))->getPermissions());
 										if(couldDL(asset->getType())
-										&& (perm.getCreator() == gAgent.getID())
 										&& perm.allowCopyBy(gAgent.getID())
 										&& perm.allowModifyBy(gAgent.getID())
 										&& perm.allowTransferTo(LLUUID::null))// && is_asset_id_knowable(asset->getType()))
@@ -781,8 +780,7 @@ BOOL JCExportTracker::mirror(LLInventoryObject* item, LLViewerObject* container,
 		//LLUUID asset_id = item->getAssetUUID();
 		//if(asset_id.notNull())
 		LLPermissions perm(((LLInventoryItem*)item)->getPermissions());
-		if((perm.getCreator() == gAgent.getID())
-		&& perm.allowCopyBy(gAgent.getID())
+		if(perm.allowCopyBy(gAgent.getID())
 		&& perm.allowModifyBy(gAgent.getID())
 		&& perm.allowTransferTo(LLUUID::null))
 		{
