@@ -395,6 +395,11 @@ void LLTextEditor::context_copy(void* data)
 	LLTextEditor* line = (LLTextEditor*)data;
 	if(line)line->copy();
 }
+void LLTextEditor::spell_correct(void* data)
+{
+	//LLTextEditor* line = (LLTextEditor*)data;
+	//if(line)line->paste(new word);
+}
 void LLTextEditor::context_paste(void* data)
 {
 	LLTextEditor* line = (LLTextEditor*)data;
@@ -1462,10 +1467,46 @@ BOOL LLTextEditor::handleDoubleClick(S32 x, S32 y, MASK mask)
 BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 {
 	setFocus(TRUE);
+	S32 wordStart = 0;
+	S32 wordEnd = 0;
+	setCursorAtLocalPos( x, y, TRUE );
 
 	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
 	if (menu)
 	{
+
+		const LLWString &text = mWText;
+
+		if( isPartOfWord( text[mCursorPos] ) )
+		{
+			// Select word the cursor is over
+			while ((mCursorPos > 0) && isPartOfWord(text[mCursorPos-1]))
+			{
+				mCursorPos--;
+			}
+			wordStart=mCursorPos;
+
+			while ((mCursorPos < (S32)text.length()) && isPartOfWord( text[mCursorPos] ) )
+			{
+				mCursorPos++;
+			}		
+			wordEnd = mCursorPos;
+			std::string selectedWord(std::string(text.begin(), text.end()).substr(wordStart,wordEnd-wordStart));
+			if(!glggHunSpell->isSpelledRight(selectedWord))
+			{
+				menu->appendSeparator();
+				//misspelled word here, and you done just right clicked on it!
+				std::vector<std::string> sujs = glggHunSpell->getSujestionList(selectedWord);
+				for(int i = 0;i<(int)sujs.size();i++)
+				{
+					menu->append(new LLMenuItemCallGL(sujs[i], spell_correct, NULL, this));
+				}
+
+
+			}
+			
+		}
+
 		menu->buildDrawLabels();
 		menu->updateParent(LLMenuGL::sMenuContainer);
 		LLMenuGL::showPopup(this, menu, x, y);
