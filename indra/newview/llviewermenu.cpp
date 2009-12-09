@@ -2332,15 +2332,28 @@ class LLObjectVisibleExport : public view_listener_t
 	{
 		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
 		bool new_value = (object != NULL);
-		
-		if (new_value)
+		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
+			 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
 		{
-			new_value = !object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer();
-			// Disable for avatars, we can only export prims
-			//LLVOAvatar* avatar = find_avatar_from_object(object); 
-			//new_value = (avatar == NULL);
+			LLSelectNode* selectNode = *iter;
+			LLViewerObject* object = selectNode->getObject();
+			if (object)
+				if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+				{
+					new_value=0;
+					break;
+				}
 		}
-		
+		for (LLObjectSelection::valid_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_begin();
+			 iter != LLSelectMgr::getInstance()->getSelection()->valid_end(); iter++)
+		{
+			LLSelectNode* selectNode = *iter;
+			if(!(selectNode->mPermissions->getCreator() == gAgent.getID()))
+			{
+				new_value=0;
+				break;
+			}
+		}
 		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
 		
 		return true;
@@ -2364,7 +2377,16 @@ class LLObjectEnableExport : public view_listener_t
 					break;
 				}
 		}
-
+		for (LLObjectSelection::valid_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_begin();
+			 iter != LLSelectMgr::getInstance()->getSelection()->valid_end(); iter++)
+		{
+			LLSelectNode* selectNode = *iter;
+			if(!(selectNode->mPermissions->getCreator() == gAgent.getID()))
+			{
+				new_value=0;
+				break;
+			}
+		}
 		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
 		
 		return true;
