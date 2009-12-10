@@ -402,12 +402,11 @@ void LLTextEditor::spell_correct(void* data)
 	SpellMenuBind* tempBind = (SpellMenuBind*)data;
 	if(tempBind)
 	{
-		if((tempBind->word)&&(tempBind->origin))
-		{
+		
 			LLTextEditor* line = tempBind->origin;
 			if(line)
 				line->paste(tempBind->word);
-		}
+		
 	}
 }
 void LLTextEditor::context_paste(void* data)
