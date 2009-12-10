@@ -1474,10 +1474,12 @@ BOOL LLTextEditor::handleDoubleClick(S32 x, S32 y, MASK mask)
 
 BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 {
+
 	setFocus(TRUE);
+
+	setCursorAtLocalPos( x, y, TRUE );
 	S32 wordStart = 0;
 	S32 wordEnd = mCursorPos;
-	setCursorAtLocalPos( x, y, TRUE );
 
 	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
 	if (menu)
@@ -1525,7 +1527,6 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 					tempStruct->wordPositionEnd = wordEnd;
 					tempStruct->wordPositionStart=wordStart;
 					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(tempStruct->word, spell_correct, NULL, tempStruct);
-												   //new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
 					tempStruct->menuItem = sujMenuItem;
 					sujestionMenuItems.push_back(tempStruct);
 					menu->append(sujMenuItem);
@@ -2015,13 +2016,9 @@ BOOL LLTextEditor::canPaste() const
 
 void LLTextEditor::spellReplace(SpellMenuBind* spellData)
 {
-	LLWString paste = utf8str_to_wstring(spellData->word);
-	if (paste.empty())return;
-	LLWString clean_string(paste);
-	LLWStringUtil::replaceTabsWithSpaces(clean_string, SPACES_PER_TAB);
-	remove( spellData->wordPositionStart, spellData->wordPositionEnd - spellData->wordPositionStart, TRUE );
-	insert( spellData->wordPositionStart, clean_string, FALSE);
-	needsReflow();
+	remove( spellData->wordPositionStart, 
+		spellData->wordPositionEnd - spellData->wordPositionStart, TRUE );
+	paste(spellData->word);
 }
 // paste from clipboard
 void LLTextEditor::paste(std::string text)
@@ -3815,6 +3812,9 @@ void LLTextEditor::appendSpellCheckText(const std::string &new_text,
 		}
 		if (part != (S32)LLTextParser::WHOLE) part=(S32)LLTextParser::END;
 		if (end < (S32)text.length()) appendHighlightedText(text,allow_undo, prepend_newline, part, stylep);		
+	}else
+	{
+		appendHighlightedText(new_text,allow_undo, prepend_newline, part, stylep);		
 	}
 }
 

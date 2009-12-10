@@ -56,9 +56,10 @@
 #include "llui.h"
 #include "lluictrlfactory.h"
 #include "llclipboard.h"
+#include "..\newview\lggHunSpell_wrapper.h"
 
 
-#include "llmenugl.h"
+//#include "llmenugl.h"
 //
 // Imported globals
 //
@@ -191,6 +192,7 @@ LLLineEditor::LLLineEditor(const std::string& name, const LLRect& rect,
 	menu->append(new LLMenuItemCallGL("Paste", context_paste, NULL, this));
 	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
 	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
+	menu->appendSeparator();
 	//menu->setBackgroundColor(gColors.getColor("MenuPopupBgColor"));
 	menu->setCanTearOff(FALSE);
 	menu->setVisible(FALSE);
@@ -449,6 +451,17 @@ void LLLineEditor::context_copy(void* data)
 	LLLineEditor* line = (LLLineEditor*)data;
 	if(line)line->copy();
 }
+void LLLineEditor::spell_correct(void* data)
+{
+	SpellMenuBind* tempBind = (SpellMenuBind*)data;
+	LLLineEditor* line = tempBind->origin;
+	if(tempBind && line)
+	{
+		llinfos << ((LLMenuItemCallGL *)(tempBind->menuItem))->getName() << " : " << tempBind->origin->getName() << " : " << tempBind->word << llendl;
+		if(line)line->spellReplace(tempBind);
+
+	}
+}
 void LLLineEditor::context_paste(void* data)
 {
 	LLLineEditor* line = (LLLineEditor*)data;
@@ -557,9 +570,68 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 {
 	setFocus(TRUE);
 
+	setCursorAtLocalPos( x);
+	S32 wordStart = 0;
+	S32 wordEnd = mCursorPos;
+	
+
 	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
 	if (menu)
 	{
+		for(int i = 0;i<(int)sujestionMenuItems.size();i++)
+		{
+			SpellMenuBind * tempBind = sujestionMenuItems[i];
+			if(tempBind)
+			{
+				menu->remove((LLMenuItemCallGL *)tempBind->menuItem);
+				((LLMenuItemCallGL *)tempBind->menuItem)->die();
+				delete tempBind->menuItem;
+				tempBind->menuItem = NULL;
+				delete tempBind;
+			}
+		}
+		sujestionMenuItems.clear();
+
+		const LLWString& text = mText.getWString();
+
+		if( LLTextEditor::isPartOfWord( text[wordEnd] ) )
+		{
+			// Select word the cursor is over
+			while ((wordEnd > 0) && LLTextEditor::isPartOfWord(text[wordEnd-1]))
+			{
+				wordEnd--;
+			}
+			wordStart=wordEnd;
+			//startSelection();
+
+			while ((wordEnd < (S32)text.length()) && LLTextEditor::isPartOfWord( text[wordEnd] ) )
+			{
+				wordEnd++;
+			}		
+			std::string selectedWord(std::string(text.begin(), text.end()).substr(wordStart,wordEnd-wordStart));
+			if(!glggHunSpell->isSpelledRight(selectedWord))
+			{				
+				//misspelled word here, and you have just right clicked on it!
+				std::vector<std::string> sujs = glggHunSpell->getSujestionList(selectedWord);
+				for(int i = 0;i<(int)sujs.size();i++)
+				{
+					SpellMenuBind * tempStruct = new SpellMenuBind;
+					tempStruct->origin = this;
+					tempStruct->word = sujs[i];
+					tempStruct->wordPositionEnd = wordEnd;
+					tempStruct->wordPositionStart=wordStart;
+					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(tempStruct->word, spell_correct, NULL, tempStruct);
+					//new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
+					tempStruct->menuItem = sujMenuItem;
+					sujestionMenuItems.push_back(tempStruct);
+					menu->append(sujMenuItem);
+				}
+
+
+			}
+
+		}
+
 		menu->buildDrawLabels();
 		menu->updateParent(LLMenuGL::sMenuContainer);
 		LLMenuGL::showPopup(this, menu, x, y);
@@ -1010,7 +1082,13 @@ void LLLineEditor::copy()
 		gClipboard.copyFromSubstring( mText.getWString(), left_pos, length );
 	}
 }
+void LLLineEditor::spellReplace(SpellMenuBind* spellData)
+{
+	mText.erase(spellData->wordPositionStart,
+		spellData->wordPositionEnd - spellData->wordPositionStart);
 
+	paste(spellData->word);
+}
 BOOL LLLineEditor::canPaste() const
 {
 	return !mReadOnly && gClipboard.canPasteString(); 
@@ -1018,11 +1096,16 @@ BOOL LLLineEditor::canPaste() const
 
 
 // paste from clipboard
-void LLLineEditor::paste()
+void LLLineEditor::paste(std::string text)
 {
 	if (canPaste())
 	{
-		LLWString paste = gClipboard.getPasteWString();
+
+		LLUUID source_id;
+		LLWString paste;
+		if(text == "")paste = gClipboard.getPasteWString(&source_id);
+		else paste = utf8str_to_wstring(text);
+		
 		if (!paste.empty())
 		{
 			// Prepare for possible rollback

@@ -51,6 +51,7 @@
 #include "llviewborder.h"
 
 #include "llpreeditor.h"
+//#include "llmenugl.h"
 
 class LLFontGL;
 class LLLineEditorRollback;
@@ -95,6 +96,17 @@ public:
 	/*virtual*/ BOOL	handleUnicodeCharHere(llwchar uni_char);
 	/*virtual*/ void	onMouseCaptureLost();
 
+	struct SpellMenuBind
+	{
+		LLLineEditor* origin;
+		void * menuItem;
+		std::string word;
+		S32 wordPositionStart;
+		S32 wordPositionEnd;
+	};
+
+
+	virtual void spellReplace(SpellMenuBind* spellData);
 	// LLEditMenuHandler overrides
 	virtual void	cut();
 	virtual BOOL	canCut() const;
@@ -102,7 +114,7 @@ public:
 	virtual void	copy();
 	virtual BOOL	canCopy() const;
 
-	virtual void	paste();
+	virtual void	paste(std::string text="");
 	virtual BOOL	canPaste() const;
 	
 	virtual void	doDelete();
@@ -116,6 +128,7 @@ public:
 
 	static void context_cut(void* data);
 	static void context_copy(void* data);
+	static void spell_correct(void* data);
 	static void context_paste(void* data);
 	static void context_delete(void* data);
 	static void context_selectall(void* data);
@@ -332,6 +345,9 @@ private:
 
 	BOOL        mReplaceNewlinesWithSpaces; // if false, will replace pasted newlines with paragraph symbol.
 
+	//to keep track of what we have to remove before showing menu
+	std::vector<SpellMenuBind* > sujestionMenuItems;
+
 	// private helper class
 	class LLLineEditorRollback
 	{
@@ -367,6 +383,8 @@ private:
 		BOOL	mIsSelecting;
 		S32		mSelectionStart;
 		S32		mSelectionEnd;
+
+		
 	}; // end class LLLineEditorRollback
 
 }; // end class LLLineEditor
