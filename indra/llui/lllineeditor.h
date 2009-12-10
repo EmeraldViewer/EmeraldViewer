@@ -114,7 +114,7 @@ public:
 	virtual void	copy();
 	virtual BOOL	canCopy() const;
 
-	virtual void	paste(std::string text="");
+	virtual void	paste();
 	virtual BOOL	canPaste() const;
 	
 	virtual void	doDelete();
@@ -347,7 +347,7 @@ private:
 	BOOL        mReplaceNewlinesWithSpaces; // if false, will replace pasted newlines with paragraph symbol.
 
 	//to keep track of what we have to remove before showing menu
-	std::vector<SpellMenuBind* > sujestionMenuItems;
+	std::vector<SpellMenuBind* > suggestionMenuItems;
 
 	// private helper class
 	class LLLineEditorRollback

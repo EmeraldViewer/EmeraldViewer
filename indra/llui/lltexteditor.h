@@ -128,7 +128,7 @@ public:
 	virtual BOOL	canCut() const;
 	virtual void	copy();
 	virtual BOOL	canCopy() const;
-	virtual void	paste(std::string text = "");
+	virtual void	paste();
 	virtual void	spellReplace(SpellMenuBind* spellData);
 	virtual BOOL	canPaste() const;
 	virtual void	doDelete();
@@ -534,7 +534,7 @@ private:
 	typedef std::vector<line_info> line_list_t;
 
 	//to keep track of what we have to remove before showing menu
-	std::vector<SpellMenuBind* > sujestionMenuItems;
+	std::vector<SpellMenuBind* > suggestionMenuItems;
 
 	line_list_t mLineStartList;
 	BOOL			mReflowNeeded;

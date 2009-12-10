@@ -1484,19 +1484,19 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
 	if (menu)
 	{
-		for(int i = 0;i<(int)sujestionMenuItems.size();i++)
+		for(int i = 0;i<(int)suggestionMenuItems.size();i++)
 		{
-			SpellMenuBind * tempBind = sujestionMenuItems[i];
+			SpellMenuBind * tempBind = suggestionMenuItems[i];
 			if(tempBind)
 			{
 				menu->remove(tempBind->menuItem);
 				tempBind->menuItem->die();
-				delete tempBind->menuItem;
-				tempBind->menuItem = NULL;
+				//delete tempBind->menuItem;
+				//tempBind->menuItem = NULL;
 				delete tempBind;
 			}
 		}
-		sujestionMenuItems.clear();
+		suggestionMenuItems.clear();
 
 		const LLWString &text = mWText;
 
@@ -1518,20 +1518,20 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 			if(!glggHunSpell->isSpelledRight(selectedWord))
 			{				
 				//misspelled word here, and you have just right clicked on it!
-				std::vector<std::string> sujs = glggHunSpell->getSujestionList(selectedWord);
-				for(int i = 0;i<(int)sujs.size();i++)
+				std::vector<std::string> suggs = glggHunSpell->getSuggestionList(selectedWord);
+				for(int i = 0;i<(int)suggs.size();i++)
 				{
 					SpellMenuBind * tempStruct = new SpellMenuBind;
 					tempStruct->origin = this;
-					tempStruct->word = sujs[i];
+					tempStruct->word = suggs[i];
 					tempStruct->wordPositionEnd = wordEnd;
 					tempStruct->wordPositionStart=wordStart;
 					tempStruct->wordY=y;
-					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(
+					LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
 						tempStruct->word, spell_correct, NULL, tempStruct);
-					tempStruct->menuItem = sujMenuItem;
-					sujestionMenuItems.push_back(tempStruct);
-					menu->append(sujMenuItem);
+					tempStruct->menuItem = suggMenuItem;
+					suggestionMenuItems.push_back(tempStruct);
+					menu->append(suggMenuItem);
 				}
 
 
@@ -2026,16 +2026,14 @@ void LLTextEditor::spellReplace(SpellMenuBind* spellData)
 	needsReflow();
 }
 // paste from clipboard
-void LLTextEditor::paste(std::string text)
+void LLTextEditor::paste()
 {
 	if (!canPaste())
 	{
 		return;
 	}
 	LLUUID source_id;
-	LLWString paste;
-	if(text == "")paste = gClipboard.getPasteWString(&source_id);
-	else paste = utf8str_to_wstring(text);
+	LLWString paste = gClipboard.getPasteWString(&source_id);
 
 	if (paste.empty())
 	{

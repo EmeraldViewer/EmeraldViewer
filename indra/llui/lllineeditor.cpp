@@ -56,7 +56,7 @@
 #include "llui.h"
 #include "lluictrlfactory.h"
 #include "llclipboard.h"
-#include "../newview/lggHunSpell_wrapper.h"
+#include "..\newview\lggHunSpell_wrapper.h"
 
 
 //#include "llmenugl.h"
@@ -581,19 +581,19 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 	{
 		if(menu->isOpen())
 			menu->setVisible(FALSE);
-		for(int i = 0;i<(int)sujestionMenuItems.size();i++)
+		for(int i = 0;i<(int)suggestionMenuItems.size();i++)
 		{
-			SpellMenuBind * tempBind = sujestionMenuItems[i];
+			SpellMenuBind * tempBind = suggestionMenuItems[i];
 			if(tempBind)
 			{
 				menu->remove((LLMenuItemCallGL *)tempBind->menuItem);
 				((LLMenuItemCallGL *)tempBind->menuItem)->die();
-				delete (LLMenuItemCallGL *)tempBind->menuItem;
-				tempBind->menuItem = NULL;
+				//delete tempBind->menuItem;
+				//tempBind->menuItem = NULL;
 				delete tempBind;
 			}
 		}
-		sujestionMenuItems.clear();
+		suggestionMenuItems.clear();
 
 		const LLWString& text = mText.getWString();
 
@@ -616,20 +616,20 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 			if(!glggHunSpell->isSpelledRight(selectedWord))
 			{	
 				//misspelled word here, and you have just right clicked on it!
-				std::vector<std::string> sujs = glggHunSpell->getSujestionList(selectedWord);
-				for(int i = 0;i<(int)sujs.size();i++)
+				std::vector<std::string> suggs = glggHunSpell->getSuggestionList(selectedWord);
+				for(int i = 0;i<(int)suggs.size();i++)
 				{
 					SpellMenuBind * tempStruct = new SpellMenuBind;
 					tempStruct->origin = this;
-					tempStruct->word = sujs[i];
+					tempStruct->word = suggs[i];
 					tempStruct->wordPositionEnd = wordEnd;
 					tempStruct->wordPositionStart=wordStart;
-					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(
+					LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
 						tempStruct->word, spell_correct, NULL, tempStruct);
 					//new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
-					tempStruct->menuItem = sujMenuItem;
-					sujestionMenuItems.push_back(tempStruct);
-					menu->append(sujMenuItem);
+					tempStruct->menuItem = suggMenuItem;
+					suggestionMenuItems.push_back(tempStruct);
+					menu->append(suggMenuItem);
 				}
 
 
@@ -1107,15 +1107,11 @@ BOOL LLLineEditor::canPaste() const
 
 
 // paste from clipboard
-void LLLineEditor::paste(std::string text)
+void LLLineEditor::paste()
 {
 	if (canPaste())
 	{
-
-		LLUUID source_id;
-		LLWString paste;
-		if(text == "")paste = gClipboard.getPasteWString(&source_id);
-		else paste = utf8str_to_wstring(text);
+		LLWString paste = gClipboard.getPasteWString();
 		
 		if (!paste.empty())
 		{

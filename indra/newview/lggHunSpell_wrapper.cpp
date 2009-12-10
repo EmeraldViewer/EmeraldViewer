@@ -60,20 +60,20 @@ BOOL lggHunSpell_Wrapper::isSpelledRight(std::string wordToCheck)
 	if(wordToCheck.length()<3)return TRUE;
 	return myHunspell->spell(wordToCheck.c_str());
 }
-std::vector<std::string> lggHunSpell_Wrapper::getSujestionList(std::string badWord)
+std::vector<std::string> lggHunSpell_Wrapper::getSuggestionList(std::string badWord)
 {
 	std::vector<std::string> toReturn;
 	if(!myHunspell)return toReturn;
-	char ** sujestionList;	
-	int numberOfSujestions = myHunspell->suggest(&sujestionList, badWord.c_str());	
-	if(numberOfSujestions <= 0)
+	char ** suggestionList;	
+	int numberOfSuggestions = myHunspell->suggest(&suggestionList, badWord.c_str());	
+	if(numberOfSuggestions <= 0)
 		return toReturn;	
-	for (int i = 0; i < numberOfSujestions; i++) 
+	for (int i = 0; i < numberOfSuggestions; i++) 
 	{
-		std::string tempSuj(sujestionList[i]);
-		toReturn.push_back(tempSuj);
+		std::string tempSugg(suggestionList[i]);
+		toReturn.push_back(tempSugg);
 	}
-	myHunspell->free_list(&sujestionList,numberOfSujestions);	
+	myHunspell->free_list(&suggestionList,numberOfSuggestions);	
 	return toReturn;
 }
 void lggHunSpell_Wrapper::debugTest(std::string testWord)
@@ -85,15 +85,15 @@ void lggHunSpell_Wrapper::debugTest(std::string testWord)
 		llinfos << testWord.c_str() << " is spelled correctly" << llendl;
 	}else
 	{
-		llinfos << testWord.c_str() << " is not spelled correctly, getting sujestions" << llendl;
-		std::vector<std::string> sujList;
-		sujList.clear();
-		sujList = getSujestionList(testWord);
-		llinfos << "Got sujestions.. " << llendl;
+		llinfos << testWord.c_str() << " is not spelled correctly, getting suggestions" << llendl;
+		std::vector<std::string> suggList;
+		suggList.clear();
+		suggList = getSuggestionList(testWord);
+		llinfos << "Got suggestions.. " << llendl;
 
-		for(int i = 0; i<(int)sujList.size();i++)
+		for(int i = 0; i<(int)suggList.size();i++)
 		{
-			llinfos << "Sujestion for " << testWord.c_str() << ":" << sujList[i].c_str() << llendl;
+			llinfos << "Suggestion for " << testWord.c_str() << ":" << suggList[i].c_str() << llendl;
 		}
 
 	}

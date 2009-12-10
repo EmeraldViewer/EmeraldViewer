@@ -18,11 +18,8 @@
 #ifndef ASPELL_WRAPPER
 #define ASPELL_WRAPPER 1
 
-#if LL_WINDOWS
+
 #include "hunspell/hunspelldll.h"
-#else
-#include "hunspell.hxx"
-#endif
 
 class lggHunSpell_Wrapper
 {
@@ -34,7 +31,7 @@ public:
 	std::vector<std::string> getDicts();
 	void setNewDictionary(std::string newDict);
 	BOOL isSpelledRight(std::string wordToCheck);
-	std::vector<std::string> getSujestionList(std::string badWord);
+	std::vector<std::string> getSuggestionList(std::string badWord);
 	S32 findNextError(std::string haystack, int startAt);
 
 private:
