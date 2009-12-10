@@ -118,8 +118,7 @@ public:
 	virtual BOOL	canCut() const;
 	virtual void	copy();
 	virtual BOOL	canCopy() const;
-	virtual void	paste();
-	virtual void	paste(std::string whatToPaste);
+	virtual void	paste(std::string text = "");
 	virtual BOOL	canPaste() const;
 	virtual void	doDelete();
 	virtual BOOL	canDoDelete() const;

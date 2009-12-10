@@ -400,12 +400,11 @@ void LLTextEditor::context_copy(void* data)
 void LLTextEditor::spell_correct(void* data)
 {
 	SpellMenuBind* tempBind = (SpellMenuBind*)data;
-	if(tempBind)
+	LLTextEditor* line = tempBind->origin;
+	if(tempBind && line)
 	{
-		
-			LLTextEditor* line = tempBind->origin;
-			if(line)
-				line->paste(tempBind->word);
+		llinfos << tempBind->menuItem->getName() << " : " << tempBind->origin->getName() << " : " << tempBind->word << llendl;
+		if(line)line->paste(tempBind->word);
 		
 	}
 }
@@ -1486,9 +1485,14 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 		for(int i = 0;i<(int)sujestionMenuItems.size();i++)
 		{
 			SpellMenuBind * tempBind = sujestionMenuItems[i];
-			menu->remove(tempBind->menuItem);
-			delete tempBind->menuItem;
-			delete tempBind;
+			if(tempBind)
+			{
+				menu->remove(tempBind->menuItem);
+				tempBind->menuItem->die();
+				delete tempBind->menuItem;
+				tempBind->menuItem = NULL;
+				delete tempBind;
+			}
 		}
 		sujestionMenuItems.clear();
 
@@ -1518,12 +1522,12 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 				std::vector<std::string> sujs = glggHunSpell->getSujestionList(selectedWord);
 				for(int i = 0;i<(int)sujs.size();i++)
 				{
-
-					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(sujs[i], spell_correct, NULL, this);
 					SpellMenuBind * tempStruct = new SpellMenuBind;
-					tempStruct->menuItem = sujMenuItem;
 					tempStruct->origin = this;
 					tempStruct->word = sujs[i];
+					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(tempStruct->word, spell_correct, NULL, tempStruct);
+												   //new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
+					tempStruct->menuItem = sujMenuItem;
 					sujestionMenuItems.push_back(tempStruct);
 					menu->append(sujMenuItem);
 				}
@@ -2012,14 +2016,17 @@ BOOL LLTextEditor::canPaste() const
 
 
 // paste from clipboard
-void LLTextEditor::paste()
+void LLTextEditor::paste(std::string text)
 {
 	if (!canPaste())
 	{
 		return;
 	}
 	LLUUID source_id;
-	LLWString paste = gClipboard.getPasteWString(&source_id);
+	LLWString paste;
+	if(text == "")paste = gClipboard.getPasteWString(&source_id);
+	else paste = utf8str_to_wstring(text);
+
 	if (paste.empty())
 	{
 		return;
@@ -2058,29 +2065,6 @@ void LLTextEditor::paste()
 	needsReflow();
 }
 
-
-void LLTextEditor::paste(std::string whatToPaste)
-{
-	//if(!canPaste())return;
-	llinfos << "Trying to replace spelling error" << llendl;
-	if(hasSelection())deleteSelection(FALSE);
-
-	llinfos << "deleted existing error" << llendl;
-	LLWString whatLToPaste(whatToPaste.length(), L' '); // Make room for characters
-
-	llinfos << "made l string" << llendl;
-	std::copy(whatToPaste.begin(), whatToPaste.end(), whatLToPaste.begin());
-
-	llinfos << "filled l string" << llendl;
-	setCursorPos(mCursorPos + insert(mCursorPos, whatLToPaste, FALSE));
-
-	llinfos << "inserted lstring" << llendl;
-	deselect();
-
-	llinfos << "deselect" << llendl;
-	needsReflow();
-	 
-}
 BOOL LLTextEditor::handleControlKey(const KEY key, const MASK mask)	
 {
 	BOOL handled = FALSE;

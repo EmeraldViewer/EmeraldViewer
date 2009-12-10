@@ -63,6 +63,8 @@
 
 #include "llviewergenericmessage.h"
 
+#include "llviewerwindow.h"
+
 
 
 #define vCatType (LLAssetType::EType)128
@@ -105,6 +107,37 @@ JCLSLBridge::~JCLSLBridge()
 {
 }
 
+void JCLSLBridge::send_chat_to_object(std::string& chat, S32 channel, LLUUID target)
+{
+	if(target.isNull())target = gAgent.getID();
+	LLMessageSystem* msg = gMessageSystem;
+	msg->newMessage(_PREHASH_ScriptDialogReply);
+	msg->nextBlock(_PREHASH_AgentData);
+	msg->addUUID(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUID(_PREHASH_SessionID, gAgent.getSessionID());
+	msg->nextBlock(_PREHASH_Data);
+	msg->addUUID(_PREHASH_ObjectID, target);
+	msg->addS32(_PREHASH_ChatChannel, channel);
+	msg->addS32(_PREHASH_ButtonIndex, 0);
+	msg->addString(_PREHASH_ButtonLabel, chat);
+	gAgent.sendReliableMessage();
+}
+struct n2kdat
+{
+	LLUUID source;
+	S32 channel;
+	std::string reply;
+};
+void callbackname2key(const LLUUID& id, const std::string& first, const std::string& last, BOOL is_group, void* data)
+{
+	n2kdat* dat = (n2kdat*)data; 
+	std::string send = dat->reply + first+" "+last;
+	JCLSLBridge::send_chat_to_object(send, dat->channel, dat->source);
+	delete dat;
+	//if(id == subjectA.owner_id)sInstance->childSetValue("owner_a_name", first + " " + last);
+	//else if(id == subjectB.owner_id)sInstance->childSetValue("owner_b_name", first + " " + last);
+}
+
 bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID source_id, LLUUID owner_id)
 {
 	if(message == "someshit")
@@ -128,27 +161,52 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				callback_fire(call, arguments);
 				return true;
 			}
-		}else if(clip == "rotat")
+		}else if(clip == "#@#@!")
 		{
-			LLViewerObject* obj = gObjectList.findObject(source_id);
-			if(obj)
+			std::string rest = message.substr(5);
+			LLSD args = JCLSLBridge::parse_string_to_list(rest, '|');
+			std::string cmd = args[0].asString();
+			//std::string uniq = args[1].asString();
+			if(cmd == "getsex")
 			{
-				if(obj->isAttachment())
+				std::string uniq = args[1].asString();
+				LLUUID target = LLUUID(args[2].asString());
+				S32	channel = atoi(args[3].asString().c_str());
+				LLViewerObject* obj = gObjectList.findObject(source_id);
+				if(obj && obj->isAvatar())
 				{
-					if(owner_id == gAgent.getID())
-					{
-						std::string rot = message.substr(5);
-						LLQuaternion rotation;
-						if(LLQuaternion::parseQuat(rot,&rotation))
-						{
-							//cmdline_printchat("script rotating!");
-							gAgent.getAvatarObject()->setRotation(rotation,TRUE);
-						}else
-						{
-							//cmdline_printchat("script rotate failed");
-						}
-					}
-				}
+					LLVOAvatar* av = (LLVOAvatar*)obj;
+					send_chat_to_object(llformat("getsexreply|%s|%d",uniq.c_str(),av->getVisualParamWeight("male")), channel, source_id);
+				}else send_chat_to_object(llformat("getsexreply|%s|-1",uniq.c_str()), channel, source_id);
+			}else if(cmd == "preloadanim")
+			{
+				//logically, this is no worse than lltriggersoundlimited used on you, 
+				//and its enherently restricted to owner due to ownersay
+				//therefore, I don't think a permission is necessitated
+				LLUUID anim = LLUUID(args[1].asString());
+				gAssetStorage->getAssetData(anim,
+						LLAssetType::AT_ANIMATION,
+						(LLGetAssetCallback)NULL,
+						NULL,
+						TRUE);
+				//maybe add completion callback later?
+			}else if(cmd == "getwindowsize")
+			{
+				std::string uniq = args[1].asString();
+				S32	channel = atoi(args[2].asString().c_str());
+				const U32 height = gViewerWindow->getWindowDisplayHeight();
+				const U32 width = gViewerWindow->getWindowDisplayWidth();
+				send_chat_to_object(llformat("getwindowsizereply|%s|%d|%d",uniq.c_str(),height,width), channel, source_id);
+			}else if(cmd == "name2key")
+			{
+				//same rational as preload impactwise
+				std::string uniq = args[1].asString();
+				n2kdat* data = new n2kdat;
+				data->channel = atoi(args[2].asString().c_str());
+				bool group = (bool)atoi(args[3].asString().c_str());
+				data->reply = llformat("name2keyreply|%s|",uniq.c_str());
+				data->source = source_id;
+				gCacheName->get(LLUUID(args[3].asString()), group, callbackname2key, data);
 			}
 		}else if(message.substr(0,3) == "l2c")
 		{
@@ -194,12 +252,9 @@ std::string md5hash(const std::string &text, U32 thing)
 
 S32 JCLSLBridge::bridge_channel(LLUUID user)
 {
-	if(l2c == 0 || l2c_inuse == false)
-	{
-		std::string tmps = md5hash(user.asString(),1);
-		int i = (int)strtol((tmps.substr(0, 7) + "\n").c_str(),(char **)NULL,16);
-		return (S32)i;
-	}else return l2c;
+	std::string tmps = md5hash(user.asString(),1);
+	int i = (int)strtol((tmps.substr(0, 7) + "\n").c_str(),(char **)NULL,16);
+	return (S32)i;
 }
 
 class ObjectBNameMatches : public LLInventoryCollectFunctor
