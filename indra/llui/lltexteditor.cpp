@@ -359,6 +359,8 @@ LLTextEditor::LLTextEditor(
 	menu->append(new LLMenuItemCallGL("Paste", context_paste, NULL, this));
 	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
 	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
+	menu->appendSeparator();
+
 	//menu->setBackgroundColor(gColors.getColor("MenuPopupBgColor"));
 	menu->setCanTearOff(FALSE);
 	menu->setVisible(FALSE);
@@ -397,8 +399,16 @@ void LLTextEditor::context_copy(void* data)
 }
 void LLTextEditor::spell_correct(void* data)
 {
-	//LLTextEditor* line = (LLTextEditor*)data;
-	//if(line)line->paste(new word);
+	SpellMenuBind* tempBind = (SpellMenuBind*)data;
+	if(tempBind)
+	{
+		if((tempBind->word)&&(tempBind->origin))
+		{
+			LLTextEditor* line = tempBind->origin;
+			if(line)
+				line->paste(tempBind->word);
+		}
+	}
 }
 void LLTextEditor::context_paste(void* data)
 {
@@ -1474,6 +1484,14 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
 	if (menu)
 	{
+		for(int i = 0;i<(int)sujestionMenuItems.size();i++)
+		{
+			SpellMenuBind * tempBind = sujestionMenuItems[i];
+			menu->remove(tempBind->menuItem);
+			delete tempBind->menuItem;
+			delete tempBind;
+		}
+		sujestionMenuItems.clear();
 
 		const LLWString &text = mWText;
 
@@ -1485,21 +1503,30 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 				mCursorPos--;
 			}
 			wordStart=mCursorPos;
+			startSelection();
 
 			while ((mCursorPos < (S32)text.length()) && isPartOfWord( text[mCursorPos] ) )
 			{
 				mCursorPos++;
 			}		
 			wordEnd = mCursorPos;
+			mSelectionEnd=mCursorPos;
 			std::string selectedWord(std::string(text.begin(), text.end()).substr(wordStart,wordEnd-wordStart));
 			if(!glggHunSpell->isSpelledRight(selectedWord))
 			{
-				menu->appendSeparator();
+				
 				//misspelled word here, and you done just right clicked on it!
 				std::vector<std::string> sujs = glggHunSpell->getSujestionList(selectedWord);
 				for(int i = 0;i<(int)sujs.size();i++)
 				{
-					menu->append(new LLMenuItemCallGL(sujs[i], spell_correct, NULL, this));
+
+					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(sujs[i], spell_correct, NULL, this);
+					SpellMenuBind * tempStruct = new SpellMenuBind;
+					tempStruct->menuItem = sujMenuItem;
+					tempStruct->origin = this;
+					tempStruct->word = sujs[i];
+					sujestionMenuItems.push_back(tempStruct);
+					menu->append(sujMenuItem);
 				}
 
 
@@ -2014,7 +2041,7 @@ void LLTextEditor::paste()
 		for( S32 i = 0; i < len; i++ )
 		{
 			llwchar wc = clean_string[i];
-			if( (wc < LLFont::FIRST_CHAR) && (wc != LF) )
+			if( (wc <  LLFont::FIRST_CHAR) && (wc != LF) )
 			{
 				clean_string[i] = LL_UNKNOWN_CHAR;
 			}
@@ -2033,6 +2060,28 @@ void LLTextEditor::paste()
 }
 
 
+void LLTextEditor::paste(std::string whatToPaste)
+{
+	//if(!canPaste())return;
+	llinfos << "Trying to replace spelling error" << llendl;
+	if(hasSelection())deleteSelection(FALSE);
+
+	llinfos << "deleted existing error" << llendl;
+	LLWString whatLToPaste(whatToPaste.length(), L' '); // Make room for characters
+
+	llinfos << "made l string" << llendl;
+	std::copy(whatToPaste.begin(), whatToPaste.end(), whatLToPaste.begin());
+
+	llinfos << "filled l string" << llendl;
+	setCursorPos(mCursorPos + insert(mCursorPos, whatLToPaste, FALSE));
+
+	llinfos << "inserted lstring" << llendl;
+	deselect();
+
+	llinfos << "deselect" << llendl;
+	needsReflow();
+	 
+}
 BOOL LLTextEditor::handleControlKey(const KEY key, const MASK mask)	
 {
 	BOOL handled = FALSE;

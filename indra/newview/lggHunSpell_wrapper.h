@@ -42,5 +42,4 @@ private:
 
 extern lggHunSpell_Wrapper *glggHunSpell; // the singleton hunspell wrapper
 
-
 #endif 

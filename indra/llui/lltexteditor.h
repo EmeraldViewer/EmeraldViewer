@@ -45,6 +45,7 @@
 #include "lldarray.h"
 
 #include "llpreeditor.h"
+#include "llmenugl.h"
 
 class LLFontGL;
 class LLScrollbar;
@@ -118,6 +119,7 @@ public:
 	virtual void	copy();
 	virtual BOOL	canCopy() const;
 	virtual void	paste();
+	virtual void	paste(std::string whatToPaste);
 	virtual BOOL	canPaste() const;
 	virtual void	doDelete();
 	virtual BOOL	canDoDelete() const;
@@ -520,6 +522,17 @@ private:
 		}
 	};
 	typedef std::vector<line_info> line_list_t;
+
+	struct SpellMenuBind
+	{
+		LLTextEditor* origin;
+		LLMenuItemCallGL * menuItem;
+		std::string word;
+	};
+
+	//to keep track of what we have to remove before showing menu
+	std::vector<SpellMenuBind* > sujestionMenuItems;
+
 	line_list_t mLineStartList;
 	BOOL			mReflowNeeded;
 	BOOL			mScrollNeeded;
@@ -600,6 +613,4 @@ private:
 	LLKeywordToken* mToken;
 	BOOL		mIsDefault;
 };
-
-
 #endif  // LL_TEXTEDITOR_
