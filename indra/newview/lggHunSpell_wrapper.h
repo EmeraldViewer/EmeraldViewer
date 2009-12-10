@@ -18,8 +18,11 @@
 #ifndef ASPELL_WRAPPER
 #define ASPELL_WRAPPER 1
 
-
+#if LL_WINDOWS
 #include "hunspell/hunspelldll.h"
+#else
+#include "hunspell.hxx"
+#endif
 
 class lggHunSpell_Wrapper
 {
