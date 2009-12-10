@@ -404,7 +404,7 @@ void LLTextEditor::spell_correct(void* data)
 	if(tempBind && line)
 	{
 		llinfos << tempBind->menuItem->getName() << " : " << tempBind->origin->getName() << " : " << tempBind->word << llendl;
-		if(line)line->paste(tempBind->word);
+		if(line)line->spellReplace(tempBind);
 		
 	}
 }
@@ -1476,7 +1476,7 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 {
 	setFocus(TRUE);
 	S32 wordStart = 0;
-	S32 wordEnd = 0;
+	S32 wordEnd = mCursorPos;
 	setCursorAtLocalPos( x, y, TRUE );
 
 	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
@@ -1498,33 +1498,32 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 
 		const LLWString &text = mWText;
 
-		if( isPartOfWord( text[mCursorPos] ) )
+		if( isPartOfWord( text[wordEnd] ) )
 		{
 			// Select word the cursor is over
-			while ((mCursorPos > 0) && isPartOfWord(text[mCursorPos-1]))
+			while ((wordEnd > 0) && isPartOfWord(text[wordEnd-1]))
 			{
-				mCursorPos--;
+				wordEnd--;
 			}
-			wordStart=mCursorPos;
-			startSelection();
+			wordStart=wordEnd;
+			//startSelection();
 
-			while ((mCursorPos < (S32)text.length()) && isPartOfWord( text[mCursorPos] ) )
+			while ((wordEnd < (S32)text.length()) && isPartOfWord( text[wordEnd] ) )
 			{
-				mCursorPos++;
+				wordEnd++;
 			}		
-			wordEnd = mCursorPos;
-			mSelectionEnd=mCursorPos;
 			std::string selectedWord(std::string(text.begin(), text.end()).substr(wordStart,wordEnd-wordStart));
 			if(!glggHunSpell->isSpelledRight(selectedWord))
-			{
-				
-				//misspelled word here, and you done just right clicked on it!
+			{				
+				//misspelled word here, and you have just right clicked on it!
 				std::vector<std::string> sujs = glggHunSpell->getSujestionList(selectedWord);
 				for(int i = 0;i<(int)sujs.size();i++)
 				{
 					SpellMenuBind * tempStruct = new SpellMenuBind;
 					tempStruct->origin = this;
 					tempStruct->word = sujs[i];
+					tempStruct->wordPositionEnd = wordEnd;
+					tempStruct->wordPositionStart=wordStart;
 					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(tempStruct->word, spell_correct, NULL, tempStruct);
 												   //new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
 					tempStruct->menuItem = sujMenuItem;
@@ -2014,7 +2013,16 @@ BOOL LLTextEditor::canPaste() const
 	return !mReadOnly && gClipboard.canPasteString();
 }
 
-
+void LLTextEditor::spellReplace(SpellMenuBind* spellData)
+{
+	LLWString paste = utf8str_to_wstring(spellData->word);
+	if (paste.empty())return;
+	LLWString clean_string(paste);
+	LLWStringUtil::replaceTabsWithSpaces(clean_string, SPACES_PER_TAB);
+	remove( spellData->wordPositionStart, spellData->wordPositionEnd - spellData->wordPositionStart, TRUE );
+	insert( spellData->wordPositionStart, clean_string, FALSE);
+	needsReflow();
+}
 // paste from clipboard
 void LLTextEditor::paste(std::string text)
 {
@@ -3760,7 +3768,7 @@ void LLTextEditor::appendSpellCheckText(const std::string &new_text,
 										S32  part,
 										LLStyleSP stylep)
 {
-	if(true)//mSpellCheck)
+	if(false)//mSpellCheck)
 	{
 
 		S32 start=0,end=0;

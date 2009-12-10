@@ -109,6 +109,15 @@ public:
 	virtual BOOL	acceptsTextInput() const;
 	virtual BOOL	isDirty() const { return( mLastCmd != NULL || (mPristineCmd && (mPristineCmd != mLastCmd)) ); }
 
+	struct SpellMenuBind
+	{
+		LLTextEditor* origin;
+		LLMenuItemCallGL * menuItem;
+		std::string word;
+		S32 wordPositionStart;
+		S32 wordPositionEnd;
+	};
+
 	// LLEditMenuHandler interface
 	virtual void	undo();
 	virtual BOOL	canUndo() const;
@@ -119,6 +128,7 @@ public:
 	virtual void	copy();
 	virtual BOOL	canCopy() const;
 	virtual void	paste(std::string text = "");
+	virtual void	spellReplace(SpellMenuBind* spellData);
 	virtual BOOL	canPaste() const;
 	virtual void	doDelete();
 	virtual BOOL	canDoDelete() const;
@@ -521,13 +531,6 @@ private:
 		}
 	};
 	typedef std::vector<line_info> line_list_t;
-
-	struct SpellMenuBind
-	{
-		LLTextEditor* origin;
-		LLMenuItemCallGL * menuItem;
-		std::string word;
-	};
 
 	//to keep track of what we have to remove before showing menu
 	std::vector<SpellMenuBind* > sujestionMenuItems;
