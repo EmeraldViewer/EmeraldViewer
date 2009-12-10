@@ -62,7 +62,7 @@
 
 #include "llmenugl.h"
 #include <boost/regex.hpp>
-#include "..\newview\lggHunSpell_wrapper.h"
+#include "../newview/lggHunSpell_wrapper.h"
 
 // 
 // Globals

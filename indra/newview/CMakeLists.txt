@@ -72,6 +72,7 @@ include_directories(
     ${LLXML_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
+		${HUNSPELL_INCLUDE_DIR}
     ${EMERALD_INCLUDE_DIRS}
     )
 
@@ -1420,6 +1421,7 @@ else (WINDOWS)
 		${EMERALD_LIBRARIES}
 		${LUA_LIBRARY}
 		${OTR_LIBRARY}
+		${HUNSPELL_LIBRARIES}
 		)
 endif (WINDOWS)
 

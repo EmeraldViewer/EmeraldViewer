@@ -16,7 +16,7 @@
    02111-1307, USA.  */
 
 #include "llviewerprecompiledheaders.h"
-#include "lggHunSpell_Wrapper.h"
+#include "lggHunSpell_wrapper.h"
 
 //#include "hunspelldll.h"
 //#include "hunspell\hunspelldll.h"
@@ -110,7 +110,7 @@ std::vector <std::string> lggHunSpell_Wrapper::getDicts()
 {
 
 	std::vector<std::string> toReturn;
-	/*
+#if 0
 	std::vector<std::string> toReturn;
 	AspellDictInfoList * dlist;
 	AspellDictInfoEnumeration * dels;
@@ -121,7 +121,7 @@ std::vector <std::string> lggHunSpell_Wrapper::getDicts()
 	spell_config = new_aspell_config();
 
 	
-	/* the returned pointer should _not_ need to be deleted 
+	// the returned pointer should _not_ need to be deleted 
 	dlist = get_aspell_dict_info_list(spell_config);
 
 	delete_aspell_config(spell_config);
@@ -138,6 +138,6 @@ std::vector <std::string> lggHunSpell_Wrapper::getDicts()
 	}
 
 	delete_aspell_dict_info_enumeration(dels);
-	*/
+#endif
 	return toReturn;
 }

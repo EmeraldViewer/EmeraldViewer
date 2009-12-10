@@ -176,8 +176,12 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				if(obj && obj->isAvatar())
 				{
 					LLVOAvatar* av = (LLVOAvatar*)obj;
-					send_chat_to_object(llformat("getsexreply|%s|%d",uniq.c_str(),av->getVisualParamWeight("male")), channel, source_id);
-				}else send_chat_to_object(llformat("getsexreply|%s|-1",uniq.c_str()), channel, source_id);
+					std::string msg = llformat("getsexreply|%s|%d",uniq.c_str(),av->getVisualParamWeight("male"));
+					send_chat_to_object(msg, channel, source_id);
+				} else {
+					std::string msg = llformat("getsexreply|%s|-1",uniq.c_str());
+					send_chat_to_object(msg, channel, source_id);
+				}
 			}else if(cmd == "preloadanim")
 			{
 				//logically, this is no worse than lltriggersoundlimited used on you, 
@@ -196,7 +200,8 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				S32	channel = atoi(args[2].asString().c_str());
 				const U32 height = gViewerWindow->getWindowDisplayHeight();
 				const U32 width = gViewerWindow->getWindowDisplayWidth();
-				send_chat_to_object(llformat("getwindowsizereply|%s|%d|%d",uniq.c_str(),height,width), channel, source_id);
+				std::string msg = llformat("getwindowsizereply|%s|%d|%d",uniq.c_str(),height,width);
+				send_chat_to_object(msg, channel, source_id);
 			}else if(cmd == "name2key")
 			{
 				//same rational as preload impactwise

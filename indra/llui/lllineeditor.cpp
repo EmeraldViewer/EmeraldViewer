@@ -56,7 +56,7 @@
 #include "llui.h"
 #include "lluictrlfactory.h"
 #include "llclipboard.h"
-#include "..\newview\lggHunSpell_wrapper.h"
+#include "../newview/lggHunSpell_wrapper.h"
 
 
 //#include "llmenugl.h"
@@ -588,7 +588,7 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 			{
 				menu->remove((LLMenuItemCallGL *)tempBind->menuItem);
 				((LLMenuItemCallGL *)tempBind->menuItem)->die();
-				delete tempBind->menuItem;
+				delete (LLMenuItemCallGL *)tempBind->menuItem;
 				tempBind->menuItem = NULL;
 				delete tempBind;
 			}
