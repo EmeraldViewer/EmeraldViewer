@@ -285,9 +285,6 @@ LLAlertDialog::LLAlertDialog( LLNotificationPtr notification, bool modal)
 		{
 			btn->setFocus(TRUE);
 		}
-		std::string magic_hide = "%C2%A0%20%C2%A0";
-		magic_hide = curl_unescape(magic_hide.c_str(),magic_hide.size());
-		if(options[i].second == magic_hide)btn->setVisible(FALSE);//magic...
 
 		button_left += button_width + BTN_HPAD;
 	}

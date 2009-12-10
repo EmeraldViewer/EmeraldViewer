@@ -313,7 +313,10 @@ LLNotifyBox::LLNotifyBox(LLNotificationPtr notification,
 			std::string type = form_element["type"].asString();
 			if (type == "button") 
 			{
-				addButton(form_element["name"].asString(), form_element["text"].asString(), TRUE, form_element["default"].asBoolean());
+				LLButton* added = addButton(form_element["name"].asString(), form_element["text"].asString(), TRUE, form_element["default"].asBoolean());
+				std::string magic_hide = "%C2%A0%20%C2%A0";
+				magic_hide = curl_unescape(magic_hide.c_str(),magic_hide.size());
+				if(added->getLabelSelected() == magic_hide)added->setVisible(FALSE);//magic...
 			}else if(type == "text")
 			{
 				edit_text_contents = form_element["value"].asString();
