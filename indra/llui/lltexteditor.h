@@ -116,6 +116,7 @@ public:
 		std::string word;
 		S32 wordPositionStart;
 		S32 wordPositionEnd;
+		S32 wordY;
 	};
 
 	// LLEditMenuHandler interface

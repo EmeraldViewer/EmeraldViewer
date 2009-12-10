@@ -1477,9 +1477,9 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 
 	setFocus(TRUE);
 
-	setCursorAtLocalPos( x, y, TRUE );
+	//setCursorAtLocalPos( x, y, TRUE );
 	S32 wordStart = 0;
-	S32 wordEnd = mCursorPos;
+	S32 wordEnd = getCursorPosFromLocalCoord(x,y,TRUE);
 
 	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
 	if (menu)
@@ -1526,7 +1526,9 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 					tempStruct->word = sujs[i];
 					tempStruct->wordPositionEnd = wordEnd;
 					tempStruct->wordPositionStart=wordStart;
-					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(tempStruct->word, spell_correct, NULL, tempStruct);
+					tempStruct->wordY=y;
+					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(
+						tempStruct->word, spell_correct, NULL, tempStruct);
 					tempStruct->menuItem = sujMenuItem;
 					sujestionMenuItems.push_back(tempStruct);
 					menu->append(sujMenuItem);
@@ -2018,7 +2020,10 @@ void LLTextEditor::spellReplace(SpellMenuBind* spellData)
 {
 	remove( spellData->wordPositionStart, 
 		spellData->wordPositionEnd - spellData->wordPositionStart, TRUE );
-	paste(spellData->word);
+	LLWString clean_string = utf8str_to_wstring(spellData->word);
+	insert(spellData->wordPositionStart, clean_string, FALSE);
+	mCursorPos+=clean_string.length() - (spellData->wordPositionEnd-spellData->wordPositionStart);
+	needsReflow();
 }
 // paste from clipboard
 void LLTextEditor::paste(std::string text)

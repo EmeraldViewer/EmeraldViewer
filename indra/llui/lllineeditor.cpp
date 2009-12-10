@@ -364,10 +364,7 @@ void LLLineEditor::setText(const LLStringExplicit &new_text)
 
 	mPrevText = mText;
 }
-
-
-// Picks a new cursor position based on the actual screen size of text being drawn.
-void LLLineEditor::setCursorAtLocalPos( S32 local_mouse_x )
+S32 LLLineEditor::calculateCursorFromMouse( S32 local_mouse_x )
 {
 	const llwchar* wtext = mText.getWString().c_str();
 	LLWString asterix_text;
@@ -380,13 +377,17 @@ void LLLineEditor::setCursorAtLocalPos( S32 local_mouse_x )
 		wtext = asterix_text.c_str();
 	}
 
-	S32 cursor_pos =
-		mScrollHPos + 
+	return mScrollHPos + 
 		mGLFont->charFromPixelOffset(
-			wtext, mScrollHPos,
-			(F32)(local_mouse_x - mMinHPixels),
-			(F32)(mMaxHPixels - mMinHPixels + 1)); // min-max range is inclusive
-	setCursor(cursor_pos);
+		wtext, mScrollHPos,
+		(F32)(local_mouse_x - mMinHPixels),
+		(F32)(mMaxHPixels - mMinHPixels + 1)); // min-max range is inclusive
+}
+
+// Picks a new cursor position based on the actual screen size of text being drawn.
+void LLLineEditor::setCursorAtLocalPos( S32 local_mouse_x )
+{
+	setCursor(calculateCursorFromMouse(local_mouse_x));
 }
 
 void LLLineEditor::setCursor( S32 pos )
@@ -570,14 +571,16 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 {
 	setFocus(TRUE);
 
-	setCursorAtLocalPos( x);
+	//setCursorAtLocalPos( x);
 	S32 wordStart = 0;
-	S32 wordEnd = mCursorPos;
+	S32 wordEnd = calculateCursorFromMouse(x);
 	
 
 	LLMenuGL* menu = (LLMenuGL*)mPopupMenuHandle.get();
 	if (menu)
 	{
+		if(menu->isOpen())
+			menu->setVisible(FALSE);
 		for(int i = 0;i<(int)sujestionMenuItems.size();i++)
 		{
 			SpellMenuBind * tempBind = sujestionMenuItems[i];
@@ -608,9 +611,10 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 			{
 				wordEnd++;
 			}		
-			std::string selectedWord(std::string(text.begin(), text.end()).substr(wordStart,wordEnd-wordStart));
+			std::string selectedWord(std::string(text.begin(), 
+				text.end()).substr(wordStart,wordEnd-wordStart));
 			if(!glggHunSpell->isSpelledRight(selectedWord))
-			{				
+			{	
 				//misspelled word here, and you have just right clicked on it!
 				std::vector<std::string> sujs = glggHunSpell->getSujestionList(selectedWord);
 				for(int i = 0;i<(int)sujs.size();i++)
@@ -620,7 +624,8 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 					tempStruct->word = sujs[i];
 					tempStruct->wordPositionEnd = wordEnd;
 					tempStruct->wordPositionStart=wordStart;
-					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(tempStruct->word, spell_correct, NULL, tempStruct);
+					LLMenuItemCallGL * sujMenuItem = new LLMenuItemCallGL(
+						tempStruct->word, spell_correct, NULL, tempStruct);
 					//new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
 					tempStruct->menuItem = sujMenuItem;
 					sujestionMenuItems.push_back(tempStruct);
@@ -1084,10 +1089,16 @@ void LLLineEditor::copy()
 }
 void LLLineEditor::spellReplace(SpellMenuBind* spellData)
 {
+	
 	mText.erase(spellData->wordPositionStart,
 		spellData->wordPositionEnd - spellData->wordPositionStart);
+	LLWString clean_string(utf8str_to_wstring(spellData->word));
+	LLWStringUtil::replaceTabsWithSpaces(clean_string, 1);
+	mText.insert(spellData->wordPositionStart, clean_string);
+	//see if we should move over the cursor acordingly
+	mCursorPos+=clean_string.length() - (spellData->wordPositionEnd-spellData->wordPositionStart);
+	mKeystrokeCallback( this, mCallbackUserData );
 
-	paste(spellData->word);
 }
 BOOL LLLineEditor::canPaste() const
 {

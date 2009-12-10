@@ -243,6 +243,7 @@ private:
 	void			removeChar();
 	void			addChar(const llwchar c);
 	void			setCursorAtLocalPos(S32 local_mouse_x);
+	S32				calculateCursorFromMouse(S32 local_mouse_x);
 	S32				findPixelNearestPos(S32 cursor_offset = 0) const;
 	void			reportBadKeystroke();
 	BOOL			handleSpecialKey(KEY key, MASK mask);
