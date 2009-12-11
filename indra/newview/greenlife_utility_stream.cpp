@@ -55,8 +55,10 @@ void GUS::initGUS()
 {
 	Enabled = gSavedSettings.getBOOL("EmeraldGUSEnabled");
 	Refresh = gSavedSettings.getF32("EmeraldGUSRefresh");
+	Refresh = llclamp(Refresh, 0.0001f, 1.f);
 	FEEnabled = gSavedSettings.getBOOL("EmeraldGUSFastEventsEnabled");
 	FERefresh = gSavedSettings.getF32("EmeraldGUSFastEventsRefresh");
+	FERefresh = llclamp(Refresh, 0.0001f, 2.f);
 	gSavedSettings.getControl("EmeraldGUSEnabled")->getSignal()->connect(&gusEnabled);
 	gSavedSettings.getControl("EmeraldGUSRefresh")->getSignal()->connect(&gusRefresh);
 	gSavedSettings.getControl("EmeraldGUSFastEventsEnabled")->getSignal()->connect(&gusFEEnabled);
@@ -98,7 +100,7 @@ bool GUS::fastEvent()
 	std::string nMessage = genFEMessage();
 	FEchanged = FEchanged || (sFEMessage != nMessage);
 	if(!FEchanged)return false;
-	F32 GUS_FE_freq = llclamp(FERefresh, 0.0001f, 20.f);
+	F32 GUS_FE_freq = llclamp(FERefresh, 0.0001f, 2.f);
 	if(FELimiter < GUS_FE_freq)
 	{
 		whisper(gSavedSettings.getS32("EmeraldGUSChannel")+1, nMessage);

@@ -215,7 +215,7 @@ void LLViewerThrottle::setMaxBandwidth(F32 kbits_per_second, BOOL from_event)
 {
 	if (!from_event)
 	{
-		gSavedSettings.setF32("ThrottleBandwidthKBPS", kbits_per_second);
+		gSavedSettings.setF32("ThrottleBandwidthKBPS",llclamp(kbits_per_second, 0.0001f, 5000.f));
 	}
 	gViewerThrottle.load();
 

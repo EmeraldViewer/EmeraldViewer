@@ -761,17 +761,17 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 border="true" mouse_opaque="true" bevel_style="in" background_visible="true" background_opaque="true"
 					 follows="top|left" bg_opaque_color="0,0,0,0.1" bg_alpha_color="blue" can_resize="false">
 					<spinner bottom_delta="-20" decimal_digits="0" follows="left|top" height="16" increment="1"
-						 label="Channel" label_width="65" left_delta="5" max_val="99999" min_val="-9999"
+						 label="Channel" label_width="65" left_delta="5" max_val="99999" min_val="1"
 						 mouse_opaque="true" name="Channel" width="128" control_name="EmeraldGUSChannel"/>
 					<check_box bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 						 initial_value="false" label="Enable FastEvents" left_delta="138" mouse_opaque="true"
 						 tool_tip="Enable Greenlife Utility Stream FastEvents (GUS-FE)" name="GUS-FE Enable"
 						 radio_style="false" width="128" control_name="EmeraldGUSFastEventsEnabled"/>
 					<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16" increment="0.5"
-						 label="GUS Rate" label_width="65" left_delta="-138" max_val="10.00" min_val="0.50"
+						 label="GUS Rate" label_width="65" left_delta="-138" max_val="1.00" min_val="0.50"
 						 mouse_opaque="true" name="Refresh Rate" width="128" control_name="EmeraldGUSRefresh"/>
 					<spinner bottom_delta="0" decimal_digits="5" follows="left|top" height="16" increment="0.5"
-						 label="GUS-FE Rate" label_width="65" left_delta="138" max_val="20.00" min_val="1.00"
+						 label="GUS-FE Rate" label_width="65" left_delta="138" max_val="2.00" min_val="1.00"
 						 mouse_opaque="true" name="Fast Event Refresh Rate" width="128" control_name="EmeraldGUSFastEventsRefresh"/>
 				</panel>
 				<!-- 
