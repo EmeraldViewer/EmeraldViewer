@@ -607,7 +607,7 @@ void LLPanelEmerald::onSpellBaseComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 	if(box)
 	{
 		glggHunSpell->newDictSelection(box->getValue().asString());
-		LLPanelEmerald* panel = (LLPanelEmerald*)box->getParent();
+		LLPanelEmerald* panel = (LLPanelEmerald*)userdata;//box->getParent();
 		if(panel)panel->refresh();
 
 	}

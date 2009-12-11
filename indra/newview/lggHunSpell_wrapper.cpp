@@ -499,6 +499,14 @@ void lggHunSpell_Wrapper::addWordToCustomDictionary(std::string wordToAdd)
 {
 	if(!myHunspell)return;
 	myHunspell->add(wordToAdd.c_str());
+	std::string filename(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, 
+		"Dictionaries","EMERALD_CUSTOM.Dic"));
+	llofstream export_file;
+	export_file.open(filename);
+	LLStringUtil::toLower(wordToAdd);
+	wordToAdd=wordToAdd+std::string("\r");
+	export_file.write(wordToAdd.c_str(),wordToAdd.length());
+	export_file.close();
 }
 BOOL lggHunSpell_Wrapper::isSpelledRight(std::string wordToCheck)
 {
@@ -767,6 +775,7 @@ void lggHunSpell_Wrapper::newDictSelection(std::string selection)
 }
 void lggHunSpell_Wrapper::getMoreButton()
 {
+	//todo upload thoes dics in a installer, link to web page with them, 
 	LLWeb::loadURL("http://www.cypherpunks.ca/otr/");
 }
 void lggHunSpell_Wrapper::editCustomButton()
