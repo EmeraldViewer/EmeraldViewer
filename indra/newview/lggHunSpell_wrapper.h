@@ -30,17 +30,39 @@ class lggHunSpell_Wrapper
 public:
 	static Hunspell * myHunspell;
 
+	BOOL highlightInRed;
+
 	void initSettings();
+	void processSettings();
+
+	std::vector<std::string> getAvailDicts();
+	std::vector<std::string> getInstalledDicts();
 	std::vector<std::string> getDicts();
+	void addDictionary(std::string additionalDictionary);
+	void addWordToCustomDictionary(std::string wordToAdd);
+	void addButton(std::string selection);
+	void removeButton(std::string selection);
+	void editCustomButton();
+	void newDictSelection(std::string selection);
+	void getMoreButton();
+	std::string dictName2FullName(std::string dictName);
+	std::string fullName2DictName(std::string fullName);
 	void setNewDictionary(std::string newDict);
 	BOOL isSpelledRight(std::string wordToCheck);
 	std::vector<std::string> getSuggestionList(std::string badWord);
 	S32 findNextError(std::string haystack, int startAt);
 
+	std::vector<std::string> CSV2VEC(std::string csv);
+	std::string VEC2CSV(std::vector<std::string> vec);
+
 private:
 	lggHunSpell_Wrapper();
 	~lggHunSpell_Wrapper();
+
 	void debugTest(std::string testWord);//prints out debug about testing the word
+	std::string currentBaseDic;
+	//std::vector<std::string> languageCodes;
+	//std::vector<std::string> countryCodes;
 };
 
 extern lggHunSpell_Wrapper *glggHunSpell; // the singleton hunspell wrapper

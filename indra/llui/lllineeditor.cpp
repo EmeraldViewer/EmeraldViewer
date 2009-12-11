@@ -463,6 +463,14 @@ void LLLineEditor::spell_correct(void* data)
 
 	}
 }
+void LLLineEditor::spell_add(void* data)
+{
+	SpellMenuBind* tempBind = (SpellMenuBind*)data;
+	if(tempBind)
+	{
+		glggHunSpell->addWordToCustomDictionary(tempBind->word);
+	}
+}
 void LLLineEditor::context_paste(void* data)
 {
 	LLLineEditor* line = (LLLineEditor*)data;
@@ -597,7 +605,8 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 
 		const LLWString& text = mText.getWString();
 
-		if( LLTextEditor::isPartOfWord( text[wordEnd] ) )
+		if(( LLTextEditor::isPartOfWord( text[wordEnd] ) ) 
+			&&(!mReadOnly))
 		{
 			// Select word the cursor is over
 			while ((wordEnd > 0) && LLTextEditor::isPartOfWord(text[wordEnd-1]))
@@ -631,6 +640,18 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 					suggestionMenuItems.push_back(tempStruct);
 					menu->append(suggMenuItem);
 				}
+				SpellMenuBind * tempStruct = new SpellMenuBind;
+				tempStruct->origin = this;
+				tempStruct->word = selectedWord;
+				tempStruct->wordPositionEnd = wordEnd;
+				tempStruct->wordPositionStart=wordStart;
+				tempStruct->wordY=y;
+				LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
+					"Add Word", spell_add, NULL, tempStruct);
+				tempStruct->menuItem = suggMenuItem;
+				suggestionMenuItems.push_back(tempStruct);
+				menu->append(suggMenuItem);
+
 
 
 			}
@@ -1089,7 +1110,7 @@ void LLLineEditor::copy()
 }
 void LLLineEditor::spellReplace(SpellMenuBind* spellData)
 {
-	
+	LLLineEditorRollback rollback(this);
 	mText.erase(spellData->wordPositionStart,
 		spellData->wordPositionEnd - spellData->wordPositionStart);
 	LLWString clean_string(utf8str_to_wstring(spellData->word));
@@ -1097,7 +1118,18 @@ void LLLineEditor::spellReplace(SpellMenuBind* spellData)
 	mText.insert(spellData->wordPositionStart, clean_string);
 	//see if we should move over the cursor acordingly
 	mCursorPos+=clean_string.length() - (spellData->wordPositionEnd-spellData->wordPositionStart);
-	mKeystrokeCallback( this, mCallbackUserData );
+	// Validate new string and rollback the if needed.
+	BOOL need_to_rollback = ( mPrevalidateFunc && !mPrevalidateFunc( mText.getWString() ) );
+	if( need_to_rollback )
+	{
+		rollback.doRollback( this );
+		reportBadKeystroke();
+	}
+	else
+	if( mKeystrokeCallback )
+	{
+		mKeystrokeCallback( this, mCallbackUserData );
+	}
 
 }
 BOOL LLLineEditor::canPaste() const

@@ -408,6 +408,14 @@ void LLTextEditor::spell_correct(void* data)
 		
 	}
 }
+void LLTextEditor::spell_add(void* data)
+{
+	SpellMenuBind* tempBind = (SpellMenuBind*)data;
+	if(tempBind)
+	{
+		glggHunSpell->addWordToCustomDictionary(tempBind->word);
+	}
+}
 void LLTextEditor::context_paste(void* data)
 {
 	LLTextEditor* line = (LLTextEditor*)data;
@@ -1500,7 +1508,7 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 
 		const LLWString &text = mWText;
 
-		if( isPartOfWord( text[wordEnd] ) )
+		if(( isPartOfWord( text[wordEnd] ) )&&(!mReadOnly))
 		{
 			// Select word the cursor is over
 			while ((wordEnd > 0) && isPartOfWord(text[wordEnd-1]))
@@ -1516,7 +1524,8 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 			}		
 			std::string selectedWord(std::string(text.begin(), text.end()).substr(wordStart,wordEnd-wordStart));
 			if(!glggHunSpell->isSpelledRight(selectedWord))
-			{				
+			{	
+
 				//misspelled word here, and you have just right clicked on it!
 				std::vector<std::string> suggs = glggHunSpell->getSuggestionList(selectedWord);
 				for(int i = 0;i<(int)suggs.size();i++)
@@ -1533,6 +1542,18 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 					suggestionMenuItems.push_back(tempStruct);
 					menu->append(suggMenuItem);
 				}
+				SpellMenuBind * tempStruct = new SpellMenuBind;
+				tempStruct->origin = this;
+				tempStruct->word = selectedWord;
+				tempStruct->wordPositionEnd = wordEnd;
+				tempStruct->wordPositionStart=wordStart;
+				tempStruct->wordY=y;
+				LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
+					"Add Word", spell_add, NULL, tempStruct);
+				tempStruct->menuItem = suggMenuItem;
+				suggestionMenuItems.push_back(tempStruct);
+				menu->append(suggMenuItem);
+
 
 
 			}

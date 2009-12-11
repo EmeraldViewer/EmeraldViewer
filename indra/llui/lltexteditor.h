@@ -144,7 +144,8 @@ public:
 	static void context_delete(void* data);
 	static void context_selectall(void* data);
 	static void spell_correct(void* data);
-	
+	static void spell_add(void* data);
+
 
 	void			selectNext(const std::string& search_text_in, BOOL case_insensitive, BOOL wrap = TRUE);
 	BOOL			replaceText(const std::string& search_text, const std::string& replace_text, BOOL case_insensitive, BOOL wrap = TRUE);
