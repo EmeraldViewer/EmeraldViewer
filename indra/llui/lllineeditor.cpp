@@ -645,7 +645,6 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 				tempStruct->word = selectedWord;
 				tempStruct->wordPositionEnd = wordEnd;
 				tempStruct->wordPositionStart=wordStart;
-				tempStruct->wordY=y;
 				LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
 					"Add Word", spell_add, NULL, tempStruct);
 				tempStruct->menuItem = suggMenuItem;

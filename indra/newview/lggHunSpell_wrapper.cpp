@@ -22,6 +22,7 @@
 #include "llviewercontrol.h"
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
+#include "llviewerwindow.h"
 
 lggHunSpell_Wrapper *glggHunSpell = 0;
 Hunspell* lggHunSpell_Wrapper::myHunspell = 0;
@@ -247,7 +248,7 @@ std::vector<std::string> lggHunSpell_Wrapper::getAvailDicts()
 		{
 			if(LLStringUtil::compareInsensitive(dics[i],installedDics[j]))
 				found=true;//this dic is already installed
-			if((LLStringUtil::compareInsensitive(dics[i],currentBaseDic))
+			if(LLStringUtil::compareInsensitive(dics[i],currentBaseDic))
 				found=true;
 		}
 		if(!found)toReturn.push_back(dics[i]);
