@@ -7,7 +7,7 @@
 			 name="tab" tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
 			<panel border="true" bottom="-408" follows="left|top|right|bottom" height="408" label="TP/Login"
 				 left="1" mouse_opaque="true" name="Teleport/Login" width="517">
-				<button bottom="-20" follows="left|top" font="SansSerifSmall" height="18" label="?"
+				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"
 					 name="EmeraldHelp_TeleportLogin" tool_tip="Click here for help regarding the settings in this page."
 					 right="490" width="18"/>
 				<check_box bottom="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
@@ -869,10 +869,10 @@ the simulator for scripts to access.</text>
 			</panel>
 			<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Effects"
 				 left="1" mouse_opaque="true" name="Effects" width="418">
-				<button bottom="-45" follows="left|top" font="SansSerifSmall" height="18" label="?"
+				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"
 					 name="EmeraldHelp_Effects" tool_tip="Click here for help regarding the settings in this page."
 					 right="490" width="18"/>
-				<check_box bottom="-40" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Enable enhanced physics on avatar breasts" left="5" mouse_opaque="true" name="EmBreastsToggle"
 					 control_name="EmeraldBreastPhysicsToggle" width="126"/>
 				<slider bottom_delta="-20" left="5" name="EmeraldBoobMass" control_name="EmeraldBoobMass"
@@ -910,7 +910,42 @@ the simulator for scripts to access.</text>
       <button bottom_delta="0" follows="left|top" font="SansSerifSmall" height="20" label="Shadows OFF" name="Emerald_ShadowsOFF" tool_tip="Turn off the rendering of dynamic shadows."
               left="120" width="100" />
 -->
-			</panel>
+                    </panel>
+               	<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="SpellCheck"
+				 left="1" mouse_opaque="true" name="SpellCheck" width="418">
+				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"
+					 name="EmeraldHelp_SpellCheck" tool_tip="Click here for help regarding the settings in this page."
+					 right="490" width="18"/>
+                    <text bottom="-20" follows="left|top" font="SansSerifSmall" height="16" left="210"
+					 name="EmSpell_txt1" width="512">Base Language</text>
+                    <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="-110" follows="left|top" height="18"
+					 max_chars="200" mouse_opaque="true" name="EmSpell_base" width="300"
+					 control_name="EmSpell_Base" tool_tip=""/>
+                    <text bottom_delta="-30" follows="left|top" font="SansSerifSmall" height="16" left="5"
+					 name="EmSpell_txt2" width="512">Additional installed dictionaries</text> 
+                    <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="0" follows="left|top" height="18"
+					 max_chars="200" mouse_opaque="true" name="EmSpell_Installed" width="180"
+					 control_name="EmSpell_Installed" tool_tip=""/>
+				<button bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="18" label="Remove"
+					 name="EmSpell_Remove" tool_tip="" left_delta="182" width="60"/>
+                    <text bottom_delta="20" follows="left|top" font="SansSerifSmall" height="16" left="270"
+					 name="EmSpell_txt3" width="512">Available dictionaries</text>
+                    <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="0" follows="left|top" height="18"
+					 max_chars="200" mouse_opaque="true" name="EmSpell_Avail" width="180"
+					 control_name="EmSpell_Avail" tool_tip=""/>
+				<button bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="18" label="Add"
+					 name="EmSpell_Add" tool_tip="" left_delta="182" width="40"/>
+                    <button bottom_delta="20" follows="left|top" font="SansSerifSmall" height="18" label="Get More!"
+					 name="EmSpell_GetMore" tool_tip="" left_delta="-30" width="70"/>
+				<check_box bottom_delta="-50" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 label="Show misspelled words in red" left="5" mouse_opaque="true" name="EmeraldSpellDisplay"
+					 control_name="EmeraldSpellDisplay" width="126"/>
+                    <button bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="18" label="Edit Custom dictionary"
+					 name="EmSpell_EditCustom" tool_tip="" left_delta="20" width="130"/>
+                    <text bottom_delta="20" follows="left|top" font="SansSerifSmall" height="16" left="250"
+					 name="EmSpell_txt4" width="512">To spellcheck, right click a misspelled word
+(red or not) and click on its replacement</text>      
+                    </panel>
 		</tab_container>
 	</tab_container>
 </panel>

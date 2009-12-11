@@ -266,6 +266,7 @@ BOOL LLPanelEmerald::postBuild()
 	initHelpBtn("EmeraldHelp_UtilityStream",	"EmeraldHelp_UtilityStream");
 	initHelpBtn("EmeraldHelp_Inventory",		"EmeraldHelp_Inventory");
 	initHelpBtn("EmeraldHelp_Effects",			"EmeraldHelp_Effects");
+	initHelpBtn("EmeraldHelp_SpellCheck",		"EmeraldHelp_SpellCheck");
 
 	LLView *target_view = getChild<LLView>("im_give_drop_target_rect");
 	if(target_view)

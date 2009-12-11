@@ -6875,6 +6875,13 @@ This enables you and other avatar's breasts to have actual physics applied to th
 
   </notification>
   <notification
+   icon="alertmodal.tga"
+   label="Emerald Help"
+   name="EmeraldHelp_SpellCheck"
+   type="alertmodal">
+SpellCheck help placeholder.
+</notification>
+  <notification
 	   icon="notifytip.tga"
 	   name="NoShadows"
 	   type="notifytip">
