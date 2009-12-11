@@ -66,6 +66,7 @@
 #include "lggBeamColorMapFloater.h"
 #include "llsliderctrl.h"
 #include "mfdKeywordFloater.h"
+#include "lggHunSpell_wrapper.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -205,6 +206,8 @@ BOOL LLPanelEmerald::postBuild()
 	getChild<LLTextureCtrl>("texture control")->setDefaultImageAssetID(LLUUID("89556747-24cb-43ed-920b-47caed15465f"));
 	getChild<LLTextureCtrl>("texture control")->setCommitCallback(onTexturePickerCommit);
 
+	getChild<LLComboBox>("EmeraldSpellBase")->setCommitCallback(onSpellBaseComboBoxCommit);
+
 		
 	//childSetCommitCallback("material",onComboBoxCommit);
 	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
@@ -213,6 +216,11 @@ BOOL LLPanelEmerald::postBuild()
 
 
 	getChild<LLButton>("keyword_allert")->setClickedCallback(onKeywordAllertButton,this);
+	
+	getChild<LLButton>("EmSpell_EditCustom")->setClickedCallback(onSpellEditCustom, this);
+	getChild<LLButton>("EmSpell_GetMore")->setClickedCallback(onSpellGetMore, this);
+	getChild<LLButton>("EmSpell_Add")->setClickedCallback(onSpellAdd, this);
+	getChild<LLButton>("EmSpell_Remove")->setClickedCallback(onSpellRemove, this);
 	
 
 	getChild<LLButton>("BeamColor_new")->setClickedCallback(onCustomBeamColor, this);
@@ -325,8 +333,8 @@ BOOL LLPanelEmerald::postBuild()
 
 void LLPanelEmerald::refresh()
 {
-	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
 	
+	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
 
 	if(comboBox != NULL) 
 	{
@@ -351,6 +359,43 @@ void LLPanelEmerald::refresh()
 			comboBox->add(names[i]);
 		}
 		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamColorFile"));
+	}
+	comboBox = getChild<LLComboBox>("EmeraldSpellBase");
+	if(comboBox != NULL) 
+	{
+		comboBox->removeall();
+		std::vector<std::string> names = glggHunSpell->getDicts();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(gSavedSettings.getString("EmeraldSpellBase"));
+	}
+	comboBox = getChild<LLComboBox>("EmSpell_Avail");
+	if(comboBox != NULL) 
+	{
+		comboBox->removeall();
+
+		comboBox->add("");
+		std::vector<std::string> names = glggHunSpell->getAvailDicts();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(std::string(""));
+	}
+	comboBox = getChild<LLComboBox>("EmSpell_Installed");
+	if(comboBox != NULL) 
+	{
+		comboBox->removeall();
+
+		comboBox->add("");
+		std::vector<std::string> names = glggHunSpell->getInstalledDicts();
+		for(int i=0; i<(int)names.size(); i++) 
+		{
+			comboBox->add(names[i]);
+		}
+		comboBox->setSimple(std::string(""));
 	}
 
 	//epic hax (TODO: make this less hax)
@@ -462,6 +507,32 @@ void LLPanelEmerald::onCustomBeamColor(void* data)
 {
 	LggBeamColorMap::show(true,data);
 }
+void LLPanelEmerald::onSpellAdd(void* data)
+{
+	LLPanelEmerald* panel = (LLPanelEmerald*)data;
+	if(panel)
+	{
+		glggHunSpell->addButton(panel->childGetValue("EmSpell_Avail").asString());
+	}
+	panel->refresh();
+}
+void LLPanelEmerald::onSpellRemove(void* data)
+{
+	LLPanelEmerald* panel = (LLPanelEmerald*)data;
+	if(panel)
+	{
+		glggHunSpell->removeButton(panel->childGetValue("EmSpell_Installed").asString());
+	}
+	panel->refresh();
+}
+void LLPanelEmerald::onSpellGetMore(void* data)
+{
+	glggHunSpell->getMoreButton();
+}
+void LLPanelEmerald::onSpellEditCustom(void* data)
+{
+	glggHunSpell->editCustomButton();
+}
 void LLPanelEmerald::onStealth(void* data)
 {
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
@@ -522,12 +593,26 @@ void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
 }
 void LLPanelEmerald::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 {
+	
 	LLComboBox* box = (LLComboBox*)ctrl;
 	if(box)
 	{
 		gSavedSettings.setString(box->getControlName(),box->getValue().asString());
+	}	
+}
+void LLPanelEmerald::onSpellBaseComboBoxCommit(LLUICtrl* ctrl, void* userdata)
+{
+
+	LLComboBox* box = (LLComboBox*)ctrl;
+	if(box)
+	{
+		glggHunSpell->newDictSelection(box->getValue().asString());
+		LLPanelEmerald* panel = (LLPanelEmerald*)box->getParent();
+		if(panel)panel->refresh();
+
 	}
-	
+	//LLPanelEmerald* panel = (LLPanelEmerald*)userdata;
+	//if(panel)panel->refresh();
 }
 void LLPanelEmerald::onTexturePickerCommit(LLUICtrl* ctrl, void* userdata)
 {

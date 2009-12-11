@@ -6879,7 +6879,11 @@ This enables you and other avatar's breasts to have actual physics applied to th
    label="Emerald Help"
    name="EmeraldHelp_SpellCheck"
    type="alertmodal">
-SpellCheck help placeholder.
+To Spell Check a word, right click on it and choose its replacement.
+You may choose a base dictionary which stores the language style and basic words
+You may also choose to install other word lists by choosing them from the list and "add"
+You may add your own words to your custom dictionary file.
+Spell check is Hunspell based, please google for more info.
 </notification>
   <notification
 	   icon="notifytip.tga"

@@ -20,8 +20,6 @@
 #include <boost/regex.hpp>
 #include "llweb.h"
 #include "llviewercontrol.h"
-#include <boost/range/begin.hpp>
-#include <boost/range/end.hpp>
 #include "llviewerwindow.h"
 
 lggHunSpell_Wrapper *glggHunSpell = 0;
@@ -60,7 +58,7 @@ static char * countryCodesraw[] = {
   (char*)"BR",(char*)"Brazil",
   (char*)"BS",(char*)"Bahama",
   (char*)"BT",(char*)"Bhutan",
-  (char*)"BU",(char*)"Burma (no longer exists)",
+  (char*)"BU",(char*)"Burma",
   (char*)"BV",(char*)"Bouvet Island",
   (char*)"BW",(char*)"Botswana",
   (char*)"BY",(char*)"Belarus",
@@ -77,7 +75,7 @@ static char * countryCodesraw[] = {
   (char*)"CN",(char*)"China",
   (char*)"CO",(char*)"Colombia",
   (char*)"CR",(char*)"Costa Rica",
-  (char*)"CS",(char*)"Czechoslovakia (no longer exists)",
+  (char*)"CS",(char*)"Czechoslovakia",
   (char*)"CU",(char*)"Cuba",
   (char*)"CV",(char*)"Cape Verde",
   (char*)"CX",(char*)"Christmas Island",
@@ -230,7 +228,7 @@ static char * countryCodesraw[] = {
   (char*)"SO",(char*)"Somalia",
   (char*)"SR",(char*)"Suriname",
   (char*)"ST",(char*)"Sao Tome & Principe",
-  (char*)"SU",(char*)"Union of Soviet Socialist Republics (no longer exists)",
+  (char*)"SU",(char*)"Union of Soviet Socialist Republics",
   (char*)"SV",(char*)"El Salvador",
   (char*)"SY",(char*)"Syrian Arab Republic",
   (char*)"SZ",(char*)"Swaziland",
@@ -256,7 +254,7 @@ static char * countryCodesraw[] = {
   (char*)"US",(char*)"United States of America",
   (char*)"UY",(char*)"Uruguay",
   (char*)"UZ",(char*)"Uzbekistan",
-  (char*)"VA",(char*)"Vatican City State (Holy See)",
+  (char*)"VA",(char*)"Vatican City State",
   (char*)"VC",(char*)"St. Vincent & the Grenadines",
   (char*)"VE",(char*)"Venezuela",
   (char*)"VG",(char*)"British Virgin Islands",
@@ -265,7 +263,7 @@ static char * countryCodesraw[] = {
   (char*)"VU",(char*)"Vanuatu",
   (char*)"WF",(char*)"Wallis & Futuna Islands",
   (char*)"WS",(char*)"Samoa",
-  (char*)"YD",(char*)"Democratic Yemen (no longer exists)",
+  (char*)"YD",(char*)"Democratic Yemen",
   (char*)"YE",(char*)"Yemen",
   (char*)"YT",(char*)"Mayotte",
   (char*)"YU",(char*)"Yugoslavia",
@@ -472,20 +470,28 @@ lggHunSpell_Wrapper::~lggHunSpell_Wrapper(){}
 
 void lggHunSpell_Wrapper::setNewDictionary(std::string newDict)
 {
+
+	llinfos << "Setting new base dictionary long name is-> " << newDict.c_str() << llendl;
+
 	currentBaseDic=newDict;
+	
 	//expecting a full name comming in
 	newDict = fullName2DictName(newDict);
 
 	if(myHunspell)delete myHunspell;
 
 	std::string dicaffpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "Dictionaries", std::string(newDict+".Aff")).c_str());
-	std::string dicdicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "Dictionaries", std::string("Emerald_Custom.Dic")).c_str());
+	std::string dicdicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "Dictionaries", std::string(newDict+".Dic")).c_str());
 	
 	llinfos << "Setting new base dictionary -> " << dicaffpath.c_str() << llendl;
 
 	myHunspell = new Hunspell(dicaffpath.c_str(),dicdicpath.c_str());
+	llinfos << "Adding custom dictionary " << llendl;
 
-	addDictionary(currentBaseDic);
+	addDictionary("Emerald_Custom");
+	std::vector<std::string> toInstall = getInstalledDicts();
+	for(int i =0;i<(int)toInstall.size();i++)
+		addDictionary(toInstall[i]);
 
 
 }
@@ -547,15 +553,15 @@ void lggHunSpell_Wrapper::initSettings()
 void lggHunSpell_Wrapper::processSettings()
 {
 	//expects everything to already be in saved settings
+	//this will also reload and read the installed dicts
 	setNewDictionary(gSavedSettings.getString("EmeraldSpellBase"));
 	highlightInRed= gSavedSettings.getBOOL("EmeraldSpellDisplay");
-	std::vector<std::string> toInstall = getInstalledDicts();
-	for(int i =0;i<(int)toInstall.size();i++)
-		addDictionary(toInstall[i]);
+	
 }
 void lggHunSpell_Wrapper::addDictionary(std::string additionalDictionary)
 {
 	if(!myHunspell)return;
+	if(additionalDictionary=="")return;
 	//expecting a full name here
 	std::string dicpath(
 		gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "Dictionaries",
@@ -566,10 +572,11 @@ void lggHunSpell_Wrapper::addDictionary(std::string additionalDictionary)
 }
 std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 {
+	if(dictName==std::string(""))return std::string("");
 	std::string countryCode="";
 	std::string languageCode="";
 	//remove extension
-	dictName = dictName.substr(0,dictName.find(".")-1);
+	dictName = dictName.substr(0,dictName.find("."));
 	//break it up by - or _
 	S32 breakPoint = dictName.find("-");
 	if(breakPoint==std::string::npos)
@@ -584,9 +591,9 @@ std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 		countryCode=dictName.substr(breakPoint+1);
 	}
 	//get long language code
-	for(int i =0;i<498;i++)
+	for(int i =0;i<370;i++)
 	{		
-		if(LLStringUtil::compareInsensitive(languageCode,languageCodesraw[i]))
+		if(0==LLStringUtil::compareInsensitive(languageCode,std::string(languageCodesraw[i])))
 		{
 			languageCode=languageCodesraw[i+1];
 			break;
@@ -594,9 +601,10 @@ std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 	}
 	//get long country code
 	if(countryCode!="")
-		for(int i =0;i<371;i++)
+		for(int i =0;i<498;i++)
 		{		
-			if(LLStringUtil::compareInsensitive(countryCode,countryCodesraw[i]))
+			llinfos << i << llendl;
+			if(0==LLStringUtil::compareInsensitive(countryCode,std::string(countryCodesraw[i])))
 			{
 				countryCode=countryCodesraw[i+1];
 				break;
@@ -607,37 +615,42 @@ std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 }
 std::string lggHunSpell_Wrapper::fullName2DictName(std::string fullName)
 {
-	std::string countryCode="";
-	std::string languageCode="";
-	//break it up by - or _
+	std::string countryCode("");
+	std::string languageCode("");
 	S32 breakPoint = fullName.find(" (");
-	languageCode=fullName.substr(0,breakPoint);
-	countryCode=fullName.substr(breakPoint+2,fullName.length()-1-breakPoint);
-	
+	if(breakPoint==std::string::npos)
+	{
+		languageCode=fullName;
+	}else
+	{
+		languageCode=fullName.substr(0,breakPoint);
+		countryCode=fullName.substr(breakPoint+2,fullName.length()-3-breakPoint);
+	}
 	//get long language code
-	for(int i =0;i<498;i++)
-	{		
-		if(LLStringUtil::compareInsensitive(languageCode,languageCodesraw[i]))
+	for(int i =1;i<370;i++)
+	{
+		//llinfos << i << llendl;
+		if(0==LLStringUtil::compareInsensitive(languageCode,std::string(languageCodesraw[i])))
 		{
-			languageCode=languageCodesraw[i-1];
+			languageCode=std::string(languageCodesraw[i-1]);
 			break;
 		}
 	}
 	//get long country code
 	if(countryCode!="")
-		for(int i =0;i<371;i++)
-		{		
-			if(LLStringUtil::compareInsensitive(countryCode,countryCodesraw[i]))
+		for(int i =1;i<498;i++)
+		{	
+			//llinfos << i << " comparing " <<countryCode<<" and "<<std::string(countryCodesraw[i]).c_str()<< llendl;
+			if(0==LLStringUtil::compareInsensitive(countryCode,std::string(countryCodesraw[i])))
 			{
-				if(i>0)
-					countryCode=countryCodesraw[i-1];
+				countryCode=std::string(countryCodesraw[i-1]);
 				break;
 			}
 		}
 		std::string toReturn = languageCode;
 		if(countryCode!="")
 		{
-			languageCode+="_"+countryCode;
+			toReturn+="_"+countryCode;
 		}
 		LLStringUtil::toUpper(toReturn);
 		return toReturn;
@@ -658,6 +671,22 @@ std::vector <std::string> lggHunSpell_Wrapper::getDicts()
 	}
 	return names;
 }
+std::vector <std::string> lggHunSpell_Wrapper::getExtraDicts()
+{
+	std::vector<std::string> names;	
+	std::string path_name(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "Dictionaries", ""));
+	bool found = true;			
+	while(found) 
+	{
+		std::string name;
+		found = gDirUtilp->getNextFileInDir(path_name, "*.Dic", name, false);
+		if(found)
+		{
+			names.push_back(dictName2FullName(name));
+		}
+	}
+	return names;
+}
 std::vector<std::string> lggHunSpell_Wrapper::getInstalledDicts()
 {
 	std::vector<std::string> toReturn;
@@ -670,18 +699,20 @@ std::vector<std::string> lggHunSpell_Wrapper::getInstalledDicts()
 std::vector<std::string> lggHunSpell_Wrapper::getAvailDicts()
 {
 	std::vector<std::string> toReturn;
-	std::vector<std::string> dics = lggHunSpell_Wrapper::getDicts();
-	std::vector<std::string> installedDics = lggHunSpell_Wrapper::getInstalledDicts();
+	std::vector<std::string> dics = getExtraDicts();
+	std::vector<std::string> installedDics = getInstalledDicts();
 	for(int i =0;i<(int)dics.size();i++)
 	{
 		bool found = false;
 		for(int j=0;j<(int)installedDics.size();j++)
 		{
-			if(LLStringUtil::compareInsensitive(dics[i],installedDics[j]))
+			if(0==LLStringUtil::compareInsensitive(dics[i],installedDics[j]))
 				found=true;//this dic is already installed
-			if(LLStringUtil::compareInsensitive(dics[i],currentBaseDic))
-				found=true;
 		}
+		if(0==LLStringUtil::compareInsensitive(dics[i],currentBaseDic))
+			found=true;
+		if(0==LLStringUtil::compareInsensitive(dics[i],"Emerald (CUSTOM)"))
+			found=true;
 		if(!found)toReturn.push_back(dics[i]);
 	}
 	return toReturn;
@@ -699,32 +730,39 @@ std::vector<std::string> lggHunSpell_Wrapper::CSV2VEC(std::string csv)
 std::string lggHunSpell_Wrapper::VEC2CSV(std::vector<std::string> vec)
 {
 	std::string toReturn="";
+	if(vec.size()<1)return toReturn;
 	for(int i = 0;i<(int)vec.size();i++)
 		toReturn+=vec[i]+",";
-	return toReturn.erase(1);
+	return toReturn.erase(toReturn.length()-1);
 }
 void lggHunSpell_Wrapper::addButton(std::string selection)
 {
+	if(selection=="")return;
 	addDictionary(selection);
-	gSavedSettings.setString("EmeraldSpellInstalled",
-		std::string(gSavedSettings.getString("EmeraldSpellInstalled")+
-		","+fullName2DictName(selection)));
+	std::vector<std::string> alreadyInstalled = CSV2VEC(gSavedSettings.getString("EmeraldSpellInstalled"));
+	alreadyInstalled.push_back(fullName2DictName(selection));	
+	gSavedSettings.setString("EmeraldSpellInstalled",VEC2CSV(alreadyInstalled));
 }
 void lggHunSpell_Wrapper::removeButton(std::string selection)
 {
+	if(selection=="")return;
 	std::vector<std::string> newInstalledDics;
 	std::vector<std::string> currentlyInstalled = getInstalledDicts();
 	for(int i =0;i<(int)currentlyInstalled.size();i++)
 	{
-		if(!LLStringUtil::compareInsensitive(selection,currentlyInstalled[i]))
-			newInstalledDics.push_back(currentlyInstalled[i]);
+		if(0!=LLStringUtil::compareInsensitive(selection,currentlyInstalled[i]))
+			newInstalledDics.push_back(fullName2DictName(currentlyInstalled[i]));
 	}
 	gSavedSettings.setString("EmeraldSpellInstalled",VEC2CSV(newInstalledDics));
 	processSettings();
 }
 void lggHunSpell_Wrapper::newDictSelection(std::string selection)
 {
+	currentBaseDic=selection;
 	gSavedSettings.setString("EmeraldSpellBase",selection);
+	//better way to do this would be to check and see if there is a installed conflict
+	//and then only remove that one.. messy
+	gSavedSettings.setString("EmeraldSpellInstalled","");
 	processSettings();
 }
 void lggHunSpell_Wrapper::getMoreButton()

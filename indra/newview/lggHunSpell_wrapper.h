@@ -38,6 +38,7 @@ public:
 	std::vector<std::string> getAvailDicts();
 	std::vector<std::string> getInstalledDicts();
 	std::vector<std::string> getDicts();
+	std::vector<std::string> getExtraDicts();
 	void addDictionary(std::string additionalDictionary);
 	void addWordToCustomDictionary(std::string wordToAdd);
 	void addButton(std::string selection);

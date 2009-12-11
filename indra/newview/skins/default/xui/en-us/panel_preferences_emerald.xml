@@ -919,8 +919,8 @@ the simulator for scripts to access.</text>
                     <text bottom="-20" follows="left|top" font="SansSerifSmall" height="16" left="210"
 					 name="EmSpell_txt1" width="512">Base Language</text>
                     <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="-110" follows="left|top" height="18"
-					 max_chars="200" mouse_opaque="true" name="EmSpell_base" width="300"
-					 control_name="EmSpell_Base" tool_tip=""/>
+					 max_chars="200" mouse_opaque="true" name="EmeraldSpellBase" width="300"
+					 control_name="EmeraldSpellBase" tool_tip=""/>
                     <text bottom_delta="-30" follows="left|top" font="SansSerifSmall" height="16" left="5"
 					 name="EmSpell_txt2" width="512">Additional installed dictionaries</text> 
                     <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="0" follows="left|top" height="18"
