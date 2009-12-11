@@ -577,7 +577,7 @@ void LLFloaterAO::init()
 	overrideloader.orig_id = ANIM_AGENT_FLY;					overrideloader.ao_id = LLUUID::null; overrideloader.state = STATE_AGENT_FLY;			mAOOverrides.push_back(overrideloader);
 	overrideloader.orig_id = ANIM_AGENT_FLYSLOW;				overrideloader.ao_id = LLUUID::null; overrideloader.state = STATE_AGENT_FLYSLOW;		mAOOverrides.push_back(overrideloader);
 
-	BOOL success = FALSE;
+	BOOL success = TRUE;
 
 	if(LLStartUp::getStartupState() >= STATE_INVENTORY_SEND)
 	{
@@ -586,6 +586,7 @@ void LLFloaterAO::init()
 			LLUUID configncitem = (LLUUID)gSavedPerAccountSettings.getString("EmeraldAOConfigNotecardID");
 			if (configncitem.notNull())
 			{
+				success = FALSE;
 				const LLInventoryItem* item = gInventory.getItem(configncitem);
 				if(item)
 				{
