@@ -541,10 +541,8 @@ void lggHunSpell_Wrapper::debugTest(std::string testWord)
 }
 void lggHunSpell_Wrapper::initSettings()
 {
-	processSettings();
-	//debugTest("Hello");
-	//debugTest("Helllo");	
-
+	glggHunSpell = new lggHunSpell_Wrapper();
+	glggHunSpell->processSettings();
 }
 void lggHunSpell_Wrapper::processSettings()
 {
@@ -631,7 +629,8 @@ std::string lggHunSpell_Wrapper::fullName2DictName(std::string fullName)
 		{		
 			if(LLStringUtil::compareInsensitive(countryCode,countryCodesraw[i]))
 			{
-				countryCode=countryCodesraw[i-1];
+				if(i>0)
+					countryCode=countryCodesraw[i-1];
 				break;
 			}
 		}

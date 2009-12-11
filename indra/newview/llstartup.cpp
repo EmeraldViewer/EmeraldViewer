@@ -400,7 +400,7 @@ bool idle_startup()
 
 		new JCLSLBridge();
 		new AOInvTimer();
-		glggHunSpell->initSettings();
+		lggHunSpell_Wrapper::initSettings();
 
 // [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-0.2.1d
 		if ( (gSavedSettings.controlExists(RLV_SETTING_MAIN)) && (gSavedSettings.getBOOL(RLV_SETTING_MAIN)) )

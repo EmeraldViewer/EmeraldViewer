@@ -32,7 +32,7 @@ public:
 
 	BOOL highlightInRed;
 
-	void initSettings();
+	static void initSettings();
 	void processSettings();
 
 	std::vector<std::string> getAvailDicts();
