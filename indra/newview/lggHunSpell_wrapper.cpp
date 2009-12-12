@@ -21,6 +21,7 @@
 #include "llweb.h"
 #include "llviewercontrol.h"
 #include "llviewerwindow.h"
+#include "llfile.h"
 
 lggHunSpell_Wrapper *glggHunSpell = 0;
 Hunspell* lggHunSpell_Wrapper::myHunspell = 0;
@@ -501,11 +502,23 @@ void lggHunSpell_Wrapper::addWordToCustomDictionary(std::string wordToAdd)
 	myHunspell->add(wordToAdd.c_str());
 	std::string filename(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, 
 		"Dictionaries","EMERALD_CUSTOM.Dic"));
-	llofstream export_file;
+	//get words already there..
+	llifstream importer(filename);
+	std::string line;
+	std::vector<std::string> lines;
+	getline( importer, line );//ignored the size
+	while( getline( importer, line ) ) lines.push_back(line);
+	importer.close();
+	llofstream export_file;	
 	export_file.open(filename);
-	LLStringUtil::toLower(wordToAdd);
-	wordToAdd=wordToAdd+std::string("\r");
+	std::string sizePart(llformat("%i",(int)(lines.size()+1))+"\n");
+	export_file.write(sizePart.c_str(),sizePart.length());
+	for(int i=0;i<(int)lines.size();i++)
+		export_file.write(std::string(lines[i]+"\n").c_str(),lines[i].length()+1);
+	//LLStringUtil::toLower(wordToAdd);
+	wordToAdd=wordToAdd+std::string("\n");
 	export_file.write(wordToAdd.c_str(),wordToAdd.length());
+	//export_file << std::hex << 10 ;
 	export_file.close();
 }
 BOOL lggHunSpell_Wrapper::isSpelledRight(std::string wordToCheck)
@@ -611,7 +624,7 @@ std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 	if(countryCode!="")
 		for(int i =0;i<498;i++)
 		{		
-			llinfos << i << llendl;
+			//llinfos << i << llendl;
 			if(0==LLStringUtil::compareInsensitive(countryCode,std::string(countryCodesraw[i])))
 			{
 				countryCode=countryCodesraw[i+1];
