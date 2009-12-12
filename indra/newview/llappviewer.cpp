@@ -1602,12 +1602,12 @@ bool LLAppViewer::initLogging()
 	
 	// Remove the last ".old" log file.
 	std::string old_log_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,
-							     "SecondLife.old");
+							     "Emerald.old");
 	LLFile::remove(old_log_file);
 
 	// Rename current log file to ".old"
 	std::string log_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,
-							     "SecondLife.log");
+							     "Emerald.log");
 	LLFile::rename(log_file, old_log_file);
 
 	// Set the log file to SecondLife.log
@@ -3405,7 +3405,6 @@ void LLAppViewer::idle()
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();
 		    
-			//if(!gSavedSettings.getBOOL("phantomRightNow"))
 			if(!gAgent.getPhantom())
 			{
 		    send_agent_update(TRUE);
