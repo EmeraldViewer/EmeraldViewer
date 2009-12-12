@@ -796,3 +796,8 @@ void lggHunSpell_Wrapper::editCustomButton()
 	std::string dicdicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "Dictionaries", std::string("Emerald_Custom.Dic")).c_str());
 	gViewerWindow->getWindow()->ShellEx(dicdicpath);
 }
+
+void lggHunSpell_Wrapper::setNewHighlightSetting( BOOL highlight )
+{
+	highlightInRed=highlight;
+}

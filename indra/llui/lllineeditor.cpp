@@ -141,7 +141,8 @@ LLLineEditor::LLLineEditor(const std::string& name, const LLRect& rect,
 		mReadOnly(FALSE),
 		mHaveHistory(FALSE),
 		mImage( sImage ),
-		mReplaceNewlinesWithSpaces( TRUE )
+		mReplaceNewlinesWithSpaces( TRUE ),
+		mOverRideAndShowMisspellings( FALSE )
 {
 	llassert( max_length_bytes > 0 );
 
@@ -463,6 +464,68 @@ void LLLineEditor::spell_correct(void* data)
 
 	}
 }
+void LLLineEditor::spell_show(void * data)
+{
+	SpellMenuBind* tempBind = (SpellMenuBind*)data;
+	LLLineEditor* line = tempBind->origin;
+
+	if(tempBind && line)
+	{
+		if(tempBind->word=="Show Errors")
+		{
+			line->setOverRideAndShowMisspellings(TRUE);
+		}else
+		{
+			line->setOverRideAndShowMisspellings(FALSE);
+		}
+	}
+
+
+}
+std::vector<S32> LLLineEditor::getMisspelledWordsPositions()
+{
+	std::vector<S32> thePosesOfBadWords;
+	const LLWString& text = mText.getWString();
+	S32 wordStart=0;
+	S32 wordEnd=0;
+
+	while(wordEnd < (S32)text.length())
+	{
+		//go through all the chars... XD	
+		if( LLTextEditor::isPartOfWord( text[wordEnd] ) ) 
+			
+		{
+			// Select word the cursor is over
+			while ((wordEnd > 0) && LLTextEditor::isPartOfWord(text[wordEnd-1]))
+			{
+				wordEnd--;
+			}
+			wordStart=wordEnd;
+			while ((wordEnd < (S32)text.length()) && LLTextEditor::isPartOfWord( text[wordEnd] ) )
+			{
+				wordEnd++;
+			}	
+			//got a word :D
+			std::string selectedWord(std::string(text.begin(), 
+				text.end()).substr(wordStart,wordEnd-wordStart));
+			if(!glggHunSpell->isSpelledRight(selectedWord))
+			{	
+				//misspelled word here, and you have just right clicked on it!
+				//get the center of this word..
+				//S32 center =  llround( (wordEnd-wordStart)/2 ) + wordStart;
+				//turn this cursor position into a pixel pos
+				//center = findPixelNearestPos(center-getCursor());
+
+				thePosesOfBadWords.push_back(
+					findPixelNearestPos(wordStart-getCursor()));
+				thePosesOfBadWords.push_back(
+					findPixelNearestPos(wordEnd-getCursor()));
+			}
+		}
+		wordEnd++;
+	}
+	return thePosesOfBadWords;
+}
 void LLLineEditor::spell_add(void* data)
 {
 	SpellMenuBind* tempBind = (SpellMenuBind*)data;
@@ -650,6 +713,24 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 				tempStruct->menuItem = suggMenuItem;
 				suggestionMenuItems.push_back(tempStruct);
 				menu->append(suggMenuItem);
+				if((!glggHunSpell->highlightInRed)
+					||(mOverRideAndShowMisspellings))
+				{
+					tempStruct = new SpellMenuBind;
+					tempStruct->origin = this;
+					tempStruct->word = selectedWord;
+					tempStruct->wordPositionEnd = wordEnd;
+					tempStruct->wordPositionStart=wordStart;
+					if(mOverRideAndShowMisspellings)
+						tempStruct->word = "Hide Errors";
+					else
+						tempStruct->word = "Show Errors";
+					LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
+						tempStruct->word, spell_show, NULL, tempStruct);
+					tempStruct->menuItem = suggMenuItem;
+					suggestionMenuItems.push_back(tempStruct);
+					menu->append(suggMenuItem);
+				}
 
 
 
@@ -1882,6 +1963,41 @@ void LLLineEditor::draw()
 	if (mDrawAsterixes)
 	{
 		mText = saved_text;
+	}
+	
+	if(glggHunSpell->highlightInRed || mOverRideAndShowMisspellings)
+	{
+		F32 elapsed = mKeystrokeTimer.getElapsedTimeF32();
+		if( (elapsed < CURSOR_FLASH_DELAY ) || (S32(elapsed / 3) & 1) )
+		{
+			if(isSpellDirty())
+			{
+				resetSpellDirty();
+				misspellLocations=getMisspelledWordsPositions();
+			}
+		}
+		for(int i =0;i<(int)misspellLocations.size();i++)
+		{
+			//S32 width = mGLFont->getWidth(mText.getWString().c_str(), mScrollHPos + rendered_text, select_right - mScrollHPos - rendered_text);
+			//width = llmin(width, mMaxHPixels - llround(rendered_pixels_right));
+			//gl_rect_2d(llround(rendered_pixels_right), cursor_top, llround(rendered_pixels_right)+width, cursor_bottom, color);
+			S32 wstart = misspellLocations[i];
+			S32 wend = misspellLocations[++i];
+			//F32 center =llround((wend-wstart)/2)+wstart;
+			//gGL.color4ub(255,255,255,10);
+			//gl_circle_2d(center,
+			//	llround(llabs(cursor_top-cursor_bottom)/2),
+			//	center-wstart,(S32)30,TRUE);
+			gGL.color4ub(255,0,0,220);
+			//3 line zig zags..
+			while(wstart<wend)
+			{
+				gl_line_2d(wstart,cursor_bottom-1,wstart+3,cursor_bottom+3);
+				gl_line_2d(wstart+3,cursor_bottom+3,wstart+6,cursor_bottom-1);
+				wstart+=6;
+			}
+				
+		}
 	}
 }
 

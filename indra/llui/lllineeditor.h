@@ -79,6 +79,7 @@ public:
 				 LLViewBorder::EStyle border_style = LLViewBorder::STYLE_LINE,
 				 S32 border_thickness = 1);
 
+	
 	virtual ~LLLineEditor();
 
 	virtual LLXMLNodePtr getXML(bool save_children = true) const;
@@ -129,10 +130,13 @@ public:
 	static void context_cut(void* data);
 	static void context_copy(void* data);
 	static void spell_correct(void* data);
+	static void spell_show(void* data);
 	static void spell_add(void* data);
 	static void context_paste(void* data);
 	static void context_delete(void* data);
 	static void context_selectall(void* data);
+
+	std::vector<S32> LLLineEditor::getMisspelledWordsPositions();
 
 	// view overrides
 	virtual void	draw();
@@ -150,6 +154,8 @@ public:
 	virtual void	onCommit();
 	virtual BOOL	isDirty() const { return mText.getString() != mPrevText; }	// Returns TRUE if user changed value at all
 	virtual void	resetDirty() { mPrevText = mText.getString(); }		// Clear dirty state
+	virtual BOOL	isSpellDirty() const { return mText.getString() != mPrevSpelledText; }	// Returns TRUE if user changed value at all
+	virtual void	resetSpellDirty() { mPrevSpelledText = mText.getString(); }		// Clear dirty state
 
 	// assumes UTF8 text
 	virtual void	setValue(const LLSD& value ) { setText(value.asString()); }
@@ -185,6 +191,7 @@ public:
 	void setWriteableBgColor( const LLColor4& c )	{ mWriteableBgColor = c; }
 	void setReadOnlyBgColor( const LLColor4& c )	{ mReadOnlyBgColor = c; }
 	void setFocusBgColor(const LLColor4& c)			{ mFocusBgColor = c; }
+	void setOverRideAndShowMisspellings(BOOL b)		{ mOverRideAndShowMisspellings =b;}
 
 	const LLColor4& getFgColor() const			{ return mFgColor; }
 	const LLColor4& getReadOnlyFgColor() const	{ return mReadOnlyFgColor; }
@@ -273,8 +280,11 @@ protected:
 
 	LLUIString		mText;					// The string being edited.
 	std::string		mPrevText;				// Saved string for 'ESC' revert
+	std::string		mPrevSpelledText;		// saved string so we know whether to respell or not
+	std::vector<S32> misspellLocations;     // where all the mispelled words are
 	LLUIString		mLabel;					// text label that is visible when no user text provided
 
+	BOOL		mOverRideAndShowMisspellings;
 	// line history support:
 	BOOL		mHaveHistory;				// flag for enabled line history
 	typedef	std::vector<std::string>	line_history_t;

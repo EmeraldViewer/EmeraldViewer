@@ -419,6 +419,7 @@ void LLPanelEmerald::apply()
 	LLWStringUtil::replaceTabsWithSpaces(im_response, 4);
 	LLWStringUtil::replaceChar(im_response, '\n', '^');
 	LLWStringUtil::replaceChar(im_response, ' ', '%');
+	glggHunSpell->setNewHighlightSetting(gSavedSettings.getBOOL("EmeraldSpellDisplay"));
 	gSavedPerAccountSettings.setString("EmeraldInstantMessageResponse", std::string(wstring_to_utf8str(im_response)));
 
 	//gSavedPerAccountSettings.setString(

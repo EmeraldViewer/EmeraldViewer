@@ -933,7 +933,7 @@ the simulator for scripts to access.</text>
                     <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="0" follows="left|top" height="18"
 					 max_chars="200" mouse_opaque="true" name="EmSpell_Avail" width="180"
 					 control_name="EmSpell_Avail" tool_tip=""/>
-				<button bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="18" label="Add"
+				<button bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="18" label="Install"
 					 name="EmSpell_Add" tool_tip="" left_delta="182" width="40"/>
                     <button bottom_delta="20" follows="left|top" font="SansSerifSmall" height="18" label="Get More!"
 					 name="EmSpell_GetMore" tool_tip="" left_delta="-30" width="70"/>
