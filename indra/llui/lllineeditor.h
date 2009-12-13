@@ -136,7 +136,7 @@ public:
 	static void context_delete(void* data);
 	static void context_selectall(void* data);
 
-	std::vector<S32> LLLineEditor::getMisspelledWordsPositions();
+	std::vector<S32> getMisspelledWordsPositions();
 
 	// view overrides
 	virtual void	draw();

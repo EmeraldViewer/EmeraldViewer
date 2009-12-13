@@ -293,7 +293,8 @@ LLTextEditor::LLTextEditor(
 	mLastSelectionX(-1),
 	mLastSelectionY(-1),
 	mReflowNeeded(FALSE),
-	mScrollNeeded(FALSE)
+	mScrollNeeded(FALSE),
+	mOverRideAndShowMisspellings(TRUE)
 {
 	mSourceID.generate();
 
@@ -407,6 +408,62 @@ void LLTextEditor::spell_correct(void* data)
 		if(line)line->spellReplace(tempBind);
 		
 	}
+}
+void LLTextEditor::spell_show(void * data)
+{
+	SpellMenuBind* tempBind = (SpellMenuBind*)data;
+	LLTextEditor* line = tempBind->origin;
+
+	if(tempBind && line)
+	{
+		if(tempBind->word=="Show Errors")
+		{
+			line->setOverRideAndShowMisspellings(TRUE);
+		}else
+		{
+			line->setOverRideAndShowMisspellings(FALSE);
+		}
+	}
+}
+
+std::vector<S32> LLTextEditor::getMisspelledWordsPositions()
+{
+	std::vector<S32> thePosesOfBadWords;
+	const LLWString& text = mWText;
+
+	S32 wordStart=0;
+	S32 wordEnd=0;
+
+	while(wordEnd < (S32)text.length())
+	{
+		//go through all the chars... XD	
+		if( LLTextEditor::isPartOfWord( text[wordEnd] ) ) 
+
+		{
+			// Select word the cursor is over
+			while ((wordEnd > 0) && LLTextEditor::isPartOfWord(text[wordEnd-1]))
+			{
+				wordEnd--;
+			}
+			wordStart=wordEnd;
+			while ((wordEnd < (S32)text.length()) && LLTextEditor::isPartOfWord( text[wordEnd] ) )
+			{
+				wordEnd++;
+			}	
+			//got a word :D
+			std::string selectedWord(std::string(text.begin(), 
+				text.end()).substr(wordStart,wordEnd-wordStart));
+			if(!glggHunSpell->isSpelledRight(selectedWord))
+			{	
+				//misspelled word here, and you have just right clicked on it
+
+				thePosesOfBadWords.push_back(wordStart);
+				thePosesOfBadWords.push_back(wordEnd);
+			}
+		}
+		wordEnd++;
+	}
+	return thePosesOfBadWords;
 }
 void LLTextEditor::spell_add(void* data)
 {
@@ -1553,6 +1610,24 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 				tempStruct->menuItem = suggMenuItem;
 				suggestionMenuItems.push_back(tempStruct);
 				menu->append(suggMenuItem);
+				if((!glggHunSpell->highlightInRed)
+					||(mOverRideAndShowMisspellings))
+				{
+					tempStruct = new SpellMenuBind;
+					tempStruct->origin = this;
+					tempStruct->word = selectedWord;
+					tempStruct->wordPositionEnd = wordEnd;
+					tempStruct->wordPositionStart=wordStart;
+					if(mOverRideAndShowMisspellings)
+						tempStruct->word = "Hide Errors";
+					else
+						tempStruct->word = "Show Errors";
+					LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
+						tempStruct->word, spell_show, NULL, tempStruct);
+					tempStruct->menuItem = suggMenuItem;
+					suggestionMenuItems.push_back(tempStruct);
+					menu->append(suggMenuItem);
+				}
 
 
 
@@ -2831,7 +2906,89 @@ void LLTextEditor::drawSelectionBackground()
 		}
 	}
 }
+void LLTextEditor::drawMisspelled()
+{
+	if(mReadOnly)return;
+	if(glggHunSpell->highlightInRed || mOverRideAndShowMisspellings)
+	{
+		//update base
+		F32 elapsed = mKeystrokeTimer.getElapsedTimeF32();
+		if( (elapsed < CURSOR_FLASH_DELAY ) || (S32(elapsed / 3) & 1) )
+		{
+			if(isSpellDirty())
+			{
+				resetSpellDirty();
+				misspellLocations=getMisspelledWordsPositions();
+			}
+		}
+		//draw
+		for(int i =0;i<(int)misspellLocations.size();i++)
+		{
+			S32 wstart = misspellLocations[i];
+			S32 wend = misspellLocations[++i];
+			//start curor code mod
+			const LLWString &text = mWText;
+			const S32 text_len = getLength();
+			// Skip through the lines we aren't drawing.
+			S32 search_pos = mScrollbar->getDocPos();
+			S32 num_lines = getLineCount();
+			if (search_pos >= num_lines)return;
+			S32 line_start = getLineStart(search_pos);
+			F32 line_height = mGLFont->getLineHeight();
+			F32 text_y = (F32)(mTextRect.mTop) - line_height;
 
+			F32 word_left = 0.f; 
+			F32 word_right = 0.f;
+			F32 word_bottom = 0.f;
+			BOOL word_visible = FALSE;
+
+			S32 line_end = 0;
+			// Determine if the cursor is visible and if so what its coordinates are.
+			while( (mTextRect.mBottom <= llround(text_y)) && (search_pos < num_lines))
+			{
+				line_end = text_len + 1;
+				S32 next_line = -1;
+
+				if ((search_pos + 1) < num_lines)
+				{
+					next_line = getLineStart(search_pos + 1);
+					line_end = next_line - 1;
+				}
+				const llwchar* line = text.c_str() + line_start;
+				// Find the cursor and selection bounds
+				if( line_start <= wstart && wend <= line_end )
+				{
+					word_visible = TRUE;
+					word_left = (F32)mTextRect.mLeft + mGLFont->getWidthF32(line, 0, wstart - line_start, mAllowEmbeddedItems )-1.f;
+					word_right = (F32)mTextRect.mLeft + mGLFont->getWidthF32(line, 0, wend - line_start, mAllowEmbeddedItems )+1.f;
+					word_bottom = text_y;
+					break;
+				}
+				// move down one line
+				text_y -= line_height;
+				line_start = next_line;
+				search_pos++;
+			}
+			if(mShowLineNumbers)
+			{
+				word_left += UI_TEXTEDITOR_LINE_NUMBER_MARGIN;
+				word_right += UI_TEXTEDITOR_LINE_NUMBER_MARGIN;
+			}
+			// Draw the cursor
+			if( word_visible )
+			{
+				//end cursos code mod
+				gGL.color4ub(255,0,0,200);
+				while(word_left<word_right)
+				{
+					gl_line_2d(word_left,word_bottom-2,word_left+3,word_bottom+1);
+					gl_line_2d(word_left+3,word_bottom+1,word_left+6,word_bottom-2);
+					word_left+=6;
+				}
+			}
+		}
+	}
+}
 void LLTextEditor::drawCursor()
 {
 	if( gFocusMgr.getKeyboardFocus() == this
@@ -3314,6 +3471,7 @@ void LLTextEditor::draw()
 			drawPreeditMarker();
 			drawText();
 			drawCursor();
+			drawMisspelled();
 
 			unbindEmbeddedChars(mGLFont);
 
@@ -3775,72 +3933,15 @@ void LLTextEditor::appendStyledText(const std::string &new_text,
 			}
 		}
 		if (part != (S32)LLTextParser::WHOLE) part=(S32)LLTextParser::END;
-		if (end < (S32)text.length()) appendSpellCheckText(text,allow_undo, prepend_newline, part, stylep);		
+		if (end < (S32)text.length()) appendHighlightedText(text,allow_undo, prepend_newline, part, stylep);		
 	}
 	
 	else 
 	{
-		appendSpellCheckText(new_text, allow_undo, prepend_newline, part, stylep);
+		appendHighlightedText(new_text, allow_undo, prepend_newline, part, stylep);
 	}
 }
-void LLTextEditor::appendSpellCheckText(const std::string &new_text, 
-										bool allow_undo, 
-										bool prepend_newline,
-										S32  part,
-										LLStyleSP stylep)
-{
-	if(false)//mSpellCheck)
-	{
 
-		S32 start=0,end=0;
-		std::string text = new_text;
-		while ( findSpellError(text, &start, &end) )
-		{
-			LLStyleSP spellError(new LLStyle);
-			spellError->setVisible(true);
-			spellError->setColor(LLColor4::red2);
-			if (stylep)
-			{
-				spellError->setFontName(stylep->getFontString());
-			}
-			spellError->mItalic = TRUE;
-			spellError->mUnderline = TRUE;
-
-			if (start > 0)
-			{
-				if (part == (S32)LLTextParser::WHOLE ||
-					part == (S32)LLTextParser::START)
-				{
-					part = (S32)LLTextParser::START;
-				}
-				else
-				{
-					part = (S32)LLTextParser::MIDDLE;
-				}
-				std::string subtext=text.substr(0,start);
-				appendHighlightedText(subtext,allow_undo, prepend_newline, part, stylep); 
-			}
-
-			spellError->setLinkHREF("spellError://"+text.substr(start,end-start));
-			appendText(text.substr(start, end-start),allow_undo, prepend_newline, spellError);
-			if (end < (S32)text.length()) 
-			{
-				text = text.substr(end,text.length() - end);
-				end=0;
-				part=(S32)LLTextParser::END;
-			}
-			else
-			{
-				break;
-			}
-		}
-		if (part != (S32)LLTextParser::WHOLE) part=(S32)LLTextParser::END;
-		if (end < (S32)text.length()) appendHighlightedText(text,allow_undo, prepend_newline, part, stylep);		
-	}else
-	{
-		appendHighlightedText(new_text,allow_undo, prepend_newline, part, stylep);		
-	}
-}
 
 void LLTextEditor::appendHighlightedText(const std::string &new_text, 
 										 bool allow_undo, 
@@ -4711,47 +4812,6 @@ BOOL LLTextEditor::findHTML(const std::string &line, S32 *begin, S32 *end) const
 	}
 	return matched;
 }
-
-
-
-BOOL LLTextEditor::findSpellError(const std::string &line, S32 *begin, S32 *end) const
-{
-	S32 m1=0;
-	BOOL matched = FALSE;
-
-	//m1=line.find("://",*end);
-	m1 =0;
-	std::string toSearchIn = line.substr(*end);
-	boost::regex re("[\\]\\[\\\\ .,!?:()\\n\\r\\t\\d]+");
-	boost::sregex_token_iterator i(toSearchIn.begin(), toSearchIn.end(), re, -1);
-	boost::sregex_token_iterator j;
-
-	while((i != j)&&(matched!=TRUE))
-	{
-		if(glggHunSpell->isSpelledRight(*i))
-		{
-
-		}else
-		{
-			m1=line.find(*i,*end);
-			matched=TRUE;
-			*begin = m1;
-			*end = m1+std::string(*i).length();
-
-		}
-		*i++;
-	}
-
-	if (!matched)
-	{
-		*begin=*end=0;
-	}
-	return matched;
-}
-
-
-
-
 void LLTextEditor::updateAllowingLanguageInput()
 {
 	if (hasFocus() && !mReadOnly)

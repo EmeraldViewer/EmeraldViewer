@@ -108,6 +108,8 @@ public:
 	virtual void	setFocus( BOOL b );
 	virtual BOOL	acceptsTextInput() const;
 	virtual BOOL	isDirty() const { return( mLastCmd != NULL || (mPristineCmd && (mPristineCmd != mLastCmd)) ); }
+	BOOL	isSpellDirty() const { return mWText != mPrevSpelledText; }	// Returns TRUE if user changed value at all
+	void	resetSpellDirty() { mPrevSpelledText = mWText; }		// Clear dirty state
 
 	struct SpellMenuBind
 	{
@@ -145,6 +147,9 @@ public:
 	static void context_selectall(void* data);
 	static void spell_correct(void* data);
 	static void spell_add(void* data);
+	static void spell_show(void* data);
+	std::vector<S32> getMisspelledWordsPositions();
+
 
 
 	void			selectNext(const std::string& search_text_in, BOOL case_insensitive, BOOL wrap = TRUE);
@@ -176,9 +181,6 @@ public:
 	void			appendHighlightedText(const std::string &new_text,  bool allow_undo, 
 										  bool prepend_newline,	 S32  highlight_part,
 										  LLStyleSP stylep);
-	void			appendSpellCheckText(const std::string &new_text,  bool allow_undo, 
-											bool prepend_newline,	 S32  highlight_part,
-											LLStyleSP stylep);
 	
 	// Removes text from the end of document
 	// Does not change highlight or cursor position.
@@ -213,6 +215,8 @@ public:
 	void			setThumbColor( const LLColor4& color );
 	void			setHighlightColor( const LLColor4& color );
 	void			setShadowColor( const LLColor4& color );
+	void setOverRideAndShowMisspellings(BOOL b)		{ mOverRideAndShowMisspellings =b;}
+
 
 	// Hacky methods to make it into a word-wrapping, potentially scrolling,
 	// read-only text box.
@@ -351,9 +355,7 @@ protected:
 	S32				findHTMLToken(const std::string &line, S32 pos, BOOL reverse) const;
 	S32				findHTMLToken(const std::string &line, S32 pos, BOOL reverse, const char *end_delims) const;
 	BOOL			findHTML(const std::string &line, S32 *begin, S32 *end) const;
-	BOOL			findSpellError(const std::string &line, S32 *begin, S32 *end) const;
 	
-
 	// Abstract inner base class representing an undoable editor command.
 	// Concrete sub-classes can be defined for operations such as insert, remove, etc.
 	// Used as arguments to the execute() method below.
@@ -467,6 +469,7 @@ private:
 	void			drawBackground();
 	void			drawSelectionBackground();
 	void			drawCursor();
+	void			drawMisspelled();
 	void			drawText();
 	void			drawClippedSegment(const LLWString &wtext, S32 seg_start, S32 seg_end, F32 x, F32 y, S32 selection_left, S32 selection_right, const LLStyleSP& color, F32* right_x);
 
@@ -492,10 +495,14 @@ private:
 	class LLTextCmdAddChar;
 	class LLTextCmdOverwriteChar;
 	class LLTextCmdRemove;
-
+		
 	LLWString		mWText;
 	mutable std::string mUTF8Text;
 	mutable BOOL	mTextIsUpToDate;
+	LLWString		mPrevSpelledText;		// saved string so we know whether to respell or not
+	std::vector<S32> misspellLocations;     // where all the mispelled words are
+	BOOL		mOverRideAndShowMisspellings;
+
 	
 	S32				mMaxTextByteLength;		// Maximum length mText is allowed to be in bytes
 

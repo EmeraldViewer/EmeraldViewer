@@ -1965,7 +1965,8 @@ void LLLineEditor::draw()
 		mText = saved_text;
 	}
 	
-	if(glggHunSpell->highlightInRed || mOverRideAndShowMisspellings)
+	if((glggHunSpell->highlightInRed || mOverRideAndShowMisspellings)
+		&&(!mReadOnly))
 	{
 		F32 elapsed = mKeystrokeTimer.getElapsedTimeF32();
 		if( (elapsed < CURSOR_FLASH_DELAY ) || (S32(elapsed / 3) & 1) )
@@ -1988,12 +1989,12 @@ void LLLineEditor::draw()
 			//gl_circle_2d(center,
 			//	llround(llabs(cursor_top-cursor_bottom)/2),
 			//	center-wstart,(S32)30,TRUE);
-			gGL.color4ub(255,0,0,220);
+			gGL.color4ub(255,0,0,200);
 			//3 line zig zags..
 			while(wstart<wend)
 			{
-				gl_line_2d(wstart,cursor_bottom-1,wstart+3,cursor_bottom+3);
-				gl_line_2d(wstart+3,cursor_bottom+3,wstart+6,cursor_bottom-1);
+				gl_line_2d(wstart,cursor_bottom-2,wstart+3,cursor_bottom+1);
+				gl_line_2d(wstart+3,cursor_bottom+1,wstart+6,cursor_bottom-2);
 				wstart+=6;
 			}
 				
