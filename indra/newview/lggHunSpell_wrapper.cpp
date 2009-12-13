@@ -25,7 +25,8 @@
 
 lggHunSpell_Wrapper *glggHunSpell = 0;
 Hunspell* lggHunSpell_Wrapper::myHunspell = 0;
-//size is 498
+// do not insert empty lines after this line until the size calculation
+#define COUNTRY_CODES_RAW_START_LINE (__LINE__ + 2)
 static char * countryCodesraw[] = {
   (char*)"SL",(char*)"SecondLife",
   (char*)"AD",(char*)"Andorra",
@@ -274,7 +275,8 @@ static char * countryCodesraw[] = {
   (char*)"ZW",(char*)"Zimbabwe",
   (char*)"ZZ",(char*)"Unknown or unspecified country"
 };
-//size is 371
+#define COUNTRY_CODES_RAW_SIZE ((__LINE__ - 1 - COUNTRY_CODES_RAW_START_LINE) * 2)
+#define LANGUAGE_CODES_RAW_START_LINE (__LINE__ + 2)
 static char * languageCodesraw[]={
   (char*)"aa",(char*)"Afar",
   (char*)"ab",(char*)"Abkhazian",
@@ -461,6 +463,7 @@ static char * languageCodesraw[]={
   (char*)"zh",(char*)"Chinese",
   (char*)"zu",(char*)"Zulu"
 };
+#define LANGUAGE_CODES_RAW_SIZE ((__LINE__ - 1 - LANGUAGE_CODES_RAW_START_LINE) * 2)
 
 lggHunSpell_Wrapper::lggHunSpell_Wrapper()
 {
@@ -612,7 +615,7 @@ std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 		countryCode=dictName.substr(breakPoint+1);
 	}
 	//get long language code
-	for(int i =0;i<370;i++)
+	for(int i =0;i<LANGUAGE_CODES_RAW_SIZE;i++)
 	{		
 		if(0==LLStringUtil::compareInsensitive(languageCode,std::string(languageCodesraw[i])))
 		{
@@ -622,7 +625,7 @@ std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 	}
 	//get long country code
 	if(countryCode!="")
-		for(int i =0;i<498;i++)
+		for(int i =0;i<COUNTRY_CODES_RAW_SIZE;i++)
 		{		
 			//llinfos << i << llendl;
 			if(0==LLStringUtil::compareInsensitive(countryCode,std::string(countryCodesraw[i])))
@@ -648,7 +651,7 @@ std::string lggHunSpell_Wrapper::fullName2DictName(std::string fullName)
 		countryCode=fullName.substr(breakPoint+2,fullName.length()-3-breakPoint);
 	}
 	//get long language code
-	for(int i =1;i<370;i++)
+	for(int i =1;i<LANGUAGE_CODES_RAW_SIZE;i+=2)
 	{
 		//llinfos << i << llendl;
 		if(0==LLStringUtil::compareInsensitive(languageCode,std::string(languageCodesraw[i])))
@@ -659,8 +662,8 @@ std::string lggHunSpell_Wrapper::fullName2DictName(std::string fullName)
 	}
 	//get long country code
 	if(countryCode!="")
-		for(int i =1;i<498;i++)
-		{	
+		for(int i =1;i<COUNTRY_CODES_RAW_SIZE;i+=2)
+		{
 			//llinfos << i << " comparing " <<countryCode<<" and "<<std::string(countryCodesraw[i]).c_str()<< llendl;
 			if(0==LLStringUtil::compareInsensitive(countryCode,std::string(countryCodesraw[i])))
 			{
