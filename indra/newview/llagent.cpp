@@ -6483,7 +6483,8 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 			if(ml)
 			{
 				gAgent.setControlFlags(AGENT_CONTROL_STAND_UP); //GIT UP
-				JCLSLBridge::bridgetolsl("move|"+GUS::sVec3(pos_local),NULL);
+				JCLSLBridge::bridgetolsl("move|"+GUS::sVec3(pos_local),NULL); //o i c wut u did thar.
+				//I presume this will be the new format instead of a naked vector on a specified channel... -tG
 			}
 		}
 	}

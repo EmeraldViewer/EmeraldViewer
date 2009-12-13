@@ -65,7 +65,7 @@
 
 #include "llviewerwindow.h"
 
-
+#include "greenlife_utility_stream.h"
 
 #define vCatType (LLAssetType::EType)128
 #define vBridgeName "#LSL<->Client Bridge v0.04"
@@ -212,6 +212,12 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				data->reply = llformat("name2keyreply|%s|",uniq.c_str());
 				data->source = source_id;
 				gCacheName->get(LLUUID(args[3].asString()), group, callbackname2key, data);
+			}
+			else if(cmd == GUS::ping_command)
+			{
+				S32	channel = atoi(args[1].asString().c_str());
+				GUS::ping(channel);
+				return true; //we don't want the user being spammed with GUS pings; bail on showing the message in the viewer
 			}
 		}else if(message.substr(0,3) == "l2c")
 		{

@@ -3430,18 +3430,18 @@ void LLAppViewer::idle()
 			GUS* GussyWussy = GUS::getInstance(); //This is for Laura =P
 			if(GussyWussy)
 			{
-				if(GUS::Enabled)
+				if(GUS::Enabled && GUS::pinged())
 				{
 					if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
 					{
-						if(GussyWussy->streamData())GUS_update_timer.reset();
-						GussyWussy->FELimiter_dec();
+						if(GUS::streamData())GUS_update_timer.reset();
+						GUS::FELimiter_dec();
 					}
 					if(GUS::FEEnabled)
 					{
 						if(GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
 						{
-							if(GussyWussy->fastEvent())GUS_FE_update_timer.reset();
+							if(GUS::fastEvent())GUS_FE_update_timer.reset();
 						}
 					}
 				}
