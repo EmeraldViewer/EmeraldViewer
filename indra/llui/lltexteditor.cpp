@@ -294,7 +294,7 @@ LLTextEditor::LLTextEditor(
 	mLastSelectionY(-1),
 	mReflowNeeded(FALSE),
 	mScrollNeeded(FALSE),
-	mOverRideAndShowMisspellings(TRUE)
+	mOverRideAndShowMisspellings(FALSE)
 {
 	mSourceID.generate();
 
@@ -416,7 +416,7 @@ void LLTextEditor::spell_show(void * data)
 
 	if(tempBind && line)
 	{
-		if(tempBind->word=="Show Errors")
+		if(tempBind->word=="Show Misspellings")
 		{
 			line->setOverRideAndShowMisspellings(TRUE);
 		}else
@@ -1610,31 +1610,24 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 				tempStruct->menuItem = suggMenuItem;
 				suggestionMenuItems.push_back(tempStruct);
 				menu->append(suggMenuItem);
-				if((!glggHunSpell->highlightInRed)
-					||(mOverRideAndShowMisspellings))
-				{
-					tempStruct = new SpellMenuBind;
-					tempStruct->origin = this;
-					tempStruct->word = selectedWord;
-					tempStruct->wordPositionEnd = wordEnd;
-					tempStruct->wordPositionStart=wordStart;
-					if(mOverRideAndShowMisspellings)
-						tempStruct->word = "Hide Errors";
-					else
-						tempStruct->word = "Show Errors";
-					LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
-						tempStruct->word, spell_show, NULL, tempStruct);
-					tempStruct->menuItem = suggMenuItem;
-					suggestionMenuItems.push_back(tempStruct);
-					menu->append(suggMenuItem);
-				}
-
-
-
 			}
 			
 		}
-
+		if((!glggHunSpell->highlightInRed)
+			||(mOverRideAndShowMisspellings))
+		{
+			SpellMenuBind *	tempStruct = new SpellMenuBind;
+			tempStruct->origin = this;
+			if(mOverRideAndShowMisspellings)
+				tempStruct->word = "Hide Misspellings";
+			else
+				tempStruct->word = "Show Misspellings";
+			LLMenuItemCallGL * suggMenuItem = new LLMenuItemCallGL(
+				tempStruct->word, spell_show, NULL, tempStruct);
+			tempStruct->menuItem = suggMenuItem;
+			suggestionMenuItems.push_back(tempStruct);
+			menu->append(suggMenuItem);
+		}
 		menu->buildDrawLabels();
 		menu->updateParent(LLMenuGL::sMenuContainer);
 		LLMenuGL::showPopup(this, menu, x, y);
