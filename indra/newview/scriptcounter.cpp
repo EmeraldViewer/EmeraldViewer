@@ -60,9 +60,7 @@ ScriptCounter::~ScriptCounter()
 void ScriptCounter::init()
 {
 	if(!sInstance)
-	{
 		sInstance = new ScriptCounter();
-	}
 	status = IDLE;
 }
 
@@ -73,34 +71,48 @@ LLVOAvatar* find_avatar_from_object( const LLUUID& object_id );
 void ScriptCounter::serializeSelection()
 {
 	LLDynamicArray<LLViewerObject*> catfayse;
-	for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
-			 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
+	LLViewerObject* foo=LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+	if(foo->isAvatar())
 	{
-		LLSelectNode* selectNode = *iter;
-		LLViewerObject* object = selectNode->getObject();
-		if(object)catfayse.put(object);
+		LLVOAvatar* av=find_avatar_from_object(foo);
+		for (LLVOAvatar::attachment_map_t::iterator iter = av->mAttachmentPoints.begin();
+			iter != av->mAttachmentPoints.end();
+			++iter)
+		{
+			LLViewerJointAttachment* attachment = iter->second;
+			if (!attachment->getValid())
+				continue ;
+			LLViewerObject* object = attachment->getObject();
+			if(object)catfayse.put(object);
+		}
 	}
-	scriptcount=0;
+	else
+	{
+		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
+				 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
+		{
+			LLSelectNode* selectNode = *iter;
+			LLViewerObject* object = selectNode->getObject();
+			if(object)catfayse.put(object);
+		}
+	}
 	cmdline_printchat("Counting scripts. Please wait.");
 	serialize(catfayse);
 }
 
 void ScriptCounter::serialize(LLDynamicArray<LLViewerObject*> objects)
 {
-
 	init();
-
+	scriptcount=0;
+	invqueries=0;
+	objIDS.clear();
 	status = COUNTING;
-
 	F32 throttle = gSavedSettings.getF32("OutBandwidth");
-	// Gross magical value that is 128kbit/s
-	// Sim appears to drop requests if they come in faster than this. *sigh*
 	if((throttle == 0.f) || (throttle > 128000.f))
 	{
 		gMessageSystem->mPacketRing.setOutBandwidth(128000);
 		gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 	}
-
 	for(LLDynamicArray<LLViewerObject*>::iterator itr = objects.begin(); itr != objects.end(); ++itr)
 	{
 		LLViewerObject* object = *itr;
@@ -108,9 +120,7 @@ void ScriptCounter::serialize(LLDynamicArray<LLViewerObject*> objects)
 			subserialize(object);
 	}
 	if(invqueries == 0)
-	{
 		init();
-	}
 	if(throttle != 0.f)
 	{
 		gMessageSystem->mPacketRing.setOutBandwidth(throttle);
@@ -125,30 +135,17 @@ void ScriptCounter::serialize(LLDynamicArray<LLViewerObject*> objects)
 
 void ScriptCounter::subserialize(LLViewerObject* linkset)
 {
-	//Chalice - Changed to support exporting linkset groups.
 	LLViewerObject* object = linkset;
-
-	// Build a list of everything that we'll be checking inventory of.
 	LLDynamicArray<LLViewerObject*> count_objects;
-	
-	// Add the root object to the list
 	count_objects.put(object);
-	
-	// Iterate over all of this objects children
 	LLViewerObject::child_list_t child_list = object->getChildren();
-	
 	for (LLViewerObject::child_list_t::iterator i = child_list.begin(); i != child_list.end(); ++i)
 	{
 		LLViewerObject* child = *i;
 		if(!child->isAvatar())
-		{
-			// Put the child objects on the export list
 			count_objects.put(child);
-		}
 	}
-		
 	S32 object_index = 0;
-
 	while ((object_index < count_objects.count()))
 	{
 		object = count_objects.get(object_index++);
