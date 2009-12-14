@@ -227,6 +227,7 @@
 #include "jc_asset_comparer.h"
 
 #include "exporttracker.h"
+#include "scriptcounter.h"
 
 #include "tsstuff.h"
 
