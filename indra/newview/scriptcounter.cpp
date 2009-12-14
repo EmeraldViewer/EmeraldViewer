@@ -72,32 +72,38 @@ void ScriptCounter::serializeSelection()
 {
 	LLDynamicArray<LLViewerObject*> catfayse;
 	LLViewerObject* foo=LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
-	if(foo->isAvatar())
+	if(foo)
 	{
-		LLVOAvatar* av=find_avatar_from_object(foo);
-		for (LLVOAvatar::attachment_map_t::iterator iter = av->mAttachmentPoints.begin();
-			iter != av->mAttachmentPoints.end();
-			++iter)
+		if(foo->isAvatar())
 		{
-			LLViewerJointAttachment* attachment = iter->second;
-			if (!attachment->getValid())
-				continue ;
-			LLViewerObject* object = attachment->getObject();
-			if(object)catfayse.put(object);
+			LLVOAvatar* av=find_avatar_from_object(foo);
+			if(av)
+			{
+				for (LLVOAvatar::attachment_map_t::iterator iter = av->mAttachmentPoints.begin();
+					iter != av->mAttachmentPoints.end();
+					++iter)
+				{
+					LLViewerJointAttachment* attachment = iter->second;
+					if (!attachment->getValid())
+						continue ;
+					LLViewerObject* object = attachment->getObject();
+					if(object)catfayse.put(object);
+				}
+			}
 		}
-	}
-	else
-	{
-		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
-				 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
+		else
 		{
-			LLSelectNode* selectNode = *iter;
-			LLViewerObject* object = selectNode->getObject();
-			if(object)catfayse.put(object);
+			for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
+					 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
+			{
+				LLSelectNode* selectNode = *iter;
+				LLViewerObject* object = selectNode->getObject();
+				if(object)catfayse.put(object);
+			}
 		}
+		cmdline_printchat("Counting scripts. Please wait.");
+		serialize(catfayse);
 	}
-	cmdline_printchat("Counting scripts. Please wait.");
-	serialize(catfayse);
 }
 
 void ScriptCounter::serialize(LLDynamicArray<LLViewerObject*> objects)
