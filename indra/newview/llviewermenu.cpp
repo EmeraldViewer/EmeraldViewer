@@ -2381,6 +2381,27 @@ class LLObjectExport : public view_listener_t
 	}
 };
 
+class LLScriptCount : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		ScriptCounter::serializeSelection();
+		return true;
+	}
+};
+
+class LLObjectVisibleScriptCount : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		bool new_value = (object != NULL);
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		
+		return true;
+	}
+};
+
 //Madgeek - Option in pie menu to disable objects if you are an estate manager.
 class LLObjectEnableObjectDisable : public view_listener_t
 {
@@ -9236,6 +9257,8 @@ void initialize_menus()
 	addMenu(new LLObjectReturn(), "Object.Return");
 	addMenu(new LLObjectReportAbuse(), "Object.ReportAbuse");
 	addMenu(new LLObjectExport(), "Object.Export");
+	addMenu(new LLScriptCount(), "Object.ScriptCount");
+	addMenu(new LLObjectVisibleScriptCount(), "Object.VisibleScriptCount");
 	addMenu(new LLObjectDisable(), "Object.Disable");
 	addMenu(new LLObjectMute(), "Object.Mute");
 	addMenu(new LLObjectBuy(), "Object.Buy");

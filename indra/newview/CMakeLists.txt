@@ -506,6 +506,7 @@ set(viewer_SOURCE_FILES
     rlvmultistringsearch.cpp
     rlvextensions.cpp
     rlvfloaterbehaviour.cpp
+	scriptcounter.cpp
     otr_wrapper.cpp
     otr_floater_smp_dialog.cpp
     otr_floater_smp_progress.cpp
@@ -960,6 +961,7 @@ set(viewer_HEADER_FILES
     rlvmultistringsearch.h
     rlvextensions.h
     rlvfloaterbehaviour.h
+	scriptcounter.h
     otr_wrapper.h
     otr_floater_smp_dialog.h
     otr_floater_smp_progress.h
