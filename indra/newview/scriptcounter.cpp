@@ -101,6 +101,12 @@ void ScriptCounter::serializeSelection()
 				if(object)catfayse.put(object);
 			}
 		}
+		F32 throttle = gSavedSettings.getF32("OutBandwidth");
+		if((throttle == 0.f) || (throttle > 128000.f))
+		{
+			gMessageSystem->mPacketRing.setOutBandwidth(128000);
+			gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+		}
 		cmdline_printchat("Counting scripts. Please wait.");
 		serialize(catfayse);
 	}
@@ -113,12 +119,6 @@ void ScriptCounter::serialize(LLDynamicArray<LLViewerObject*> objects)
 	invqueries=0;
 	objIDS.clear();
 	status = COUNTING;
-	F32 throttle = gSavedSettings.getF32("OutBandwidth");
-	if((throttle == 0.f) || (throttle > 128000.f))
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(128000);
-		gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
-	}
 	for(LLDynamicArray<LLViewerObject*>::iterator itr = objects.begin(); itr != objects.end(); ++itr)
 	{
 		LLViewerObject* object = *itr;
@@ -127,16 +127,6 @@ void ScriptCounter::serialize(LLDynamicArray<LLViewerObject*> objects)
 	}
 	if(invqueries == 0)
 		init();
-	if(throttle != 0.f)
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(throttle);
-		gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
-	}
-	else
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(0.0);
-		gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
-	}
 }
 
 void ScriptCounter::subserialize(LLViewerObject* linkset)
@@ -175,6 +165,17 @@ void ScriptCounter::completechk()
 		cmdline_printchat(sstr.str());
 		scriptcount=0;
 		objIDS.clear();
+		F32 throttle = gSavedSettings.getF32("OutBandwidth");
+		if(throttle != 0.f)
+		{
+			gMessageSystem->mPacketRing.setOutBandwidth(throttle);
+			gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+		}
+		else
+		{
+			gMessageSystem->mPacketRing.setOutBandwidth(0.0);
+			gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
+		}
 		init();
 	}
 }

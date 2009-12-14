@@ -346,6 +346,14 @@ bool JCExportTracker::serializeSelection()
 	{
 		LLFirstUse::EmeraldNCreatorExport();
 	}
+	F32 throttle = gSavedSettings.getF32("OutBandwidth");
+	// Gross magical value that is 128kbit/s
+	// Sim appears to drop requests if they come in faster than this. *sigh*
+	if(throttle < 128000.)
+	{
+		gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
+	}
+	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 	return serialize(catfayse);
 }
 
@@ -360,15 +368,6 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 		
 	if (!file_picker.getSaveFile(LLFilePicker::FFSAVE_XML))
 		return false; // User canceled save.
-
-	F32 throttle = gSavedSettings.getF32("OutBandwidth");
-	// Gross magical value that is 128kbit/s
-	// Sim appears to drop requests if they come in faster than this. *sigh*
-	if(throttle < 128000.)
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
-	}
-	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 
 	destination = file_picker.getFirstFile();
 
@@ -434,17 +433,6 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 		data = total;
 	}
 
-	if(throttle != 0.)
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(throttle);
-		gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
-	}
-	else
-	{
-		gMessageSystem->mPacketRing.setOutBandwidth(0.0);
-		gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
-	}
-
 	return success;
 
 }
@@ -477,8 +465,19 @@ void JCExportTracker::completechk()
 	{
 		//cmdline_printchat("Full property export completed.");
 		cmdline_printchat("(Content downloads may require more time, but the tracker is free for another export.)");
-		finalize(data);
-	}
+		F32 throttle = gSavedSettings.getF32("OutBandwidth");
+		if(throttle != 0.)
+		{
+			gMessageSystem->mPacketRing.setOutBandwidth(throttle);
+			gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+		}
+		else
+		{
+			gMessageSystem->mPacketRing.setOutBandwidth(0.0);
+			gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
+		}
+			finalize(data);
+		}
 }
 
 //LLSD* chkdata(LLUUID id, LLSD* data)
