@@ -523,11 +523,10 @@ int lggIrcThread::RPL_WHOISUSER( char * params, irc_reply_data * hostd, void * c
 				if( i >> whoR.user)
 					if(i>>whoR.host)
 						if(i>>us)
-							while(i>>whoR.realName)
-							{
+							while(i>>us)
+								whoR.realName = whoR.realName + us+ " ";
 								//do nothing.. stupid warnings.. uhm..
-								us = "";
-							}
+								//us = "";
 
 		}
 	}
@@ -632,10 +631,17 @@ int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, vo
 			{
 				if((strcmp(twho.c_str(),conn->current_nick()) == 0) && gSavedSettings.getBOOL("EmeraldIRC_AutoReJoin"))
 				{
+					std::string temp;
 					if(iss >> twhy)
 					{
-						msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
-					}else
+						temp = temp + twhy;
+						while(iss >> twhy)
+						{
+							temp = temp + " " + twhy;
+						}
+						msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,temp.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}
+					else
 					{
 						msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
 					}
@@ -644,10 +650,17 @@ int lggIrcThread::KickMessageResponce( char * params, irc_reply_data * hostd, vo
 				}
 				else if(gSavedSettings.getBOOL("EmeraldIRC_ShowKick"))
 				{
+					std::string temp;
 					if(iss >> twhy)
 					{
-						msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,twhy.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
-					}else
+						temp = temp + twhy;
+						while(iss >> twhy)
+						{
+							temp = temp + " " + twhy;
+						}
+						msg( llformat("%s has been kicked by %s (%s).",twho.c_str(),hostd->nick,temp.substr(1).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
+					}
+					else
 					{
 						msg( llformat("%s has been kicked by %s.",twho.c_str(),hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorKick"),false);	
 					}
@@ -796,15 +809,21 @@ void lggIrcThread::sendChat(std::string chat)
 		msg(std::string("\"/join\" will attempt to re-join the current channel.\n\"/msg NICK MSG\" will send a private MSG to NICK\n\"/kick NICK [REASON]\" will kick NICK from that chat (if you have op rights)\n\"/nick NEWNICK\" will change your current nick to NEWNICK"));
 	}
 	else if(command == "/kick")
-	{
+	{	
 		std::string targetNick;
 		if(i >> targetNick)
 		{
 			std::string reason;
+			std::string temp;
 			if(i >> reason)
 			{
-				conn->kick((char *)getChannel().c_str(),(char *)targetNick.c_str(),(char *)reason.c_str());
-				//msg(llformat("You have kicked %s from this chat. (%s)",targetNick.c_str(),reason.c_str()));
+				temp = temp + reason;
+				while(i >> reason)
+				{
+					temp = temp + " " + reason;
+				}
+				conn->kick((char *)getChannel().c_str(),(char *)targetNick.c_str(),(char *)temp.c_str());
+				msg(llformat("You have kicked %s from this chat. (%s)",targetNick.c_str(),temp.c_str()));
 			}
 			else
 			{
