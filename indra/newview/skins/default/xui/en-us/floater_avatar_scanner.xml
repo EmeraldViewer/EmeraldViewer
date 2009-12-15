@@ -88,6 +88,17 @@
 			       font="SansSerifSmall"
 			       follows="bottom|left"
 			       />
+			<button
+			       name="script_count_btn"
+			       label="Scripts"
+			       tool_tip="Script Count"
+			       left_delta="90"
+			       bottom_delta="0"
+			       width="80"
+			       height="20"
+			       font="SansSerifSmall"
+			       follows="bottom|left"
+			       />
 			<!--middle row -->
 			<button
 			       name="track_btn"

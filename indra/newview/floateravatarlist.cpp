@@ -56,6 +56,8 @@
 #include "jc_lslviewerbridge.h"
 #include "v3dmath.h"
 
+#include "scriptcounter.h"
+
 #include "llfloaterregioninfo.h"
 
 void cmdline_printchat(std::string message);
@@ -590,6 +592,7 @@ BOOL LLFloaterAvatarList::postBuild()
 	childSetAction("estate_ban_btn", onClickBanFromEstate, this);
 	childSetAction("estate_tph_btn", onClickTPHFromEstate, this);
 	childSetAction("estate_gtfo_btn", onClickGTFOFromEstate, this);
+	childSetAction("script_count_btn", onClickScriptCount, this);
 
 	childSetCommitCallback("agealert", onClickAgeAlert,this);
 	childSetValue("agealert",gSavedSettings.getBOOL("EmeraldAvatarAgeAlert"));
@@ -2136,6 +2139,20 @@ void LLFloaterAvatarList::onClickBan(void *userdata)
 	avlist->doCommand(cmd_ban);
 }
 
+//static
+
+void LLFloaterAvatarList::onClickScriptCount(void *userdata)
+{
+	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
+ 	LLScrollListItem *item =   avlist->mAvatarList->getFirstSelected();
+	LLViewerObject *obj=gObjectList.findObject(item->getUUID());
+	if(obj)
+	{
+		LLSelectMgr::getInstance()->selectObjectOnly(obj);
+		ScriptCounter::serializeSelection(false);
+		LLSelectMgr::getInstance()->deselectAll();
+	}
+}
 //static
 void LLFloaterAvatarList::onClickMute(void *userdata)
 {

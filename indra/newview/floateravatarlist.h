@@ -655,6 +655,7 @@ private:
 	static void onClickBanFromEstate(void *userdata);
 	static void onClickTPHFromEstate(void *userdata);
 	static void onClickGTFOFromEstate(void *userdata);
+	static void onClickScriptCount(void *userdata);
 
 	static void callbackFreeze(const LLSD& notification, const LLSD& response);
 	static void callbackEject(const LLSD& notification, const LLSD& response);
