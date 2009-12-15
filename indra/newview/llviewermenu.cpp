@@ -2386,7 +2386,16 @@ class LLScriptCount : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		ScriptCounter::serializeSelection();
+		ScriptCounter::serializeSelection(false);
+		return true;
+	}
+};
+
+class LLScriptDelete : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		ScriptCounter::serializeSelection(true);
 		return true;
 	}
 };
@@ -2397,6 +2406,29 @@ class LLObjectVisibleScriptCount : public view_listener_t
 	{
 		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
 		bool new_value = (object != NULL);
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		
+		return true;
+	}
+};
+
+class LLObjectEnableScriptDelete : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		bool new_value=true;
+		for (LLObjectSelection::root_iterator iter = LLSelectMgr::getInstance()->getSelection()->root_begin();
+			iter != LLSelectMgr::getInstance()->getSelection()->root_end(); iter++)
+		{
+			LLSelectNode* selectNode = *iter;
+			LLViewerObject* object = selectNode->getObject();
+			if(object)
+				if(!object->permModify())
+				{
+					new_value=false;
+					break;
+				}
+		}
 		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
 		
 		return true;
@@ -9207,6 +9239,8 @@ void initialize_menus()
 	addMenu(new LLToolsTakeCopy(), "Tools.TakeCopy");
 	addMenu(new LLToolsSaveToObjectInventory(), "Tools.SaveToObjectInventory");
 	addMenu(new LLToolsSelectedScriptAction(), "Tools.SelectedScriptAction");
+	addMenu(new LLScriptDelete(), "Tools.ScriptDelete");
+	addMenu(new LLObjectEnableScriptDelete(), "Tools.EnableScriptDelete");
 
 	addMenu(new LLToolsEnableToolNotPie(), "Tools.EnableToolNotPie");
 	addMenu(new LLToolsEnableSelectNextPart(), "Tools.EnableSelectNextPart");

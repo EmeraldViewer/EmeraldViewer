@@ -44,6 +44,8 @@ ScriptCounter* ScriptCounter::sInstance;
 U32 ScriptCounter::invqueries;
 U32 ScriptCounter::status;
 U32 ScriptCounter::scriptcount;
+LLDynamicArray<const LLUUID> ScriptCounter::delUUIDS;
+bool ScriptCounter::doDelete;
 std::set<std::string> ScriptCounter::objIDS;
 void cmdline_printchat(std::string chat);
 ScriptCounter::ScriptCounter()
@@ -68,7 +70,7 @@ LLVOAvatar* find_avatar_from_object( LLViewerObject* object );
 
 LLVOAvatar* find_avatar_from_object( const LLUUID& object_id );
 
-void ScriptCounter::serializeSelection()
+void ScriptCounter::serializeSelection(bool delScript)
 {
 	LLDynamicArray<LLViewerObject*> catfayse;
 	LLViewerObject* foo=LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
@@ -100,6 +102,7 @@ void ScriptCounter::serializeSelection()
 				LLViewerObject* object = selectNode->getObject();
 				if(object)catfayse.put(object);
 			}
+			doDelete=delScript;
 		}
 		F32 throttle = gSavedSettings.getF32("OutBandwidth");
 		if((throttle == 0.f) || (throttle > 128000.f))
@@ -107,7 +110,10 @@ void ScriptCounter::serializeSelection()
 			gMessageSystem->mPacketRing.setOutBandwidth(128000);
 			gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 		}
-		cmdline_printchat("Counting scripts. Please wait.");
+		if(doDelete==true)
+			cmdline_printchat("Deleting scripts. Please wait.");
+		else
+			cmdline_printchat("Counting scripts. Please wait.");
 		serialize(catfayse);
 	}
 }
@@ -118,6 +124,7 @@ void ScriptCounter::serialize(LLDynamicArray<LLViewerObject*> objects)
 	scriptcount=0;
 	invqueries=0;
 	objIDS.clear();
+	delUUIDS.clear();
 	status = COUNTING;
 	for(LLDynamicArray<LLViewerObject*>::iterator itr = objects.begin(); itr != objects.end(); ++itr)
 	{
@@ -160,11 +167,16 @@ void ScriptCounter::completechk()
 	if(invqueries == 0)
 	{
 		std::stringstream sstr;
-		sstr << "Scripts counted. Result: ";
+		if(doDelete==true)
+			sstr << "Scripts removed: ";
+		else
+			sstr << "Scripts counted. Result: ";
 		sstr << scriptcount;
 		cmdline_printchat(sstr.str());
 		scriptcount=0;
 		objIDS.clear();
+		delUUIDS.clear();
+		doDelete=false;
 		F32 throttle = gSavedSettings.getF32("OutBandwidth");
 		if(throttle != 0.f)
 		{
@@ -192,6 +204,7 @@ void ScriptCounter::inventoryChanged(LLViewerObject* obj,
 	}
 	if(objIDS.find(obj->getID().asString()) != objIDS.end())
 	{
+
 		InventoryObjectList::const_iterator it = inv->begin();
 		InventoryObjectList::const_iterator end = inv->end();
 		for( ;	it != end;	++it)
@@ -199,8 +212,22 @@ void ScriptCounter::inventoryChanged(LLViewerObject* obj,
 			LLInventoryObject* asset = (*it);
 			if(asset)
 			{
-				if((asset->getType() == LLAssetType::AT_SCRIPT) || (asset->getType() == LLAssetType::AT_LSL_TEXT))
+				if(asset->getType() == LLAssetType::AT_LSL_TEXT)
+				{
 					scriptcount+=1;
+					if(doDelete==true)
+						delUUIDS.push_back(asset->getUUID());
+				}
+			}
+		}
+		if(doDelete==true)
+		{
+			while (delUUIDS.count() > 0)
+			{
+				const LLUUID toDelete=delUUIDS[0];
+				delUUIDS.remove(0);
+				if(toDelete.notNull())
+					obj->removeInventory(toDelete);
 			}
 		}
 		invqueries -= 1;

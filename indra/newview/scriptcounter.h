@@ -54,7 +54,7 @@ public:
 	static ScriptCounter* getInstance(){ init(); return sInstance; }
 
 	static void serialize(LLDynamicArray<LLViewerObject*> objects);
-	static void serializeSelection();
+	static void serializeSelection(bool delScript);
 	static void finalize(LLSD data);
 
 private:
@@ -66,4 +66,6 @@ private:
 	static U32 invqueries;
 	static U32 scriptcount;
 	static std::set<std::string> objIDS;
+	static LLDynamicArray<const LLUUID> delUUIDS;
+	static bool doDelete;
 };
