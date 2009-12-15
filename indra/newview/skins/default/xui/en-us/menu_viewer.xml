@@ -839,7 +839,6 @@
 			<on_enable function="Tools.EnableScriptDelete" />
 		</menu_item_call>
 	</menu>
-	</menu>
 	<menu bottom="219" create_jump_keys="true" drop_shadow="true" enabled="true"
 	     height="317" label="Help" left="227" mouse_opaque="false" name="Help"
 	     opaque="true" tear_off="true" width="166">
