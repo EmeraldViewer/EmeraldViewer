@@ -2416,7 +2416,9 @@ class LLObjectEnableScriptDelete : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		bool new_value=true;
+		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		bool new_value = (object != NULL);
+		if(new_value)
 		for (LLObjectSelection::root_iterator iter = LLSelectMgr::getInstance()->getSelection()->root_begin();
 			iter != LLSelectMgr::getInstance()->getSelection()->root_end(); iter++)
 		{
