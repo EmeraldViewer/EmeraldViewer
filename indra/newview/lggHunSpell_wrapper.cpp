@@ -275,7 +275,8 @@ static char * countryCodesraw[] = {
   (char*)"ZW",(char*)"Zimbabwe",
   (char*)"ZZ",(char*)"Unknown or unspecified country"
 };
-#define COUNTRY_CODES_RAW_SIZE ((__LINE__ - 1 - COUNTRY_CODES_RAW_START_LINE) * 2)
+//#define COUNTRY_CODES_RAW_SIZE ((__LINE__ - 1 - COUNTRY_CODES_RAW_START_LINE) * 2)
+#define COUNTRY_CODES_RAW_SIZE 492
 #define LANGUAGE_CODES_RAW_START_LINE (__LINE__ + 2)
 static char * languageCodesraw[]={
   (char*)"aa",(char*)"Afar",
@@ -463,8 +464,8 @@ static char * languageCodesraw[]={
   (char*)"zh",(char*)"Chinese",
   (char*)"zu",(char*)"Zulu"
 };
-#define LANGUAGE_CODES_RAW_SIZE ((__LINE__ - 1 - LANGUAGE_CODES_RAW_START_LINE) * 2)
-
+//#define LANGUAGE_CODES_RAW_SIZE ((__LINE__ - 1 - LANGUAGE_CODES_RAW_START_LINE) * 2)
+#define LANGUAGE_CODES_RAW_SIZE 368
 lggHunSpell_Wrapper::lggHunSpell_Wrapper()
 {
 	highlightInRed=false;

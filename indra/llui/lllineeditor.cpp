@@ -1963,7 +1963,7 @@ void LLLineEditor::draw()
 		&&(!mReadOnly))
 	{
 		F32 elapsed = mKeystrokeTimer.getElapsedTimeF32();
-		if( (elapsed < CURSOR_FLASH_DELAY ) || (S32(elapsed / 3) & 1) )
+		if(S32(elapsed / 1) & 1) 
 		{
 			if(isSpellDirty())
 			{
@@ -1973,16 +1973,8 @@ void LLLineEditor::draw()
 		}
 		for(int i =0;i<(int)misspellLocations.size();i++)
 		{
-			//S32 width = mGLFont->getWidth(mText.getWString().c_str(), mScrollHPos + rendered_text, select_right - mScrollHPos - rendered_text);
-			//width = llmin(width, mMaxHPixels - llround(rendered_pixels_right));
-			//gl_rect_2d(llround(rendered_pixels_right), cursor_top, llround(rendered_pixels_right)+width, cursor_bottom, color);
 			S32 wstart = misspellLocations[i];
 			S32 wend = misspellLocations[++i];
-			//F32 center =llround((wend-wstart)/2)+wstart;
-			//gGL.color4ub(255,255,255,10);
-			//gl_circle_2d(center,
-			//	llround(llabs(cursor_top-cursor_bottom)/2),
-			//	center-wstart,(S32)30,TRUE);
 			gGL.color4ub(255,0,0,200);
 			//3 line zig zags..
 			while(wstart<wend)

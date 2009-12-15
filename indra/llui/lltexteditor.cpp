@@ -2906,7 +2906,7 @@ void LLTextEditor::drawMisspelled()
 	{
 		//update base
 		F32 elapsed = mKeystrokeTimer.getElapsedTimeF32();
-		if( (elapsed < CURSOR_FLASH_DELAY ) || (S32(elapsed / 3) & 1) )
+		if(  (S32(elapsed / 1) & 1) )
 		{
 			if(isSpellDirty())
 			{
