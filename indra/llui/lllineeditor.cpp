@@ -1188,7 +1188,7 @@ void LLLineEditor::spellReplace(SpellMenuBind* spellData)
 	mText.erase(spellData->wordPositionStart,
 		spellData->wordPositionEnd - spellData->wordPositionStart);
 	LLWString clean_string(utf8str_to_wstring(spellData->word));
-	LLWStringUtil::replaceTabsWithSpaces(clean_string, 1);
+	LLWStringUtil::replaceTabsWithSpaces(clean_string, 4);
 	mText.insert(spellData->wordPositionStart, clean_string);
 	//see if we should move over the cursor acordingly
 	mCursorPos+=clean_string.length() - (spellData->wordPositionEnd-spellData->wordPositionStart);
@@ -1232,7 +1232,7 @@ void LLLineEditor::paste()
 
 			// Clean up string (replace tabs and returns and remove characters that our fonts don't support.)
 			LLWString clean_string(paste);
-			LLWStringUtil::replaceTabsWithSpaces(clean_string, 1);
+			LLWStringUtil::replaceTabsWithSpaces(clean_string, 4);
 			//clean_string = wstring_detabify(paste, 1);
 			LLWStringUtil::replaceChar(clean_string, '\n', mReplaceNewlinesWithSpaces ? ' ' : 182); // 182 == paragraph character
 

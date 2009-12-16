@@ -101,7 +101,10 @@
 					 font="SansSerifSmall" height="20" left_delta="-110" max_length="256" mouse_opaque="true"
 					 name="debug_voice_field" tool_tip="This is the 'debug grid' voice channel" control_name="vivoxDebugServerName"
 					 width="200"/>
-			</panel>
+        <check_box bottom_delta="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 initial_value="false" label="Disable SLim Friends List (Requires restart)" left="10" mouse_opaque="true"
+					 name="o.owat" radio_style="false" width="270" control_name="EmeraldLargeFriendslistNoSLim" tool_tip="Disabling the friends list in SLim can help with voice connecting if you have a large friends list." />
+      </panel>
 			<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Shields"
 				 left="1" mouse_opaque="true" name="Shields" width="418">
 				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"
