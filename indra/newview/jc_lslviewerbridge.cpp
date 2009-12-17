@@ -531,13 +531,16 @@ void JCLSLBridge::processSoundTrigger(LLMessageSystem* msg,void**)
 		{
 			if(sBridgeStatus == ACTIVE)
 			{
-				send_chat_to_object(std::string("emerald_bridge_rdy"), JCLSLBridge::bridge_channel(gAgent.getID()), object_id);
+                std::string mess = "emerald_bridge_rdy";
+				send_chat_to_object(mess, JCLSLBridge::bridge_channel(gAgent.getID()), object_id);
 			}else if(sBridgeStatus == FAILED)
 			{
-				send_chat_to_object(std::string("emerald_bridge_failed"), JCLSLBridge::bridge_channel(gAgent.getID()), object_id);
+                std::string mess = "emerald_bridge_failed";
+				send_chat_to_object(mess, JCLSLBridge::bridge_channel(gAgent.getID()), object_id);
 			}else
 			{
-				send_chat_to_object(std::string("emerald_bridge_working"), JCLSLBridge::bridge_channel(gAgent.getID()), object_id);
+                std::string mess = "emerald_bridge_working";
+				send_chat_to_object(mess, JCLSLBridge::bridge_channel(gAgent.getID()), object_id);
 			}
 		}
 		
