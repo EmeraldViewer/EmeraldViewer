@@ -66,6 +66,6 @@ private:
 	static U32 invqueries;
 	static U32 scriptcount;
 	static std::set<std::string> objIDS;
-	static LLDynamicArray<const LLUUID> delUUIDS;
+	static LLDynamicArray<LLUUID> delUUIDS;
 	static bool doDelete;
 };

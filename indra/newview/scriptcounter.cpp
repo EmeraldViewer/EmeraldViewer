@@ -44,7 +44,7 @@ ScriptCounter* ScriptCounter::sInstance;
 U32 ScriptCounter::invqueries;
 U32 ScriptCounter::status;
 U32 ScriptCounter::scriptcount;
-LLDynamicArray<const LLUUID> ScriptCounter::delUUIDS;
+LLDynamicArray<LLUUID> ScriptCounter::delUUIDS;
 bool ScriptCounter::doDelete;
 std::set<std::string> ScriptCounter::objIDS;
 void cmdline_printchat(std::string chat);
