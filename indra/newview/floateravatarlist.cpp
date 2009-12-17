@@ -1483,7 +1483,7 @@ void LLFloaterAvatarList::checkTrackingStatus()
 		std::string name = mAvatars[mTrackedAvatar].getName();
 		std::string tooltip = "Tracking last known position";
 		name += " (near)";
-		LLTracker::trackLocation(mAvatars[mTrackedAvatar].getPosition(), name, tooltip);
+		LLTracker::trackLocationUpdate(mAvatars[mTrackedAvatar].getPosition(),name, tooltip);
 	}
 
 	//llinfos << "Tracking position: " << LLTracker::getTrackedPositionGlobal() << llendl;
