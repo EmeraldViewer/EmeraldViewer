@@ -504,8 +504,7 @@ void lggHunSpell_Wrapper::addWordToCustomDictionary(std::string wordToAdd)
 {
 	if(!myHunspell)return;
 	myHunspell->add(wordToAdd.c_str());
-	std::string filename(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, 
-		"Dictionaries","EMERALD_CUSTOM.dic"));
+	std::string filename(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", "EMERALD_CUSTOM.dic"));
 	//get words already there..
 	llifstream importer(filename);
 	std::string line;
