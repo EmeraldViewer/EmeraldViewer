@@ -204,30 +204,32 @@ void ScriptCounter::inventoryChanged(LLViewerObject* obj,
 	}
 	if(objIDS.find(obj->getID().asString()) != objIDS.end())
 	{
-
-		InventoryObjectList::const_iterator it = inv->begin();
-		InventoryObjectList::const_iterator end = inv->end();
-		for( ;	it != end;	++it)
+		if(inv)
 		{
-			LLInventoryObject* asset = (*it);
-			if(asset)
+			InventoryObjectList::const_iterator it = inv->begin();
+			InventoryObjectList::const_iterator end = inv->end();
+			for( ;	it != end;	++it)
 			{
-				if(asset->getType() == LLAssetType::AT_LSL_TEXT)
+				LLInventoryObject* asset = (*it);
+				if(asset)
 				{
-					scriptcount+=1;
-					if(doDelete==true)
-						delUUIDS.push_back(asset->getUUID());
+					if(asset->getType() == LLAssetType::AT_LSL_TEXT)
+					{
+						scriptcount+=1;
+						if(doDelete==true)
+							delUUIDS.push_back(asset->getUUID());
+					}
 				}
 			}
-		}
-		if(doDelete==true)
-		{
-			while (delUUIDS.count() > 0)
+			if(doDelete==true)
 			{
-				const LLUUID toDelete=delUUIDS[0];
-				delUUIDS.remove(0);
-				if(toDelete.notNull())
-					obj->removeInventory(toDelete);
+				while (delUUIDS.count() > 0)
+				{
+					const LLUUID toDelete=delUUIDS[0];
+					delUUIDS.remove(0);
+					if(toDelete.notNull())
+						obj->removeInventory(toDelete);
+				}
 			}
 		}
 		invqueries -= 1;

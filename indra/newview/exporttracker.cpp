@@ -688,35 +688,37 @@ void JCExportTracker::inventoryChanged(LLViewerObject* obj,
 								//cmdline_printchat("downloaded inventory for "+obj->getID().asString());
 								LLSD inventory;
 								//lol lol lol lol lol
-								InventoryObjectList::const_iterator it = inv->begin();
-								InventoryObjectList::const_iterator end = inv->end();
-								U32 num = 0;
-								for( ;	it != end;	++it)
+								if(inv)
 								{
-									LLInventoryObject* asset = (*it);
-									if(asset)
+									InventoryObjectList::const_iterator it = inv->begin();
+									InventoryObjectList::const_iterator end = inv->end();
+									U32 num = 0;
+									for( ;	it != end;	++it)
 									{
-										LLPermissions perm(((LLInventoryItem*)((LLInventoryObject*)(*it)))->getPermissions());
-										if(couldDL(asset->getType())
-										&& perm.allowCopyBy(gAgent.getID())
-										&& perm.allowModifyBy(gAgent.getID())
-										&& perm.allowTransferTo(LLUUID::null))// && is_asset_id_knowable(asset->getType()))
+										LLInventoryObject* asset = (*it);
+										if(asset)
 										{
-											LLSD inv_item;
-											inv_item["name"] = asset->getName();
-											inv_item["type"] = LLAssetType::lookup(asset->getType());
-											//cmdline_printchat("requesting asset for "+asset->getName());
-											inv_item["desc"] = ((LLInventoryItem*)((LLInventoryObject*)(*it)))->getDescription();//god help us all
-											inv_item["item_id"] = asset->getUUID().asString();
-											JCExportTracker::mirror(asset, obj, asset_dir, asset->getUUID().asString());//loltest
-											//unacceptable
-											inventory[num] = inv_item;
-											num += 1;
+											LLPermissions perm(((LLInventoryItem*)((LLInventoryObject*)(*it)))->getPermissions());
+											if(couldDL(asset->getType())
+											&& perm.allowCopyBy(gAgent.getID())
+											&& perm.allowModifyBy(gAgent.getID())
+											&& perm.allowTransferTo(LLUUID::null))// && is_asset_id_knowable(asset->getType()))
+											{
+												LLSD inv_item;
+												inv_item["name"] = asset->getName();
+												inv_item["type"] = LLAssetType::lookup(asset->getType());
+												//cmdline_printchat("requesting asset for "+asset->getName());
+												inv_item["desc"] = ((LLInventoryItem*)((LLInventoryObject*)(*it)))->getDescription();//god help us all
+												inv_item["item_id"] = asset->getUUID().asString();
+												JCExportTracker::mirror(asset, obj, asset_dir, asset->getUUID().asString());//loltest
+												//unacceptable
+												inventory[num] = inv_item;
+												num += 1;
+											}
 										}
 									}
+									(*link_itr)["inventory"] = inventory;
 								}
-								(*link_itr)["inventory"] = inventory;
-
 								invqueries -= 1;
 								//cmdline_printchat(llformat("%d inv queries left",invqueries));
 							}
