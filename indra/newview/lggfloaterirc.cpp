@@ -31,8 +31,8 @@
 
 #include "llviewerprecompiledheaders.h"
 
-#include "lggFloaterIrc.h"
-#include "lggFloaterIrcEdit.h"
+#include "lggfloaterirc.h"
+#include "lggfloaterircedit.h"
 #include "message.h"
 
 #include "llagent.h"

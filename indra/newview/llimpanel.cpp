@@ -33,7 +33,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llimpanel.h"
-#include "lggIrcGroupHandler.h"
+#include "lggircgrouphandler.h"
 
 #include "indra_constants.h"
 #include "llfocusmgr.h"
@@ -85,7 +85,7 @@
 #include "otr_wrapper.h"
 #include "otr_floater_smp_dialog.h"
 #include "otr_floater_smp_progress.h"
-#include "mfdKeywordFloater.h"
+#include "mfdkeywordfloater.h"
 #endif // USE_OTR // [/$PLOTR$]
 
 //

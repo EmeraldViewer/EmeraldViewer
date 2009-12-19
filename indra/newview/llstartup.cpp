@@ -204,8 +204,8 @@
 
 #if COMPILE_OTR          // [$PLOTR$]
 #include "otr_wrapper.h"
-#include "lggIrcGroupHandler.h"
-#include "lggHunSpell_wrapper.h"
+#include "lggircgrouphandler.h"
+#include "lgghunspell_wrapper.h"
 #endif // COMPILE_OTR    // [/$PLOTR$]
 
 //

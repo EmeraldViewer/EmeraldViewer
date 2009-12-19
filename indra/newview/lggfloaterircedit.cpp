@@ -29,9 +29,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "llviewerprecompiledheaders.h"
-#include "lggFloaterIrcEdit.h"
-#include "lggFloaterIrc.h"
-//#include "lggIrcGroupHandler.h"
+#include "lggfloaterircedit.h"
+#include "lggfloaterirc.h"
 
 #include "llagentdata.h"
 #include "llcommandhandler.h"
@@ -45,7 +44,7 @@
 #include "lliconctrl.h"
 #include "llbutton.h"
 #include "llcolorswatch.h"
-#include "lggBeamMaps.h"
+#include "lggbeammaps.h"
 
 #include "llsdserialize.h"
 

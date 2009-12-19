@@ -90,29 +90,29 @@ include_directories(
 )
 
 set(viewer_SOURCE_FILES
-	lggHunSpell_wrapper.cpp
+	lgghunspell_wrapper.cpp
 	floaterao.cpp
 	importtracker.cpp
 	exporttracker.cpp
 	chatbar_as_cmdline.cpp
-	IRC.cpp
+	irc.cpp
 	jc_lslviewerbridge.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
 	jc_asset_comparer.cpp
 	jcobjectpropertylist.cpp
-	mfdKeywordFloater.cpp
-	lggBeamMapFloater.cpp
-	lggBeamColorMapFloater.cpp
-	lggBeamsColors.cpp
-	lggIrcData.cpp
-	lggIrcGroupHandler.cpp
-	lggIrcProfileFloater.cpp
-	lggFloaterIrcEdit.cpp
-	lggFloaterIrc.cpp
-	lggBeamMaps.cpp
+	mfdkeywordfloater.cpp
+	lggbeammapfloater.cpp
+	lggbeamcolormapfloater.cpp
+	lggbeamscolors.cpp
+	lggircdata.cpp
+	lggircgrouphandler.cpp
+	lggircprofilefloater.cpp
+	lggfloaterircedit.cpp
+	lggfloaterirc.cpp
+	lggbeammaps.cpp
 	floaterassetbrowser.cpp
-	lggIrcThread.cpp
+	lggircthread.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -534,27 +534,27 @@ endif (LINUX)
 set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
-	lggHunSpell_wrapper.h
+	lgghunspell_wrapper.h
     chatbar_as_cmdline.h
     importtracker.h
-    IRC.h
+    irc.h
 	jc_lslviewerbridge.h
 	floaterao.h
     jcfloater_animation_list.h
     jcfloater_areasearch.h
     jcobjectpropertylist.h
-    mfdKeywordFloater.h
+    mfdkeywordfloater.h
     exporttracker.h
-    lggBeamMaps.h
-    lggBeamMapFloater.h
-    lggBeamColorMapFloater.h
-    lggBeamsColors.h
-    lggFloaterIrcEdit.h
-    lggFloaterIrc.h
-    lggIrcGroupHandler.h
-	lggIrcProfileFloater.h
-    lggIrcThread.h
-    lggIrcData.h
+    lggbeammaps.h
+    lggbeammapfloater.h
+    lggbeamcolormapfloater.h
+    lggbeamscolors.h
+    lggfloaterircedit.h
+    lggfloaterirc.h
+    lggircgrouphandler.h
+	lggircprofilefloater.h
+    lggircthread.h
+    lggircdata.h
 	floaterassetbrowser.h
     llagent.h
     llagentaccess.h

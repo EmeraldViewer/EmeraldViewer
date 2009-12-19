@@ -30,7 +30,6 @@
 #include <iostream>
 
 // extra
-//#include "IrcClient.h"
 
 using namespace std;
 

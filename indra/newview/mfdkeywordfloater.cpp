@@ -31,7 +31,7 @@
 
 #include "llviewerprecompiledheaders.h"
 
-#include "mfdKeywordFloater.h"
+#include "mfdkeywordfloater.h"
 
 #include "llagentdata.h"
 #include "llcommandhandler.h"

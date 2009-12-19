@@ -31,12 +31,11 @@
  
 
 #include "llviewerprecompiledheaders.h" 
-#include "lggIrcGroupHandler.h"
+#include "lggircgrouphandler.h"
 #include "llfile.h"
 #include "llagent.h"
 #include "llsdserialize.h"
 #include "llimview.h"
-//#include "lggIrcThread.h"
 using namespace std;
 
 lggIrcGroupHandler glggIrcGroupHandler;

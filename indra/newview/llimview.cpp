@@ -69,7 +69,7 @@
 #include "llviewerregion.h"
 
 #include "llfirstuse.h"
-#include "lggIrcGroupHandler.h"
+#include "lggircgrouphandler.h"
 
 //
 // Globals

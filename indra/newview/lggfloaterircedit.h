@@ -16,7 +16,7 @@
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS “AS IS”
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -28,48 +28,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-
-#ifndef GROUP_HANDLER_IRC22
-#define GROUP_HANDLER_IRC22
-
-//using namespace std;
-
-#include "llviewerprecompiledheaders.h"
-#include "lggIrcThread.h"
-#include "lggIrcData.h"
-#include "lggFloaterIrc.h"
-
-class lggIrcGroupHandler
+#include "lggircgrouphandler.h"
+class LggIrcFloaterStarter
 {
 	public:
-
-		lggIrcGroupHandler() {}
-		~lggIrcGroupHandler() { }
-	public:
-		lggPanelIRC * listPanel;
-		void setListPanel(lggPanelIRC * ilistPanel);
-		void fillListPanel();
-		std::list<lggIrcThread*> activeThreads;
-		std::vector<lggIrcData> getFileNames();
-		lggIrcData	getIrcGroupInfo(std::string filename);
-		lggIrcData	getIrcGroupInfoByID(LLUUID id); 
-		void deleteIrcGroup(std::string filename);		
-		void deleteIrcGroupByID(LLUUID id);
-		void startUpAutoRunIRC();
-		BOOL sendWhoisToAll(LLUUID who);
-		void startUpIRCListener(lggIrcData dat);
-		void endDownIRCListener(LLUUID id);
-		lggIrcThread* getThreadByID(LLUUID id);
-		void sendIrcChatByID(LLUUID id, std::string msg);
-		bool trySendPrivateImToID(std::string msg, LLUUID id,BOOL testingForExistance);
-
-		
+	static void show(lggIrcData dat ,void* data);
 };
-
-
-
-extern lggIrcGroupHandler glggIrcGroupHandler;
-
-#endif
-

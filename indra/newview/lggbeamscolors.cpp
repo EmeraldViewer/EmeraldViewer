@@ -33,7 +33,7 @@
 //////////////DATA TYPE/////////////////////////////
 
 #include "llviewerprecompiledheaders.h"
-#include "lggBeamsColors.h"
+#include "lggbeamscolors.h"
 
 lggBeamsColors lggBeamsColors::fromLLSD(LLSD inputData)
 {

@@ -33,7 +33,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llpanelemerald.h"
-#include "lggBeamMapFloater.h"
+#include "lggbeammapfloater.h"
 // linden library includes
 #include "llradiogroup.h"
 #include "llbutton.h"
@@ -43,7 +43,7 @@
 #include "llslider.h"
 #include "lltexturectrl.h"
 
-#include "lggBeamMaps.h"
+#include "lggbeammaps.h"
 
 // project includes
 #include "llviewercontrol.h"
@@ -63,10 +63,10 @@
 #include "lldirpicker.h"
 
 #include "llweb.h" // [$PLOTR$/]
-#include "lggBeamColorMapFloater.h"
+#include "lggbeamcolormapfloater.h"
 #include "llsliderctrl.h"
-#include "mfdKeywordFloater.h"
-#include "lggHunSpell_wrapper.h"
+#include "mfdkeywordfloater.h"
+#include "lgghunspell_wrapper.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

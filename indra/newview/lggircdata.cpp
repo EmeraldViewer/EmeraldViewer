@@ -29,12 +29,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//#include "lggIrcThread.h"
 ////////////////////////////////////////////////////
 //////////////DATA TYPE/////////////////////////////
 
 #include "llviewerprecompiledheaders.h"
-#include "lggIrcData.h"
+#include "lggircdata.h"
 #include "llviewercontrol.h"
 #include "llviewerobject.h"
 #include "llagent.h"

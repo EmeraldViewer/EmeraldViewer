@@ -50,12 +50,9 @@ Ok, here is how this is suposed to work.
 */
 
 #include "llviewerprecompiledheaders.h"
-#include "lggIrcThread.h"
+#include "lggircthread.h"
 #include "llimpanel.h"
 #include "llviewercontrol.h"
-//#include "IRC.h"
-
-//#include "llthread.h"
 #include "linden_common.h"
 #include "llapp.h"
 
@@ -64,7 +61,7 @@ Ok, here is how this is suposed to work.
 #include <crtdbg.h>
 #endif
 #include "llnotifications.h"
-#include "lggIrcProfileFloater.h"
+#include "lggircprofilefloater.h"
 #include "llfloaterchat.h"
 #include "llfloaterchatterbox.h"
 #include "llfloater.h"

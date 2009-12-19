@@ -33,9 +33,9 @@
 
 
 #include "llthread.h"
-#include "lggIrcData.h"
+#include "lggircdata.h"
 #include "llviewerprecompiledheaders.h"
-#include "IRC.h"
+#include "irc.h"
 #include "llimpanel.h"
 #include "llchat.h"
 

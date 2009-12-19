@@ -75,7 +75,7 @@
 #include "llfloaterhtml.h"
 #include "llweb.h"
 #include "llstylemap.h"
-#include "mfdKeywordFloater.h"
+#include "mfdkeywordfloater.h"
 
 // Used for LCD display
 extern void AddNewIMToLCD(const std::string &newLine);

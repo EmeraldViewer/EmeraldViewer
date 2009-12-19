@@ -16,7 +16,7 @@
    02111-1307, USA.  */
 
 #include "llviewerprecompiledheaders.h"
-#include "lggHunSpell_wrapper.h"
+#include "lgghunspell_wrapper.h"
 #include <boost/regex.hpp>
 #include "llweb.h"
 #include "llviewercontrol.h"
@@ -493,7 +493,7 @@ void lggHunSpell_Wrapper::setNewDictionary(std::string newDict)
 	myHunspell = new Hunspell(dicaffpath.c_str(),dicdicpath.c_str());
 	llinfos << "Adding custom dictionary " << llendl;
 
-	addDictionary("EMERALD_CUSTOM");
+	addDictionary("emerald_custom");
 	std::vector<std::string> toInstall = getInstalledDicts();
 	for(int i =0;i<(int)toInstall.size();i++)
 		addDictionary(toInstall[i]);
@@ -504,7 +504,7 @@ void lggHunSpell_Wrapper::addWordToCustomDictionary(std::string wordToAdd)
 {
 	if(!myHunspell)return;
 	myHunspell->add(wordToAdd.c_str());
-	std::string filename(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", "EMERALD_CUSTOM.dic"));
+	std::string filename(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", "emerald_custom.dic"));
 	//get words already there..
 	llifstream importer(filename);
 	std::string line;
@@ -676,7 +676,7 @@ std::string lggHunSpell_Wrapper::fullName2DictName(std::string fullName)
 		{
 			toReturn+="_"+countryCode;
 		}
-		LLStringUtil::toUpper(toReturn);
+		LLStringUtil::toLower(toReturn);
 		return toReturn;
 }
 std::vector <std::string> lggHunSpell_Wrapper::getDicts()
@@ -796,7 +796,7 @@ void lggHunSpell_Wrapper::getMoreButton()
 }
 void lggHunSpell_Wrapper::editCustomButton()
 {
-	std::string dicdicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", std::string("EMERALD_CUSTOM.dic")).c_str());
+	std::string dicdicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", std::string("emerald_custom.dic")).c_str());
 	gViewerWindow->getWindow()->ShellEx(dicdicpath);
 }
 
