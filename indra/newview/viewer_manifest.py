@@ -60,6 +60,7 @@ class ViewerManifest(LLManifest):
             self.path("beams")
             self.path("beamsColors")
 	    self.path("bridge_assets")
+	    self.path("dictionaries")
             # ... and the entire windlight directory
             self.path("windlight")
             self.end_prefix("app_settings")
@@ -411,6 +412,7 @@ class DarwinManifest(ViewerManifest):
             #  <bundle>/Contents/MacOS/
             self.contents_of_tar(self.args['source']+'/mozilla-universal-darwin.tgz', 'MacOS')
 
+#            self.path("Info-SecondLife.plist", dst="Info.plist")
             self.path("Info-Emerald.plist", dst="Info.plist")
 
             # copy additional libs in <bundle>/Contents/MacOS/
@@ -450,8 +452,10 @@ class DarwinManifest(ViewerManifest):
                 # If we are not using the default channel, use the 'Firstlook
                 # icon' to show that it isn't a stable release.
                 if self.default_channel() and self.default_grid():
+		#   self.path("secondlife.icns")
                     self.path("emerald_icon.icns")
                 else:
+                #   self.path("secondlife_firstlook.icns", "secondlife.icns")
                     self.path("emerald_icon.icns", "emerald_icon.icns")
                 self.path("SecondLife.nib")
                 
@@ -484,7 +488,7 @@ class DarwinManifest(ViewerManifest):
 #                self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
                 
                 #libfmodwrapper.dylib
-#                self.path(self.args['configuration'] + "/libfmodwrapper.dylib", "libfmodwrapper.dylib")
+                self.path(self.args['configuration'] + "/libfmodwrapper.dylib", "libfmodwrapper.dylib")
                 
                 # our apps
 #                self.path("../mac_crash_logger/" + self.args['configuration'] + "/mac-crash-logger.app", "mac-crash-logger.app")
@@ -617,7 +621,7 @@ class LinuxManifest(ViewerManifest):
         if 'installer_name' in self.args:
             installer_name = self.args['installer_name']
         else:
-            installer_name_components = ['Emerald_', self.args.get('arch')]
+            installer_name_components = ['GreenLife_', self.args.get('arch')]
             installer_name_components.extend(self.args['version'])
             installer_name = "_".join(installer_name_components)
             if self.default_channel():

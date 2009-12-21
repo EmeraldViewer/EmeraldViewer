@@ -400,6 +400,7 @@ U32 LLAudioBufferOpenAL::getLength()
 
 void LLAudioEngine_OpenAL::initWind()
 {
+#if 0
 	ALenum error;
 	llinfos << "LLAudioEngine_OpenAL::initWind() start" << llendl;
 
@@ -429,10 +430,12 @@ void LLAudioEngine_OpenAL::initWind()
 	}
 
 	llinfos << "LLAudioEngine_OpenAL::initWind() done" << llendl;
+#endif
 }
 
 void LLAudioEngine_OpenAL::cleanupWind()
 {
+#if 0
 	llinfos << "LLAudioEngine_OpenAL::cleanupWind()" << llendl;
 
 	if (mWindSource != AL_NONE)
@@ -459,10 +462,12 @@ void LLAudioEngine_OpenAL::cleanupWind()
 
 	delete mWindGen;
 	mWindGen = NULL;
+#endif
 }
 
 void LLAudioEngine_OpenAL::updateWind(LLVector3 wind_vec, F32 camera_altitude)
 {
+#if 0
 	LLVector3 wind_pos;
 	F64 pitch;
 	F64 center_freq;
@@ -570,5 +575,6 @@ void LLAudioEngine_OpenAL::updateWind(LLVector3 wind_vec, F32 camera_altitude)
 
 		lldebugs << "Wind had stopped - probably ran out of buffers - restarting: " << (unprocessed+mNumEmptyWindALBuffers) << " now queued." << llendl;
 	}
+#endif
 }
 

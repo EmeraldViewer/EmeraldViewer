@@ -333,6 +333,7 @@ LLAudioChannel *LLAudioEngine_FMOD::createChannel()
 
 void LLAudioEngine_FMOD::initWind()
 {
+#if 0
 	mWindGen = new LLWindGen<MIXBUFFERFORMAT>;
 
 	if (!gWindDSP)
@@ -344,11 +345,13 @@ void LLAudioEngine_FMOD::initWind()
 		FMOD_API(FSOUND_DSP_SetActive)(gWindDSP, true);
 	}
 	mNextWindUpdate = 0.0;
+#endif
 }
 
 
 void LLAudioEngine_FMOD::cleanupWind()
 {
+#if 0
 	if (gWindDSP)
 	{
 		FMOD_API(FSOUND_DSP_SetActive)(gWindDSP, false);
@@ -358,12 +361,14 @@ void LLAudioEngine_FMOD::cleanupWind()
 
 	delete mWindGen;
 	mWindGen = NULL;
+#endif
 }
 
 
 //-----------------------------------------------------------------------
 void LLAudioEngine_FMOD::updateWind(LLVector3 wind_vec, F32 camera_height_above_water)
 {
+#if 0
 	LLVector3 wind_pos;
 	F64 pitch;
 	F64 center_freq;
@@ -391,6 +396,7 @@ void LLAudioEngine_FMOD::updateWind(LLVector3 wind_vec, F32 camera_height_above_
 		mWindGen->mTargetGain = (F32)mapWindVecToGain(wind_vec) * mMaxWindGain;
 		mWindGen->mTargetPanGainR = (F32)mapWindVecToPan(wind_vec);
   	}
+#endif
 }
 
 /*
