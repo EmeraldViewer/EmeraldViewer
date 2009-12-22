@@ -51,6 +51,7 @@ include(libotr)
 
 if (DARWIN OR LINUX)
     include(libotrb)
+    include(libhunspellb)
 endif (DARWIN OR LINUX)
 
 include_directories(
@@ -1425,7 +1426,7 @@ else (WINDOWS)
 	        ${GCRYPT_LIBRARY}
 	        ${GPG-ERROR_LIBRARY}
 		${OTR_LIBRARY}
-		${HUNSPELL_LIBRARIES}
+		${HUNSPELL_LIBRARY}
 		)
 endif (WINDOWS)
 

@@ -431,6 +431,9 @@ class DarwinManifest(ViewerManifest):
 	    self.path("../../libraries/universal-darwin/lib_release/libgpg-error.0.dylib", "MacOS/libgpg-error.0.dylib");
 	    self.path("../../libraries/universal-darwin/lib_release/libiconv.2.dylib", "MacOS/libiconv.2.dylib");
 
+	    # hunspell library
+	    self.path("../../libraries/universal-darwin/lib_release/libhunspell-1.2.0.0.0.dylib", "MacOS/libhunspell-1.2.0.0.0.dylib");
+
             # replace the default theme with our custom theme (so scrollbars work).
             if self.prefix(src="mozilla-theme", dst="MacOS/chrome"):
                 self.path("classic.jar")
@@ -485,7 +488,7 @@ class DarwinManifest(ViewerManifest):
 #                self.path("vivox-runtime/universal-darwin/SLVoice", "SLVoice")
 
                 # llkdu dynamic library
-#                self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
+                self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
                 
                 #libfmodwrapper.dylib
                 self.path(self.args['configuration'] + "/libfmodwrapper.dylib", "libfmodwrapper.dylib")
