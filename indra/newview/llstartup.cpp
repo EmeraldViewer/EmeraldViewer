@@ -844,10 +844,15 @@ bool idle_startup()
 		gLoginMenuBarView->setEnabled( TRUE );
 
 		// Push our window frontmost
-		//gViewerWindow->getWindow()->show(); //Removeing annoyingness of the viewer and also removeing the DEV fix below by fixing what causes it. -Liny
+		gViewerWindow->getWindow()->show();
 		display_startup();
 
-		// If your looking for DEV-16927, then stop. The original cause of the bug has been removed and thus we nolonger need that fix. -Liny
+		// DEV-16927.  The following code removes errant keystrokes that happen while the window is being 
+		// first made visible.
+#ifdef _WIN32
+		MSG msg;
+		while( PeekMessage( &msg, /*All hWnds owned by this thread */ NULL, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE ) );
+#endif
 		timeout.reset();
 		return FALSE;
 	}
