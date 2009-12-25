@@ -353,6 +353,10 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 name="EmResetCamOnEscape-toggle" radio_style="false" width="270" control_name="EmeraldResetCamOnEscape"
 					 tool_tip="Setting this value to False prevents the camera from resetting when escape is pressed from within Camera mode (Ctrl+1)."/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 initial_value="false" label="Clicking on avatar resets camera position" left_delta="0" mouse_opaque="true"
+					 name="ResetCamOnAvatar-toggle" radio_style="false" width="270" control_name="ResetFocusOnSelfClick"
+					 tool_tip="Setting this value to False prevents the camera from resetting when clicking on your avatar."/>
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Enable Minimap Rotation" left_delta="0" mouse_opaque="true" name="MinimapRotate"
 					 radio_style="false" width="270" control_name="MiniMapRotate"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"

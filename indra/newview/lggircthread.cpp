@@ -446,7 +446,17 @@ int lggIrcThread::PartMessageResponce( char * params, irc_reply_data * hostd, vo
 		if(hostd->nick)
 		{
 			if(gSavedSettings.getBOOL("EmeraldIRC_ShowQuit"))
-				msg( llformat("%s has left this chat.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
+			{
+				try
+				{
+					std::string temp = std::string(&params[1]).substr(getChannel().length() + 1);
+					msg( llformat("%s has left this chat. (%s)",hostd->nick,temp.c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
+				}
+				catch(...)
+				{
+					msg( llformat("%s has left this chat.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
+				}
+			}
 		}
 	}
 	
@@ -462,7 +472,7 @@ int lggIrcThread::QuitMessageResponce( char * params, irc_reply_data * hostd, vo
 		if(hostd->nick)
 		{
 			if(gSavedSettings.getBOOL("EmeraldIRC_ShowQuit"))
-				msg( llformat("%s has logged off.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
+				msg( llformat("%s has logged off.. (%s)",hostd->nick,params).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
 		}
 	}
 	updateNames();

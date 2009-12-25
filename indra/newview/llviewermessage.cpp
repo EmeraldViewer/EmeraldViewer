@@ -4448,7 +4448,7 @@ void process_sim_stats(LLMessageSystem *msg, void **user_data)
 				S32 tdiff = (stat_value-gSavedSettings.getF32("Emeraldnumscripts"));
 				diff << tdiff;
 				chat.mText = "Total scripts jumped from " + os.str() + " to " + ns.str() + "("+diff.str()+")";
-				LLFloaterChat::addChatHistory(chat, FALSE);
+				LLFloaterChat::addChat(chat, FALSE,FALSE);
 			}
 			gSavedSettings.setF32("Emeraldnumscripts",stat_value);
 			}

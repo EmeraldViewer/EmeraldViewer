@@ -5825,6 +5825,7 @@ class LLShowFloater : public view_listener_t
 		else if (floater_name == "teleport history")
 		{
 			gFloaterTeleportHistory->setVisible(!gFloaterTeleportHistory->getVisible());
+			gFloaterTeleportHistory->setFocus(TRUE);
 		}
 		else if (floater_name == "im")
 		{
