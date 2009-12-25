@@ -345,6 +345,10 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 name="EmShowLookAtNames-toggle" control_name="EmeraldShowLookAtNames" radio_style="false"
 					 width="270"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 initial_value="false" label="Don't show me my LookAt beacon" left_delta="0" mouse_opaque="true"
+					 name="EmShowLookAtNames-toggle" control_name="EmeraldDontShowMyLookAt" radio_style="false"
+					 width="270"/>
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="ESC key to resets camera position" left_delta="0" mouse_opaque="true"
 					 name="EmResetCamOnEscape-toggle" radio_style="false" width="270" control_name="EmeraldResetCamOnEscape"
 					 tool_tip="Setting this value to False prevents the camera from resetting when escape is pressed from within Camera mode (Ctrl+1)."/>

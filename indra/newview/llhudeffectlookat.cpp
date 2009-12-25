@@ -501,6 +501,8 @@ void LLHUDEffectLookAt::setSourceObject(LLViewerObject* objectp)
 //-----------------------------------------------------------------------------
 void LLHUDEffectLookAt::render()
 {
+    if (gSavedSettings.getBOOL("EmeraldDontShowMyLookAt") &&
+        (gAgent.getAvatarObject() == ((LLVOAvatar*)(LLViewerObject*)mSourceObject))) return;
 	if (sDebugLookAt && mSourceObject.notNull())
 	{
 		gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
