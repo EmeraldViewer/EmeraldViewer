@@ -1151,6 +1151,8 @@ void LLFloaterAvatarList::refreshAvatarList()
 	//lgg send batch of names to bridge
 	if((toSendToBridge != "" ) && gSavedSettings.getBOOL("EmeraldUseBridgeRadar"))
 	{
+		if(gFocusMgr.getAppHasFocus()) // Phox: This interaction seems to cause a lockup if it happens too much while the window is out of focus.
+		{
 		F32 timeNow = gFrameTimeSeconds;
 		if( (timeNow - mlastBridgeCallTime) > 20)
 		{
@@ -1158,6 +1160,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 			//llinfos << "Sending data to the bridge: " << toSendToBridge << llendl;
 			JCLSLBridge::bridgetolsl("pos"+toSendToBridge, new LggPosCallback(avatarsToSendToBridge));
 
+		}
 		}
 		
 	}
