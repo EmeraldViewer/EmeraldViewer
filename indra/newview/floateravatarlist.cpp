@@ -59,7 +59,7 @@
 #include "scriptcounter.h"
 
 #include "llfloaterregioninfo.h"
-
+#include "llfocusmgr.h"
 void cmdline_printchat(std::string message);
 
 // Timeouts
