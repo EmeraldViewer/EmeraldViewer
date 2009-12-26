@@ -195,9 +195,9 @@
 					<key>windows</key>
 					<map>
 						<key>md5sum</key>
-						<string>286cca0d0fc3fb301b158672fb6465f6</string>
+						<string>3e3e5e861ecc2067bedfd400bec41f35</string>
 						<key>url</key>
-						<uri>http://www.lawlinter.net/data/boost-1.36.0-windows-20090626.tar.bz2</uri>
+						<uri>http://www.lawlinter.net/data/boost-1.36.0-windows-20091223.tar.bz2</uri>
 					</map>
 				</map>
 			</map>

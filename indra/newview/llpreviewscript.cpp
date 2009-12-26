@@ -88,6 +88,8 @@
 
 #include "llpanelinventory.h"
 
+#include "jclslpreproc.h"
+
 
 const std::string HELLO_LSL =
 	"default\n"
@@ -301,12 +303,13 @@ LLScriptEdCore::LLScriptEdCore(
 	void (*save_callback)(void*, BOOL),
 	void (*search_replace_callback) (void* userdata),
 	void* userdata,
-	S32 bottom_pad)
+	S32 bottom_pad, LLViewerInventoryItem* item)
 	:
 	LLPanel( std::string("name"), rect ),
 	mSampleText(sample),
 	mHelpURL(help_url),
 	mEditor( NULL ),
+	mPostEditor( NULL ),
 	mLoadCallback( load_callback ),
 	mSaveCallback( save_callback ),
 	mSearchReplaceCallback( search_replace_callback ),
@@ -315,13 +318,19 @@ LLScriptEdCore::LLScriptEdCore(
 	mLastHelpToken(NULL),
 	mLiveHelpHistorySize(0),
 	mEnableSave(FALSE),
-	mHasScriptData(FALSE)
+	mHasScriptData(FALSE),
+	mItem(item)
 {
 	setFollowsAll();
 	setBorderVisible(FALSE);
 
-	
-	LLUICtrlFactory::getInstance()->buildPanel(this, "floater_script_ed_panel.xml");
+	BOOL preproc = gSavedSettings.getBOOL("EmeraldLSLPreprocessor");
+
+	std::string xmlname = "floater_script_ed_panel.xml";
+	if(preproc)xmlname = "floater_script_ed_panel_adv.xml";
+	LLUICtrlFactory::getInstance()->buildPanel(this, xmlname);
+
+	mLSLProc = new JCLSLPreprocessor(this);
 
 	mErrorList = getChild<LLScrollListCtrl>("lsl errors");
 
@@ -334,7 +343,14 @@ LLScriptEdCore::LLScriptEdCore(
 	mEditor->setHandleEditKeysDirectly(TRUE);
 	mEditor->setEnabled(TRUE);
 	mEditor->setWordWrap(TRUE);
-
+	if(preproc)mPostEditor = getChild<LLViewerTextEditor>("post_process");
+	if(mPostEditor)
+	{
+		mPostEditor->setFollowsAll();
+		mPostEditor->setHandleEditKeysDirectly(TRUE);
+		mPostEditor->setEnabled(TRUE);
+		mPostEditor->setWordWrap(TRUE);
+	}
 	std::vector<std::string> funcs;
 	std::vector<std::string> tooltips;
 	for (S32 i = 0; i < gScriptLibrary.mNextNumber; i++)
@@ -348,9 +364,54 @@ LLScriptEdCore::LLScriptEdCore(
 	}
 	//LLColor3 color(0.5f, 0.0f, 0.15f);
 	LLColor3 color(gSavedSettings.getColor3("ColorllFunction"));
-		
-	mEditor->loadKeywords(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"keywords.ini"), funcs, tooltips, color);
+	if(mPostEditor)
+	{
+		mPostEditor->loadKeywords(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"keywords.ini"), funcs, tooltips, color);
+		mEditor->addToken(LLKeywordToken::WORD,"#assert",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#define",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#elif",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#else",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#endif",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#error",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#ident",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#sccs",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#if",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#ifdef",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#ifndef",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#import",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#include",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#include_next",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#line",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#pragma",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#unassert",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#undef",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#warning",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
+		mEditor->addToken(LLKeywordToken::WORD,"#",LLColor3(0.0f,0.0f,0.8f),
+			std::string("Preprocessor command. See Advanced menu of the script editor."));
 
+		//couldn'tr define in file because # represented a comment
+	}
+	mEditor->loadKeywords(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"keywords.ini"), funcs, tooltips, color);
+	
 	
 	LLKeywordToken *token;
 	LLKeywords::keyword_iterator_t token_it;
@@ -394,6 +455,9 @@ LLScriptEdCore::~LLScriptEdCore()
 		script_search->close();
 		delete script_search;
 	}
+
+	delete mLSLProc;
+	mLSLProc = NULL;
 }
 
 void LLScriptEdCore::initMenu()
@@ -442,15 +506,66 @@ void LLScriptEdCore::initMenu()
 	menuItem = getChild<LLMenuItemCallGL>("LSL Wiki Help...");
 	menuItem->setMenuCallback(onBtnDynamicHelp, this);
 	menuItem->setEnabledCallback(NULL);
+
+	/*menuItem = getChild<LLMenuItemCallGL>("Syntax Check");
+	menuItem->setMenuCallback(onSyntaxCheck, this);
+	menuItem->setEnabledCallback(NULL);*/
+
+	LLMenuItemCheckGL* lslproc = getChild<LLMenuItemCheckGL>("preproc_on");
+	lslproc->setMenuCallback(onToggleProc,this);
+	lslproc->setControlName("EmeraldLSLPreprocessor",NULL);
+}
+
+void LLScriptEdCore::onToggleProc(void* userdata)
+{
+	LLScriptEdCore* corep = (LLScriptEdCore*)userdata;
+	corep->mErrorList->addCommentText(std::string("Toggling the preprocessor will not take full effect unless you close and reopen this editor."));
+	corep->mErrorList->selectFirstItem();
+	gSavedSettings.setBOOL("EmeraldLSLPreprocessor",!gSavedSettings.getBOOL("EmeraldLSLPreprocessor"));
+}
+void cmdline_printchat(std::string message);
+
+void LLScriptEdCore::onSyntaxCheck(void* userdata)
+{
+	LLScriptEdCore* corep = (LLScriptEdCore*)userdata;
+
+	corep->mLSLProc->preprocess_script();
+	/*std::string file = corep->mEditor->getText();
+
+	std::vector<std::string> filelist = corep->mLSLProc->scan_includes(mItem->getName(),file);
+	cmdline_printchat("files:");
+	for(int i = 0; i<(int)filelist.size();i++)
+	{
+		//llinfos << "Suggestion for " << testWord.c_str() << ":" << suggList[i].c_str() << llendl;
+		cmdline_printchat(filelist[i]);
+	}
+	cmdline_printchat("o.o");*/
 }
 
 void LLScriptEdCore::setScriptText(const std::string& text, BOOL is_valid)
 {
 	if (mEditor)
 	{
-		mEditor->setText(text);
+		std::string ntext = text;
+		if(gSavedSettings.getBOOL("EmeraldLSLPreprocessor"))
+		{
+			if(mPostEditor)mPostEditor->setText(ntext);
+			ntext = mLSLProc->decode(ntext);
+		}
+		mEditor->setText(ntext);
 		mHasScriptData = is_valid;
 	}
+}
+std::string LLScriptEdCore::getScriptText()
+{
+	if(gSavedSettings.getBOOL("EmeraldLSLPreprocessor") && mPostEditor)
+	{
+		return mPostEditor->getText();
+	}else if (mEditor)
+	{
+		return mEditor->getText();
+	}
+	return std::string();
 }
 
 BOOL LLScriptEdCore::hasChanged(void* userdata)
@@ -809,6 +924,19 @@ void LLScriptEdCore::onBtnInsertFunction(LLUICtrl *ui, void* userdata)
 // static 
 void LLScriptEdCore::doSave( void* userdata, BOOL close_after_save )
 {
+	if(gSavedSettings.getBOOL("EmeraldLSLPreprocessor"))
+	{
+		LLScriptEdCore* self = (LLScriptEdCore*)userdata;
+		//self->mLSLProc->mClose = close_after_save;
+		self->mLSLProc->preprocess_script(close_after_save);
+	}else
+	{
+		doSaveComplete(userdata, FALSE);
+	}
+}
+
+void LLScriptEdCore::doSaveComplete( void* userdata, BOOL close_after_save )
+{
 	LLViewerStats::getInstance()->incStat( LLViewerStats::ST_LSL_SAVE_COUNT );
 
 	LLScriptEdCore* self = (LLScriptEdCore*) userdata;
@@ -973,8 +1101,15 @@ void LLScriptEdCore::onErrorList(LLUICtrl*, void* user_data)
 		sscanf(line.c_str(), "%d %d", &row, &column);
 		//llinfos << "LLScriptEdCore::onErrorList() - " << row << ", "
 		//<< column << llendl;
-		self->mEditor->setCursor(row, column);
-		self->mEditor->setFocus(TRUE);
+		if(gSavedSettings.getBOOL("EmeraldLSLPreprocessor") && self->mPostEditor)
+		{
+			self->mPostEditor->setCursor(row, column);
+			self->mPostEditor->setFocus(TRUE);
+		}else
+		{
+			self->mEditor->setCursor(row, column);
+			self->mEditor->setFocus(TRUE);
+		}
 	}
 }
 
@@ -1081,6 +1216,8 @@ void* LLPreviewLSL::createScriptEdPanel(void* userdata)
 	
 	LLPreviewLSL *self = (LLPreviewLSL*)userdata;
 
+	LLViewerInventoryItem* item = self->getItem();	
+
 	self->mScriptEd =  new LLScriptEdCore("script panel",
 								   LLRect(),
 								   HELLO_LSL,
@@ -1090,7 +1227,7 @@ void* LLPreviewLSL::createScriptEdPanel(void* userdata)
 								   LLPreviewLSL::onSave,
 								   LLPreviewLSL::onSearchReplace,
 								   self,
-								   0);
+								   0, item);
 
 	return self->mScriptEd;
 }
@@ -1296,7 +1433,7 @@ void LLPreviewLSL::saveIfNeeded()
 		return;
 	}
 
-	std::string utf8text = mScriptEd->mEditor->getText();
+	std::string utf8text = mScriptEd->getScriptText();
 	fputs(utf8text.c_str(), fp);
 	fclose(fp);
 	fp = NULL;
@@ -1617,6 +1754,8 @@ void* LLLiveLSLEditor::createScriptEdPanel(void* userdata)
 	
 	LLLiveLSLEditor *self = (LLLiveLSLEditor*)userdata;
 
+	LLViewerInventoryItem* item = self->getItem();
+
 	self->mScriptEd =  new LLScriptEdCore("script ed panel",
 								   LLRect(),
 								   HELLO_LSL,
@@ -1626,7 +1765,7 @@ void* LLLiveLSLEditor::createScriptEdPanel(void* userdata)
 								   &LLLiveLSLEditor::onSave,
 								   &LLLiveLSLEditor::onSearchReplace,
 								   self,
-								   0);
+								   0, item);
 
 	return self->mScriptEd;
 }
@@ -2160,7 +2299,7 @@ void LLLiveLSLEditor::saveIfNeeded()
 		mScriptEd->mErrorList->addElement(row);
 		return;
 	}
-	std::string utf8text = mScriptEd->mEditor->getText();
+	std::string utf8text = mScriptEd->getScriptText();
 
 	// Special case for a completely empty script - stuff in one space so it can store properly.  See SL-46889
 	if ( utf8text.size() == 0 )

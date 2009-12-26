@@ -63,6 +63,8 @@
 
 #include "llfloaterchat.h"
 
+#include "jclslpreproc.h"
+
 void cmdline_printchat(std::string message);
 void cmdline_rezplat(bool use_saved_value = true, F32 visual_radius = 30.0);
 void cmdline_tp2name(std::string target);
@@ -283,6 +285,13 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				//Zwag: I wonder how many people will actually get this?
 				cmdline_printchat("Nothing happens.");
 				return false;
+			}else if(command == "typingstop")
+			{
+				std::string text;
+				if(i >> text)
+				{
+					gChatBar->sendChatFromViewer(text, CHAT_TYPE_STOP, FALSE);
+				}
 			}
 		}
 	}

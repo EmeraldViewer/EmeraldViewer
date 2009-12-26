@@ -2917,6 +2917,7 @@ void process_decline_callingcard(LLMessageSystem* msg, void**)
 	LLNotifications::instance().add("CallingCardDeclined");
 }
 
+void cmdline_printchat(std::string message);
 
 void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 {
@@ -3115,6 +3116,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		}
 		else if (CHAT_TYPE_STOP == chat.mChatType)
 		{
+			cmdline_printchat(std::string("typing_stop(")+mesg+")");
 			LLLocalSpeakerMgr::getInstance()->setSpeakerTyping(from_id, FALSE);
 
 			// Might not have the avatar constructed yet, eg on login.

@@ -97,6 +97,9 @@ set(viewer_SOURCE_FILES
 	exporttracker.cpp
 	chatbar_as_cmdline.cpp
 	irc.cpp
+	jclslpreproc.cpp
+	jcscripteditor.cpp
+	jc_achievements.cpp
 	jc_lslviewerbridge.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
@@ -541,6 +544,9 @@ set(viewer_HEADER_FILES
     irc.h
 	jc_lslviewerbridge.h
 	floaterao.h
+	jclslpreproc.h
+	jcscripteditor.h
+	jc_achievements.h
     jcfloater_animation_list.h
     jcfloater_areasearch.h
     jcobjectpropertylist.h
