@@ -472,10 +472,12 @@ std::string reformat_lazy_lists(std::string script)
 {
 	BOOL add_set = FALSE;
 	std::string nscript = script;
-	nscript = boost::regex_replace(nscript, boost::regex("([a-zA-Z0-9_]+)\\[([a-zA-Z0-9_()\"]+)]\\s*=\\s*([a-zA-Z0-9_()\"]+)([;)])",boost::regex::perl), "$1=lazy_list_set($1,$2,[$3])$4");
+	nscript = boost::regex_replace(nscript, boost::regex("([a-zA-Z0-9_]+)\\[([a-zA-Z0-9_()\"]+)]\\s*=\\s*([a-zA-Z0-9_()\"\\+\\-\\*/]+)([;)])",boost::regex::perl), "$1=lazy_list_set($1,$2,[$3])$4");
 	if(nscript != script)add_set = TRUE;
 	
 	//...
+
+	//boost::regex_search(
 	
 
 	if(add_set == TRUE)
@@ -483,6 +485,8 @@ std::string reformat_lazy_lists(std::string script)
 		//add lazy_list_set function to top of script, as it is used
 		nscript = utf8str_removeCRLF(lazy_list_set_func) + "\n" + nscript;
 	}
+
+
 	return nscript;
 }
 
