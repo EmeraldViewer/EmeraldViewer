@@ -3116,7 +3116,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		}
 		else if (CHAT_TYPE_STOP == chat.mChatType)
 		{
-			cmdline_printchat(std::string("typing_stop(")+mesg+")");
+			//cmdline_printchat(std::string("typing_stop(")+mesg+")");
 			LLLocalSpeakerMgr::getInstance()->setSpeakerTyping(from_id, FALSE);
 
 			// Might not have the avatar constructed yet, eg on login.
