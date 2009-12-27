@@ -2,7 +2,7 @@
 <panel bottom="-550" enabled="true" follows="left|top|right|bottom" height="508"
      left="0" mouse_opaque="true" name="script panel" width="500" border_drop_shadow_visible="false" border_visible="false" bevel_style="none" border_style="line" border_thickness="0">
   <tab_container border="false" label="Page 1" bottom="-393" height="376" left="4" mouse_opaque="false"
-			 name="tab" visible="true" tab_min_width="50" follows="left|top|right|bottom" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
+			 name="tabset" visible="true" tab_min_width="50" follows="left|top|right|bottom" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
     <panel border="false" follows="left|top|right|bottom" bottom="-393" height="376" label="Script"
        left="4" mouse_opaque="true" name="Script" width="492">
 	<text_editor type="string" length="1" bottom="0"

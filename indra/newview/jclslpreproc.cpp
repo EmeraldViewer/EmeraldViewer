@@ -273,6 +273,10 @@ void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAs
 
 			std::string content(buffer);
 			content = utf8str_removeCRLF(content);
+			content = self->decode(content);
+			/*content += llformat("\n#define __UP_ITEMID__ __ITEMID__\n#define __ITEMID__ %s\n",uuid.asString().c_str())+content;
+			content += "\n#define __ITEMID__ __UP_ITEMID__\n";*/
+			//prolly wont work and ill have to be not lazy, but worth a try
 			delete buffer;
 			if(boost::filesystem::native(name))
 			{
@@ -285,8 +289,14 @@ void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAs
 					self->caching_files.erase(pos);
 					self->cached_files.push_back(name);
 
-					std::vector<std::string> files = self->scan_includes(name, content);
-
+					//we have to eliminate interfering directives that might otherwise break the scan cache
+					//this will delete all directives but 
+					//#import
+					//#include
+					//#include_next
+					std::string scanscript = boost::regex_replace(content, boost::regex("#unassert|#warning|#pragma|#define|#assert|#ifndef|#undef|#ifdef|#ident|#endif|#error|#else|#line|#elif|#sccs|#if",boost::regex::perl), "");
+					std::vector<std::string> files = self->scan_includes(name, scanscript);
+					scanscript = "";
 					if(self->cachecheck(files))
 					{
 						if(self->caching_files.size() == 0)self->start_process();
@@ -541,10 +551,17 @@ void JCLSLPreprocessor::start_process()
 		std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc"+gDirUtilp->getDirDelimiter();
 		ctx.add_include_path(path.c_str());
 
-		ctx.add_macro_definition(llformat("__AGENTKEY__=%s",gAgent.getID().asString().c_str()),false);
+		std::string def = llformat("__AGENTKEY__=%s",gAgent.getID().asString().c_str());
+		ctx.add_macro_definition(def,false);
 		std::string aname;
 		gAgent.getName(aname);
-		ctx.add_macro_definition(llformat("__AGENTNAME__=%s",aname.c_str()),false);
+		def = llformat("__AGENTNAME__=%s",aname.c_str());
+		ctx.add_macro_definition(def,false);
+		def = llformat("__ITEMID__=%s",mCore->mItem->getUUID().asString().c_str());
+		ctx.add_macro_definition(def,false);
+		//tba
+		def = llformat("__BASE_ITEMID__=%s",mCore->mItem->getUUID().asString().c_str());
+		ctx.add_macro_definition(def,false);
 
 		//  Get the preprocessor iterators and use them to generate 
 		//  the token sequence.

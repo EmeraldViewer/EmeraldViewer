@@ -1103,12 +1103,16 @@ void LLScriptEdCore::onErrorList(LLUICtrl*, void* user_data)
 		//<< column << llendl;
 		if(gSavedSettings.getBOOL("EmeraldLSLPreprocessor") && self->mPostEditor)
 		{
-			self->mPostEditor->setCursor(row, column);
+			LLPanel* tab = self->getChild<LLPanel>("postscript");
+			LLTabContainer* tabset = self->getChild<LLTabContainer>("tabset");
+			if(tabset)tabset->selectTabByName("postscript");
+			if(tab)tab->setFocus(TRUE);
 			self->mPostEditor->setFocus(TRUE);
+			self->mPostEditor->setCursor(row, column);
 		}else
 		{
-			self->mEditor->setCursor(row, column);
 			self->mEditor->setFocus(TRUE);
+			self->mEditor->setCursor(row, column);
 		}
 	}
 }
