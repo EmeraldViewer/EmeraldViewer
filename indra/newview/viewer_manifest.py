@@ -432,7 +432,7 @@ class DarwinManifest(ViewerManifest):
 	    self.path("../../libraries/universal-darwin/lib_release/libiconv.2.dylib", "MacOS/libiconv.2.dylib");
 
 	    # hunspell library
-	    self.path("../../libraries/universal-darwin/lib_release/libhunspell-1.2.0.0.0.dylib", "MacOS/libhunspell-1.2.0.0.0.dylib");
+	    self.path("../../libraries/universal-darwin/lib_release/libhunspell-1.2.dylib", "MacOS/libhunspell-1.2.dylib");
 
             # replace the default theme with our custom theme (so scrollbars work).
             if self.prefix(src="mozilla-theme", dst="MacOS/chrome"):
