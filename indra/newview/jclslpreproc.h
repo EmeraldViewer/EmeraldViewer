@@ -45,7 +45,7 @@ class JCLSLPreprocessor
 public:
 
 	JCLSLPreprocessor(LLScriptEdCore* corep)
-		: mCore(corep)/*,
+		: mCore(corep), waving(FALSE), mClose(FALSE)/*,
 		state(IDLE),
 		last(0),
 		groupcounter(0),
@@ -62,14 +62,16 @@ public:
 
 	static void JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat);
 
-	BOOL cachecheck(std::vector<std::string> files);
 	void preprocess_script(BOOL close = FALSE);
 	void start_process();
 
-	std::vector<std::string> caching_files;
-	std::vector<std::string> cached_files;
+	std::set<std::string> caching_files;
+	std::set<std::string> cached_files;
+	std::map<std::string,std::string> cached_assetids;
 
 	LLScriptEdCore* mCore;
+
+	BOOL waving;
 
 	BOOL mClose;
 };

@@ -84,7 +84,7 @@ namespace po = boost::program_options;
 
 using namespace boost::regex_constants;
 
-//void cmdline_printchat(std::string message);
+void cmdline_printchat(std::string message);
 
 #define encode_start std::string("//start_unprocessed_text\n/*")
 #define encode_end std::string("*/\n//end_unprocessed_text")
@@ -140,12 +140,13 @@ std::string JCLSLPreprocessor::decode(std::string script)
 }
 
 
-//typedef void (*stroutputfunc)(std::string message);
-struct trace_include_files : public boost::wave::context_policies::default_preprocessing_hooks 
+struct trace_include_files : public boost::wave::context_policies::default_preprocessing_hooks
 {
-	trace_include_files(std::set<std::string> &files_) 
-    :   files(files_) 
-    {}
+	trace_include_files(JCLSLPreprocessor* proc) 
+    :   mProc(proc) 
+    {
+		mAssetStack.push(LLUUID::null.asString());
+	}
 
 
 template <typename ContextT>
@@ -153,85 +154,104 @@ template <typename ContextT>
         std::string const &filename, bool include_next)
 	{
 		std::string cfilename = filename.substr(1,filename.length()-2);
-        std::set<std::string>::iterator it = files.find(cfilename);
-        if (it == files.end())
+		cmdline_printchat(cfilename+":found_include_directive");
+        std::set<std::string>::iterator it = mProc->cached_files.find(cfilename);
+        if (it == mProc->cached_files.end())
 		{
-			//std::string out;
-            // print indented filename
-            //for (std::size_t i = 0; i < include_depth; ++i)out += " ";
-            //out += filename;
-			//out += "\n";
-			//if(lolcall)lolcall(out);
-            files.insert(cfilename);
-        }
+			std::set<std::string>::iterator it = mProc->caching_files.find(cfilename);
+			if (it == mProc->caching_files.end())
+			{
+				LLUUID item_id = JCLSLPreprocessor::findInventoryByName(cfilename);
+				if(item_id.notNull())
+				{
+					LLViewerInventoryItem* item = gInventory.getItem(item_id);
+					if(item)
+					{
+						mProc->caching_files.insert(cfilename);
+						//mProc->mCore->mErrorList->addCommentText(std::string("Caching ")+cfilename);
+						ProcCacheInfo* info = new ProcCacheInfo;
+						info->item = item;
+						info->self = mProc;
+						LLPermissions perm(((LLInventoryItem*)item)->getPermissions());
+						gAssetStorage->getInvItemAsset(LLHost::invalid,
+						gAgent.getID(),
+						gAgent.getSessionID(),
+						perm.getOwner(),
+						LLUUID::null,
+						item->getUUID(),
+						LLUUID::null,
+						item->getType(),
+						&JCLSLPreprocessor::JCProcCacheCallback,
+						info,
+						TRUE);
+						return true;
+					}//else mProc->mCore->mErrorList->addCommentText(std::string("Bad item? ("+cfilename+")"));
+				}//else mProc->mCore->mErrorList->addCommentText(std::string("Unable to find "+cfilename+" in agent inventory."));
+				cmdline_printchat(cfilename+":bad item or null include");
+			}else
+			{
+				cmdline_printchat(cfilename+":being cached but we still hit it somehow");
+				return true;
+			}
+        }else
+		{
+			cmdline_printchat(cfilename+":cached item");
+		}
         //++include_depth;
-		return true;
+		return false;
     }
+
+template <typename ContextT>
+	void opened_include_file(ContextT const& ctx, 
+		std::string const &relname, std::string const& absname,
+		bool is_system_include)
+	{
+		ContextT& usefulctx = const_cast<ContextT&>(ctx);
+		std::string id;
+		std::string filename = boost::filesystem::path(std::string(relname)).filename();
+		std::set<std::string>::iterator it = mProc->cached_files.find(filename);
+		if(it != mProc->cached_files.end())
+		{
+			id = mProc->cached_assetids[filename];
+		}else id = "NOT_IN_WORLD";//I guess, still need to add external includes atm
+		mAssetStack.push(id);
+		std::string macro = "__ASSETID__";
+		usefulctx.remove_macro_definition(macro, true);
+		std::string def = llformat("%s=\"%s\"",macro.c_str(),id.c_str());
+		usefulctx.add_macro_definition(def,false);
+	}
+
+
+template <typename ContextT>
+	void returning_from_include_file(ContextT const& ctx)
+	{
+		ContextT& usefulctx = const_cast<ContextT&>(ctx);
+		if(mAssetStack.size() > 1)
+		{
+			mAssetStack.pop();
+			std::string id = mAssetStack.top();
+			std::string macro = "__ASSETID__";
+			usefulctx.remove_macro_definition(macro, true);
+			std::string def = llformat("%s=\"%s\"",macro.c_str(),id.c_str());
+			usefulctx.add_macro_definition(def,false);
+		}//else wave did something really fucked up
+	}
 
     /*template <typename ContextT>
     void returning_from_include_file(ContextT const& ctx) 
     {
         --include_depth;
     }*/
-    std::set<std::string> &files;
+    JCLSLPreprocessor* mProc;
+
+	std::stack<std::string> mAssetStack;
+
+	//ContextT *usefulctx;
     //std::size_t include_depth;
 	//stroutputfunc lolcall;
 };
-std::vector<std::string> JCLSLPreprocessor::scan_includes(std::string filename, std::string script)
-{
-	mCore->mErrorList->addCommentText("Scanning "+filename+" for includes to cache");
-	boost::wave::util::file_position_type current_position;
-	std::set<std::string> files;
-	try
-	{
-		// current file position is saved for exception handling
 
-		typedef boost::wave::cpplexer::lex_iterator<
-							boost::wave::cpplexer::lex_token<> >
-						lex_iterator_type;
-		typedef boost::wave::context<
-		std::string::iterator, lex_iterator_type,
-		boost::wave::iteration_context_policies::load_file_to_string,
-		trace_include_files
-		> context_type;
-
-		//set<string> files;
-		trace_include_files trace(files);
-
-		//trace.lolcall = cmdline_printchat;
-
-		context_type ctx(script.begin(), script.end(), "script", trace);
-
-		context_type::iterator_type first = ctx.begin();
-		context_type::iterator_type last = ctx.end();
-
-		while (first != last)
-		{
-			current_position = (*first).get_position();
-			++first;
-		}
-	}catch(boost::wave::cpp_exception const& e)
-	{
-		// some preprocessing error
-		std::string err = filename + "(" + llformat("%d",e.line_no()) + "): " + e.description();
-		mCore->mErrorList->addCommentText(err);
-	}
-	catch(std::exception const& e)
-	{
-		std::string err = std::string(current_position.get_file().c_str()) + "(" + llformat("%d",current_position.get_line()) + "): ";
-		err += std::string("exception caught: ") + e.what();
-		mCore->mErrorList->addCommentText(err);
-	}
-	catch (...)
-	{
-		std::string err = std::string(current_position.get_file().c_str()) + llformat("%d",current_position.get_line());
-		err += std::string("): unexpected exception caught.");
-		mCore->mErrorList->addCommentText(err);
-	}
-
-	std::vector<std::string> nfiles(files.begin(), files.end());
-	return nfiles;
-}
+//typedef void (*stroutputfunc)(std::string message);
 
 std::string cachepath(std::string name)
 {
@@ -240,6 +260,7 @@ std::string cachepath(std::string name)
 
 void cache_script(std::string name, std::string content)
 {
+	cmdline_printchat("writing "+name+" to cache");
 	std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"lslpreproc",name);
 	LLAPRFile infile;
 	infile.open(path.c_str(), LL_APR_WB);
@@ -256,6 +277,7 @@ struct ProcCacheInfo
 
 void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
 {
+	cmdline_printchat("cachecallback called");
 	ProcCacheInfo* info =(ProcCacheInfo*)userdata;
 	LLViewerInventoryItem* item = info->item;
 	JCLSLPreprocessor* self = info->self;
@@ -280,28 +302,20 @@ void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAs
 			delete buffer;
 			if(boost::filesystem::native(name))
 			{
+				cmdline_printchat("native name of "+name);
 				self->mCore->mErrorList->addCommentText(std::string("Cached ")+name);
 				cache_script(name, content);
-
-				std::vector<std::string>::iterator pos = std::find(self->caching_files.begin(), self->caching_files.end(), name);//self->caching_files.find(name);//self->caching_files.erase(
-				if(pos != self->caching_files.end())
+				std::set<std::string>::iterator loc = self->caching_files.find(name);
+				if(loc != self->caching_files.end())
 				{
-					self->caching_files.erase(pos);
-					self->cached_files.push_back(name);
-
-					//we have to eliminate interfering directives that might otherwise break the scan cache
-					//this will delete all directives but 
-					//#import
-					//#include
-					//#include_next
-					std::string scanscript = boost::regex_replace(content, boost::regex("#unassert|#warning|#pragma|#define|#assert|#ifndef|#undef|#ifdef|#ident|#endif|#error|#else|#line|#elif|#sccs|#if",boost::regex::perl), "");
-					std::vector<std::string> files = self->scan_includes(name, scanscript);
-					scanscript = "";
-					if(self->cachecheck(files))
-					{
-						if(self->caching_files.size() == 0)self->start_process();
-						else self->mCore->mErrorList->addCommentText(std::string("Files remaining: "+llformat("%d",self->caching_files.size())));
-					}
+					cmdline_printchat("finalizing cache");
+					self->caching_files.erase(loc);
+					self->cached_files.insert(name);
+					self->cached_assetids[name] = uuid.asString();//.insert(uuid.asString());
+					self->start_process();
+				}else
+				{
+					cmdline_printchat("something fucked");
 				}
 			}else self->mCore->mErrorList->addCommentText(std::string("Error: script named '")+name+"' isn't safe to copy to the filesystem. This include will fail.");
 		}else
@@ -352,108 +366,24 @@ LLUUID JCLSLPreprocessor::findInventoryByName(std::string name)
 	return LLUUID::null;
 }
 
-BOOL JCLSLPreprocessor::cachecheck(std::vector<std::string> files)
-{
-	BOOL allcached = TRUE;
-	for(int i = 0; i < (int)files.size(); i++)
-	{
-		std::string name = files[i].c_str();
-		//llinfos << "Suggestion for " << testWord.c_str() << ":" << suggList[i].c_str() << llendl;
-		//std::vector<std::string>::iterator it = cached_files.find(filename);
-        if (std::find(cached_files.begin(), cached_files.end(), name) == cached_files.end())
-		{
-			if(std::find(caching_files.begin(), caching_files.end(), name) == caching_files.end())
-			{
-				LLUUID item_id = JCLSLPreprocessor::findInventoryByName(name);
-				if(item_id.notNull())
-				{
-					LLViewerInventoryItem* item = gInventory.getItem(item_id);
-					if(item)
-					{
-						caching_files.push_back(name);
-						mCore->mErrorList->addCommentText(std::string("Caching ")+name);
-						ProcCacheInfo* info = new ProcCacheInfo;
-						info->item = item;
-						info->self = this;
-						LLPermissions perm(((LLInventoryItem*)item)->getPermissions());
-						gAssetStorage->getInvItemAsset(LLHost::invalid,
-						gAgent.getID(),
-						gAgent.getSessionID(),
-						perm.getOwner(),
-						LLUUID::null,
-						item->getUUID(),
-						LLUUID::null,
-						item->getType(),
-						JCProcCacheCallback,
-						info,
-						TRUE);
-					}else mCore->mErrorList->addCommentText(std::string("Bad item? ("+name+")"));
-				}else mCore->mErrorList->addCommentText(std::string("Unable to find "+name+" in agent inventory."));
-				allcached = FALSE;
-			}
-		}
-	}
-	return allcached;
-}
-
 void JCLSLPreprocessor::preprocess_script(BOOL close)
 {
 	mClose = close;
 	cached_files.clear();
 	caching_files.clear();
+	cached_assetids.clear();
 	mCore->mErrorList->addCommentText(std::string("Starting..."));
 	LLFile::mkdir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc");
 	std::string script = mCore->mEditor->getText();
 	//this script is special
 	LLViewerInventoryItem* item = mCore->mItem;
 	std::string name = item->getName();
-	cached_files.push_back(name);
+	cached_files.insert(name);
+	cached_assetids[name] = LLUUID::null.asString();
 	cache_script(name, script);
 	//start the party
-	std::vector<std::string> files = scan_includes(name, script);
-	if(cachecheck(files))start_process();
+	start_process();
 }
-/*
-std::string implement_switches(std::string input)
-{
-	std::string swinit = "switch(";
-	S32 swp = input.find(swinit);
-	if(swp != -1)
-	{
-		S32 scope = 0;
-		std::string tmp = input.substr(swp + swinit.length());
-		S32 up = tmp.find("{");
-		S32 down = tmp.find("}");
-		S32 truedown = 0;
-		while(up != -1 && up < down)//inefficient, i know.
-		{
-			//if(up != -1)
-			{
-				tmp = tmp.substr(up+1);
-				scope += 1;
-				truedown += up+1;
-			}
-			up = tmp.find("{");
-		}
-		while(down != -1 && scope > 0)//inefficient, i know.
-		{
-			//if(up != -1)
-			{
-				tmp = tmp.substr(down+1);
-				scope -= 1;
-				truedown += down+1;
-			}
-			down = tmp.find("}");
-		}
-		if(down != -1)
-		{
-			tmp = input.substr(swp + swinit.length(),(truedown-1) - (swp + swinit.length()));
-			cmdline_printchat(std::string("<SWITCH\n")+tmp+"\nSWITCH>");
-		}
-		swp = input.find(swinit);
-	}
-	return input;
-}*/
 
 const std::string lazy_list_set_func("\
 list lazy_list_set(list target, integer pos, list newval)\n\
@@ -502,7 +432,14 @@ std::string reformat_lazy_lists(std::string script)
 
 void JCLSLPreprocessor::start_process()
 {
-	mCore->mErrorList->addCommentText(std::string("Completed caching."));
+	if(waving)
+	{
+		cmdline_printchat("already waving?");
+		return;
+	}
+	waving = TRUE;
+	cmdline_printchat("entering waving");
+	//mCore->mErrorList->addCommentText(std::string("Completed caching."));
 
 	boost::wave::util::file_position_type current_position;
 
@@ -517,7 +454,8 @@ void JCLSLPreprocessor::start_process()
 	BOOL errored = FALSE;
 	std::string err;
 	try
-	{
+	{	
+		trace_include_files tracer(this);
 
 		//  This token type is one of the central types used throughout the library, 
 		//  because it is a template parameter to some of the public classes and  
@@ -532,17 +470,11 @@ void JCLSLPreprocessor::start_process()
 		//  This is the resulting context type to use. The first template parameter
 		//  should match the iterator type to be used during construction of the
 		//  corresponding context object (see below).
-		typedef boost::wave::context<std::string::iterator, lex_iterator_type>
+		typedef boost::wave::context<std::string::iterator, lex_iterator_type, boost::wave::iteration_context_policies::load_file_to_string, trace_include_files >
 				context_type;
 
-		// The preprocessor iterator shouldn't be constructed directly. It is 
-		// to be generated through a wave::context<> object. This wave:context<> 
-		// object is to be used additionally to initialize and define different 
-		// parameters of the actual preprocessing (not done here).
-		//
-		// The preprocessing of the input stream is done on the fly behind the 
-		// scenes during iteration over the context_type::iterator_type stream.
-		context_type ctx (input.begin(), input.end(), name.c_str());
+		context_type ctx(input.begin(), input.end(), name.c_str(), tracer);
+		//tracer.usefulctx = &ctx;
 
 		ctx.set_language(boost::wave::enable_long_long(ctx.get_language()));
 		ctx.set_language(boost::wave::enable_preserve_comments(ctx.get_language()));
@@ -551,18 +483,19 @@ void JCLSLPreprocessor::start_process()
 		std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc"+gDirUtilp->getDirDelimiter();
 		ctx.add_include_path(path.c_str());
 
-		std::string def = llformat("__AGENTKEY__=%s",gAgent.getID().asString().c_str());
+		std::string def = llformat("__AGENTKEY__=\"%s\"",gAgent.getID().asString().c_str());//legacy because I used it earlier
 		ctx.add_macro_definition(def,false);
-		std::string aname;
-		gAgent.getName(aname);
-		def = llformat("__AGENTNAME__=%s",aname.c_str());
+		def = llformat("__AGENTID__=\"%s\"",gAgent.getID().asString().c_str());
 		ctx.add_macro_definition(def,false);
-		def = llformat("__ITEMID__=%s",mCore->mItem->getUUID().asString().c_str());
-		ctx.add_macro_definition(def,false);
-		//tba
-		def = llformat("__BASE_ITEMID__=%s",mCore->mItem->getUUID().asString().c_str());
+		def = llformat("__AGENTIDRAW__=%s",gAgent.getID().asString().c_str());
 		ctx.add_macro_definition(def,false);
 
+		std::string aname;
+		gAgent.getName(aname);
+		def = llformat("__AGENTNAME__=\"%s\"",aname.c_str());
+		ctx.add_macro_definition(def,false);
+		def = llformat("__ASSETID__=%s",LLUUID::null.asString().c_str());
+		ctx.add_macro_definition(def,false);
 		//  Get the preprocessor iterators and use them to generate 
 		//  the token sequence.
 		context_type::iterator_type first = ctx.begin();
@@ -571,20 +504,32 @@ void JCLSLPreprocessor::start_process()
 
 		//  The input stream is preprocessed for you while iterating over the range
 		//  [first, last)
-        while (first != last) {
+        while (first != last)
+		{
+			if(caching_files.size() != 0)
+			{
+				cmdline_printchat("caching somethin, exiting waving");
+				mCore->mErrorList->addCommentText("Caching something...");
+				waving = FALSE;
+				first = last;
+				return;
+			}
             current_position = (*first).get_position();
-			std::string token = std::string((*first).get_value().c_str());
+			std::string token = std::string((*first).get_value().c_str());//stupid boost bitching even though we know its a std::string
 			if(token == "#line")token = "//#line";
-			output += token;//stupid boost bitching even though we know its a std::string
+			//line directives are emitted in case the frontend of the future can find use for them
+			output += token;
+			if(lazy_lists == FALSE)lazy_lists = ctx.is_defined_macro(std::string("USE_LAZY_LISTS"));
+			/*this needs to be checked for because if it is *ever* enabled it indicates that the transform is a dependency*/
             ++first;
         }
-		lazy_lists = ctx.is_defined_macro(std::string("USE_LAZY_LISTS"));
 	}
 	catch(boost::wave::cpp_exception const& e)
 	{
 		errored = TRUE;
 		// some preprocessing error
 		err = name + "(" + llformat("%d",e.line_no()) + "): " + e.description();
+		cmdline_printchat(err);
 		mCore->mErrorList->addCommentText(err);
 	}
 	catch(std::exception const& e)
@@ -592,6 +537,7 @@ void JCLSLPreprocessor::start_process()
 		errored = TRUE;
 		err = std::string(current_position.get_file().c_str()) + "(" + llformat("%d",current_position.get_line()) + "): ";
 		err += std::string("exception caught: ") + e.what();
+		cmdline_printchat(err);
 		mCore->mErrorList->addCommentText(err);
 	}
 	catch (...)
@@ -599,6 +545,7 @@ void JCLSLPreprocessor::start_process()
 		errored = TRUE;
 		err = std::string(current_position.get_file().c_str()) + llformat("%d",current_position.get_line());
 		err += std::string("): unexpected exception caught.");
+		cmdline_printchat(err);
 		mCore->mErrorList->addCommentText(err);
 	}
 	
@@ -617,73 +564,5 @@ void JCLSLPreprocessor::start_process()
 		outfield->setText(LLStringExplicit(output));
 	}
 	mCore->doSaveComplete((void*)mCore,mClose);
+	waving = FALSE;
 }
-
-
-
-/*else if(command == "wavetest")
-			{
-				boost::wave::util::file_position_type current_position;
-				try 
-				{
-
-					typedef boost::wave::cpplexer::lex_iterator<
-							boost::wave::cpplexer::lex_token<> >
-						lex_iterator_type;
-					typedef boost::wave::context<
-							std::string::iterator, lex_iterator_type>
-						context_type;
-
-					context_type ctx(command.begin(), command.end(), "input.cpp");
-
-					context_type::iterator_type first = ctx.begin();
-					context_type::iterator_type last = ctx.end();
-
-
-
-					while (first != last)
-					{
-						current_position = (*first).get_position();
-						std::string tmp = (*first).get_value().c_str();
-						cmdline_printchat(tmp);
-						//std::cout << (*first).get_value();
-						++first;
-					}
-				}catch(boost::wave::cpp_exception const& e)
-				{
-				// some preprocessing error
-					std::string err;
-					err += e.file_name();
-					err += "(";
-					err += llformat("%d",e.line_no());
-					err += "): ";
-					err += e.description();
-					cmdline_printchat(err);
-					//return 2;
-				}
-				catch(std::exception const& e)
-				{
-					std::string err;
-				// use last recognized token to retrieve the error position
-					err += current_position.get_file().c_str();
-					err += "(";
-					err += llformat("%d",current_position.get_line());
-					err += "): ";
-					err += "exception caught: ";
-					err += e.what();
-					cmdline_printchat(err);
-					//return 3;
-				}
-				catch (...)
-				{
-					std::string err;
-				// use last recognized token to retrieve the error position
-					err += current_position.get_file().c_str();
-					err += llformat("%d",current_position.get_line());
-					err += "): ";
-					err += "unexpected exception caught.";
-					cmdline_printchat(err);
-					//return 4;
-				}
-			}
-		}*/
