@@ -139,6 +139,12 @@ std::string JCLSLPreprocessor::decode(std::string script)
 	return otext;
 }
 
+struct ProcCacheInfo
+{
+	LLViewerInventoryItem* item;
+	JCLSLPreprocessor* self;
+};
+
 
 struct trace_include_files : public boost::wave::context_policies::default_preprocessing_hooks
 {
@@ -268,12 +274,6 @@ void cache_script(std::string name, std::string content)
 	if(fp)infile.write(content.c_str(), content.length());
 	infile.close();
 }
-
-struct ProcCacheInfo
-{
-	LLViewerInventoryItem* item;
-	JCLSLPreprocessor* self;
-};
 
 void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
 {
