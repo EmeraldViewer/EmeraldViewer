@@ -59,12 +59,12 @@ FMOD_INSTANCE* gFmod = NULL;
 #include "llapr.h"
 
 #include "sound_ids.h"
-
+/*
 extern "C" {
 	void * F_CALLBACKAPI windCallback(void *originalbuffer, void *newbuffer, int length, void* userdata);
 }
-
-FSOUND_DSPUNIT *gWindDSP = NULL;
+*/
+//FSOUND_DSPUNIT *gWindDSP = NULL;
 
 // Safe strcpy
 #if 0 //(unused)  //LL_WINDOWS || LL_LINUX
@@ -95,7 +95,7 @@ LLAudioEngine_FMOD::LLAudioEngine_FMOD()
 	mInited = false;
 	mCurrentInternetStreamp = NULL;
 	mInternetStreamChannel = -1;
-	mWindGen = NULL;
+	//mWindGen = NULL;
 }
 
 
@@ -300,11 +300,13 @@ void LLAudioEngine_FMOD::allocateListener(void)
 
 void LLAudioEngine_FMOD::shutdown()
 {
+	/*
 	if (gWindDSP)
 	{
 		FMOD_API(FSOUND_DSP_SetActive)(gWindDSP,false);
 		FMOD_API(FSOUND_DSP_Free)(gWindDSP);
 	}
+	*/
 
 	stopInternetStream();
 
@@ -330,7 +332,7 @@ LLAudioChannel *LLAudioEngine_FMOD::createChannel()
 	return new LLAudioChannelFMOD();
 }
 
-
+/*
 void LLAudioEngine_FMOD::initWind()
 {
 	mWindGen = new LLWindGen<MIXBUFFERFORMAT>;
@@ -345,8 +347,8 @@ void LLAudioEngine_FMOD::initWind()
 	}
 	mNextWindUpdate = 0.0;
 }
-
-
+*/
+/*
 void LLAudioEngine_FMOD::cleanupWind()
 {
 	if (gWindDSP)
@@ -359,14 +361,14 @@ void LLAudioEngine_FMOD::cleanupWind()
 	delete mWindGen;
 	mWindGen = NULL;
 }
-
-
+*/
+/*
 //-----------------------------------------------------------------------
 void LLAudioEngine_FMOD::updateWind(LLVector3 wind_vec, F32 camera_height_above_water)
 {
 	LLVector3 wind_pos;
-	F64 pitch;
-	F64 center_freq;
+	F32 pitch;
+	F32 center_freq;
 
 	if (!mEnableWind)
 	{
@@ -392,7 +394,7 @@ void LLAudioEngine_FMOD::updateWind(LLVector3 wind_vec, F32 camera_height_above_
 		mWindGen->mTargetPanGainR = (F32)mapWindVecToPan(wind_vec);
   	}
 }
-
+*/
 /*
 //-----------------------------------------------------------------------
 void LLAudioEngine_FMOD::setSourceMinDistance(U16 source_num, F64 distance)
@@ -1082,6 +1084,7 @@ int LLAudioStreamFMOD::getOpenState()
 	return open_state;
 }
 
+/*
 void * F_CALLBACKAPI windCallback(void *originalbuffer, void *newbuffer, int length, void* userdata)
 {
 	// originalbuffer = fmod's original mixbuffer.
@@ -1114,3 +1117,4 @@ void * F_CALLBACKAPI windCallback(void *originalbuffer, void *newbuffer, int len
 
 	return newbuffer;
 }
+*/
