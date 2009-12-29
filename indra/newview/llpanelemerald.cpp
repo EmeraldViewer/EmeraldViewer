@@ -528,7 +528,7 @@ void LLPanelEmerald::onSpellRemove(void* data)
 }
 void LLPanelEmerald::onSpellGetMore(void* data)
 {
-	glggHunSpell->getMoreButton();
+	glggHunSpell->getMoreButton(data);
 }
 void LLPanelEmerald::onSpellEditCustom(void* data)
 {

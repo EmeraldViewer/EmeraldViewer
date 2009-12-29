@@ -109,6 +109,7 @@ set(viewer_SOURCE_FILES
 	lggbeammapfloater.cpp
 	lggbeamcolormapfloater.cpp
 	lggbeamscolors.cpp
+	lggdicdownload.cpp
 	lggircdata.cpp
 	lggircgrouphandler.cpp
 	lggircprofilefloater.cpp
@@ -556,6 +557,7 @@ set(viewer_HEADER_FILES
     lggbeammapfloater.h
     lggbeamcolormapfloater.h
     lggbeamscolors.h
+	lggdicdownload.h
     lggfloaterircedit.h
     lggfloaterirc.h
     lggircgrouphandler.h

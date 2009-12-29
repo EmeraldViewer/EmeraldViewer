@@ -96,26 +96,9 @@ void hslToRgb1 ( F32 hValIn, F32 sValIn, F32 lValIn, F32& rValOut, F32& gValOut,
 
 
 class lggBeamColorMapFloater;
-// class lggBeamColorUpdater;
-// 
-// class lggBeamColorUpdater : public LLThread
-// {
-// public:
-// 	lggBeamColorUpdater(lggBeamsColors idata, lggBeamColorMapFloater* ipanel);
-// 	~lggBeamColorUpdater();	
-// 	/*virtual*/ void run(void);
-// 	/*virtual*/ void shutdown(void);
-// 	void setNewData(lggBeamsColors idata);
-// 
-// protected:
-// 	lggBeamsColors data;
-// 	lggBeamColorMapFloater* panel;
-// 
-// };
 const F32 CONTEXT_CONE_IN_ALPHA = 0.0f;
 const F32 CONTEXT_CONE_OUT_ALPHA = 1.f;
 const F32 CONTEXT_FADE_TIME = 0.08f;
-
 
 ////////////////////////////////////////////////////////////////////////////
 // lggBeamMapFloater
@@ -476,35 +459,3 @@ void LggBeamColorMap::show(BOOL showin, void * data)
 
 	}
 }
-
-
-
-///////////////////////////////////
-// 
-// lggBeamColorUpdater::lggBeamColorUpdater(lggBeamsColors idata, lggBeamColorMapFloater* ipanel): LLThread("BEAM COLOR UPDATER"),data(idata),panel(ipanel)
-// {
-// 
-// }
-// 
-// void lggBeamColorUpdater::run()
-// {
-// 	while(1)
-// 	{
-// 		LLColorSwatchCtrl* colorctrl = panel->getChild<LLColorSwatchCtrl>("BeamColor_Preview");
-// 		
-// 		//panel->childSetValue("BeamColor_Preview",lggBeamMaps::beamColorFromData(data));
-// 		colorctrl->set(LLColor4(lggBeamMaps::beamColorFromData(data)),TRUE);
-// 		ms_sleep(400);
-// 	}
-// }
-// void lggBeamColorUpdater::setNewData(lggBeamsColors idata)
-// {
-// 	data=idata;
-// }
-// void lggBeamColorUpdater::shutdown()
-// {
-// }
-// 
-// lggBeamColorUpdater::~lggBeamColorUpdater()
-// {
-// }

@@ -45,9 +45,9 @@ public:
 	void removeButton(std::string selection);
 	void editCustomButton();
 	void newDictSelection(std::string selection);
-	void getMoreButton();
-	std::string dictName2FullName(std::string dictName);
-	std::string fullName2DictName(std::string fullName);
+	void getMoreButton(void * data);
+	static std::string dictName2FullName(std::string dictName);
+	static std::string fullName2DictName(std::string fullName);
 	void setNewDictionary(std::string newDict);
 	void setNewHighlightSetting(BOOL highlight);
 	BOOL isSpelledRight(std::string wordToCheck);

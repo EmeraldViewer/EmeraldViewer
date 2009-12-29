@@ -22,6 +22,8 @@
 #include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llfile.h"
+#include "llhttpclient.h"
+#include "lggdicdownload.h"
 
 lggHunSpell_Wrapper *glggHunSpell = 0;
 Hunspell* lggHunSpell_Wrapper::myHunspell = 0;
@@ -789,10 +791,27 @@ void lggHunSpell_Wrapper::newDictSelection(std::string selection)
 	gSavedSettings.setString("EmeraldSpellInstalled","");
 	processSettings();
 }
-void lggHunSpell_Wrapper::getMoreButton()
+void lggHunSpell_Wrapper::getMoreButton(void * data)
 {
-	//todo upload thoes dics in a installer, link to web page with them, 
-	LLWeb::loadURL("http://www.cypherpunks.ca/otr/");
+	//LLWeb::loadURL("http://www.cypherpunks.ca/otr/");
+	std::vector<std::string> shortNames;
+	std::vector<std::string> longNames;
+	LLSD response = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/dics/dic_list.xml");
+	if(response.has("body"))
+	{
+		const LLSD &dict_list = response["body"];
+		if(dict_list.has("isComplete"))
+		{
+			LLSD dics = dict_list["data"];
+			for(int i = 0; i < dics.size(); i++)
+			{
+				std::string dicFullName = dictName2FullName(dics[i].asString());
+				longNames.push_back(dicFullName);
+				shortNames.push_back(fullName2DictName(dicFullName));
+			}
+			LggDicDownload::show(true,shortNames,longNames, data);	
+		}
+	}
 }
 void lggHunSpell_Wrapper::editCustomButton()
 {
