@@ -78,6 +78,7 @@
 
 #include <boost/filesystem.hpp>
 
+
 using namespace boost::spirit::classic;
 namespace po = boost::program_options;
 
@@ -137,6 +138,224 @@ std::string JCLSLPreprocessor::decode(std::string script)
 	//otext = curl_unescape(otext.c_str(),otext.length());
 
 	return otext;
+}
+
+inline S32 const_iterator2pos(std::string::const_iterator it, std::string::const_iterator begin)
+{
+	S32 pos = 1;
+	while(it != begin)
+	{
+		pos += 1;
+		it -= 1;
+	}
+	return pos;
+}
+/*
+//I know this is one ugly ass function but it does the job eh
+std::string scoperip(std::string& top, S32 fstart)
+{
+	S32 up = top.find("{",fstart);
+	//cmdline_printchat(llformat("up=%d",up));
+	S32 down = top.find("}",fstart);
+	S32 ldown = 0;
+	//cmdline_printchat(llformat("down=%d",down));
+	S32 count = 0;
+	do
+	{
+		while(up < down && up != -1)
+		{
+			up = top.find("{",up+1);
+			//cmdline_printchat(llformat("up=%d",up));
+			count += 1;
+		}
+		while((down < up || up == -1) && count > 0 && down != -1)
+		{
+			ldown = down;
+			down = top.find("}",down+1);
+			//cmdline_printchat(llformat("down=%d",down));
+			count -= 1;
+		}
+		//cmdline_printchat(llformat("count=%d",count));
+	}while(count > 0 && up != -1 && down != -1);
+	
+	std::string function = top.substr(fstart,(ldown-fstart)+1);
+	
+	//cmdline_printchat("func=["+function+"]");
+	return function;
+}*/
+//letstry that again, last function was fundamentally flawed and didn't take string x = "oolol{olo\"lol}"; into consideration
+std::string scopeript2(std::string& top, S32 fstart)
+{
+	int cursor = fstart;
+	bool noscoped = true;
+	bool in_literal = false;
+	int count = 0;
+	char ltoken = ' ';
+	while((count > 0 || noscoped) && cursor < int(top.length()))
+	{
+		char token = top.at(cursor);
+		if(token == '"' && ltoken != '\\')in_literal = !in_literal;
+		if(!in_literal)
+		{
+			if(token == '{')
+			{
+				count += 1;
+				noscoped = false;
+			}else if(token == '}')
+			{
+				count -= 1;
+				noscoped = false;
+			}
+		}
+		ltoken = token;
+		cursor += 1;
+	}
+	return top.substr(fstart,(cursor-fstart));
+}
+
+
+std::string JCLSLPreprocessor::lslopt(std::string script)
+{
+	
+	//this should be fun
+	//boost::regex reg;
+	//try
+	{
+		boost::smatch result;
+		//reg = "([\\S\\s]*)(\\s*default\\s*\\{)([\\S\\s]*)";//.assign(sre, boost::regex_constants::icase);
+		if (boost::regex_search(script, result, boost::regex("([\\S\\s]*)(\\s*default\\s*\\{)([\\S\\s]*)")))//boost::regex_search(script, broked, reg))
+		{
+			std::string top = result[1];
+			std::string bottom = result[2];
+			bottom += result[3];
+/*integer|float|string|key|vector|rotation|list*/
+
+			boost::regex findfuncts("(integer|float|string|key|vector|rotation|list){0,1}[\\}\\s]+([a-zA-Z0-9_]+)\\(");
+
+			//boost::regex findcalls("(integer|float|string|key|vector|rotation|list|\\s)\\s([a-zA-Z0-9_]+)\\(");
+	
+
+			//std::string::const_iterator TOPend = top.end();
+			boost::smatch TOPfmatch;
+
+			std::set<std::string> kept_functions;
+
+			std::map<std::string, std::string> functions;
+
+			std::string::const_iterator TOPstart = top.begin();
+			while(boost::regex_search(TOPstart, std::string::const_iterator(top.end()), TOPfmatch, findfuncts, boost::match_default))
+			{
+				//std::string type = TOPfmatch[1];
+				std::string funcname = TOPfmatch[2];
+
+				int pos = const_iterator2pos(TOPfmatch[0].first, top.begin())-1;
+				std::string funcb = scopeript2(top, pos);
+				functions[funcname] = funcb;
+				cmdline_printchat("func "+funcname+" added to list["+funcb+"]");
+				top.erase(pos,funcb.size());
+				// update search position 
+				//since we erase the match out we don't need to do this
+				//TOPstart = TOPfmatch[0].second; 
+			}
+			
+			bool repass = false;
+			//bool optimized = false;
+			do
+			{
+				repass = false;
+				std::map<std::string, std::string>::iterator func_it;
+				for(func_it = functions.begin(); func_it != functions.end(); func_it++)
+				{
+					std::string funcname = func_it->first;
+					
+					if(kept_functions.find(funcname) == kept_functions.end())
+					{
+						boost::smatch calls;
+												//funcname has to be [a-zA-Z0-9_]+, so we know its safe
+						boost::regex findcalls(std::string("[^a-zA-Z0-9_]")+funcname+std::string("\\("));
+						
+						std::string::const_iterator bstart = bottom.begin();
+						std::string::const_iterator bend = bottom.end();
+
+						if(boost::regex_search(bstart, bend, calls, findcalls, boost::match_default))
+						{
+							cmdline_printchat("func "+funcname+" used;");
+							//top.substr(fmatch[0].first,
+							//S32 fstart = func_it->second;
+							std::string function = func_it->second;//scoperip(top, fstart);
+							cmdline_printchat("func=["+function+"]");
+							kept_functions.insert(funcname);
+							bottom = function+"\n"+bottom;
+							//cmdline_printchat("BOTTOM["+bottom+"]ENDBOTTOM");
+							//optimized = true;
+							repass = true;
+						}
+					}/*else
+					{
+						//cmdline_printchat("func "+funcname+" already preserved;");
+					}*/
+				}
+			}while(repass);
+
+			//cmdline_printchat("top=["+top+"]");
+
+			//global var time
+
+			std::map<std::string, std::string> gvars;
+
+			boost::regex findvars("(integer|float|string|key|vector|rotation|list)\\s+([a-zA-Z0-9_]+)([^\\(\\);]*;)");
+
+			boost::smatch TOPvmatch;
+			while(boost::regex_search(TOPstart, std::string::const_iterator(top.end()), TOPvmatch, findvars, boost::match_default))
+			{
+				//std::string type = TOPfmatch[1];
+				std::string varname = TOPvmatch[2];
+				std::string fullref = TOPvmatch[1] + " " + varname+TOPvmatch[3];
+
+				//int pos = const_iterator2pos(TOPfmatch[1].first, top.begin())-1;
+				//std::string funcb = scoperip(top, pos);
+				gvars[varname] = fullref;
+				cmdline_printchat("var "+varname+" added to list as ["+fullref+"]");
+				top.erase(TOPvmatch[0].first,TOPvmatch[0].second);
+				// update search position 
+				//since we erase the match out we don't need to do this
+				//TOPstart = TOPfmatch[0].second; 
+			}
+
+			std::map<std::string, std::string>::iterator var_it;
+			for(var_it = gvars.begin(); var_it != gvars.end(); var_it++)
+			{
+				std::string varname = var_it->first;
+				boost::regex findvcalls(std::string("[^a-zA-Z0-9_]+")+varname+std::string("[^a-zA-Z0-9_]+"));
+				boost::smatch vcalls;
+				std::string::const_iterator bstart = bottom.begin();
+				std::string::const_iterator bend = bottom.end();
+
+				if(boost::regex_search(bstart, bend, vcalls, findvcalls, boost::match_default))
+				{
+					//boost::regex findvcalls(std::string("[^a-zA-Z0-9_]+")+varname+std::string("[^a-zA-Z0-9_]+="));
+					//if we want to opt out unset globals into local literals
+					bottom = var_it->second + "\n" + bottom;
+					cmdline_printchat("restored var "+var_it->second);
+					//cmdline_printchat("BOTTOM["+bottom+"]ENDBOTTOM");
+				}
+			}
+
+			script = bottom;
+		}
+	}
+	/*catch (boost::regex_error& e)
+	{
+		std::string err = "not a valid regular expression: \"";
+		err += e.what();
+		err += "\"; optimization skipped";
+		cmdline_printchat(err);
+	}
+	catch (...)
+	{
+		cmdline_printchat("unexpected exception caught; optimization skipped");
+	}*/
+	return script;
 }
 
 struct ProcCacheInfo
@@ -266,6 +485,7 @@ std::string cachepath(std::string name)
 
 void cache_script(std::string name, std::string content)
 {
+	content = "\n" + content + "\n";/*hack!*/
 	cmdline_printchat("writing "+name+" to cache");
 	std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"lslpreproc",name);
 	LLAPRFile infile;
@@ -477,7 +697,7 @@ void JCLSLPreprocessor::start_process()
 		//tracer.usefulctx = &ctx;
 
 		ctx.set_language(boost::wave::enable_long_long(ctx.get_language()));
-		ctx.set_language(boost::wave::enable_preserve_comments(ctx.get_language()));
+		//ctx.set_language(boost::wave::enable_preserve_comments(ctx.get_language()));
 		ctx.set_language(boost::wave::enable_prefer_pp_numbers(ctx.get_language()));
 
 		std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc"+gDirUtilp->getDirDelimiter();
@@ -550,6 +770,8 @@ void JCLSLPreprocessor::start_process()
 	}
 	
 	if(lazy_lists == TRUE)output = reformat_lazy_lists(output);
+
+	output = lslopt(output);
 	//output = implement_switches(output);
 	if(errored)
 	{
@@ -565,4 +787,13 @@ void JCLSLPreprocessor::start_process()
 	}
 	mCore->doSaveComplete((void*)mCore,mClose);
 	waving = FALSE;
+}
+
+void JCLSLPreprocessor::getfuncmatches(std::string token)
+{
+	/*if(!LSLHunspell)
+	{
+		std::string dicaffpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", std::string(newDict+".aff")).c_str());
+		LSLHunspell = new Hunspell(
+	}*/
 }

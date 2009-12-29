@@ -33,7 +33,11 @@
 
 #include "llpreviewscript.h"
 
-
+#if LL_WINDOWS
+#include "hunspell/hunspelldll.h"
+#else
+#include "hunspell.hxx"
+#endif
 /*class JCLSLPreprocessorCallback : public LLRefCount
 {
 public:
@@ -50,10 +54,12 @@ public:
 		last(0),
 		groupcounter(0),
 		updated(0)
-		*/{ }
+		*/{}
 
 	std::string encode(std::string script);
 	std::string decode(std::string script);
+
+	std::string lslopt(std::string script);
 
 
 	std::vector<std::string> scan_includes(std::string filename, std::string script);
@@ -65,6 +71,8 @@ public:
 	void preprocess_script(BOOL close = FALSE);
 	void start_process();
 
+	void getfuncmatches(std::string token);
+
 	std::set<std::string> caching_files;
 	std::set<std::string> cached_files;
 	std::map<std::string,std::string> cached_assetids;
@@ -74,4 +82,6 @@ public:
 	BOOL waving;
 
 	BOOL mClose;
+
+	static Hunspell* LSLHunspell;
 };
