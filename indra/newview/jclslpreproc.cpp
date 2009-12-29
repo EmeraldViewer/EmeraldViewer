@@ -692,6 +692,7 @@ void JCLSLPreprocessor::start_process()
 	std::string name = mCore->mItem->getName();
 	//BOOL use_switches;
 	BOOL lazy_lists = FALSE;
+	BOOL use_switch = FALSE;
 
 	BOOL errored = FALSE;
 	std::string err;
@@ -762,6 +763,7 @@ void JCLSLPreprocessor::start_process()
 			//line directives are emitted in case the frontend of the future can find use for them
 			output += token;
 			if(lazy_lists == FALSE)lazy_lists = ctx.is_defined_macro(std::string("USE_LAZY_LISTS"));
+			if(use_switch == FALSE)use_switch = ctx.is_defined_macro(std::string("USE_SWITCHES"));
 			/*this needs to be checked for because if it is *ever* enabled it indicates that the transform is a dependency*/
             ++first;
         }
@@ -792,6 +794,7 @@ void JCLSLPreprocessor::start_process()
 	}
 	
 	if(lazy_lists == TRUE)output = reformat_lazy_lists(output);
+	if(use_switch == TRUE)output = reformat_switch_statements(output);
 
 	if(!mDefinitionCaching)
 	{
