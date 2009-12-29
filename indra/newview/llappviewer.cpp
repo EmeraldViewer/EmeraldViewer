@@ -2931,6 +2931,7 @@ bool LLAppViewer::initCache()
 	// Setup and verify the cache location
 	std::string cache_location = gSavedSettings.getString("CacheLocation");
 	std::string new_cache_location = gSavedSettings.getString("NewCacheLocation");
+	gDirUtilp->mm_setsnddir(gSavedSettings.getString("Emeraldmm_sndcacheloc"));
 	if (new_cache_location != cache_location)
 	{
 		gDirUtilp->setCacheDir(gSavedSettings.getString("CacheLocation"));

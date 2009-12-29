@@ -5274,17 +5274,28 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
-		<key>EmeraldClothingMode</key>
-		<map>
-			<key>Comment</key>
-			<string>now you fucked up</string>
-			<key>Persist</key>
-			<integer>1</integer>
-			<key>Type</key>
-			<string>Boolean</string>
-			<key>Value</key>
-			<integer>0</integer>
-		</map>
+    <key>Emeraldmm_sndcacheloc</key>
+    <map>
+      <key>Comment</key>
+      <string>Location of unpacked sound files.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string></string>
+    </map>
+    <key>Emeraldmm_showtexinfo</key>
+    <map>
+      <key>Comment</key>
+      <string>More info on ctrl+alt+shift+t option!</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>EmeraldLSLPreprocessor</key>
     <map>
       <key>Comment</key>
