@@ -630,7 +630,7 @@ bool idle_startup()
 #endif // !LL_WINDOWS
 			    )
 			{
-//				gAudiop = (LLAudioEngine *) new LLAudioEngine_FMOD();
+				gAudiop = (LLAudioEngine *) new LLAudioEngine_FMOD();
 
 			if (gAudiop)
 			{

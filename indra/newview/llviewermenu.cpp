@@ -3557,7 +3557,7 @@ void velocity_interpolate( void* data )
 	}
 }
 
-
+/*
 void toggle_wind_audio(void)
 {
 	if (gAudiop)
@@ -3565,7 +3565,7 @@ void toggle_wind_audio(void)
 		gAudiop->enableWind(!(gAudiop->isWindEnabled()));
 	}
 }
-
+*/
 
 // Callback for enablement
 BOOL is_inventory_visible( void* user_data )

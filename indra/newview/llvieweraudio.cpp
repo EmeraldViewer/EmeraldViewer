@@ -132,7 +132,7 @@ void audio_update_volume(bool force_update)
 		gAudiop->setDistanceFactor(gSavedSettings.getF32("AudioLevelDistance")); 
 		gAudiop->setRolloffFactor(gSavedSettings.getF32("AudioLevelRolloff"));
 		gAudiop->setMuted(mute_audio);
-		gAudiop->setWindMuted(gSavedSettings.getBOOL("MuteAmbient")); // disable wind /ez
+//		gAudiop->setWindMuted(gSavedSettings.getBOOL("MuteAmbient")); // disable wind /ez
 		
 		if (force_update)
 		{
