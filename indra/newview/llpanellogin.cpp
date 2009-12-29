@@ -50,6 +50,8 @@
 #include "llcurl.h"
 #include "llviewercontrol.h"
 #include "llfloaterabout.h"
+#include "llfloaterchat.h"
+#include "llchat.h"
 #include "llfloatertest.h"
 #include "llfloaterpreference.h"
 #include "llfocusmgr.h"
@@ -282,6 +284,9 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 	channel_text->setClickedCallback(onClickVersion);
 	channel_text->setCallbackUserData(this);
 	
+	childSetValue("autorelog_toggle",LLStartUp::s_re_login);
+	childSetCommitCallback("autorelog_toggle",onClickToggleAutorelog);
+
 	LLTextBox* forgot_password_text = getChild<LLTextBox>("forgot_password_text");
 	forgot_password_text->setClickedCallback(onClickForgotPassword);
 
@@ -1235,4 +1240,13 @@ void LLPanelLogin::clearPassword()
 	sInstance->childSetText("password_edit", blank);
 	sInstance->mIncomingPassword = blank;
 	sInstance->mMungedPassword = blank;
+}
+
+void LLPanelLogin::onClickToggleAutorelog(LLUICtrl* ctrl, void* user_data)
+{
+	//LLPanelLogin* self = (LLPanelLogin*)user_data;
+	LLStartUp::s_re_login = sInstance->getChild<LLCheckBoxCtrl>("autorelog_toggle")->get();
+	LLChat chat;
+	chat.mText = llformat("autorelog=%d",LLStartUp::s_re_login);
+	LLFloaterChat::addChat(chat);
 }

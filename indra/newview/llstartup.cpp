@@ -240,7 +240,7 @@ static std::string sInitialOutfitGender;	// "male" or "female"
 static bool gUseCircuitCallbackCalled = false;
 
 EStartupState LLStartUp::gStartupState = STATE_FIRST;
-
+bool LLStartUp::s_re_login;
 
 //
 // local function declaration
@@ -815,6 +815,13 @@ bool idle_startup()
 			gSavedSettings.setBOOL("FirstRunThisInstall", FALSE);
 
 			LLStartUp::setStartupState( STATE_LOGIN_WAIT );		// Wait for user input
+			if(LLStartUp::s_re_login)
+			{
+				LLChat chat;
+				chat.mText = "Autorelogging";
+				LLFloaterChat::addChat(chat);
+				LLPanelLogin::PublicConnect();
+			}
 		}
 		else
 		{
@@ -1690,7 +1697,7 @@ bool idle_startup()
 				// Bounce back to the login screen.
 				LLSD args;
 				args["ERROR_MESSAGE"] = emsg.str();
-				LLNotifications::instance().add("ErrorMessage", args, LLSD(), login_alert_done);
+				if(!LLStartUp::s_re_login) LLNotifications::instance().add("ErrorMessage", args, LLSD(), login_alert_done);
 				reset_login();
 				gSavedSettings.setBOOL("AutoLogin", FALSE);
 				show_connect_box = true;
@@ -1710,7 +1717,7 @@ bool idle_startup()
 			// Bounce back to the login screen.
 			LLSD args;
 			args["ERROR_MESSAGE"] = emsg.str();
-			LLNotifications::instance().add("ErrorMessage", args, LLSD(), login_alert_done);
+			if(!LLStartUp::s_re_login) LLNotifications::instance().add("ErrorMessage", args, LLSD(), login_alert_done);
 			reset_login();
 			gSavedSettings.setBOOL("AutoLogin", FALSE);
 			show_connect_box = true;

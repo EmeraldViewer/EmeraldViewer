@@ -95,6 +95,7 @@ public:
 	static void giveFocus();
 	static void setAlwaysRefresh(bool refresh); 
 	static void mungePassword(LLUICtrl* caller, void* user_data);
+	static void PublicConnect(){ onClickConnect(0); }
 	
 	/**
 	 * @brief	Returns the login history data.
@@ -127,6 +128,7 @@ private:
 	static void onNameCheckChanged(LLUICtrl* ctrl, void* data);
 	static void clearPassword();
 	
+	static void onClickToggleAutorelog(LLUICtrl* ctrl, void* user_data);
 private:
 	LLPointer<LLUIImage> mLogoImage;
 
