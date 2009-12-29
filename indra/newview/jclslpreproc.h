@@ -68,13 +68,18 @@ public:
 
 	static void JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat);
 
-	void preprocess_script(BOOL close = FALSE);
+	void preprocess_script(BOOL close = FALSE, BOOL defcache = FALSE);
 	void start_process();
 
-	void getfuncmatches(std::string token);
+	//void getfuncmatches(std::string token);
 
 	std::set<std::string> caching_files;
 	std::set<std::string> cached_files;
+
+	std::set<std::string> defcached_files;
+
+	BOOL mDefinitionCaching;
+
 	std::map<std::string,std::string> cached_assetids;
 
 	LLScriptEdCore* mCore;

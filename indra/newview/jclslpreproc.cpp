@@ -216,14 +216,16 @@ std::string scopeript2(std::string& top, S32 fstart)
 
 std::string JCLSLPreprocessor::lslopt(std::string script)
 {
-	
+	script = " \n"+script;//HACK//this should prevent regex fail for functions starting on line 0, column 0
+
+
 	//this should be fun
-	//boost::regex reg;
+
 	//try
 	{
 		boost::smatch result;
-		//reg = "([\\S\\s]*)(\\s*default\\s*\\{)([\\S\\s]*)";//.assign(sre, boost::regex_constants::icase);
-		if (boost::regex_search(script, result, boost::regex("([\\S\\s]*)(\\s*default\\s*\\{)([\\S\\s]*)")))//boost::regex_search(script, broked, reg))
+
+		if (boost::regex_search(script, result, boost::regex("([\\S\\s]*)(\\s*default\\s*\\{)([\\S\\s]*)")))
 		{
 			std::string top = result[1];
 			std::string bottom = result[2];
@@ -231,11 +233,11 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 /*integer|float|string|key|vector|rotation|list*/
 
 			boost::regex findfuncts("(integer|float|string|key|vector|rotation|list){0,1}[\\}\\s]+([a-zA-Z0-9_]+)\\(");
+			//there is a minor problem with this regex, it will 
+			//grab extra wnhitespace/newlines in front of functions that do not return a value
+			//however this seems unimportant as it is only a couple chars and 
+			//never grabs code that would actually break compilation
 
-			//boost::regex findcalls("(integer|float|string|key|vector|rotation|list|\\s)\\s([a-zA-Z0-9_]+)\\(");
-	
-
-			//std::string::const_iterator TOPend = top.end();
 			boost::smatch TOPfmatch;
 
 			std::set<std::string> kept_functions;
@@ -253,13 +255,9 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 				functions[funcname] = funcb;
 				cmdline_printchat("func "+funcname+" added to list["+funcb+"]");
 				top.erase(pos,funcb.size());
-				// update search position 
-				//since we erase the match out we don't need to do this
-				//TOPstart = TOPfmatch[0].second; 
 			}
 			
 			bool repass = false;
-			//bool optimized = false;
 			do
 			{
 				repass = false;
@@ -308,12 +306,9 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 			boost::smatch TOPvmatch;
 			while(boost::regex_search(TOPstart, std::string::const_iterator(top.end()), TOPvmatch, findvars, boost::match_default))
 			{
-				//std::string type = TOPfmatch[1];
 				std::string varname = TOPvmatch[2];
 				std::string fullref = TOPvmatch[1] + " " + varname+TOPvmatch[3];
 
-				//int pos = const_iterator2pos(TOPfmatch[1].first, top.begin())-1;
-				//std::string funcb = scoperip(top, pos);
 				gvars[varname] = fullref;
 				cmdline_printchat("var "+varname+" added to list as ["+fullref+"]");
 				top.erase(TOPvmatch[0].first,TOPvmatch[0].second);
@@ -586,9 +581,10 @@ LLUUID JCLSLPreprocessor::findInventoryByName(std::string name)
 	return LLUUID::null;
 }
 
-void JCLSLPreprocessor::preprocess_script(BOOL close)
+void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
 {
 	mClose = close;
+	mDefinitionCaching = defcache;
 	cached_files.clear();
 	caching_files.clear();
 	cached_assetids.clear();
@@ -649,6 +645,32 @@ std::string reformat_lazy_lists(std::string script)
 
 	return nscript;
 }
+
+std::string reformat_switch_statements(std::string script)
+{
+	//"switch\\(([^\\)]*)\\)\\s{"
+
+	boost::regex findswitches("switch\\(([\\S\\s]*)\\)\\s{");//nasty
+
+	boost::smatch matches;
+
+	std::string buffer = script;
+
+	std::string::const_iterator start = buffer.begin();
+	while(boost::regex_search(start, std::string::const_iterator(buffer.end()), matches, findswitches, boost::match_default))
+	{
+		std::string argument = matches[1];
+
+		int pos = const_iterator2pos(matches[0].first, start)-1;
+		std::string statement = scopeript2(buffer, pos);
+
+		//functions[funcname] = funcb;
+		cmdline_printchat("detected switch ["+statement+"]");
+		buffer.erase(pos,statement.size());
+	}
+	return script;
+}
+
 
 void JCLSLPreprocessor::start_process()
 {
@@ -771,29 +793,34 @@ void JCLSLPreprocessor::start_process()
 	
 	if(lazy_lists == TRUE)output = reformat_lazy_lists(output);
 
-	output = lslopt(output);
-	//output = implement_switches(output);
-	if(errored)
+	if(!mDefinitionCaching)
 	{
-		output += "\nPreprocessor exception:\n"+err;
-	}
-	output = encode(input)+"\n\n"+output;
+		output = lslopt(output);
+		//output = implement_switches(output);
+		if(errored)
+		{
+			output += "\nPreprocessor exception:\n"+err;
+		}
+		output = encode(input)+"\n\n"+output;
 
-
-	LLTextEditor* outfield = mCore->mPostEditor;//getChild<LLViewerTextEditor>("post_process");
-	if(outfield)
+		LLTextEditor* outfield = mCore->mPostEditor;//getChild<LLViewerTextEditor>("post_process");
+		if(outfield)
+		{
+			outfield->setText(LLStringExplicit(output));
+		}
+		mCore->doSaveComplete((void*)mCore,mClose);
+	}else
 	{
-		outfield->setText(LLStringExplicit(output));
+		
 	}
-	mCore->doSaveComplete((void*)mCore,mClose);
 	waving = FALSE;
 }
 
-void JCLSLPreprocessor::getfuncmatches(std::string token)
-{
-	/*if(!LSLHunspell)
+/*void JCLSLPreprocessor::getfuncmatches(std::string token)
+{//not sure if this is needed...
+	if(!LSLHunspell)
 	{
 		std::string dicaffpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", std::string(newDict+".aff")).c_str());
 		LSLHunspell = new Hunspell(
-	}*/
-}
+	}
+}*/
