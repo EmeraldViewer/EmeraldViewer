@@ -123,19 +123,10 @@ void lggDicDownloadFloater::onClickDownload(void* data)
 }
 void lggDicDownloadFloater::downloadDic(std::string name)
 {
-
-	LLSD response = LLHTTPClient::blockingGet(std::string("http://www.modularsystems.sl/app/dics/"+name));
-	if(response.has("body"))
-	{
-		std::string dicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", 
+	std::string dicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", 
 			name.c_str()));
-
-		llofstream export_file;
-		export_file.open(dicpath);
-		export_file << response["body"];
-		export_file.close();
-	}
-
+	LLHTTPClient::downloadFile(std::string("http://www.modularsystems.sl/app/dics/"+name),
+			dicpath);
 }
 void LggDicDownload::show(BOOL showin, std::vector<std::string> shortNames, std::vector<std::string> longNames, void * data)
 {
