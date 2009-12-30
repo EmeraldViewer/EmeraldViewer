@@ -472,7 +472,7 @@ int lggIrcThread::QuitMessageResponce( char * params, irc_reply_data * hostd, vo
 		if(hostd->nick)
 		{
 			if(gSavedSettings.getBOOL("EmeraldIRC_ShowQuit"))
-				msg( llformat("%s has logged off.. (%s)",hostd->nick,params).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
+				msg( llformat("%s has logged off. (%s)",hostd->nick,(std::string(params).substr(1)).c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
 		}
 	}
 	updateNames();
