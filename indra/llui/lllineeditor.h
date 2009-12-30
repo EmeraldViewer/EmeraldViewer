@@ -318,6 +318,7 @@ protected:
 	S32			(*mPrevalidateFunc)(const LLWString &str);
 
 	LLFrameTimer mKeystrokeTimer;
+	LLFrameTimer mSpellTimer;
 
 	LLColor4	mCursorColor;
 

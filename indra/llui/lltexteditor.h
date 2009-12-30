@@ -555,6 +555,7 @@ private:
 	BOOL			mScrollNeeded;
 
 	LLFrameTimer	mKeystrokeTimer;
+	LLFrameTimer	mSpellTimer;
 
 	LLColor4		mCursorColor;
 

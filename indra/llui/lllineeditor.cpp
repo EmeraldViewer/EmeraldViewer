@@ -1962,7 +1962,8 @@ void LLLineEditor::draw()
 	if((glggHunSpell->highlightInRed || mOverRideAndShowMisspellings)
 		&&(!mReadOnly))
 	{
-		F32 elapsed = mKeystrokeTimer.getElapsedTimeF32();
+		
+		F32 elapsed = mSpellTimer.getElapsedTimeF32();
 		if(S32(elapsed / 1) & 1) 
 		{
 			if(isSpellDirty())

@@ -788,7 +788,7 @@ void lggHunSpell_Wrapper::newDictSelection(std::string selection)
 	gSavedSettings.setString("EmeraldSpellBase",selection);
 	//better way to do this would be to check and see if there is a installed conflict
 	//and then only remove that one.. messy
-	gSavedSettings.setString("EmeraldSpellInstalled","");
+	gSavedSettings.setString("EmeraldSpellInstalled","en_sl");
 	processSettings();
 }
 void lggHunSpell_Wrapper::getMoreButton(void * data)
