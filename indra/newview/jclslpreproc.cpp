@@ -184,24 +184,27 @@ std::string scoperip(std::string& top, S32 fstart)
 	return function;
 }*/
 //letstry that again, last function was fundamentally flawed and didn't take string x = "oolol{olo\"lol}"; into consideration
-std::string scopeript2(std::string& top, S32 fstart)
+std::string scopeript2(std::string& top, S32 fstart, char left = '{', char right = '}')
 {
+	if(fstart >= int(top.length()))return "begin out of bounds";
+
 	int cursor = fstart;
 	bool noscoped = true;
 	bool in_literal = false;
 	int count = 0;
 	char ltoken = ' ';
-	while((count > 0 || noscoped) && cursor < int(top.length()))
+	do
 	{
 		char token = top.at(cursor);
 		if(token == '"' && ltoken != '\\')in_literal = !in_literal;
-		if(!in_literal)
+		else if(token == '\\' && ltoken == '\\')token = ' ';
+		else if(!in_literal)
 		{
-			if(token == '{')
+			if(token == left)
 			{
 				count += 1;
 				noscoped = false;
-			}else if(token == '}')
+			}else if(token == right)
 			{
 				count -= 1;
 				noscoped = false;
@@ -209,8 +212,54 @@ std::string scopeript2(std::string& top, S32 fstart)
 		}
 		ltoken = token;
 		cursor += 1;
-	}
+	}while((count > 0 || noscoped) && cursor < int(top.length()));
+	int end = (cursor-fstart);
+	if(end > int(top.length()))return "end out of bounds";//end = int(top.length()) - 1;
 	return top.substr(fstart,(cursor-fstart));
+}
+
+int getscope(std::string& file, int cursor, char left = '{', char right = '}')
+{
+	int filelen = file.length();
+	if(cursor < filelen)
+	{
+		int pos = 0;
+		bool in_literal = false;
+		int scope = 0;
+		char ltoken = ' ';
+		do
+		{
+			char token = file.at(pos);
+			if(token == '"' && ltoken != '\\')in_literal = !in_literal;
+			else if(token == '\\' && ltoken == '\\')token = ' ';
+			else if(!in_literal)
+			{
+				if(token == left)
+				{
+					scope += 1;
+				}else if(token == right)
+				{
+					scope -= 1;
+				}
+			}
+			ltoken = token;
+			pos += 1;
+		}while(pos <= cursor);
+
+	}
+	return -1;
+}
+
+std::string gettype(std::string& file, std::string var, int pos)
+{
+	//int scope = getscope(file, pos);
+//todo
+	return std::string();
+}
+
+inline int const_iterator_to_pos(std::string::const_iterator begin, std::string::const_iterator cursor)
+{
+	return std::distance(begin, cursor);
 }
 
 
@@ -244,13 +293,13 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 
 			std::map<std::string, std::string> functions;
 
-			std::string::const_iterator TOPstart = top.begin();
-			while(boost::regex_search(TOPstart, std::string::const_iterator(top.end()), TOPfmatch, findfuncts, boost::match_default))
+			//std::string::const_iterator TOPstart = top.begin();
+			while(boost::regex_search(std::string::const_iterator(top.begin()), std::string::const_iterator(top.end()), TOPfmatch, findfuncts, boost::match_default))
 			{
 				//std::string type = TOPfmatch[1];
 				std::string funcname = TOPfmatch[2];
 
-				int pos = const_iterator2pos(TOPfmatch[0].first, top.begin())-1;
+				int pos = TOPfmatch.position(0);//const_iterator2pos(TOPfmatch[0].first, top.begin())-1;
 				std::string funcb = scopeript2(top, pos);
 				functions[funcname] = funcb;
 				cmdline_printchat("func "+funcname+" added to list["+funcb+"]");
@@ -304,14 +353,16 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 			boost::regex findvars("(integer|float|string|key|vector|rotation|list)\\s+([a-zA-Z0-9_]+)([^\\(\\);]*;)");
 
 			boost::smatch TOPvmatch;
-			while(boost::regex_search(TOPstart, std::string::const_iterator(top.end()), TOPvmatch, findvars, boost::match_default))
+			while(boost::regex_search(std::string::const_iterator(top.begin()), std::string::const_iterator(top.end()), TOPvmatch, findvars, boost::match_default))
 			{
 				std::string varname = TOPvmatch[2];
 				std::string fullref = TOPvmatch[1] + " " + varname+TOPvmatch[3];
 
 				gvars[varname] = fullref;
 				cmdline_printchat("var "+varname+" added to list as ["+fullref+"]");
-				top.erase(TOPvmatch[0].first,TOPvmatch[0].second);
+				top.erase(
+					const_iterator_to_pos(std::string::const_iterator(top.begin()), TOPvmatch[0].first)
+					,const_iterator_to_pos(std::string::const_iterator(top.begin()), TOPvmatch[0].second));
 				// update search position 
 				//since we erase the match out we don't need to do this
 				//TOPstart = TOPfmatch[0].second; 
@@ -646,28 +697,210 @@ std::string reformat_lazy_lists(std::string script)
 	return nscript;
 }
 
+
+inline std::string randstr(int len, std::string chars)
+{
+	int clen = int(chars.length());
+	int built = 0;
+	std::string ret;
+	while(built < len)
+	{
+		int r = std::rand() / ( RAND_MAX / clen );
+		r = r % clen;//sanity
+		ret += chars.at(r);
+		built += 1;
+	}
+	return ret;
+}
+
+inline std::string quicklabel()
+{
+	return std::string("c")+randstr(5,"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+}
+
+#define cmdline_printchat(x) cmdline_printchat(x); llinfos << x << llendl
+
+std::string minimalize_whitespace(std::string in)
+{
+	return boost::regex_replace(in, boost::regex("\\s*",boost::regex::perl), "\n");		
+}
+
 std::string reformat_switch_statements(std::string script)
 {
 	//"switch\\(([^\\)]*)\\)\\s{"
 
-	boost::regex findswitches("switch\\(([\\S\\s]*)\\)\\s{");//nasty
-
-	boost::smatch matches;
-
 	std::string buffer = script;
-
-	std::string::const_iterator start = buffer.begin();
-	while(boost::regex_search(start, std::string::const_iterator(buffer.end()), matches, findswitches, boost::match_default))
+	try
 	{
-		std::string argument = matches[1];
+		try
+		{
+			boost::regex findswitches("\\sswitch\\(");//nasty
 
-		int pos = const_iterator2pos(matches[0].first, start)-1;
-		std::string statement = scopeript2(buffer, pos);
+			boost::smatch matches;
 
-		//functions[funcname] = funcb;
-		cmdline_printchat("detected switch ["+statement+"]");
-		buffer.erase(pos,statement.size());
+			static std::string switchstr = "switch(";
+
+			int escape = 100;
+
+			//int res = buffer.find(switchstr);
+			//while(res != -1)
+			//{
+			//std::string::const_iterator(buffer.begin());
+			//std::string::const_iterator(buffer.end());
+			while(boost::regex_search(std::string::const_iterator(buffer.begin()), std::string::const_iterator(buffer.end()), matches, findswitches, boost::match_default) && escape > 1)
+			{
+				int res = matches.position(0)+1;//const_iterator2pos(matches[0].first+1, std::string::const_iterator(buffer.begin()))-1;
+				//backreference 1 is "switch(" so we get same as str.find but ensure its not part of a larger word or something
+
+				static int slen = switchstr.length();
+				std::string arg = scopeript2(buffer, res+slen-1,'(',')');
+				//arg *will have* () around it
+				if(arg == "begin out of bounds" || arg == "end out of bounds")
+				{
+					cmdline_printchat(arg);
+					break;
+				}
+				cmdline_printchat("arg=["+arg+"]");
+				std::string rstate = scopeript2(buffer, res+slen+arg.length()-1);
+
+				int cutlen = slen;
+				cutlen -= 1;
+				cutlen += arg.length();
+				cutlen += rstate.length();
+				//slen is for switch( and arg has () so we need to - 1 ( to get the right length
+				//then add arg len and state len to get section to excise
+
+				//rip off the scope edges
+				int slicestart = rstate.find("{")+1;
+				rstate = rstate.substr(slicestart,(rstate.rfind("}")-slicestart)-1);
+				cmdline_printchat("rstate=["+rstate+"]");
+
+
+
+				boost::regex findcases("\\scase\\s");
+
+				boost::smatch statematches;
+
+				std::map<std::string,std::string> ifs;
+
+				while(boost::regex_search(std::string::const_iterator(rstate.begin()), std::string::const_iterator(rstate.end()), statematches, findcases, boost::match_default) && escape > 1)
+				{
+					//if(statematches[0].matched)
+					{
+						int case_start = statematches.position(0)+1;//const_iterator2pos(statematches[0].first+1, std::string::const_iterator(rstate.begin()))-1;
+						int next_curl = rstate.find("{",case_start+1);
+						int next_semi = rstate.find(":",case_start+1);
+						int case_end = (next_curl < next_semi && next_curl != -1) ? next_curl : next_semi;
+						static int caselen = std::string("case").length();
+						if(case_end != -1)
+						{
+							std::string casearg = rstate.substr(case_start+caselen,case_end-(case_start+caselen));
+							cmdline_printchat("casearg=["+casearg+"]");
+							std::string label = quicklabel();
+							ifs[casearg] = label;
+							cmdline_printchat("BEFORE["+rstate+"]");
+							bool addcurl = (case_end == next_curl ? 1 : 0);
+							label = "@"+label+";\n";
+							if(addcurl)label += "{";
+							rstate.erase(case_start,(case_end-case_start) + 1);
+							rstate.insert(case_start,label);
+							cmdline_printchat("AFTER["+rstate+"]");
+						}else
+						{
+							cmdline_printchat("error");
+							rstate.erase(case_start,caselen);
+							rstate.insert(case_start,"error; cannot find { or :");
+						}
+					}/*else
+					{
+						cmdline_printchat("unmatched[1]");
+						statestart_it = statematches[0].second;
+					}*/
+					//if(next_curl < next_semi)case_end = next_curl;
+					//else
+					escape -= 1;
+				}
+
+				std::string deflt = quicklabel();
+				bool isdflt = false;
+				std::string defstate;
+				defstate = boost::regex_replace(rstate, boost::regex("(\\s)(default\\s*?):",boost::regex::perl), "$1\\@"+deflt+";");
+				defstate = boost::regex_replace(defstate, boost::regex("(\\s)(default\\s*?)\\{",boost::regex::perl), "$1\\@"+deflt+"; \\{");
+				if(defstate != rstate)
+				{
+					isdflt = true;
+					rstate = defstate;
+				}
+				//std::string argl = quicklabel();
+				std::string jumptable = "{";//\ninteger "+argl+" = "+arg+";\n";
+
+				std::map<std::string, std::string>::iterator ifs_it;
+				for(ifs_it = ifs.begin(); ifs_it != ifs.end(); ifs_it++)
+				{
+					jumptable += "if("+arg+" == ("+ifs_it->first+"))jump "+ifs_it->second+";\n";
+				}
+				if(isdflt)jumptable += "jump "+deflt+";\n";
+
+				rstate = jumptable + rstate + "\n";
+			
+				std::string brk = quicklabel();
+				defstate = boost::regex_replace(rstate, boost::regex("(\\s)break\\s*;",boost::regex::perl), "$1jump "+brk+";");
+				if(defstate != rstate)
+				{
+					rstate = defstate;
+					rstate += "\n@"+brk+";\n";
+				}
+				rstate = rstate + "}";
+
+				cmdline_printchat("replacing["+buffer.substr(res,cutlen)+"] with ["+rstate+"]");
+				buffer.erase(res,cutlen);
+				buffer.insert(res,rstate);
+
+				//start = buffer.begin();
+				//end = buffer.end();
+
+				escape -= 1;
+
+				//res = buffer.find(switchstr);
+			}
+
+
+			/*std::string::const_iterator start = buffer.begin();
+			while(boost::regex_search(start, std::string::const_iterator(buffer.end()), matches, findswitches, boost::match_default))
+			{
+				std::string argument = matches[1];
+
+				int pos = const_iterator2pos(matches[0].first, start)-1;
+				std::string statement = scopeript2(buffer, pos);
+
+				std::string newstatement = "{\n";
+				newstatement += "integer switch_res = ("+argument+");\n";
+				std::map<std::string case_,std::string label> ifs;
+
+				//functions[funcname] = funcb;
+				cmdline_printchat("detected switch ["+statement+"]");
+				buffer.erase(pos,statement.size());
+			}*/
+			script = buffer;
+		}
+		catch (boost::regex_error& e)
+		{
+			std::string err = "not a valid regular expression: \"";
+			err += e.what();
+			err += "\"; optimization skipped";
+			cmdline_printchat(err);
+		}
+		catch (...)
+		{
+			cmdline_printchat("unexpected exception caught; buffer=["+buffer+"]");
+		}
 	}
+	catch (...)
+	{
+		cmdline_printchat("unexpected griefer exception caught; buffer=["+buffer+"]");
+	}
+
+
 	return script;
 }
 
