@@ -2917,7 +2917,7 @@ void process_decline_callingcard(LLMessageSystem* msg, void**)
 	LLNotifications::instance().add("CallingCardDeclined");
 }
 
-void cmdline_printchat(std::string message);
+//void cmdline_printchat(std::string message);
 
 void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 {

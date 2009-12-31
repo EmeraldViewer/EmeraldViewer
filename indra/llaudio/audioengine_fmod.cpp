@@ -59,12 +59,12 @@ FMOD_INSTANCE* gFmod = NULL;
 #include "llapr.h"
 
 #include "sound_ids.h"
-/*
+
 extern "C" {
 	void * F_CALLBACKAPI windCallback(void *originalbuffer, void *newbuffer, int length, void* userdata);
 }
-*/
-//FSOUND_DSPUNIT *gWindDSP = NULL;
+
+FSOUND_DSPUNIT *gWindDSP = NULL;
 
 // Safe strcpy
 #if 0 //(unused)  //LL_WINDOWS || LL_LINUX
@@ -95,7 +95,7 @@ LLAudioEngine_FMOD::LLAudioEngine_FMOD()
 	mInited = false;
 	mCurrentInternetStreamp = NULL;
 	mInternetStreamChannel = -1;
-	//mWindGen = NULL;
+	mWindGen = NULL;
 }
 
 
@@ -300,13 +300,11 @@ void LLAudioEngine_FMOD::allocateListener(void)
 
 void LLAudioEngine_FMOD::shutdown()
 {
-	/*
 	if (gWindDSP)
 	{
 		FMOD_API(FSOUND_DSP_SetActive)(gWindDSP,false);
 		FMOD_API(FSOUND_DSP_Free)(gWindDSP);
 	}
-	*/
 
 	stopInternetStream();
 
@@ -332,9 +330,10 @@ LLAudioChannel *LLAudioEngine_FMOD::createChannel()
 	return new LLAudioChannelFMOD();
 }
 
-/*
+
 void LLAudioEngine_FMOD::initWind()
 {
+	if(mWindGen)return;
 	mWindGen = new LLWindGen<MIXBUFFERFORMAT>;
 
 	if (!gWindDSP)
@@ -347,10 +346,11 @@ void LLAudioEngine_FMOD::initWind()
 	}
 	mNextWindUpdate = 0.0;
 }
-*/
-/*
+
+
 void LLAudioEngine_FMOD::cleanupWind()
 {
+	if(!mWindGen)return;
 	if (gWindDSP)
 	{
 		FMOD_API(FSOUND_DSP_SetActive)(gWindDSP, false);
@@ -361,18 +361,32 @@ void LLAudioEngine_FMOD::cleanupWind()
 	delete mWindGen;
 	mWindGen = NULL;
 }
-*/
-/*
+
+
 //-----------------------------------------------------------------------
 void LLAudioEngine_FMOD::updateWind(LLVector3 wind_vec, F32 camera_height_above_water)
 {
 	LLVector3 wind_pos;
-	F32 pitch;
-	F32 center_freq;
+	F64 pitch;
+	F64 center_freq;
 
-	if (!mEnableWind)
+	static bool lastwind = false;
+	if (!mEnableWind || mWindMuted)
 	{
+		//WIND IS OFF
+		if(lastwind != false)
+		{
+			lastwind = false;
+			if(mWindGen)cleanupWind();
+		}
 		return;
+	}else
+	{
+		if(lastwind != true)
+		{
+			lastwind = true;
+			if(!mWindGen)initWind();
+		}
 	}
 	
 	if (mWindUpdateTimer.checkExpirationAndReset(LL_WIND_UPDATE_INTERVAL))
@@ -394,7 +408,7 @@ void LLAudioEngine_FMOD::updateWind(LLVector3 wind_vec, F32 camera_height_above_
 		mWindGen->mTargetPanGainR = (F32)mapWindVecToPan(wind_vec);
   	}
 }
-*/
+
 /*
 //-----------------------------------------------------------------------
 void LLAudioEngine_FMOD::setSourceMinDistance(U16 source_num, F64 distance)
@@ -1084,7 +1098,6 @@ int LLAudioStreamFMOD::getOpenState()
 	return open_state;
 }
 
-/*
 void * F_CALLBACKAPI windCallback(void *originalbuffer, void *newbuffer, int length, void* userdata)
 {
 	// originalbuffer = fmod's original mixbuffer.
@@ -1117,4 +1130,3 @@ void * F_CALLBACKAPI windCallback(void *originalbuffer, void *newbuffer, int len
 
 	return newbuffer;
 }
-*/

@@ -90,10 +90,25 @@ void cmdline_printchat(std::string message);
 #define encode_start std::string("//start_unprocessed_text\n/*")
 #define encode_end std::string("*/\n//end_unprocessed_text")
 
+BOOL JCLSLPreprocessor::mono_directive(std::string& text, bool agent_inv)
+{
+	BOOL domono = agent_inv;
+	if(text.find("//mono\n") != -1)
+	{
+		domono = TRUE;
+	}else if(text.find("//lsl2\n") != -1)
+	{
+		domono = FALSE;
+	}
+	return domono;
+}
+
 std::string JCLSLPreprocessor::encode(std::string script)
 {
 
 	std::string otext = JCLSLPreprocessor::decode(script);
+
+	BOOL mono = mono_directive(script);
 
 	otext = boost::regex_replace(otext, boost::regex("([/*])(?=[/*|])",boost::regex::perl), "$1|");
 
@@ -102,9 +117,10 @@ std::string JCLSLPreprocessor::encode(std::string script)
 	otext = encode_start+otext+encode_end;
 	otext += "\n//nfo_preprocessor_version 0";
 	otext += "\n//^ = determine what featureset is supported";
-	std::string version = llformat("%d.%d.%d (%d)",
-						LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD);
-	otext += llformat("\n//nfo_program_version %s %s",LL_CHANNEL,version.c_str());
+	otext += llformat("\n//program_version %s", LLAppViewer::instance()->getSecondLifeTitle().c_str());
+	otext += "\n";
+	if(mono)otext += "//mono\n";
+	else otext += "//lsl2\n";
 
 	return otext;
 }
@@ -246,16 +262,447 @@ int getscope(std::string& file, int cursor, char left = '{', char right = '}')
 			pos += 1;
 		}while(pos <= cursor);
 
+		return scope;
 	}
 	return -1;
+}
+/*
+//checks if the item at "it" is accessible at "me"
+bool in_my_scope(std::string& file, int it, int me, char left = '{', char right = '}')
+{
+	int scope = getscope(file, me);
+	if(me < it)return false;//the future isnt behind us
+	bool accessible = true;
+	bool in_literal = false;
+	int relative_scope = scope;
+	int out_of_scope = 0;
+	char ltoken = ' ';
+	do
+	{
+		char token = file.at(me);
+		if(ltoken == '"' && token != '\\')in_literal = !in_literal;
+		else if(ltoken == '\\' && token == '\\')token = ' ';
+		else if(!in_literal)
+		{
+			if(token == left)
+			{
+				relative_scope -= 1;
+				out_of_scope -= 1;
+				if(out_of_scope < 0)out_of_scope = 0;
+			}else if(token == right)
+			{
+				relative_scope += 1;
+				out_of_scope += 1;
+			}
+		}
+		ltoken = token;
+		me -= 1;
+	}while(it < me);
+	if(out_of_scope > 0)accessible = false;
+	return accessible;
+}
+
+static std::map<std::string, std::string> llFuncs;
+void init_funcs()
+{
+	llFuncs.clear();
+	llFuncs[std::string("llSin")] = std::string("float");
+	llFuncs[std::string("llCos")] = std::string("float");
+	llFuncs[std::string("llTan")] = std::string("float");
+	llFuncs[std::string("llAtan2")] = std::string("float");
+	llFuncs[std::string("llSqrt")] = std::string("float");
+	llFuncs[std::string("llPow")] = std::string("float");
+	llFuncs[std::string("llAbs")] = std::string("integer");
+	llFuncs[std::string("llFabs")] = std::string("float");
+	llFuncs[std::string("llFrand")] = std::string("float");
+	llFuncs[std::string("llFloor")] = std::string("integer");
+	llFuncs[std::string("llCeil")] = std::string("integer");
+	llFuncs[std::string("llRound")] = std::string("integer");
+	llFuncs[std::string("llVecMag")] = std::string("float");
+	llFuncs[std::string("llVecNorm")] = std::string("vector");
+	llFuncs[std::string("llVecDist")] = std::string("float");
+	llFuncs[std::string("llRot2Euler")] = std::string("vector");
+	llFuncs[std::string("llEuler2Rot")] = std::string("rotation");
+	llFuncs[std::string("llAxes2Rot")] = std::string("rotation");
+	llFuncs[std::string("llRot2Fwd")] = std::string("vector");
+	llFuncs[std::string("llRot2Left")] = std::string("vector");
+	llFuncs[std::string("llRot2Up")] = std::string("vector");
+	llFuncs[std::string("llRotBetween")] = std::string("rotation");
+	llFuncs[std::string("llWhisper")] = std::string("void");
+	llFuncs[std::string("llSay")] = std::string("void");
+	llFuncs[std::string("llShout")] = std::string("void");
+	llFuncs[std::string("llListen")] = std::string("integer");
+	llFuncs[std::string("llListenControl")] = std::string("void");
+	llFuncs[std::string("llListenRemove")] = std::string("void");
+	llFuncs[std::string("llSensor")] = std::string("void");
+	llFuncs[std::string("llSensorRepeat")] = std::string("void");
+	llFuncs[std::string("llSensorRemove")] = std::string("void");
+	llFuncs[std::string("llDetectedName")] = std::string("string");
+	llFuncs[std::string("llDetectedKey")] = std::string("key");
+	llFuncs[std::string("llDetectedOwner")] = std::string("key");
+	llFuncs[std::string("llDetectedType")] = std::string("integer");
+	llFuncs[std::string("llDetectedPos")] = std::string("vector");
+	llFuncs[std::string("llDetectedVel")] = std::string("vector");
+	llFuncs[std::string("llDetectedGrab")] = std::string("vector");
+	llFuncs[std::string("llDetectedRot")] = std::string("rotation");
+	llFuncs[std::string("llDetectedGroup")] = std::string("integer");
+	llFuncs[std::string("llDetectedLinkNumber")] = std::string("integer");
+	llFuncs[std::string("llDie")] = std::string("void");
+	llFuncs[std::string("llGround")] = std::string("float");
+	llFuncs[std::string("llCloud")] = std::string("float");
+	llFuncs[std::string("llWind")] = std::string("vector");
+	llFuncs[std::string("llSetStatus")] = std::string("void");
+	llFuncs[std::string("llGetStatus")] = std::string("integer");
+	llFuncs[std::string("llSetScale")] = std::string("void");
+	llFuncs[std::string("llGetScale")] = std::string("vector");
+	llFuncs[std::string("llSetColor")] = std::string("void");
+	llFuncs[std::string("llGetAlpha")] = std::string("float");
+	llFuncs[std::string("llSetAlpha")] = std::string("void");
+	llFuncs[std::string("llGetColor")] = std::string("vector");
+	llFuncs[std::string("llSetTexture")] = std::string("void");
+	llFuncs[std::string("llScaleTexture")] = std::string("void");
+	llFuncs[std::string("llOffsetTexture")] = std::string("void");
+	llFuncs[std::string("llRotateTexture")] = std::string("void");
+	llFuncs[std::string("llGetTexture")] = std::string("string");
+	llFuncs[std::string("llSetPos")] = std::string("void");
+	llFuncs[std::string("llGetPos")] = std::string("vector");
+	llFuncs[std::string("llGetLocalPos")] = std::string("vector");
+	llFuncs[std::string("llSetRot")] = std::string("void");
+	llFuncs[std::string("llGetRot")] = std::string("rotation");
+	llFuncs[std::string("llGetLocalRot")] = std::string("rotation");
+	llFuncs[std::string("llSetForce")] = std::string("void");
+	llFuncs[std::string("llGetForce")] = std::string("vector");
+	llFuncs[std::string("llTarget")] = std::string("integer");
+	llFuncs[std::string("llTargetRemove")] = std::string("void");
+	llFuncs[std::string("llRotTarget")] = std::string("integer");
+	llFuncs[std::string("llRotTargetRemove")] = std::string("void");
+	llFuncs[std::string("llMoveToTarget")] = std::string("void");
+	llFuncs[std::string("llStopMoveToTarget")] = std::string("void");
+	llFuncs[std::string("llApplyImpulse")] = std::string("void");
+	llFuncs[std::string("llApplyRotationalImpulse")] = std::string("void");
+	llFuncs[std::string("llSetTorque")] = std::string("void");
+	llFuncs[std::string("llGetTorque")] = std::string("vector");
+	llFuncs[std::string("llSetForceAndTorque")] = std::string("void");
+	llFuncs[std::string("llGetVel")] = std::string("vector");
+	llFuncs[std::string("llGetAccel")] = std::string("vector");
+	llFuncs[std::string("llGetOmega")] = std::string("vector");
+	llFuncs[std::string("llGetTimeOfDay")] = std::string("float");
+	llFuncs[std::string("llGetWallclock")] = std::string("float");
+	llFuncs[std::string("llGetTime")] = std::string("float");
+	llFuncs[std::string("llResetTime")] = std::string("void");
+	llFuncs[std::string("llGetAndResetTime")] = std::string("float");
+	llFuncs[std::string("llSound")] = std::string("void");
+	llFuncs[std::string("llPlaySound")] = std::string("void");
+	llFuncs[std::string("llLoopSound")] = std::string("void");
+	llFuncs[std::string("llLoopSoundMaster")] = std::string("void");
+	llFuncs[std::string("llLoopSoundSlave")] = std::string("void");
+	llFuncs[std::string("llPlaySoundSlave")] = std::string("void");
+	llFuncs[std::string("llTriggerSound")] = std::string("void");
+	llFuncs[std::string("llStopSound")] = std::string("void");
+	llFuncs[std::string("llPreloadSound")] = std::string("void");
+	llFuncs[std::string("llGetSubString")] = std::string("string");
+	llFuncs[std::string("llDeleteSubString")] = std::string("string");
+	llFuncs[std::string("llInsertString")] = std::string("string");
+	llFuncs[std::string("llToUpper")] = std::string("string");
+	llFuncs[std::string("llToLower")] = std::string("string");
+	llFuncs[std::string("llGiveMoney")] = std::string("void");
+	llFuncs[std::string("llMakeExplosion")] = std::string("void");
+	llFuncs[std::string("llMakeFountain")] = std::string("void");
+	llFuncs[std::string("llMakeSmoke")] = std::string("void");
+	llFuncs[std::string("llMakeFire")] = std::string("void");
+	llFuncs[std::string("llRezObject")] = std::string("void");
+	llFuncs[std::string("llLookAt")] = std::string("void");
+	llFuncs[std::string("llStopLookAt")] = std::string("void");
+	llFuncs[std::string("llSetTimerEvent")] = std::string("void");
+	llFuncs[std::string("llSleep")] = std::string("void");
+	llFuncs[std::string("llGetMass")] = std::string("float");
+	llFuncs[std::string("llCollisionFilter")] = std::string("void");
+	llFuncs[std::string("llTakeControls")] = std::string("void");
+	llFuncs[std::string("llReleaseControls")] = std::string("void");
+	llFuncs[std::string("llAttachToAvatar")] = std::string("void");
+	llFuncs[std::string("llDetachFromAvatar")] = std::string("void");
+	llFuncs[std::string("llTakeCamera")] = std::string("void");
+	llFuncs[std::string("llReleaseCamera")] = std::string("void");
+	llFuncs[std::string("llGetOwner")] = std::string("key");
+	llFuncs[std::string("llInstantMessage")] = std::string("void");
+	llFuncs[std::string("llEmail")] = std::string("void");
+	llFuncs[std::string("llGetNextEmail")] = std::string("void");
+	llFuncs[std::string("llGetKey")] = std::string("key");
+	llFuncs[std::string("llSetBuoyancy")] = std::string("void");
+	llFuncs[std::string("llSetHoverHeight")] = std::string("void");
+	llFuncs[std::string("llStopHover")] = std::string("void");
+	llFuncs[std::string("llMinEventDelay")] = std::string("void");
+	llFuncs[std::string("llSoundPreload")] = std::string("void");
+	llFuncs[std::string("llRotLookAt")] = std::string("void");
+	llFuncs[std::string("llStringLength")] = std::string("integer");
+	llFuncs[std::string("llStartAnimation")] = std::string("void");
+	llFuncs[std::string("llStopAnimation")] = std::string("void");
+	llFuncs[std::string("llPointAt")] = std::string("void");
+	llFuncs[std::string("llStopPointAt")] = std::string("void");
+	llFuncs[std::string("llTargetOmega")] = std::string("void");
+	llFuncs[std::string("llGetStartParameter")] = std::string("integer");
+	llFuncs[std::string("llGodLikeRezObject")] = std::string("void");
+	llFuncs[std::string("llRequestPermissions")] = std::string("void");
+	llFuncs[std::string("llGetPermissionsKey")] = std::string("key");
+	llFuncs[std::string("llGetPermissions")] = std::string("integer");
+	llFuncs[std::string("llGetLinkNumber")] = std::string("integer");
+	llFuncs[std::string("llSetLinkColor")] = std::string("void");
+	llFuncs[std::string("llCreateLink")] = std::string("void");
+	llFuncs[std::string("llBreakLink")] = std::string("void");
+	llFuncs[std::string("llBreakAllLinks")] = std::string("void");
+	llFuncs[std::string("llGetLinkKey")] = std::string("key");
+	llFuncs[std::string("llGetLinkName")] = std::string("string");
+	llFuncs[std::string("llGetInventoryNumber")] = std::string("integer");
+	llFuncs[std::string("llGetInventoryName")] = std::string("string");
+	llFuncs[std::string("llSetScriptState")] = std::string("void");
+	llFuncs[std::string("llGetEnergy")] = std::string("float");
+	llFuncs[std::string("llGiveInventory")] = std::string("void");
+	llFuncs[std::string("llRemoveInventory")] = std::string("void");
+	llFuncs[std::string("llSetText")] = std::string("void");
+	llFuncs[std::string("llWater")] = std::string("float");
+	llFuncs[std::string("llPassTouches")] = std::string("void");
+	llFuncs[std::string("llRequestAgentData")] = std::string("key");
+	llFuncs[std::string("llRequestInventoryData")] = std::string("key");
+	llFuncs[std::string("llSetDamage")] = std::string("void");
+	llFuncs[std::string("llTeleportAgentHome")] = std::string("void");
+	llFuncs[std::string("llModifyLand")] = std::string("void");
+	llFuncs[std::string("llCollisionSound")] = std::string("void");
+	llFuncs[std::string("llCollisionSprite")] = std::string("void");
+	llFuncs[std::string("llGetAnimation")] = std::string("string");
+	llFuncs[std::string("llResetScript")] = std::string("void");
+	llFuncs[std::string("llMessageLinked")] = std::string("void");
+	llFuncs[std::string("llPushObject")] = std::string("void");
+	llFuncs[std::string("llPassCollisions")] = std::string("void");
+	llFuncs[std::string("llGetScriptName")] = std::string("void");
+	llFuncs[std::string("llGetNumberOfSides")] = std::string("integer");
+	llFuncs[std::string("llAxisAngle2Rot")] = std::string("rotation");
+	llFuncs[std::string("llRot2Axis")] = std::string("vector");
+	llFuncs[std::string("llRot2Angle")] = std::string("float");
+	llFuncs[std::string("llAcos")] = std::string("float");
+	llFuncs[std::string("llAsin")] = std::string("float");
+	llFuncs[std::string("llAngleBetween")] = std::string("float");
+	llFuncs[std::string("llGetInventoryKey")] = std::string("key");
+	llFuncs[std::string("llAllowInventoryDrop")] = std::string("void");
+	llFuncs[std::string("llGetSunDirection")] = std::string("vector");
+	llFuncs[std::string("llGetTextureOffset")] = std::string("vector");
+	llFuncs[std::string("llGetTextureScale")] = std::string("vector");
+	llFuncs[std::string("llGetTextureRot")] = std::string("float");
+	llFuncs[std::string("llSubStringIndex")] = std::string("integer");
+	llFuncs[std::string("llGetOwnerKey")] = std::string("key");
+	llFuncs[std::string("llGetCenterOfMass")] = std::string("vector");
+	llFuncs[std::string("llListSort")] = std::string("list");
+	llFuncs[std::string("llGetListLength")] = std::string("integer");
+	llFuncs[std::string("llList2Integer")] = std::string("integer");
+	llFuncs[std::string("llList2Float")] = std::string("float");
+	llFuncs[std::string("llList2String")] = std::string("string");
+	llFuncs[std::string("llList2Key")] = std::string("key");
+	llFuncs[std::string("llList2Vector")] = std::string("vector");
+	llFuncs[std::string("llList2Rot")] = std::string("rotation");
+	llFuncs[std::string("llList2List")] = std::string("list");
+	llFuncs[std::string("llDeleteSubList")] = std::string("list");
+	llFuncs[std::string("llGetListEntryType")] = std::string("integer");
+	llFuncs[std::string("llList2CSV")] = std::string("string");
+	llFuncs[std::string("llCSV2List")] = std::string("list");
+	llFuncs[std::string("llListRandomize")] = std::string("list");
+	llFuncs[std::string("llList2ListStrided")] = std::string("list");
+	llFuncs[std::string("llGetRegionCorner")] = std::string("vector");
+	llFuncs[std::string("llListInsertList")] = std::string("list");
+	llFuncs[std::string("llListFindList")] = std::string("integer");
+	llFuncs[std::string("llGetObjectName")] = std::string("string");
+	llFuncs[std::string("llSetObjectName")] = std::string("void");
+	llFuncs[std::string("llGetDate")] = std::string("string");
+	llFuncs[std::string("llEdgeOfWorld")] = std::string("integer");
+	llFuncs[std::string("llGetAgentInfo")] = std::string("integer");
+	llFuncs[std::string("llAdjustSoundVolume")] = std::string("void");
+	llFuncs[std::string("llSetSoundQueueing")] = std::string("void");
+	llFuncs[std::string("llSetSoundRadius")] = std::string("void");
+	llFuncs[std::string("llKey2Name")] = std::string("string");
+	llFuncs[std::string("llSetTextureAnim")] = std::string("void");
+	llFuncs[std::string("llTriggerSoundLimited")] = std::string("void");
+	llFuncs[std::string("llEjectFromLand")] = std::string("void");
+	llFuncs[std::string("llParseString2List")] = std::string("list");
+	llFuncs[std::string("llOverMyLand")] = std::string("integer");
+	llFuncs[std::string("llGetLandOwnerAt")] = std::string("key");
+	llFuncs[std::string("llGetNotecardLine")] = std::string("key");
+	llFuncs[std::string("llGetAgentSize")] = std::string("vector");
+	llFuncs[std::string("llSameGroup")] = std::string("integer");
+	llFuncs[std::string("llUnSit")] = std::string("key");
+	llFuncs[std::string("llGroundSlope")] = std::string("vector");
+	llFuncs[std::string("llGroundNormal")] = std::string("vector");
+	llFuncs[std::string("llGroundCountour")] = std::string("vector");
+	llFuncs[std::string("llGetAttached")] = std::string("integer");
+	llFuncs[std::string("llGetFreeMemory")] = std::string("integer");
+	llFuncs[std::string("llGetRegionName")] = std::string("string");
+	llFuncs[std::string("llGetRegionTimeDilation")] = std::string("float");
+	llFuncs[std::string("llGetRegionFPS")] = std::string("float");
+	llFuncs[std::string("llParticleSystem")] = std::string("void");
+	llFuncs[std::string("llGroundRepel")] = std::string("void");
+	llFuncs[std::string("llGiveInventoryList")] = std::string("void");
+	llFuncs[std::string("llSetVehicleType")] = std::string("void");
+	llFuncs[std::string("llSetVehicleFloatParam")] = std::string("void");
+	llFuncs[std::string("llSetVehicleVectorParam")] = std::string("void");
+	llFuncs[std::string("llSetVehicleVectorParam")] = std::string("void");
+	llFuncs[std::string("llSetVehicleFlags")] = std::string("void");
+	llFuncs[std::string("llRemoveVehicleFlags")] = std::string("void");
+	llFuncs[std::string("llSitTarget")] = std::string("void");
+	llFuncs[std::string("llAvatarOnSitTarget")] = std::string("key");
+	llFuncs[std::string("llAddToLandPassList")] = std::string("void");
+	llFuncs[std::string("llSetTouchText")] = std::string("void");
+	llFuncs[std::string("llSetSitText")] = std::string("void");
+	llFuncs[std::string("llSetCameraEyeOffset")] = std::string("void");
+	llFuncs[std::string("llSetCameraAtOffset")] = std::string("void");
+	llFuncs[std::string("llDumpList2String")] = std::string("string");
+	llFuncs[std::string("llScriptDanger")] = std::string("integer");
+	llFuncs[std::string("llDialog")] = std::string("void");
+	llFuncs[std::string("llVolumeDetect")] = std::string("void");
+	llFuncs[std::string("llResetOtherScript")] = std::string("void");
+	llFuncs[std::string("llGetScriptState")] = std::string("integer");
+	llFuncs[std::string("llScriptLibraryFunction")] = std::string("void");
+	llFuncs[std::string("llSetRemoteScriptAccessPin")] = std::string("void");
+	llFuncs[std::string("llRemoteLoadScriptPin")] = std::string("void");
+	llFuncs[std::string("llOpenRemoteDataChannel")] = std::string("void");
+	llFuncs[std::string("llSendRemoteData")] = std::string("void");
+	llFuncs[std::string("llRemoteDataReply")] = std::string("void");
+	llFuncs[std::string("llCloseRemoteDataChannel")] = std::string("void");
+	llFuncs[std::string("llMD5String")] = std::string("string");
+	llFuncs[std::string("llSetPrimitiveParams")] = std::string("void");
+	llFuncs[std::string("llStringToBase64")] = std::string("string");
+	llFuncs[std::string("llBase64ToString")] = std::string("string");
+	llFuncs[std::string("llXorBase64Strings")] = std::string("void");
+	llFuncs[std::string("llRemoteDataSetRegion")] = std::string("void");
+	llFuncs[std::string("llLog10")] = std::string("float");
+	llFuncs[std::string("llLog")] = std::string("float");
+	llFuncs[std::string("llGetAnimationList")] = std::string("list");
+	llFuncs[std::string("llSetParcelMusicURL")] = std::string("void");
+	llFuncs[std::string("llGetRootPosition")] = std::string("vector");
+	llFuncs[std::string("llGetRootRotation")] = std::string("rotation");
+	llFuncs[std::string("llGetObjectDesc")] = std::string("string");
+	llFuncs[std::string("llSetObjectDesc")] = std::string("void");
+	llFuncs[std::string("llGetCreator")] = std::string("key");
+	llFuncs[std::string("llGetTimestamp")] = std::string("string");
+	llFuncs[std::string("llSetLinkAlpha")] = std::string("void");
+	llFuncs[std::string("llGetNumberOfPrims")] = std::string("integer");
+	llFuncs[std::string("llGetNumberOfNotecardLines")] = std::string("key");
+	llFuncs[std::string("llGetBoundingBox")] = std::string("list");
+	llFuncs[std::string("llGetGeometricCenter")] = std::string("vector");
+	llFuncs[std::string("llGetPrimitiveParams")] = std::string("list");
+	llFuncs[std::string("llIntegerToBase64")] = std::string("void");
+	llFuncs[std::string("llBase64ToInteger")] = std::string("void");
+	llFuncs[std::string("llGetGMTclock")] = std::string("float");
+	llFuncs[std::string("llGetSimulatorHostname")] = std::string("void");
+	llFuncs[std::string("llSetLocalRot")] = std::string("void");
+	llFuncs[std::string("llParseStringKeeps")] = std::string("list");
+	llFuncs[std::string("llRezAtRoot")] = std::string("void");
+	llFuncs[std::string("llGetObjectPermMask")] = std::string("integer");
+	llFuncs[std::string("llSetObjectPermMask")] = std::string("void");
+	llFuncs[std::string("llGetInventoryPermMask")] = std::string("integer");
+	llFuncs[std::string("llSetInventoryPermMask")] = std::string("void");
+	llFuncs[std::string("llGetInventoryCreator")] = std::string("key");
+	llFuncs[std::string("llOwnerSay")] = std::string("void");
+	llFuncs[std::string("llRequestSimulatorData")] = std::string("key");
+	llFuncs[std::string("llForceMouselook")] = std::string("void");
+	llFuncs[std::string("llGetObjectMass")] = std::string("float");
+	llFuncs[std::string("llListReplaceList")] = std::string("list");
+	llFuncs[std::string("lloadURL")] = std::string("void");
+	llFuncs[std::string("llParcelMediaCommandList")] = std::string("void");
+	llFuncs[std::string("llParcelMediaQuery")] = std::string("void");
+	llFuncs[std::string("llModPow")] = std::string("integer");
+	llFuncs[std::string("llGetInventoryType")] = std::string("integer");
+	llFuncs[std::string("llSetPayPrice")] = std::string("void");
+	llFuncs[std::string("llGetCameraPos")] = std::string("vector");
+	llFuncs[std::string("llGetCameraRot")] = std::string("rotation");
+	llFuncs[std::string("llSetPrimURL")] = std::string("void");
+	llFuncs[std::string("llRefreshPrimURL")] = std::string("void");
+	llFuncs[std::string("llEscapeURL")] = std::string("string");
+	llFuncs[std::string("llUnescapeURL")] = std::string("string");
+	llFuncs[std::string("llMapDestination")] = std::string("void");
+	llFuncs[std::string("llAddToLandBanList")] = std::string("void");
+	llFuncs[std::string("llRemoveFromLandPassList")] = std::string("void");
+	llFuncs[std::string("llRemoveFromLandBanList")] = std::string("void");
+	llFuncs[std::string("llSetCameraParams")] = std::string("");
+	llFuncs[std::string("llClearCameraParams")] = std::string("");
+	llFuncs[std::string("llListStatistics")] = std::string("float");
+	llFuncs[std::string("llGetUnixTime")] = std::string("integer");
+	llFuncs[std::string("llGetParcelFlags")] = std::string("integer");
+	llFuncs[std::string("llGetRegionFlags")] = std::string("integer");
+	llFuncs[std::string("llXorBase64StringsCorrect")] = std::string("string");
+	llFuncs[std::string("llHTTPRequest")] = std::string("void");
+	llFuncs[std::string("llResetLandBanList")] = std::string("void");
+	llFuncs[std::string("llResetLandPassList")] = std::string("void");
+	llFuncs[std::string("llGetObjectPrimCount")] = std::string("integer");
+	llFuncs[std::string("llGetParcelPrimOwners")] = std::string("void");
+	llFuncs[std::string("llGetParcelPrimCount")] = std::string("integer");
+	llFuncs[std::string("llGetParcelMaxPrims")] = std::string("integer");
+	llFuncs[std::string("llGetParcelDetails")] = std::string("list");
+	llFuncs[std::string("llSetLinkPrimitiveParams")] = std::string("void");
+	llFuncs[std::string("llSetLinkTexture")] = std::string("void");
+	llFuncs[std::string("llStringTrim")] = std::string("string");
+	llFuncs[std::string("llRegionSay")] = std::string("void");
+	llFuncs[std::string("llGetObjectDetails")] = std::string("list");
+	llFuncs[std::string("llSetClickAction")] = std::string("void");
+	llFuncs[std::string("llGetRegionAgentCount")] = std::string("integer");
+	llFuncs[std::string("llTextBox")] = std::string("void");
+	llFuncs[std::string("llGetAgentLanguage")] = std::string("void");
+	llFuncs[std::string("llDetectedTouchUV")] = std::string("vector");
+	llFuncs[std::string("llDetectedTouchFace")] = std::string("integer");
+	llFuncs[std::string("llDetectedTouchPos")] = std::string("vector");
+	llFuncs[std::string("llDetectedTouchNormal")] = std::string("vector");
+	llFuncs[std::string("llDetectedTouchBinormal")] = std::string("vector");
+	llFuncs[std::string("llDetectedTouchST")] = std::string("vector");
+	llFuncs[std::string("llSHA1String")] = std::string("string");
+	llFuncs[std::string("llGetFreeURLs")] = std::string("integer");
+	llFuncs[std::string("llRequestURL")] = std::string("key");
+	llFuncs[std::string("llRequestSecureURL")] = std::string("key");
+	llFuncs[std::string("llReleaseURL")] = std::string("void");
+	llFuncs[std::string("llHTTPResponse")] = std::string("void");
+	llFuncs[std::string("llGetHTTPHeader")] = std::string("string");
+	llFuncs[std::string("llGetHTTPHeader")] = std::string("string");
+	llFuncs[std::string("integer")] = std::string("integer");
+	llFuncs[std::string("float")] = std::string("float");
+	llFuncs[std::string("string")] = std::string("string");
+	llFuncs[std::string("key")] = std::string("key");
+	llFuncs[std::string("vector")] = std::string("vector");
+	llFuncs[std::string("rotation")] = std::string("rotation");
+	llFuncs[std::string("list")] = std::string("list");
 }
 
 std::string gettype(std::string& file, std::string var, int pos)
 {
+	static bool init_func_types = true;
+	if(init_func_types)
+	{
+		init_func_types = false;
+		init_funcs();
+	}
+	//in_my_scope(std::string& file, int it, int me, char left = '{', char right = '}')
 	//int scope = getscope(file, pos);
-//todo
-	return std::string();
-}
+//todo//(\S*?)\s*
+	{
+		boost::smatch matches;
+		std::string::const_iterator start = var.begin();
+		var += " ";
+		if(boost::regex_search(start, std::string::const_iterator(var.end()), matches, boost::regex("[^a-zA-Z0-9_]*?([a-zA-Z0-9_]*?)\\s+?"), boost::match_default))
+		{
+			var = matches[1];
+		}
+	}
+	if(llFuncs.find(var) != llFuncs.end())return llFuncs[var];
+	else
+	{
+		boost::smatch matches;
+		std::string::const_iterator start = file.begin();
+		while(boost::regex_search(start, std::string::const_iterator(file.end()), matches, boost::regex("(integer|float|string|key|vector|rotation|list)\\s+?"+var+"\\s*?[;=]"), boost::match_default))
+		{
+			std::string type = matches[1];
+			if(in_my_scope(file, matches.position(0), pos))
+			{
+				return type;
+			}
+			start = matches[0].second;
+		}
+	}
+	return std::string("-1");
+}*/
 
 inline int const_iterator_to_pos(std::string::const_iterator begin, std::string::const_iterator cursor)
 {
@@ -266,20 +713,19 @@ inline int const_iterator_to_pos(std::string::const_iterator begin, std::string:
 std::string JCLSLPreprocessor::lslopt(std::string script)
 {
 	script = " \n"+script;//HACK//this should prevent regex fail for functions starting on line 0, column 0
-
+	//added more to prevent split fail on scripts with no global data
 
 	//this should be fun
 
-	//try
+	try
 	{
 		boost::smatch result;
 
-		if (boost::regex_search(script, result, boost::regex("([\\S\\s]*)(\\s*default\\s*\\{)([\\S\\s]*)")))
+		if (boost::regex_search(script, result, boost::regex("([\\S\\s]*?)(\\s*default\\s*\\{)([\\S\\s]*)")))
 		{
 			std::string top = result[1];
 			std::string bottom = result[2];
 			bottom += result[3];
-/*integer|float|string|key|vector|rotation|list*/
 
 			boost::regex findfuncts("(integer|float|string|key|vector|rotation|list){0,1}[\\}\\s]+([a-zA-Z0-9_]+)\\(");
 			//there is a minor problem with this regex, it will 
@@ -293,16 +739,15 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 
 			std::map<std::string, std::string> functions;
 
-			//std::string::const_iterator TOPstart = top.begin();
 			while(boost::regex_search(std::string::const_iterator(top.begin()), std::string::const_iterator(top.end()), TOPfmatch, findfuncts, boost::match_default))
 			{
 				//std::string type = TOPfmatch[1];
 				std::string funcname = TOPfmatch[2];
 
-				int pos = TOPfmatch.position(0);//const_iterator2pos(TOPfmatch[0].first, top.begin())-1;
+				int pos = TOPfmatch.position(0);
 				std::string funcb = scopeript2(top, pos);
 				functions[funcname] = funcb;
-				cmdline_printchat("func "+funcname+" added to list["+funcb+"]");
+				//cmdline_printchat("func "+funcname+" added to list["+funcb+"]");
 				top.erase(pos,funcb.size());
 			}
 			
@@ -326,25 +771,14 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 
 						if(boost::regex_search(bstart, bend, calls, findcalls, boost::match_default))
 						{
-							cmdline_printchat("func "+funcname+" used;");
-							//top.substr(fmatch[0].first,
-							//S32 fstart = func_it->second;
-							std::string function = func_it->second;//scoperip(top, fstart);
-							cmdline_printchat("func=["+function+"]");
+							std::string function = func_it->second;
 							kept_functions.insert(funcname);
 							bottom = function+"\n"+bottom;
-							//cmdline_printchat("BOTTOM["+bottom+"]ENDBOTTOM");
-							//optimized = true;
 							repass = true;
 						}
-					}/*else
-					{
-						//cmdline_printchat("func "+funcname+" already preserved;");
-					}*/
+					}
 				}
 			}while(repass);
-
-			//cmdline_printchat("top=["+top+"]");
 
 			//global var time
 
@@ -359,13 +793,10 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 				std::string fullref = TOPvmatch[1] + " " + varname+TOPvmatch[3];
 
 				gvars[varname] = fullref;
-				cmdline_printchat("var "+varname+" added to list as ["+fullref+"]");
-				top.erase(
-					const_iterator_to_pos(std::string::const_iterator(top.begin()), TOPvmatch[0].first)
-					,const_iterator_to_pos(std::string::const_iterator(top.begin()), TOPvmatch[0].second));
-				// update search position 
-				//since we erase the match out we don't need to do this
-				//TOPstart = TOPfmatch[0].second; 
+				//cmdline_printchat("var "+varname+" added to list as ["+fullref+"]");
+				int start = const_iterator_to_pos(std::string::const_iterator(top.begin()), TOPvmatch[1].first);
+				top.erase(start,fullref.length());
+				//cmdline_printchat("top=["+top+"]");
 			}
 
 			std::map<std::string, std::string>::iterator var_it;
@@ -380,17 +811,15 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 				if(boost::regex_search(bstart, bend, vcalls, findvcalls, boost::match_default))
 				{
 					//boost::regex findvcalls(std::string("[^a-zA-Z0-9_]+")+varname+std::string("[^a-zA-Z0-9_]+="));
-					//if we want to opt out unset globals into local literals
+					//do we want to opt out unset global strings into local literals hrm
 					bottom = var_it->second + "\n" + bottom;
-					cmdline_printchat("restored var "+var_it->second);
-					//cmdline_printchat("BOTTOM["+bottom+"]ENDBOTTOM");
 				}
 			}
 
 			script = bottom;
 		}
 	}
-	/*catch (boost::regex_error& e)
+	catch (boost::regex_error& e)
 	{
 		std::string err = "not a valid regular expression: \"";
 		err += e.what();
@@ -400,7 +829,7 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 	catch (...)
 	{
 		cmdline_printchat("unexpected exception caught; optimization skipped");
-	}*/
+	}
 	return script;
 }
 
@@ -425,7 +854,7 @@ template <typename ContextT>
         std::string const &filename, bool include_next)
 	{
 		std::string cfilename = filename.substr(1,filename.length()-2);
-		cmdline_printchat(cfilename+":found_include_directive");
+		//cmdline_printchat(cfilename+":found_include_directive");
         std::set<std::string>::iterator it = mProc->cached_files.find(cfilename);
         if (it == mProc->cached_files.end())
 		{
@@ -532,7 +961,7 @@ std::string cachepath(std::string name)
 void cache_script(std::string name, std::string content)
 {
 	content = "\n" + content + "\n";/*hack!*/
-	cmdline_printchat("writing "+name+" to cache");
+	//cmdline_printchat("writing "+name+" to cache");
 	std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"lslpreproc",name);
 	LLAPRFile infile;
 	infile.open(path.c_str(), LL_APR_WB);
@@ -543,7 +972,7 @@ void cache_script(std::string name, std::string content)
 
 void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
 {
-	cmdline_printchat("cachecallback called");
+	//cmdline_printchat("cachecallback called");
 	ProcCacheInfo* info =(ProcCacheInfo*)userdata;
 	LLViewerInventoryItem* item = info->item;
 	JCLSLPreprocessor* self = info->self;
@@ -568,13 +997,13 @@ void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAs
 			delete buffer;
 			if(boost::filesystem::native(name))
 			{
-				cmdline_printchat("native name of "+name);
+				//cmdline_printchat("native name of "+name);
 				self->mCore->mErrorList->addCommentText(std::string("Cached ")+name);
 				cache_script(name, content);
 				std::set<std::string>::iterator loc = self->caching_files.find(name);
 				if(loc != self->caching_files.end())
 				{
-					cmdline_printchat("finalizing cache");
+					//cmdline_printchat("finalizing cache");
 					self->caching_files.erase(loc);
 					self->cached_files.insert(name);
 					self->cached_assetids[name] = uuid.asString();//.insert(uuid.asString());
@@ -718,7 +1147,7 @@ inline std::string quicklabel()
 	return std::string("c")+randstr(5,"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
 }
 
-#define cmdline_printchat(x) cmdline_printchat(x); llinfos << x << llendl
+//#define cmdline_printchat(x) cmdline_printchat(x); llinfos << x << llendl
 
 std::string minimalize_whitespace(std::string in)
 {
@@ -730,7 +1159,6 @@ std::string reformat_switch_statements(std::string script)
 	//"switch\\(([^\\)]*)\\)\\s{"
 
 	std::string buffer = script;
-	try
 	{
 		try
 		{
@@ -742,25 +1170,21 @@ std::string reformat_switch_statements(std::string script)
 
 			int escape = 100;
 
-			//int res = buffer.find(switchstr);
-			//while(res != -1)
-			//{
-			//std::string::const_iterator(buffer.begin());
-			//std::string::const_iterator(buffer.end());
 			while(boost::regex_search(std::string::const_iterator(buffer.begin()), std::string::const_iterator(buffer.end()), matches, findswitches, boost::match_default) && escape > 1)
 			{
-				int res = matches.position(0)+1;//const_iterator2pos(matches[0].first+1, std::string::const_iterator(buffer.begin()))-1;
-				//backreference 1 is "switch(" so we get same as str.find but ensure its not part of a larger word or something
-
+				int res = matches.position(0)+1;
+				
 				static int slen = switchstr.length();
+
 				std::string arg = scopeript2(buffer, res+slen-1,'(',')');
+
 				//arg *will have* () around it
 				if(arg == "begin out of bounds" || arg == "end out of bounds")
 				{
 					cmdline_printchat(arg);
 					break;
 				}
-				cmdline_printchat("arg=["+arg+"]");
+				//cmdline_printchat("arg=["+arg+"]");
 				std::string rstate = scopeript2(buffer, res+slen+arg.length()-1);
 
 				int cutlen = slen;
@@ -773,7 +1197,7 @@ std::string reformat_switch_statements(std::string script)
 				//rip off the scope edges
 				int slicestart = rstate.find("{")+1;
 				rstate = rstate.substr(slicestart,(rstate.rfind("}")-slicestart)-1);
-				cmdline_printchat("rstate=["+rstate+"]");
+				//cmdline_printchat("rstate=["+rstate+"]");
 
 
 
@@ -795,29 +1219,23 @@ std::string reformat_switch_statements(std::string script)
 						if(case_end != -1)
 						{
 							std::string casearg = rstate.substr(case_start+caselen,case_end-(case_start+caselen));
-							cmdline_printchat("casearg=["+casearg+"]");
+							//cmdline_printchat("casearg=["+casearg+"]");
 							std::string label = quicklabel();
 							ifs[casearg] = label;
-							cmdline_printchat("BEFORE["+rstate+"]");
+							//cmdline_printchat("BEFORE["+rstate+"]");
 							bool addcurl = (case_end == next_curl ? 1 : 0);
 							label = "@"+label+";\n";
 							if(addcurl)label += "{";
 							rstate.erase(case_start,(case_end-case_start) + 1);
 							rstate.insert(case_start,label);
-							cmdline_printchat("AFTER["+rstate+"]");
+							//cmdline_printchat("AFTER["+rstate+"]");
 						}else
 						{
-							cmdline_printchat("error");
+							cmdline_printchat("error in regex case_end != -1");
 							rstate.erase(case_start,caselen);
 							rstate.insert(case_start,"error; cannot find { or :");
 						}
-					}/*else
-					{
-						cmdline_printchat("unmatched[1]");
-						statestart_it = statematches[0].second;
-					}*/
-					//if(next_curl < next_semi)case_end = next_curl;
-					//else
+					}
 					escape -= 1;
 				}
 
@@ -831,8 +1249,18 @@ std::string reformat_switch_statements(std::string script)
 					isdflt = true;
 					rstate = defstate;
 				}
-				//std::string argl = quicklabel();
-				std::string jumptable = "{";//\ninteger "+argl+" = "+arg+";\n";
+				std::string argl;
+				std::string jumptable = "{";
+				/*std::string type = gettype(buffer, arg, res);
+				if(type != "void" && type != "-1")
+				{
+					std::string argl = quicklabel();
+					jumptable += type+" "+argl+" = "+arg+";\n";
+					arg = argl;
+				}else
+				{
+					cmdline_printchat("type="+type);
+				}*/
 
 				std::map<std::string, std::string>::iterator ifs_it;
 				for(ifs_it = ifs.begin(); ifs_it != ifs.end(); ifs_it++)
@@ -852,7 +1280,7 @@ std::string reformat_switch_statements(std::string script)
 				}
 				rstate = rstate + "}";
 
-				cmdline_printchat("replacing["+buffer.substr(res,cutlen)+"] with ["+rstate+"]");
+				//cmdline_printchat("replacing["+buffer.substr(res,cutlen)+"] with ["+rstate+"]");
 				buffer.erase(res,cutlen);
 				buffer.insert(res,rstate);
 
@@ -887,17 +1315,13 @@ std::string reformat_switch_statements(std::string script)
 		{
 			std::string err = "not a valid regular expression: \"";
 			err += e.what();
-			err += "\"; optimization skipped";
+			err += "\"; switch statements skipped";
 			cmdline_printchat(err);
 		}
 		catch (...)
 		{
 			cmdline_printchat("unexpected exception caught; buffer=["+buffer+"]");
 		}
-	}
-	catch (...)
-	{
-		cmdline_printchat("unexpected griefer exception caught; buffer=["+buffer+"]");
 	}
 
 
@@ -913,7 +1337,7 @@ void JCLSLPreprocessor::start_process()
 		return;
 	}
 	waving = TRUE;
-	cmdline_printchat("entering waving");
+	//cmdline_printchat("entering waving");
 	//mCore->mErrorList->addCommentText(std::string("Completed caching."));
 
 	boost::wave::util::file_position_type current_position;
@@ -921,11 +1345,13 @@ void JCLSLPreprocessor::start_process()
 	//static const std::string predefined_stuff('
 
 	std::string input = mCore->mEditor->getText();
+	std::string rinput = input;
+	input = "\n"+input+"\n";
 	std::string output;
 	std::string name = mCore->mItem->getName();
 	//BOOL use_switches;
-	BOOL lazy_lists = FALSE;
-	BOOL use_switch = FALSE;
+	BOOL lazy_lists = gSavedSettings.getBOOL("EmeraldLSLLazyLists");
+	BOOL use_switch = gSavedSettings.getBOOL("EmeraldLSLSwitch");
 
 	BOOL errored = FALSE;
 	std::string err;
@@ -984,7 +1410,7 @@ void JCLSLPreprocessor::start_process()
 		{
 			if(caching_files.size() != 0)
 			{
-				cmdline_printchat("caching somethin, exiting waving");
+				//cmdline_printchat("caching somethin, exiting waving");
 				mCore->mErrorList->addCommentText("Caching something...");
 				waving = FALSE;
 				first = last;
@@ -1026,18 +1452,33 @@ void JCLSLPreprocessor::start_process()
 		mCore->mErrorList->addCommentText(err);
 	}
 	
-	if(lazy_lists == TRUE)output = reformat_lazy_lists(output);
-	if(use_switch == TRUE)output = reformat_switch_statements(output);
+	if(lazy_lists == TRUE)
+	{
+		mCore->mErrorList->addCommentText("Applying lazy list set transform");
+		output = reformat_lazy_lists(output);
+	}
+	if(use_switch == TRUE)
+	{
+		mCore->mErrorList->addCommentText("Applying switch statement transform");
+		output = reformat_switch_statements(output);
+	}
 
 	if(!mDefinitionCaching)
 	{
-		output = lslopt(output);
+		if(gSavedSettings.getBOOL("EmeraldLSLOptimizer"))
+		{
+			mCore->mErrorList->addCommentText("Optimizing out unreferenced user-defined functions and global variables");
+			output = lslopt(output);
+		}
 		//output = implement_switches(output);
 		if(errored)
 		{
 			output += "\nPreprocessor exception:\n"+err;
+			mCore->mErrorList->addCommentText("!! Preprocessor exception:");
+			mCore->mErrorList->addCommentText(err);
 		}
-		output = encode(input)+"\n\n"+output;
+		output = encode(rinput)+"\n\n"+output;
+
 
 		LLTextEditor* outfield = mCore->mPostEditor;//getChild<LLViewerTextEditor>("post_process");
 		if(outfield)

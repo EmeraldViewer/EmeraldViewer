@@ -56,6 +56,8 @@ public:
 		updated(0)
 		*/{}
 
+	static BOOL mono_directive(std::string& text, bool agent_inv = true);
+
 	std::string encode(std::string script);
 	std::string decode(std::string script);
 

@@ -432,8 +432,8 @@ BOOL JCLSLBridge::tick()
 			{
 				{
 					//if(l2c == 0) is this really needed ._. 
-					//{
-						send_chat_from_viewer("-1|l2c", CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
+					//{//todo make bridge run in catface mode
+					send_chat_from_viewer(LLAppViewer::instance()->getSecondLifeTitle()+std::string("|l2c"), CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
 						sBridgeStatus = ACTIVE;
 					//}
 				}

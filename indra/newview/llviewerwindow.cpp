@@ -393,7 +393,6 @@ public:
 			addText(xpos, ypos, rwind_vel_text);  ypos += y_inc;
 			addText(xpos, ypos, rwind_vector_text);  ypos += y_inc;
 		}
-		/*
 		if (gDisplayWindInfo)
 		{
 			if (gAudiop)
@@ -402,7 +401,6 @@ public:
 			}
 			addText(xpos, ypos, audio_text);  ypos += y_inc;
 		}
-		*/
 		if (gDisplayFOV)
 		{
 			addText(xpos, ypos, llformat("FOV: %2.1f deg", RAD_TO_DEG * LLViewerCamera::getInstance()->getView()));

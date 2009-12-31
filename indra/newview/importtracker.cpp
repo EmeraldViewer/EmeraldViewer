@@ -23,6 +23,8 @@
 
 #include "llviewertexteditor.h"
 
+#include "jclslpreproc.h"
+
 ImportTracker gImportTracker;
 
 extern LLAgent gAgent;
@@ -433,14 +435,14 @@ public:
 					U8* buffer = new U8[size];
 					gVFS->getData(data->assetid, data->type, buffer, 0, size);
 					std::string script((char*)buffer);
-					BOOL domono = TRUE;
-					if(script.find("//mono\n") != -1)
+					BOOL domono = JCLSLPreprocessor::mono_directive(script);
+					/*if(script.find("//mono\n") != -1)
 					{
 						domono = TRUE;
 					}else if(script.find("//lsl2\n") != -1)
 					{
 						domono = FALSE;
-					}
+					}*/
 					delete buffer;
 					buffer = 0;
 					body["target"] = (domono == TRUE) ? "mono" : "lsl2";

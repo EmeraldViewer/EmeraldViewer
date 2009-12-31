@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <panel bottom="-550" enabled="true" follows="left|top|right|bottom" height="508"
      left="0" mouse_opaque="true" name="script panel" width="500" border_drop_shadow_visible="false" border_visible="false" bevel_style="none" border_style="line" border_thickness="0">
-  <tab_container border="false" label="Page 1" bottom="-393" height="376" left="4" mouse_opaque="false"
+  <tab_container border="false" label="Page 1" bottom="-333" height="316" left="4" mouse_opaque="false"
 			 name="tabset" visible="true" tab_min_width="50" follows="left|top|right|bottom" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
-    <panel border="false" follows="left|top|right|bottom" bottom="-393" height="376" label="Script"
+    <panel border="false" follows="left|top|right|bottom" bottom="-333" height="316" label="Script"
        left="4" mouse_opaque="true" name="Script" width="492">
 	<text_editor type="string" length="1" bottom="0"
 	     embedded_items="false" enabled="true" follows="left|top|right|bottom"
-	     font="Monospace" height="376" ignore_tab="false" left="4"
+	     font="Monospace" height="316" ignore_tab="false" left="4"
 	     max_length="65536" mouse_opaque="true" name="Script Editor" width="485" border_drop_shadow_visible="false" border_visible="false" bevel_style="none" border_style="line" border_thickness="0"
 	     word_wrap="true" show_line_numbers="true">
 		Loading...
 	</text_editor>
     </panel>
-    <panel border="false" follows="left|top|right|bottom" bottom="-393" height="376" label="Postprocessed"
+    <panel border="false" follows="left|top|right|bottom" bottom="-333" height="316" label="Postprocessed"
        left="4" mouse_opaque="true" name="postscript" width="492">
       <text_editor type="string" length="1" bottom="0"
            embedded_items="false" enabled="true" follows="left|top|right|bottom"
-           font="Monospace" height="376" ignore_tab="false" left="4"
+           font="Monospace" height="316" ignore_tab="false" left="4"
            max_length="65536" mouse_opaque="true" name="post_process" width="485" border_drop_shadow_visible="false" border_visible="false" bevel_style="none" border_style="line" border_thickness="0"
            word_wrap="true" show_line_numbers="true">
         No output
@@ -29,7 +29,7 @@
 	     mouse_opaque="true" name="Save_btn" width="128" />
 	<scroll_list background_visible="true" bottom="-457" column_padding="5" draw_border="true"
 	     draw_heading="false" draw_stripes="true" enabled="true"
-	     follows="left|right|bottom" height="60" left="4" mouse_opaque="true"
+	     follows="left|right|bottom" height="120" left="4" mouse_opaque="true"
 	     multi_select="false" name="lsl errors" width="492" />
 	<combo_box allow_text_entry="false" bottom="-499" enabled="true" follows="left|bottom"
 	     height="20" label="Insert..." left="12" max_chars="20" mouse_opaque="true"
@@ -91,6 +91,12 @@
 		     width="112">
       <menu_item_check bottom="-30" enabled="true" height="20" label="Enable Preprocessing" left="0"
 			     mouse_opaque="true" name="preproc_on" width="112" />
+      <menu_item_check bottom="-30" enabled="true" height="20" label="Enable Optimizer" left="0"
+			     mouse_opaque="true" name="optim_on" width="112" />
+      <menu_item_check bottom="-30" enabled="true" height="20" label="Enable Lazy Lists" left="0"
+			     mouse_opaque="true" name="lazylist_on" width="112" />
+      <menu_item_check bottom="-30" enabled="true" height="20" label="Enable Switches" left="0"
+			     mouse_opaque="true" name="switch_on" width="112" visible="false" />
       <menu_item_call bottom="-30" enabled="true" height="20" label="Syntax Check" left="0"
 			     mouse_opaque="true" name="Syntax Check" width="112" />
     </menu>

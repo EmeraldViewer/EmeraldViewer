@@ -757,7 +757,7 @@ LLInvFVBridge* LLInvFVBridge::createBridge(LLAssetType::EType asset_type,
 // +=================================================+
 // |        LLItemBridge                             |
 // +=================================================+
-void cmdline_printchat(std::string message);
+//void cmdline_printchat(std::string message);
 void LLItemBridge::performAction(LLFolderView* folder, LLInventoryModel* model, std::string action)
 {
 	//cmdline_printchat("item="+action);
@@ -3668,7 +3668,7 @@ LLUIImagePtr LLLSLTextBridge::getIcon() const
 
 void LLLSLTextBridge::performAction(LLFolderView* folder, LLInventoryModel* model, std::string action)
 {
-	cmdline_printchat(action);
+	//cmdline_printchat(action);
 	if ("export" == action)
 	{
 		//cmdline_printchat("export?");

@@ -36,7 +36,7 @@
 
 #include "audioengine.h"
 #include "listener_fmod.h"
-//#include "windgen.h"
+#include "windgen.h"
 
 //from "fmod.h"
 #if LL_WINDOWS
@@ -71,10 +71,10 @@ public:
 	virtual int isInternetStreamPlaying();
 	virtual void setInternetStreamGain(F32 vol);
 
-	///*virtual*/ void initWind();
-	///*virtual*/ void cleanupWind();
+	/*virtual*/ void initWind();
+	/*virtual*/ void cleanupWind();
 
-	///*virtual*/void updateWind(LLVector3 direction, F32 camera_height_above_water);
+	/*virtual*/void updateWind(LLVector3 direction, F32 camera_height_above_water);
 
 #if LL_DARWIN
         typedef S32 MIXBUFFERFORMAT;
@@ -104,7 +104,7 @@ protected:
 	// On Windows, userdata is the HWND of the application window.
 	void* mUserData;
 
-	//LLWindGen<MIXBUFFERFORMAT> *mWindGen;
+	LLWindGen<MIXBUFFERFORMAT> *mWindGen;
 };
 
 

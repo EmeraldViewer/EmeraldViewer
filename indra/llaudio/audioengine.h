@@ -48,7 +48,7 @@
 
 class LLMediaBase;
 
-//const F32 LL_WIND_UPDATE_INTERVAL = 0.1f;
+const F32 LL_WIND_UPDATE_INTERVAL = 0.1f;
 const F32 LL_ROLLOFF_MULTIPLIER_UNDER_WATER = 5.f;			//  How much sounds are weaker under water
 const F32 LL_WIND_UNDERWATER_CENTER_FREQ = 20.f;
 
@@ -104,15 +104,15 @@ public:
 	// Used by the mechanics of the engine
 	//virtual void processQueue(const LLUUID &sound_guid);
 	virtual void setListener(LLVector3 pos,LLVector3 vel,LLVector3 up,LLVector3 at);
-	//virtual void updateWind(LLVector3 direction, F32 camera_height_above_water) = 0;
+	virtual void updateWind(LLVector3 direction, F32 camera_height_above_water) = 0;
 	virtual void idle(F32 max_decode_time = 0.f);
 	virtual void updateChannels();
 
 	//
 	// "End user" functionality
 	//
-	//virtual bool isWindEnabled();
-	//virtual void enableWind(bool state_b);
+	virtual bool isWindEnabled();
+	virtual void enableWind(bool state_b);
 
 	// Use these for temporarily muting the audio system.
 	// Does not change buffers, initialization, etc. but
@@ -120,8 +120,8 @@ public:
 	void setMuted(bool muted);
 	bool getMuted() const { return mMuted; }
 
-	//void setWindMuted(bool windMuted);
-	//bool getWindMuted() const { return mWindMuted; }
+	void setWindMuted(bool windMuted);
+	bool getWindMuted() const { return mWindMuted; }
 
 	F32 getMasterGain();
 	void setMasterGain(F32 gain);
@@ -137,7 +137,7 @@ public:
 	virtual F32 getDistanceFactor();
 	virtual void setRolloffFactor(F32 factor);
 	virtual F32 getRolloffFactor();
-	//virtual void setMaxWindGain(F32 gain);
+	virtual void setMaxWindGain(F32 gain);
 
 
 	// Methods actually related to setting up and removing sounds
@@ -190,8 +190,8 @@ protected:
 	virtual LLAudioBuffer *createBuffer() = 0;
 	virtual LLAudioChannel *createChannel() = 0;
 
-	//virtual void initWind() = 0;
-	//virtual void cleanupWind() = 0;
+	virtual void initWind() = 0;
+	virtual void cleanupWind() = 0;
 	virtual void setInternalGain(F32 gain) = 0;
 
 	void commitDeferredChanges();
@@ -206,9 +206,9 @@ protected:
 	virtual void translateListener(LLVector3 vec);
 
 
-	//F64 mapWindVecToGain(LLVector3 wind_vec);
-	//F64 mapWindVecToPitch(LLVector3 wind_vec);
-	//F64 mapWindVecToPan(LLVector3 wind_vec);
+	F64 mapWindVecToGain(LLVector3 wind_vec);
+	F64 mapWindVecToPitch(LLVector3 wind_vec);
+	F64 mapWindVecToPan(LLVector3 wind_vec);
 
 protected:
 	LLListener *mListenerp;
@@ -216,12 +216,12 @@ protected:
 	bool mMuted;
 	void* mUserData;
 
-	//bool mWindMuted;
+	bool mWindMuted;
 
 	S32 mLastStatus;
 	
 	S32 mNumChannels;
-	//bool mEnableWind;
+	bool mEnableWind;
 
 	LLUUID mCurrentTransfer; // Audio file currently being transferred by the system
 	LLFrameTimer mCurrentTransferTimer;
@@ -249,9 +249,9 @@ protected:
 	F32 mInternetStreamGain;
 	std::string mInternetStreamURL;
 
-	//F32 mNextWindUpdate;
+	F32 mNextWindUpdate;
 
-	//LLFrameTimer mWindUpdateTimer;
+	LLFrameTimer mWindUpdateTimer;
 
 private:
 	void setDefaults();

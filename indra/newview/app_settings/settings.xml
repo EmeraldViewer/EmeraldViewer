@@ -5307,6 +5307,39 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldLSLOptimizer</key>
+    <map>
+      <key>Comment</key>
+      <string>now you fucked up</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldLSLLazyLists</key>
+    <map>
+      <key>Comment</key>
+      <string>now you fucked up</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldLSLSwitch</key>
+    <map>
+      <key>Comment</key>
+      <string>now you fucked up</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
 		<key>EnableRippleWater</key>
 		<map>
 			<key>Comment</key>
@@ -9130,6 +9163,22 @@
 				<integer>0</integer>
 			</array>
 		</map>
+    <key>ScriptErrorRect</key>
+    <map>
+      <key>Comment</key>
+      <string>o.o</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Rect</string>
+      <key>Value</key>
+      <array>
+        <integer>4</integer>
+        <integer>120</integer>
+        <integer>496</integer>
+        <integer>51</integer>
+      </array>
+    </map>
 		<key>PreviewSoundRect</key>
 		<map>
 			<key>Comment</key>

@@ -72,19 +72,19 @@ LLAudioEngine::~LLAudioEngine()
 
 void LLAudioEngine::setDefaults()
 {
-	//mMaxWindGain = 1.f;
+	mMaxWindGain = 1.f;
 
 	mListenerp = NULL;
 
 	mMuted = false;
 	mUserData = NULL;
 
-	//mWindMuted = false; // disable wind /ez
+	mWindMuted = false; // disable wind /ez
 
 	mLastStatus = 0;
 
 	mNumChannels = 0;
-	//mEnableWind = false;
+	mEnableWind = false;
 
 	S32 i;
 	for (i = 0; i < MAX_CHANNELS; i++)
@@ -99,7 +99,7 @@ void LLAudioEngine::setDefaults()
 	mMasterGain = 1.f;
 	mInternalGain = 0.f;
 	mInternetStreamGain = 0.125f;
-	//mNextWindUpdate = 0.f;
+	mNextWindUpdate = 0.f;
 
 	mInternetStreamMedia = NULL;
 	mInternetStreamURL.clear();
@@ -134,7 +134,7 @@ void LLAudioEngine::shutdown()
 	gAudioDecodeMgrp = NULL;
 
 	// Clean up wind source
-	//cleanupWind();
+	cleanupWind();
 
 	// Clean up audio sources
 	source_map::iterator iter_src;
@@ -635,7 +635,7 @@ bool LLAudioEngine::updateBufferForData(LLAudioData *adp, const LLUUID &audio_uu
 	return true;
 }
 
-/*
+
 void LLAudioEngine::enableWind(bool enable)
 {
 	enable = enable & !mWindMuted; // disable wind /ez
@@ -650,7 +650,6 @@ void LLAudioEngine::enableWind(bool enable)
 		cleanupWind();
 	}
 }
-*/
 
 
 LLAudioBuffer *LLAudioEngine::getFreeBuffer()
@@ -783,12 +782,12 @@ bool LLAudioEngine::preloadSound(const LLUUID &uuid)
 	return false;
 }
 
-/*
+
 bool LLAudioEngine::isWindEnabled()
 {
 	return mEnableWind;
 }
-*/
+
 
 void LLAudioEngine::setMuted(bool muted)
 {
@@ -797,14 +796,14 @@ void LLAudioEngine::setMuted(bool muted)
 		mMuted = muted;
 		setMasterGain(mMasterGain);
 	}
-	//enableWind(!mMuted);
+	enableWind(!mMuted);
 }
-/*
+
 void LLAudioEngine::setWindMuted(bool windMuted) // disable wind /ez
 {
 	mWindMuted = windMuted;
 }
-*/
+
 void LLAudioEngine::setMasterGain(const F32 gain)
 {
 	mMasterGain = gain;
@@ -837,7 +836,7 @@ F32 LLAudioEngine::getInternetStreamGain()
 {
 	return mInternetStreamGain;
 }
-/*
+
 void LLAudioEngine::setMaxWindGain(F32 gain)
 {
 	mMaxWindGain = gain;
@@ -906,7 +905,7 @@ F64 LLAudioEngine::mapWindVecToPan(LLVector3 wind_vec)
 
 	return (theta);
 }
-*/
+
 
 void LLAudioEngine::triggerSound(const LLUUID &audio_uuid, const LLUUID& owner_id, const F32 gain,
 								 const S32 type, const LLVector3d &pos_global)

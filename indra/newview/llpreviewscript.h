@@ -76,6 +76,8 @@ public:
 		void* userdata,
 		S32 bottom_pad = 0, LLViewerInventoryItem* item = NULL);	// pad below bottom row of buttons
 	~LLScriptEdCore();
+
+	static void		updateResizer(void* userdata);
 	
 	void			initMenu();
 
@@ -153,6 +155,8 @@ private:
 	BOOL			mForceClose;
 	//LLPanel*		mGuiPanel;
 	LLPanel*		mCodePanel;
+	LLResizeBar* mErrorListResizer;
+	LLRect mErrorOldRect;
 	LLScrollListCtrl* mErrorList;
 	LLDynamicArray<LLEntryAndEdCore*> mBridges;
 	LLHandle<LLFloater>	mLiveHelpHandle;

@@ -397,15 +397,16 @@ U32 LLAudioBufferOpenAL::getLength()
 }
 
 // ------------
-/*
+
 void LLAudioEngine_OpenAL::initWind()
 {
+	if(mWindGen)return;
 	ALenum error;
 	llinfos << "LLAudioEngine_OpenAL::initWind() start" << llendl;
 
 	mNumEmptyWindALBuffers = MAX_NUM_WIND_BUFFERS;
 
-	alGetError(); // clear error 
+	alGetError(); /* clear error */
 	
 	alGenSources(1,&mWindSource);
 	
@@ -418,9 +419,9 @@ void LLAudioEngine_OpenAL::initWind()
 
 	mWindBufFreq = mWindGen->getInputSamplingRate();
 	mWindBufSamples = llceil(mWindBufFreq * WIND_BUFFER_SIZE_SEC);
-	mWindBufBytes = mWindBufSamples * 2  * sizeof(WIND_SAMPLE_T);
+	mWindBufBytes = mWindBufSamples * 2 /*stereo*/ * sizeof(WIND_SAMPLE_T);
 
-	mWindBuf = new WIND_SAMPLE_T [mWindBufSamples * 2];
+	mWindBuf = new WIND_SAMPLE_T [mWindBufSamples * 2 /*stereo*/];
 
 	if(mWindBuf==NULL)
 	{
@@ -433,6 +434,7 @@ void LLAudioEngine_OpenAL::initWind()
 
 void LLAudioEngine_OpenAL::cleanupWind()
 {
+	if(!mWindGen)return;
 	llinfos << "LLAudioEngine_OpenAL::cleanupWind()" << llendl;
 
 	if (mWindSource != AL_NONE)
@@ -468,8 +470,24 @@ void LLAudioEngine_OpenAL::updateWind(LLVector3 wind_vec, F32 camera_altitude)
 	F64 center_freq;
 	ALenum error;
 	
-	if (!mEnableWind)
+	static bool lastwind = false;
+	if (!mEnableWind || mWindMuted)
+	{
+		//WIND IS OFF
+		if(lastwind != false)
+		{
+			lastwind = false;
+			if(mWindGen)cleanupWind();
+		}
 		return;
+	}else
+	{
+		if(lastwind != true)
+		{
+			lastwind = true;
+			if(!mWindGen)initWind();
+		}
+	}
 	
 	if(!mWindBuf)
 		return;
@@ -515,7 +533,7 @@ void LLAudioEngine_OpenAL::updateWind(LLVector3 wind_vec, F32 camera_altitude)
 	{
 		ALuint buffer;
 		ALenum error;
-		alGetError(); 
+		alGetError(); /* clear error */
 		alSourceUnqueueBuffers(mWindSource, 1, &buffer);
 		error = alGetError();
 		if(error != AL_NO_ERROR)
@@ -532,7 +550,7 @@ void LLAudioEngine_OpenAL::updateWind(LLVector3 wind_vec, F32 camera_altitude)
 	while (mNumEmptyWindALBuffers > 0) // fill+queue new buffers
 	{
 		ALuint buffer;
-		alGetError(); 
+		alGetError(); /* clear error */
 		alGenBuffers(1,&buffer);
 		if((error=alGetError()) != AL_NO_ERROR)
 		{
@@ -571,4 +589,4 @@ void LLAudioEngine_OpenAL::updateWind(LLVector3 wind_vec, F32 camera_altitude)
 		lldebugs << "Wind had stopped - probably ran out of buffers - restarting: " << (unprocessed+mNumEmptyWindALBuffers) << " now queued." << llendl;
 	}
 }
-*/
+
