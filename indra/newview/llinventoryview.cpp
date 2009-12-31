@@ -493,7 +493,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	addBoolControl("Inventory.SystemFoldersToTop", sort_system_folders_to_top );
 
 	//Search Controls - RKeast
-	U32 search_type = gSavedSettings.getU32("InventorySearchType");
+	U32 search_type = gSavedPerAccountSettings.getU32("EmeraldInventorySearchType");
 	BOOL search_by_name = (search_type == 0);
 
 	addBoolControl("Inventory.SearchByName", search_by_name);
@@ -503,7 +503,7 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	addBoolControl("Inventory.SearchByAll", !search_by_name);
 	
 	//Bool for toggling the partial search results - RKeast
-	BOOL partial_search = gSavedSettings.getBOOL("ShowPartialSearchResults");
+	BOOL partial_search = gSavedPerAccountSettings.getBOOL("EmeraldInventoryPartialSearch");
 	
 	addBoolControl("Inventory.PartialSearchToggle", partial_search);
 
@@ -519,6 +519,11 @@ void LLInventoryView::init(LLInventoryModel* inventory)
 	if (mActivePanel)
 	{
 		// "All Items" is the previous only view, so it gets the InventorySortOrder
+
+		//Fix for gSavedSettings use - rkeast
+		mActivePanel->getFilter()->setSearchType(search_type);
+		mActivePanel->getFilter()->setPartialSearch(partial_search);
+
 		mActivePanel->setSortOrder(gSavedSettings.getU32("InventorySortOrder"));
 		mActivePanel->getFilter()->markDefault();
 		mActivePanel->getRootFolder()->applyFunctorRecursively(*mSavedFolderState);
@@ -1635,6 +1640,30 @@ void LLInventoryPanel::draw()
 		setSelection(mSelectThisID, false);
 	}
 	LLPanel::draw();
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+void LLInventoryPanel::setPartialSearch(bool toggle)
+{
+	mFolders->getFilter()->setPartialSearch(toggle);
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+bool LLInventoryPanel::getPartialSearch()
+{
+	return mFolders->getFilter()->getPartialSearch();
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+void LLInventoryPanel::setSearchType(U32 type)
+{
+	mFolders->getFilter()->setSearchType(type);
+}
+
+//fix to get rid of gSavedSettings use - rkeast
+U32 LLInventoryPanel::getSearchType()
+{
+	return mFolders->getFilter()->getSearchType();
 }
 
 void LLInventoryPanel::setFilterTypes(U32 filter_types)

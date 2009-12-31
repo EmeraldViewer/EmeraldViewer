@@ -485,8 +485,8 @@ class SetSearchType : public inventory_listener_t
 		std::string search_type = userdata.asString();
 		if(search_type == "name")
 		{
-			gSavedSettings.setU32("InventorySearchType", 0);
-
+			mPtr->getActivePanel()->setSearchType(0);
+			
 			mPtr->getControl("Inventory.SearchByName")->setValue(TRUE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);	
 			mPtr->getControl("Inventory.SearchByDesc")->setValue(FALSE);
@@ -494,7 +494,7 @@ class SetSearchType : public inventory_listener_t
 		}
 		else if(search_type == "creator")
 		{
-			gSavedSettings.setU32("InventorySearchType", 1);
+			mPtr->getActivePanel()->setSearchType(1);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(TRUE);
@@ -503,7 +503,7 @@ class SetSearchType : public inventory_listener_t
 		}
 		else if(search_type == "desc")
 		{
-			gSavedSettings.setU32("InventorySearchType", 2);
+			mPtr->getActivePanel()->setSearchType(2);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);
@@ -512,7 +512,7 @@ class SetSearchType : public inventory_listener_t
 		}
 		else if(search_type == "all")
 		{
-			gSavedSettings.setU32("InventorySearchType", 3);
+			mPtr->getActivePanel()->setSearchType(3);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);
@@ -535,13 +535,15 @@ class SetPartialSearch : public inventory_listener_t
 		std::string data = userdata.asString();
 		if(data == "toggle")
 		{
-			BOOL current = gSavedSettings.getBOOL("ShowPartialSearchResults");
-			gSavedSettings.setBOOL("ShowPartialSearchResults", !current);
+			BOOL current = mPtr->getActivePanel()->getPartialSearch();
+			mPtr->getActivePanel()->setPartialSearch(!current);
 			
 			if(current == false)
+			{			
+				mPtr->getActivePanel()->setPartialSearch(true);
 				mPtr->getControl("Inventory.PartialSearchToggle")->setValue(TRUE);
-			else
-				mPtr->getControl("Inventory.PartialSearchToggle")->setValue(FALSE);
+			}
+			else mPtr->getActivePanel()->setPartialSearch(false);
 		}
 		
 		//Clear search when switching modes.
