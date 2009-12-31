@@ -7,8 +7,8 @@
 	can_close="true"
 	can_drag_on_left="false"
 	rect_control="FloaterAreaSearchRect"
-	min_width="500"
-	min_height="650"
+	min_width="460"
+	min_height="250"
 	width="500"
 	height="650"
 	>
