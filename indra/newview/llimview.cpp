@@ -807,9 +807,7 @@ LLUUID LLIMMgr::addSession(
 	EInstantMessage dialog,
 	const LLUUID& other_participant_id)
 {
-	//lggtodo
 	LLUUID session_id = computeSessionID(dialog, other_participant_id);
-
 	LLFloaterIMPanel* floater = findFloaterBySession(session_id);
 	if(!floater)
 	{
@@ -832,7 +830,7 @@ LLUUID LLIMMgr::addSession(
 		{
 			noteMutedUsers(floater, ids);
 		}
-		LLFloaterChatterBox::getInstance(LLSD())->showFloater(floater);
+		//LLFloaterChatterBox::getInstance(LLSD())->showFloater(floater);
 	}
 	else
 	{
