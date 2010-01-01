@@ -531,6 +531,7 @@ void LLLineEditor::spell_add(void* data)
 	if(tempBind)
 	{
 		glggHunSpell->addWordToCustomDictionary(tempBind->word);
+		tempBind->origin->mPrevSpelledText="";//make it update
 	}
 }
 void LLLineEditor::context_paste(void* data)
