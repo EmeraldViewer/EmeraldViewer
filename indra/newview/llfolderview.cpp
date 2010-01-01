@@ -350,7 +350,8 @@ void LLFolderViewItem::refresh()
 
 	if (mSearchableLabel.compare(searchable_label) ||
 		mSearchableLabelCreator.compare(searchable_label_creator) ||
-		mSearchableLabelDesc.compare(searchable_label_creator))
+		mSearchableLabelDesc.compare(searchable_label_desc) || 
+		mSearchableLabelAll.compare(searchable_label_all))
 	{
 		mSearchableLabel.assign(searchable_label);
 		mSearchableLabelCreator.assign(searchable_label_creator);
