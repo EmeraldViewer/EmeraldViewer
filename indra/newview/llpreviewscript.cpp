@@ -1291,7 +1291,7 @@ BOOL LLScriptEdCore::handleKeyHere(KEY key, MASK mask)
 	{
 		mErrorList->deleteAllItems();
 		// do the save, but don't close afterwards
-		doSave(data, FALSE);
+		doSave(this, FALSE);
 
 		return TRUE;
 	}
