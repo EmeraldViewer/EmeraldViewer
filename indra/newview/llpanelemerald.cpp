@@ -324,6 +324,9 @@ BOOL LLPanelEmerald::postBuild()
 	childSetAction("set_mirror", onClickSetMirror, this);
 	childSetCommitCallback("mirror_location", onCommitApplyControl);
 
+	childSetAction("set_includeHDD", onClickSetHDDInclude, this);
+	childSetCommitCallback("include_location", onCommitApplyControl);
+
 	getChild<LLCheckBoxCtrl>("telerequest_toggle")->setCommitCallback(onConditionalPreferencesChanged);
 	getChild<LLCheckBoxCtrl>("mldct_toggle")->setCommitCallback(onConditionalPreferencesChanged);
 
@@ -732,13 +735,28 @@ void LLPanelEmerald::onClickSetMirror(void* user_data)
 	if (!dir_name.empty() && dir_name != cur_name)
 	{
 		self->childSetText("mirror_location", dir_name);
-		//LLNotifications::instance().add("CacheWillBeMoved");
 		gSavedSettings.setString("EmeraldInvMirrorLocation", dir_name);
 	}
-	else
+}
+
+void LLPanelEmerald::onClickSetHDDInclude(void* user_data)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)user_data;
+
+	std::string cur_name(gSavedSettings.getString("EmeraldHDDIncludeLocation"));
+	std::string proposed_name(cur_name);
+	
+	LLDirPicker& picker = LLDirPicker::instance();
+	if (! picker.getDir(&proposed_name ) )
 	{
-		std::string cache_location = gDirUtilp->getCacheDir();
-		self->childSetText("mirror_location", cache_location);
+		return; //Canceled!
+	}
+
+	std::string dir_name = picker.getDirName();
+	if (!dir_name.empty() && dir_name != cur_name)
+	{
+		self->childSetText("include_location", dir_name);
+		gSavedSettings.setString("EmeraldHDDIncludeLocation", dir_name);
 	}
 }
 

@@ -782,7 +782,7 @@ void LLTextEditor::selectNext(const std::string& search_text_in, BOOL case_insen
 }
 
 BOOL LLTextEditor::replaceText(const std::string& search_text_in, const std::string& replace_text,
-							   BOOL case_insensitive, BOOL wrap)
+							   BOOL case_insensitive, BOOL wrap, BOOL group)
 {
 	BOOL replaced = FALSE;
 
@@ -805,7 +805,7 @@ BOOL LLTextEditor::replaceText(const std::string& search_text_in, const std::str
 
 		if (selected_text == search_text)
 		{
-			insertText(replace_text);
+			insertText(replace_text, group);
 			replaced = TRUE;
 		}
 	}
@@ -824,8 +824,13 @@ void LLTextEditor::replaceTextAll(const std::string& search_text, const std::str
 	BOOL replaced = TRUE;
 	while ( replaced )
 	{
-		replaced = replaceText(search_text,replace_text, case_insensitive, FALSE);
+		replaced = replaceText(search_text,replace_text, case_insensitive, FALSE, TRUE);
 	}
+	setCursorPos(0);
+	std::string hackchar = wstring_to_utf8str(getWText().substr(0,0));
+	replaceText(hackchar,hackchar, case_insensitive, FALSE, FALSE);
+	//HACK to fix search replace faggotry with undo
+
 
 	mScrollbar->setDocPos(cur_pos);
 }
@@ -3836,7 +3841,7 @@ void LLTextEditor::autoIndent()
 }
 
 // Inserts new text at the cursor position
-void LLTextEditor::insertText(const std::string &new_text)
+void LLTextEditor::insertText(const std::string &new_text, BOOL group)
 {
 	BOOL enabled = getEnabled();
 	setEnabled( TRUE );
@@ -3847,7 +3852,7 @@ void LLTextEditor::insertText(const std::string &new_text)
 		deleteSelection(TRUE);
 	}
 
-	setCursorPos(mCursorPos + insert( mCursorPos, utf8str_to_wstring(new_text), FALSE ));
+	setCursorPos(mCursorPos + insert( mCursorPos, utf8str_to_wstring(new_text), group ));
 	
 	needsReflow();
 

@@ -87,6 +87,9 @@ using namespace boost::regex_constants;
 
 void cmdline_printchat(std::string message);
 
+std::map<std::string,LLUUID> JCLSLPreprocessor::cached_assetids;
+
+
 #define encode_start std::string("//start_unprocessed_text\n/*")
 #define encode_end std::string("*/\n//end_unprocessed_text")
 
@@ -855,20 +858,28 @@ template <typename ContextT>
 	{
 		std::string cfilename = filename.substr(1,filename.length()-2);
 		//cmdline_printchat(cfilename+":found_include_directive");
-        std::set<std::string>::iterator it = mProc->cached_files.find(cfilename);
-        if (it == mProc->cached_files.end())
+		LLUUID item_id = JCLSLPreprocessor::findInventoryByName(cfilename);
+		if(item_id.notNull())
 		{
-			std::set<std::string>::iterator it = mProc->caching_files.find(cfilename);
-			if (it == mProc->caching_files.end())
+			LLViewerInventoryItem* item = gInventory.getItem(item_id);
+			if(item)
 			{
-				LLUUID item_id = JCLSLPreprocessor::findInventoryByName(cfilename);
-				if(item_id.notNull())
+				std::map<std::string,LLUUID>::iterator it = mProc->cached_assetids.find(cfilename);
+				bool not_cached = (it == mProc->cached_assetids.end());
+				bool changed = true;
+				if(!not_cached)
 				{
-					LLViewerInventoryItem* item = gInventory.getItem(item_id);
-					if(item)
+					changed = (mProc->cached_assetids[cfilename] != item->getAssetUUID());
+				}
+				if (not_cached || changed)
+				{
+					std::set<std::string>::iterator it = mProc->caching_files.find(cfilename);
+					if (it == mProc->caching_files.end())
 					{
+						if(not_cached)mProc->display_error(std::string("Caching ")+cfilename);
+						else /*if(changed)*/mProc->display_error(cfilename+std::string(" has changed, recaching..."));
+						//one is always true
 						mProc->caching_files.insert(cfilename);
-						//mProc->mCore->mErrorList->addCommentText(std::string("Caching ")+cfilename);
 						ProcCacheInfo* info = new ProcCacheInfo;
 						info->item = item;
 						info->self = mProc;
@@ -885,17 +896,12 @@ template <typename ContextT>
 						info,
 						TRUE);
 						return true;
-					}//else mProc->mCore->mErrorList->addCommentText(std::string("Bad item? ("+cfilename+")"));
-				}//else mProc->mCore->mErrorList->addCommentText(std::string("Unable to find "+cfilename+" in agent inventory."));
-				cmdline_printchat(cfilename+":bad item or null include");
-			}else
-			{
-				cmdline_printchat(cfilename+":being cached but we still hit it somehow");
-				return true;
+					}
+				}
 			}
         }else
 		{
-			cmdline_printchat(cfilename+":cached item");
+			//todo check on HDD in user defined dir for file in question
 		}
         //++include_depth;
 		return false;
@@ -909,10 +915,10 @@ template <typename ContextT>
 		ContextT& usefulctx = const_cast<ContextT&>(ctx);
 		std::string id;
 		std::string filename = boost::filesystem::path(std::string(relname)).filename();
-		std::set<std::string>::iterator it = mProc->cached_files.find(filename);
-		if(it != mProc->cached_files.end())
+		std::map<std::string,LLUUID>::iterator it = mProc->cached_assetids.find(filename);
+		if(it != mProc->cached_assetids.end())
 		{
-			id = mProc->cached_assetids[filename];
+			id = mProc->cached_assetids[filename].asString();
 		}else id = "NOT_IN_WORLD";//I guess, still need to add external includes atm
 		mAssetStack.push(id);
 		std::string macro = "__ASSETID__";
@@ -970,8 +976,9 @@ void cache_script(std::string name, std::string content)
 	infile.close();
 }
 
-void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
+void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& iuuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
 {
+	LLUUID uuid = iuuid;
 	//cmdline_printchat("cachecallback called");
 	ProcCacheInfo* info =(ProcCacheInfo*)userdata;
 	LLViewerInventoryItem* item = info->item;
@@ -1005,8 +1012,10 @@ void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAs
 				{
 					//cmdline_printchat("finalizing cache");
 					self->caching_files.erase(loc);
-					self->cached_files.insert(name);
-					self->cached_assetids[name] = uuid.asString();//.insert(uuid.asString());
+					//self->cached_files.insert(name);
+					if(uuid.isNull())uuid.generate();
+					item->setAssetUUID(uuid);
+					self->cached_assetids[name] = uuid;//.insert(uuid.asString());
 					self->start_process();
 				}else
 				{
@@ -1065,17 +1074,16 @@ void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
 {
 	mClose = close;
 	mDefinitionCaching = defcache;
-	cached_files.clear();
 	caching_files.clear();
-	cached_assetids.clear();
+	//cached_assetids.clear();
 	mCore->mErrorList->addCommentText(std::string("Starting..."));
 	LLFile::mkdir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc");
 	std::string script = mCore->mEditor->getText();
 	//this script is special
 	LLViewerInventoryItem* item = mCore->mItem;
 	std::string name = item->getName();
-	cached_files.insert(name);
-	cached_assetids[name] = LLUUID::null.asString();
+	//cached_files.insert(name);
+	cached_assetids[name] = LLUUID::null;
 	cache_script(name, script);
 	//start the party
 	start_process();
@@ -1328,6 +1336,11 @@ std::string reformat_switch_statements(std::string script)
 	return script;
 }
 
+void JCLSLPreprocessor::display_error(std::string err)
+{
+	mCore->mErrorList->addCommentText(err);
+}
+
 
 void JCLSLPreprocessor::start_process()
 {
@@ -1384,6 +1397,16 @@ void JCLSLPreprocessor::start_process()
 
 		std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc"+gDirUtilp->getDirDelimiter();
 		ctx.add_include_path(path.c_str());
+		if(gSavedSettings.getBOOL("EmeraldEnableHDDInclude"))
+		{
+			std::string hddpath = gSavedSettings.getString("EmeraldHDDIncludeLocation");
+			if(hddpath != "")
+			{
+				ctx.add_include_path(hddpath.c_str());
+				ctx.add_sysinclude_path(hddpath.c_str());
+				//allow "file" and <file>
+			}
+		}
 
 		std::string def = llformat("__AGENTKEY__=\"%s\"",gAgent.getID().asString().c_str());//legacy because I used it earlier
 		ctx.add_macro_definition(def,false);
@@ -1411,7 +1434,7 @@ void JCLSLPreprocessor::start_process()
 			if(caching_files.size() != 0)
 			{
 				//cmdline_printchat("caching somethin, exiting waving");
-				mCore->mErrorList->addCommentText("Caching something...");
+				//mCore->mErrorList->addCommentText("Caching something...");
 				waving = FALSE;
 				first = last;
 				return;
@@ -1451,32 +1474,38 @@ void JCLSLPreprocessor::start_process()
 		cmdline_printchat(err);
 		mCore->mErrorList->addCommentText(err);
 	}
-	
-	if(lazy_lists == TRUE)
+
+	if(!errored)
 	{
-		mCore->mErrorList->addCommentText("Applying lazy list set transform");
-		output = reformat_lazy_lists(output);
-	}
-	if(use_switch == TRUE)
-	{
-		mCore->mErrorList->addCommentText("Applying switch statement transform");
-		output = reformat_switch_statements(output);
+		if(lazy_lists == TRUE)
+		{
+			mCore->mErrorList->addCommentText("Applying lazy list set transform");
+			output = reformat_lazy_lists(output);
+		}
+		if(use_switch == TRUE)
+		{
+			mCore->mErrorList->addCommentText("Applying switch statement transform");
+			output = reformat_switch_statements(output);
+		}
 	}
 
 	if(!mDefinitionCaching)
 	{
-		if(gSavedSettings.getBOOL("EmeraldLSLOptimizer"))
+		if(!errored)
 		{
-			mCore->mErrorList->addCommentText("Optimizing out unreferenced user-defined functions and global variables");
-			output = lslopt(output);
+			if(gSavedSettings.getBOOL("EmeraldLSLOptimizer"))
+			{
+				mCore->mErrorList->addCommentText("Optimizing out unreferenced user-defined functions and global variables");
+				output = lslopt(output);
+			}
 		}
 		//output = implement_switches(output);
-		if(errored)
+		/*if(errored)
 		{
 			output += "\nPreprocessor exception:\n"+err;
 			mCore->mErrorList->addCommentText("!! Preprocessor exception:");
 			mCore->mErrorList->addCommentText(err);
-		}
+		}*/
 		output = encode(rinput)+"\n\n"+output;
 
 

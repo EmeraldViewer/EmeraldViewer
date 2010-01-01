@@ -81,6 +81,7 @@ private:
 	static void onSpellBaseComboBoxCommit(LLUICtrl* ctrl, void* userdata);	
 	static void beamUpdateCall(LLUICtrl* ctrl, void* userdata);
 	static void onClickSetMirror(void*);
+	static void onClickSetHDDInclude(void*);
     static void onClickOtrHelp(void* data); // [$PLOTR$/]
 	static void onConditionalPreferencesChanged(LLUICtrl* ctrl, void* userdata);
 	//static void onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data);

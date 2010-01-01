@@ -153,7 +153,7 @@ public:
 
 
 	void			selectNext(const std::string& search_text_in, BOOL case_insensitive, BOOL wrap = TRUE);
-	BOOL			replaceText(const std::string& search_text, const std::string& replace_text, BOOL case_insensitive, BOOL wrap = TRUE);
+	BOOL			replaceText(const std::string& search_text, const std::string& replace_text, BOOL case_insensitive, BOOL wrap = TRUE, BOOL group = FALSE);
 	void			replaceTextAll(const std::string& search_text, const std::string& replace_text, BOOL case_insensitive);
 	
 	// Undo/redo stack
@@ -165,7 +165,7 @@ public:
 	BOOL			allowsEmbeddedItems() const { return mAllowEmbeddedItems; }
 
 	// inserts text at cursor
-	void			insertText(const std::string &text);
+	void			insertText(const std::string &text, BOOL group = FALSE);
 	// appends text at end
 	void 			appendText(const std::string &wtext, bool allow_undo, bool prepend_newline,
 							   const LLStyleSP stylep = NULL);

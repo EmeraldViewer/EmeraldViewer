@@ -1681,18 +1681,23 @@ void LLPreviewLSL::uploadAssetLegacy(const std::string& filename,
 
 
 // static
-void LLPreviewLSL::onSaveComplete(const LLUUID& asset_uuid, void* user_data, S32 status, LLExtStat ext_status) // StoreAssetData callback (fixed)
+void LLPreviewLSL::onSaveComplete(const LLUUID& iuuid, void* user_data, S32 status, LLExtStat ext_status) // StoreAssetData callback (fixed)
 {
+	LLUUID asset_uuid = iuuid;
 	LLScriptSaveInfo* info = reinterpret_cast<LLScriptSaveInfo*>(user_data);
 	if(0 == status)
 	{
 		if (info)
 		{
-			const LLViewerInventoryItem* item;
-			item = (const LLViewerInventoryItem*)gInventory.getItem(info->mItemUUID);
+			LLViewerInventoryItem* item;
+			item = (LLViewerInventoryItem*)gInventory.getItem(info->mItemUUID);
 			if(item)
 			{
 				LLPointer<LLViewerInventoryItem> new_item = new LLViewerInventoryItem(item);
+				if(asset_uuid.isNull())asset_uuid.generate();//has file changed in preproc uses asset id
+
+				item->setAssetUUID(asset_uuid);
+				//unsure if this matters but just in case
 				new_item->setAssetUUID(asset_uuid);
 				new_item->setTransactionID(info->mTransactionID);
 				new_item->updateServer(FALSE);
@@ -2553,8 +2558,9 @@ void LLLiveLSLEditor::uploadAssetLegacy(const std::string& filename,
 	runningCheckbox->setEnabled(TRUE);
 }
 
-void LLLiveLSLEditor::onSaveTextComplete(const LLUUID& asset_uuid, void* user_data, S32 status, LLExtStat ext_status) // StoreAssetData callback (fixed)
+void LLLiveLSLEditor::onSaveTextComplete(const LLUUID& iuuid, void* user_data, S32 status, LLExtStat ext_status) // StoreAssetData callback (fixed)
 {
+	LLUUID asset_uuid = iuuid;
 	LLLiveLSLSaveData* data = (LLLiveLSLSaveData*)user_data;
 
 	if (status)
@@ -2566,6 +2572,9 @@ void LLLiveLSLEditor::onSaveTextComplete(const LLUUID& asset_uuid, void* user_da
 	}
 	else
 	{
+		if(asset_uuid.isNull())asset_uuid.generate();
+		//has file changed in preproc uses asset id
+		data->mItem->setAssetUUID(asset_uuid);
 		LLLiveLSLEditor* self = sInstances.getIfThere(data->mItem->getUUID() ^ data->mObjectID);
 		if (self)
 		{
