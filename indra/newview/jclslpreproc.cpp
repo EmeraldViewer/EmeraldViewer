@@ -747,7 +747,7 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 				//std::string type = TOPfmatch[1];
 				std::string funcname = TOPfmatch[2];
 
-				int pos = TOPfmatch.position(0);
+				int pos = TOPfmatch.position(boost::match_results<std::string::const_iterator>::size_type(0));
 				std::string funcb = scopeript2(top, pos);
 				functions[funcname] = funcb;
 				//cmdline_printchat("func "+funcname+" added to list["+funcb+"]");
@@ -1180,7 +1180,7 @@ std::string reformat_switch_statements(std::string script)
 
 			while(boost::regex_search(std::string::const_iterator(buffer.begin()), std::string::const_iterator(buffer.end()), matches, findswitches, boost::match_default) && escape > 1)
 			{
-				int res = matches.position(0)+1;
+				int res = matches.position(boost::match_results<std::string::const_iterator>::size_type(0))+1;
 				
 				static int slen = switchstr.length();
 
@@ -1219,7 +1219,7 @@ std::string reformat_switch_statements(std::string script)
 				{
 					//if(statematches[0].matched)
 					{
-						int case_start = statematches.position(0)+1;//const_iterator2pos(statematches[0].first+1, std::string::const_iterator(rstate.begin()))-1;
+						int case_start = statematches.position(boost::match_results<std::string::const_iterator>::size_type(0))+1;//const_iterator2pos(statematches[0].first+1, std::string::const_iterator(rstate.begin()))-1;
 						int next_curl = rstate.find("{",case_start+1);
 						int next_semi = rstate.find(":",case_start+1);
 						int case_end = (next_curl < next_semi && next_curl != -1) ? next_curl : next_semi;
