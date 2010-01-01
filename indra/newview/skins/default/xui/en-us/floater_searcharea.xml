@@ -34,13 +34,13 @@
     <column name="Buy" label="Buy" width="50"/>
 	</scroll_list>
 
-  <check_box enabled="true" bottom="-40" follows="left|top" left_delta="0" name="touch_only" label="Scripted Objects with Touch Only" control_name="scripttouchbeacon" />
-  <check_box enabled="true" bottom_delta="-20" follows="left|top" left_delta="0" name="scripted" label="Scripted Objects" control_name="scriptsbeacon" />
-  <check_box enabled="true" bottom_delta="-20" follows="left|top" left_delta="0" name="sounds" label="Sound Sources" control_name="soundsbeacon" />
-  <check_box enabled="true" bottom_delta="-20" follows="left|top" left_delta="0" name="physical" label="Physical Objects" control_name="physicalbeacon" />
-  <check_box enabled="true" bottom_delta="60" follows="left|top" left_delta="200" name="particles" label="Particle Sources" control_name="particlesbeacon" />
-  <check_box enabled="true" bottom_delta="-20" follows="left|top" left_delta="0" name="payable" label="Payable Object" />
-  <check_box enabled="true" bottom_delta="-20" follows="left|top" left_delta="0" name="buyable" label="Buyable Object" />
+  <check_box enabled="false" bottom="-40" follows="left|top" left_delta="0" name="touch_only" label="Scripted Objects with Touch Only" control_name="scripttouchbeacon" />
+  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="scripted" label="Scripted Objects" control_name="scriptsbeacon" />
+  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="sounds" label="Sound Sources" control_name="soundsbeacon" />
+  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="physical" label="Physical Objects" control_name="physicalbeacon" />
+  <check_box enabled="false" bottom_delta="60" follows="left|top" left_delta="200" name="particles" label="Particle Sources" control_name="particlesbeacon" />
+  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="payable" label="Payable Object" />
+  <check_box enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="buyable" label="Buyable Object" />
   
   <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="-125"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="-200"
