@@ -486,6 +486,8 @@ class SetSearchType : public inventory_listener_t
 		if(search_type == "name")
 		{
 			mPtr->getActivePanel()->setSearchType(0);
+
+			gSavedPerAccountSettings.setU32("EmeraldInventorySearchType",0);
 			
 			mPtr->getControl("Inventory.SearchByName")->setValue(TRUE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);	
@@ -496,6 +498,8 @@ class SetSearchType : public inventory_listener_t
 		{
 			mPtr->getActivePanel()->setSearchType(1);
 
+			gSavedPerAccountSettings.setU32("EmeraldInventorySearchType",1);
+
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(TRUE);
 			mPtr->getControl("Inventory.SearchByDesc")->setValue(FALSE);
@@ -505,6 +509,8 @@ class SetSearchType : public inventory_listener_t
 		{
 			mPtr->getActivePanel()->setSearchType(2);
 
+			gSavedPerAccountSettings.setU32("EmeraldInventorySearchType",2);
+
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByDesc")->setValue(TRUE);
@@ -513,6 +519,8 @@ class SetSearchType : public inventory_listener_t
 		else if(search_type == "all")
 		{
 			mPtr->getActivePanel()->setSearchType(3);
+
+			gSavedPerAccountSettings.setU32("EmeraldInventorySearchType",3);
 
 			mPtr->getControl("Inventory.SearchByName")->setValue(FALSE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);
@@ -542,8 +550,15 @@ class SetPartialSearch : public inventory_listener_t
 			{			
 				mPtr->getActivePanel()->setPartialSearch(true);
 				mPtr->getControl("Inventory.PartialSearchToggle")->setValue(TRUE);
+
+				gSavedPerAccountSettings.setBOOL("EmeraldInventoryPartialSearch",TRUE);
 			}
-			else mPtr->getActivePanel()->setPartialSearch(false);
+			else 
+			{
+				mPtr->getActivePanel()->setPartialSearch(false);
+
+				gSavedPerAccountSettings.setBOOL("EmeraldInventoryPartialSearch",FALSE);
+			}
 		}
 		
 		//Clear search when switching modes.
