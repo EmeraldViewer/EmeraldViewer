@@ -10,6 +10,6 @@ for install, and then press the download button.</text>
 		max_chars="255" mouse_opaque="true" name="Emerald_combo_dics" width="290"
 		control_name="Emerald_combo_dics" tool_tip=""/>
      <button bottom_delta="-35" enabled="true" follows="left|top" font="SansSerif"
-	     halign="center" height="22" label="Download" left_delta="100"
-	     mouse_opaque="true" name="Emerald_dic_download" scale_image="true" width="90" />
+	     halign="center" height="22" label="Download" left_delta="0"
+	     mouse_opaque="true" name="Emerald_dic_download" scale_image="true" width="290" />
 </floater> 

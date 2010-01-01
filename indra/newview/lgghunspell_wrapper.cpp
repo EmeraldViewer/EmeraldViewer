@@ -627,6 +627,7 @@ std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 	}
 	//get long country code
 	if(countryCode!="")
+	{
 		for(int i =0;i<COUNTRY_CODES_RAW_SIZE;i++)
 		{		
 			//llinfos << i << llendl;
@@ -636,8 +637,10 @@ std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 				break;
 			}
 		}
+		countryCode=" ("+countryCode+")";
+	}
 	
-	return std::string(languageCode+" ("+countryCode+")");
+	return std::string(languageCode+countryCode);
 }
 std::string lggHunSpell_Wrapper::fullName2DictName(std::string fullName)
 {

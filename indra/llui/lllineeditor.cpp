@@ -517,9 +517,8 @@ std::vector<S32> LLLineEditor::getMisspelledWordsPositions()
 				//center = findPixelNearestPos(center-getCursor());
 
 				thePosesOfBadWords.push_back(
-					findPixelNearestPos(wordStart-getCursor()));
-				thePosesOfBadWords.push_back(
-					findPixelNearestPos(wordEnd-getCursor()));
+					wordStart);
+				thePosesOfBadWords.push_back(wordEnd);
 			}
 		}
 		wordEnd++;
@@ -1974,8 +1973,18 @@ void LLLineEditor::draw()
 		}
 		for(int i =0;i<(int)misspellLocations.size();i++)
 		{
-			S32 wstart = misspellLocations[i];
-			S32 wend = misspellLocations[++i];
+			S32 wstart =findPixelNearestPos( misspellLocations[i]-getCursor());
+			S32 wend = findPixelNearestPos(misspellLocations[++i]-getCursor());
+			S32 maxw = getRect().getWidth();
+
+			if(wend > maxw)
+			{
+				wend=maxw;
+			}
+			if(wstart > maxw)
+			{
+				wstart=maxw;
+			}
 			gGL.color4ub(255,0,0,200);
 			//3 line zig zags..
 			while(wstart<wend)

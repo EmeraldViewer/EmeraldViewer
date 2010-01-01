@@ -125,6 +125,9 @@ void lggDicDownloadFloater::downloadDic(std::string name)
 {
 	std::string dicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", 
 			name.c_str()));
+	//LLButton* butt = getChild<LLButton>("Emerald_dic_download");
+	//if(butt)butt->setLabel(LLStringExplicit("Downloading... Please Wait"));
+
 	LLHTTPClient::downloadFile(std::string("http://www.modularsystems.sl/app/dics/"+name),
 			dicpath);
 }
