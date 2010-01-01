@@ -1289,11 +1289,9 @@ BOOL LLScriptEdCore::handleKeyHere(KEY key, MASK mask)
 
 	if(('S' == key) && just_control)
 	{
-		if(mSaveCallback)
-		{
-			// don't close after saving
-			mSaveCallback(mUserdata, FALSE);
-		}
+		mErrorList->deleteAllItems();
+		// do the save, but don't close afterwards
+		doSave(data, FALSE);
 
 		return TRUE;
 	}
