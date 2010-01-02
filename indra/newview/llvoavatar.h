@@ -512,13 +512,13 @@ private:
 
 private:
 	bool			mFirstSetActualBoobGravRan;
-	bool			mFirstSetActualButtGravRan;
-	bool			mFirstSetActualFatGravRan;
+	//bool			mFirstSetActualButtGravRan;
+	//bool			mFirstSetActualFatGravRan;
 	LLFrameTimer	mBoobBounceTimer;
 	EmeraldAvatarLocalBoobConfig mLocalBoobConfig;
 	EmeraldBoobState mBoobState;
-	EmeraldBoobState mButtState;
-	EmeraldBoobState mFatState;
+	//EmeraldBoobState mButtState;
+	//EmeraldBoobState mFatState;
 
 public:
 	//boob
@@ -534,7 +534,7 @@ public:
 	}
 
 	//butt
-	F32				getActualButtGrav() { return mLocalBoobConfig.actualButtGrav; }
+	/*F32				getActualButtGrav() { return mLocalBoobConfig.actualButtGrav; }
 	void			setActualButtGrav(F32 grav)
 	{
 		mLocalBoobConfig.actualButtGrav = grav;
@@ -544,7 +544,6 @@ public:
 			mFirstSetActualButtGravRan = true;
 		}
 	}
-
 	//fat
 	F32				getActualFatGrav() { return mLocalBoobConfig.actualFatGrav; }
 	void			setActualFatGrav(F32 grav)
@@ -556,7 +555,7 @@ public:
 			mFirstSetActualFatGravRan = true;
 		}
 	}
-
+	*/
 	static EmeraldGlobalBoobConfig sBoobConfig;
 
 	//--------------------------------------------------------------------

@@ -790,9 +790,9 @@ LLVOAvatar::LLVOAvatar(const LLUUID& id,
   mIsCryolife(FALSE),
 	mFullyLoadedInitialized(FALSE),
 	mHasBakedHair( FALSE ),
-	mFirstSetActualBoobGravRan( false ),
-	mFirstSetActualButtGravRan( false ),
-	mFirstSetActualFatGravRan( false )
+	mFirstSetActualBoobGravRan( false )
+	//mFirstSetActualButtGravRan( false ),
+	//mFirstSetActualFatGravRan( false )
 {
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
 	//VTResume();  // VTune
@@ -8668,7 +8668,7 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 					llwarns << "Boob Grav SET to " << newWeight << " for " << getFullname() << llendl;
 					setActualBoobGrav(newWeight);
 				}
-				if(param->getID() == 795 && newWeight != getActualButtGrav())
+				/*if(param->getID() == 795 && newWeight != getActualButtGrav())
 				{
 					llwarns << "Butt Grav SET to " << newWeight << " for " << getFullname() << llendl;
 					setActualButtGrav(newWeight);
@@ -8678,7 +8678,7 @@ void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 					llwarns << "Fat Grav SET to " << newWeight << " for " << getFullname() << llendl;
 					setActualFatGrav(newWeight);
 				}
-
+				*/
 
 
 				if (is_first_appearance_message || (param->getWeight() != newWeight))
