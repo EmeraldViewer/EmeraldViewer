@@ -56,7 +56,7 @@
 #include "llui.h"
 #include "lluictrlfactory.h"
 #include "llclipboard.h"
-#include "../newview/lggHunSpell_wrapper.h"
+#include "../newview/lgghunspell_wrapper.h"
 
 
 //#include "llmenugl.h"

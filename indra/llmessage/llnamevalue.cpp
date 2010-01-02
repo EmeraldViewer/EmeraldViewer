@@ -578,7 +578,7 @@ LLNameValue::~LLNameValue()
 	mNameValueReference.string = NULL;
 }
 
-char	*LLNameValue::getString()
+char *LLNameValue::getString()
 {
 	if (mType == NVT_STRING)
 	{
@@ -587,7 +587,7 @@ char	*LLNameValue::getString()
 	else
 	{
 		llinfos << mName << " not a string!" << llendl;
-		return "lol";//NULL;
+		return (char*)"lol";//NULL;
 	}
 }
 
