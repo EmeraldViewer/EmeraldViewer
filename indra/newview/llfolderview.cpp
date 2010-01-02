@@ -364,24 +364,6 @@ void LLFolderViewItem::refresh()
 			mParentFolder->requestArrange();
 	}
 	
-	/*if(mSearchableLabelCreator.compare(searchable_label_creator))
-	{
-		mSearchableLabelCreator.assign(searchable_label_creator);
-
-		dirtyFilter();
-		if(mParentFolder)
-			mParentFolder->requestArrange();
-	}
-
-	if(mSearchableLabelDesc.compare(searchable_label_desc))
-	{
-		mSearchableLabelDesc.assign(searchable_label_desc);
-
-		dirtyFilter();
-		if(mParentFolder)
-			mParentFolder->requestArrange();
-	}*/
-
 	S32 label_width = sFont->getWidth(mLabel);
 	if( mLabelSuffix.size() )   
 	{   
