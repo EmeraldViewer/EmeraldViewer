@@ -136,6 +136,7 @@
 #include "llfloaterworldmap.h"
 #include "llviewerdisplay.h"
 #include "llkeythrottle.h"
+#include "lltranslate.h"
 
 #include "llfloaterfriends.h"
 
@@ -2919,6 +2920,82 @@ void process_decline_callingcard(LLMessageSystem* msg, void**)
 
 //void cmdline_printchat(std::string message);
 
+class ChatTranslationReceiver : public LLTranslate::TranslationReceiver
+{
+public :
+	ChatTranslationReceiver(const std::string &fromLang, const std::string &toLang, LLChat *chat, 
+		const BOOL history)
+		: LLTranslate::TranslationReceiver(fromLang, toLang),
+		m_chat(chat),
+		m_history(history)	
+	{
+	}
+
+	static boost::intrusive_ptr<ChatTranslationReceiver> build(const std::string &fromLang, const std::string &toLang, LLChat *chat, const BOOL history)
+	{
+		return boost::intrusive_ptr<ChatTranslationReceiver>(new ChatTranslationReceiver(fromLang, toLang, chat, history));
+	}
+
+protected:
+	void handleResponse(const std::string &translation, const std::string &detectedLanguage)
+	{		
+		if (m_toLang != detectedLanguage)
+			m_chat->mText += " (" + translation + ")";			
+
+		add_floater_chat(*m_chat, m_history);
+
+		delete m_chat;
+	}
+
+	void handleFailure()
+	{
+		LLTranslate::TranslationReceiver::handleFailure();
+
+		m_chat->mText += " (?)";
+
+		add_floater_chat(*m_chat, m_history);
+
+		delete m_chat;
+	}
+
+private:
+	LLChat *m_chat;
+	const BOOL m_history;		
+};
+
+void add_floater_chat(const LLChat &chat, const BOOL history)
+{
+	if (history)
+	{
+		// just add to history
+		LLFloaterChat::addChatHistory(chat);
+	}
+	else
+	{
+		// show on screen and add to history
+		LLFloaterChat::addChat(chat, FALSE, FALSE);
+	}
+}
+
+void check_translate_chat(const std::string &mesg, LLChat &chat, const BOOL history)
+{	
+	const bool translate = LLUI::sConfigGroup->getBOOL("TranslateChat");
+
+	if (translate && chat.mSourceType != CHAT_SOURCE_SYSTEM)
+	{
+		const std::string &fromLang = chat.mLanguage;
+		const std::string &toLang = LLTranslate::getTranslateLanguage();
+		LLChat *newChat = new LLChat(chat);
+
+		LLHTTPClient::ResponderPtr result = ChatTranslationReceiver::build(fromLang, toLang, newChat, history);
+		LLTranslate::translateMessage(result, fromLang, toLang, mesg);
+	}
+	else
+	{
+		add_floater_chat(chat, history);
+	}
+}
+
 void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 {
 	LLChat		chat;
@@ -2932,6 +3009,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 	LLUUID		owner_id;
 	BOOL		is_owned_by_me = FALSE;
 	LLViewerObject*	chatter;
+	std::string	language;
 
 	msg->getString("ChatData", "FromName", from_name);
 	chat.mFromName = from_name;
@@ -2953,6 +3031,17 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 	
 	chat.mTime = LLFrameTimer::getElapsedSeconds();
 	
+	// Empty language value implies automatic language detection.
+	// TODO: Check if the source is an agent to decide whether to
+	// read the language value. Waiting on server fix for this.
+	// if (chat.mSourceType == CHAT_SOURCE_AGENT)
+	int languageSize = msg->getSize(_PREHASH_ChatData, _PREHASH_Language);
+	if (languageSize > 0)
+	{
+		msg->getString(_PREHASH_ChatData, _PREHASH_Language, language);
+		chat.mLanguage = language;
+	}
+
 	BOOL is_busy = gAgent.getBusy();
 
 	BOOL is_muted = FALSE;
@@ -3094,14 +3183,10 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		if (prefix == "/me " || prefix == "/me'")
 		{
 			chat.mText = from_name;
-			chat.mText += mesg.substr(3);
+			mesg = mesg.substr(3);
 			ircstyle = TRUE;
 		}
-		else
-		{
-			chat.mText = mesg;
-		}
-
+		chat.mText += mesg;
 		// Look for the start of typing so we can put "..." in the bubbles.
 		if (CHAT_TYPE_START == chat.mChatType)
 		{
@@ -3247,10 +3332,8 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 				break;
 			}
 
-
-			chat.mText = from_name;
-			chat.mText += verb;
-			chat.mText += mesg;
+			chat.mText = from_name + verb + mesg;
+			
 		}
 		
 		if (chatter)
@@ -3277,12 +3360,12 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 			&& (is_linden || !is_busy || is_owned_by_me))
 		{
 			// show on screen and add to history
-			LLFloaterChat::addChat(chat, FALSE, FALSE);
+			check_translate_chat(mesg, chat, FALSE);
 		}
 		else
 		{
 			// just add to chat history
-			LLFloaterChat::addChatHistory(chat);
+			check_translate_chat(mesg, chat, TRUE);
 		}
 	}
 }

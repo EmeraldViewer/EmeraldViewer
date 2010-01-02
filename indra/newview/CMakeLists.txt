@@ -11,6 +11,7 @@ include(ELFIO)
 include(FMOD)
 include(OPENAL)
 include(FindOpenGL)
+include(JsonCpp)
 include(LLAddBuildTest)
 include(LLAudio)
 include(LLCharacter)
@@ -57,6 +58,7 @@ endif (DARWIN OR LINUX)
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
     ${ELFIO_INCLUDE_DIR}
+	${JSONCPP_INCLUDE_DIRS}
     ${LLAUDIO_INCLUDE_DIRS}
     ${LLCHARACTER_INCLUDE_DIRS}
     ${LLCOMMON_INCLUDE_DIRS}
@@ -416,6 +418,7 @@ set(viewer_SOURCE_FILES
     lltoolview.cpp
     lltracker.cpp
     lltrans.cpp
+	lltranslate.cpp
     lluploaddialog.cpp
     llurl.cpp
     llurldispatcher.cpp
@@ -867,6 +870,7 @@ set(viewer_HEADER_FILES
     lltoolview.h
     lltracker.h
     lltrans.h
+	lltranslate.h
     lluiconstants.h
     lluploaddialog.h
     llurl.h
@@ -1380,6 +1384,7 @@ if (WINDOWS)
 		${BOOST_REGEX_LIBRARY}
 		${DBUSGLIB_LIBRARIES}
 		${OPENGL_LIBRARIES}
+		${JSONCPP_LIBRARIES}
 		${FMODWRAPPER_LIBRARY}
 		${OPENGL_LIBRARIES}
 		${MOZLIB_LIBRARIES}
