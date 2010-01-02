@@ -450,7 +450,14 @@ int lggIrcThread::PartMessageResponce( char * params, irc_reply_data * hostd, vo
 				try
 				{
 					std::string temp = std::string(&params[1]).substr(getChannel().length() + 1);
-					msg( llformat("%s has left this chat. (%s)",hostd->nick,temp.c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
+					if(temp.length() == 0)
+					{
+						msg( llformat("%s has left this chat.",hostd->nick).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
+					}
+					else
+					{
+						msg( llformat("%s has left this chat. (%s)",hostd->nick,temp.c_str()).c_str(),gSavedSettings.getColor("EmeraldIRC_ColorQuit"),false);
+					}
 				}
 				catch(...)
 				{
@@ -1017,6 +1024,12 @@ void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 		{
 			conn->notice((char *)name.c_str(), (char *)msg.c_str());
 		}
+		else if(command == "TIME")
+		{
+			time_t rawtime;
+			time ( &rawtime );
+			conn->notice((char *)name.c_str(), llformat("\001%s\001",ctime(&rawtime)));
+		}
 		else
 		{
 			if(!gSavedSettings.getBOOL("EmeraldIRC_ShowPrivate"))return;
@@ -1137,7 +1150,7 @@ void lggIrcThread::msg(std::string message, std::string name, LLColor4 color, bo
 
 		if(gSavedSettings.getBOOL("IMInChatConsole"))
 		{				
-			chat.mText = std::string("IRC: ") + name + std::string(": ") + stripColorCodes(message);
+			chat.mText = std::string("IRC: ") + name + stripColorCodes(message);
 			LLFloaterChat::addChat( chat, TRUE );
 		}
 	}

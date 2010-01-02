@@ -654,7 +654,7 @@ void IRC::parse_irc_reply(char* data)
 			}
 			*params='\0';
 			params++;
-		
+			hostd_tmp.target = changevars;
 			plus=false;
 			for (i=0; i<(signed)strlen(changevars); i++)
 			{
@@ -724,6 +724,7 @@ void IRC::parse_irc_reply(char* data)
 						*tmp='\0';
 						tmp++;
 					}
+					tmp=params;
 					if (plus)
 					{
 						// user has been voiced
@@ -731,10 +732,13 @@ void IRC::parse_irc_reply(char* data)
 						d=0;
 						while (cup)
 						{
-							if (!strcmp(cup->channel, params) && !strcmp(cup->nick, hostd_tmp.nick))
+							if (cup->next && cup->channel)
 							{
-								d=cup;
-								break;
+								if (!strcmp(cup->channel, chan) && !strcmp(cup->nick, tmp))
+								{
+									d=cup;
+									break;
+								}
 							}
 							cup=cup->next;
 						}
@@ -750,7 +754,7 @@ void IRC::parse_irc_reply(char* data)
 						d=0;
 						while (cup)
 						{
-							if (!strcmp(cup->channel, params) && !strcmp(cup->nick, hostd_tmp.nick))
+							if (!strcmp(cup->channel, chan) && !strcmp(cup->nick, tmp))
 							{
 								d=cup;
 								break;
@@ -760,6 +764,57 @@ void IRC::parse_irc_reply(char* data)
 						if (d)
 						{
 							d->flags=d->flags^IRC_USER_VOICE;
+						}
+					}
+					params=tmp;
+					break;
+					case 'h':
+					tmp=strchr(params, ' ');
+					if (tmp)
+					{
+						*tmp='\0';
+						tmp++;
+					}
+					tmp=params;
+					if (plus)
+					{
+						// user has been voiced
+						cup=chan_users;
+						d=0;
+						while (cup)
+						{
+							if (cup->next && cup->channel)
+							{
+								if (!strcmp(cup->channel, chan) && !strcmp(cup->nick, tmp))
+								{
+									d=cup;
+									break;
+								}
+							}
+							cup=cup->next;
+						}
+						if (d)
+						{
+							d->flags=d->flags|IRC_USER_HALFOP;
+						}
+					}
+					else
+					{
+						// user has been dehoped
+						cup=chan_users;
+						d=0;
+						while (cup)
+						{
+							if (!strcmp(cup->channel, chan) && !strcmp(cup->nick, tmp))
+							{
+								d=cup;
+								break;
+							}
+							cup=cup->next;
+						}
+						if (d)
+						{
+							d->flags=d->flags^IRC_USER_HALFOP;
 						}
 					}
 					params=tmp;

@@ -50,14 +50,9 @@ LLFloaterMOTD::~LLFloaterMOTD()
 
 BOOL LLFloaterMOTD::postBuild()
 {
+	mMOTDText->setWrappedText( gAgent.mMOTD , 300.0);
 	childSetAction("OK", onBtnOK, this);
 	return TRUE;
-}
-
-void LLFloaterMOTD::draw()
-{
-	mMOTDText->setText( gAgent.mMOTD );
-	LLFloater::draw();
 }
 
 void LLFloaterMOTD::onBtnOK( void* userdata )
