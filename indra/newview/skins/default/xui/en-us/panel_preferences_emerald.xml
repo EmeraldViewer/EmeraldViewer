@@ -349,7 +349,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 name="EmShowLookAtNames-toggle" control_name="EmeraldDontShowMyLookAt" radio_style="false"
 					 width="270"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="ESC key to resets camera position" left_delta="0" mouse_opaque="true"
+					 initial_value="false" label="ESC key to reset camera position" left_delta="0" mouse_opaque="true"
 					 name="EmResetCamOnEscape-toggle" radio_style="false" width="270" control_name="EmeraldResetCamOnEscape"
 					 tool_tip="Setting this value to False prevents the camera from resetting when escape is pressed from within Camera mode (Ctrl+1)."/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
@@ -957,18 +957,18 @@ the simulator for scripts to access.</text>
                     <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="0" follows="left|top" height="18"
 					 max_chars="200" mouse_opaque="true" name="EmSpell_Installed" width="180"
 					 control_name="EmSpell_Installed" tool_tip=""/>
-				<button bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="18" label="Remove"
+					<button bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="18" label="Remove"
 					 name="EmSpell_Remove" tool_tip="" left_delta="182" width="60"/>
                     <text bottom_delta="20" follows="left|top" font="SansSerifSmall" height="16" left="270"
 					 name="EmSpell_txt3" width="512">Available dictionaries</text>
-                    <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="0" follows="left|top" height="18"
+                    <combo_box allow_text_entry="false" bottom_delta="-20" left_delta="-10" follows="left|top" height="18"
 					 max_chars="200" mouse_opaque="true" name="EmSpell_Avail" width="180"
 					 control_name="EmSpell_Avail" tool_tip=""/>
-				<button bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="18" label="Install"
-					 name="EmSpell_Add" tool_tip="" left_delta="182" width="40"/>
+					<button bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="18" label="Install"
+					 name="EmSpell_Add" tool_tip="" left_delta="182" width="50"/>
                     <button bottom_delta="20" follows="left|top" font="SansSerifSmall" height="18" label="Get More!"
-					 name="EmSpell_GetMore" tool_tip="" left_delta="-30" width="70"/>
-				<check_box bottom_delta="-50" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 name="EmSpell_GetMore" tool_tip="" left_delta="-20" width="70"/>
+					<check_box bottom_delta="-50" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Show misspelled words in red" left="5" mouse_opaque="true" name="EmeraldSpellDisplay"
 					 control_name="EmeraldSpellDisplay" width="126"/>
                     <button bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="18" label="Edit Custom dictionary"
