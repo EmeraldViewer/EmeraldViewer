@@ -1378,5 +1378,4 @@ extern char * _PREHASH_VCoord;
 extern char * _PREHASH_FaceIndex;
 extern char * _PREHASH_StatusData;
 extern char * _PREHASH_ProductSKU;
-extern char * _PREHASH_Language;
 #endif
