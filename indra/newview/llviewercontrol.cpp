@@ -71,6 +71,7 @@
 #include "llvowlsky.h"
 #include "llrender.h"
 #include "llviewerparceloverlay.h"
+#include "llfloaterchat.h" 
 
 #ifdef TOGGLE_HACKED_GODLIKE_VIEWER
 BOOL 				gHackGodmode = FALSE;
@@ -428,6 +429,17 @@ static bool handleRenderUseFBOChanged(const LLSD& newvalue)
 	return true;
 }
 
+bool handleTranslateChatPrefsChanged(const LLSD& newvalue) 
+{ 
+	LLFloaterChat* floaterp = LLFloaterChat::getInstance();	
+	if(floaterp) 
+	{
+		// update "translate chat" pref in "Local Chat" floater 
+		floaterp->updateSettings();
+	}
+	return true;
+}
+
 static bool handleRenderUseImpostorsChanged(const LLSD& newvalue)
 {
 	LLVOAvatar::sUseImpostors = newvalue.asBoolean();
@@ -682,7 +694,8 @@ void settings_setup_listeners()
 	gSavedSettings.getControl("VoiceInputAudioDevice")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("VoiceOutputAudioDevice")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
 	gSavedSettings.getControl("AudioLevelMic")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
-	gSavedSettings.getControl("LipSyncEnabled")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));	
+	gSavedSettings.getControl("LipSyncEnabled")->getSignal()->connect(boost::bind(&handleVoiceClientPrefsChanged, _1));
+	gSavedSettings.getControl("TranslateChat")->getSignal()->connect(boost::bind(&handleTranslateChatPrefsChanged, _1));
 
 // [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.1h
 	if (gSavedSettings.controlExists(RLV_SETTING_ENABLELEGACYNAMING))

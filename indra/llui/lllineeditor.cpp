@@ -57,6 +57,7 @@
 #include "lluictrlfactory.h"
 #include "llclipboard.h"
 #include "../newview/lgghunspell_wrapper.h"
+#include "../newview/lltranslate.h"
 
 
 //#include "llmenugl.h"
@@ -92,6 +93,31 @@ static LLRegisterWidget<LLLineEditor> r1("line_editor");
 //
 // Member functions
 //
+class ChatTranslationReceiver : public LLTranslate::TranslationReceiver
+{
+public :
+	ChatTranslationReceiver(const std::string &toLang, LLLineEditor* line): LLTranslate::TranslationReceiver("", toLang),
+		m_line(line)	
+	{
+	}
+
+	static boost::intrusive_ptr<ChatTranslationReceiver> build(const std::string &toLang,LLLineEditor* line)
+	{
+		return boost::intrusive_ptr<ChatTranslationReceiver>(new ChatTranslationReceiver(toLang,line));
+	}
+
+protected:
+	void handleResponse(const std::string &translation, const std::string &detectedLanguage)
+	{
+		m_line->insert(" (" + translation + ")",m_line->getCursor());
+	}
+	void handleFailure()
+	{
+		LLTranslate::TranslationReceiver::handleFailure();
+	}
+private:
+	LLLineEditor* m_line;
+};
  
 LLLineEditor::LLLineEditor(const std::string& name, const LLRect& rect,
 						   const std::string& default_text, const LLFontGL* font,
@@ -192,6 +218,7 @@ LLLineEditor::LLLineEditor(const std::string& name, const LLRect& rect,
 	menu->append(new LLMenuItemCallGL("Copy", context_copy, NULL, this));
 	menu->append(new LLMenuItemCallGL("Paste", context_paste, NULL, this));
 	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
+	menu->append(new LLMenuItemCallGL("Translate",translateText, NULL, this));
 	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
 	menu->appendSeparator();
 	//menu->setBackgroundColor(gColors.getColor("MenuPopupBgColor"));
@@ -463,6 +490,15 @@ void LLLineEditor::spell_correct(void* data)
 		if(line)line->spellReplace(tempBind);
 
 	}
+}
+void LLLineEditor::translateText(void * data)
+{
+	LLLineEditor* line = (LLLineEditor*)data;
+	const std::string &toLang = LLTranslate::getTranslateLanguage();
+	LLHTTPClient::ResponderPtr result = ChatTranslationReceiver::build(toLang,line);
+	S32 left_pos = llmin( line->mSelectionStart, line->mSelectionEnd );
+	S32 length = abs( line->mSelectionStart - line->mSelectionEnd );
+	LLTranslate::translateMessage(result,"", toLang, line->mText.getString().substr(left_pos, length));
 }
 void LLLineEditor::spell_show(void * data)
 {
@@ -1184,14 +1220,20 @@ void LLLineEditor::copy()
 }
 void LLLineEditor::spellReplace(SpellMenuBind* spellData)
 {
-	LLLineEditorRollback rollback(this);
 	mText.erase(spellData->wordPositionStart,
 		spellData->wordPositionEnd - spellData->wordPositionStart);
-	LLWString clean_string(utf8str_to_wstring(spellData->word));
+	insert(spellData->word,spellData->wordPositionStart);
+	mCursorPos+=spellData->word.length() - (spellData->wordPositionEnd-spellData->wordPositionStart);
+
+	
+}
+void LLLineEditor::insert(std::string what, S32 wher)
+{
+	LLLineEditorRollback rollback(this);
+	LLWString clean_string(utf8str_to_wstring(what));
 	LLWStringUtil::replaceTabsWithSpaces(clean_string, 4);
-	mText.insert(spellData->wordPositionStart, clean_string);
+	mText.insert(wher, clean_string);
 	//see if we should move over the cursor acordingly
-	mCursorPos+=clean_string.length() - (spellData->wordPositionEnd-spellData->wordPositionStart);
 	// Validate new string and rollback the if needed.
 	BOOL need_to_rollback = ( mPrevalidateFunc && !mPrevalidateFunc( mText.getWString() ) );
 	if( need_to_rollback )
@@ -1199,12 +1241,8 @@ void LLLineEditor::spellReplace(SpellMenuBind* spellData)
 		rollback.doRollback( this );
 		reportBadKeystroke();
 	}
-	else
-	if( mKeystrokeCallback )
-	{
+	else if( mKeystrokeCallback )
 		mKeystrokeCallback( this, mCallbackUserData );
-	}
-
 }
 BOOL LLLineEditor::canPaste() const
 {

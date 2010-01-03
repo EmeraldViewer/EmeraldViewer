@@ -2938,24 +2938,29 @@ public :
 
 protected:
 	void handleResponse(const std::string &translation, const std::string &detectedLanguage)
-	{		
-		if (m_toLang != detectedLanguage)
-			m_chat->mText += " (" + translation + ")";			
+	{	
+		if(m_chat)
+		{
+			if (m_toLang != detectedLanguage)
+				m_chat->mText += " (" + translation + ")";			
 
-		add_floater_chat(*m_chat, m_history);
+			add_floater_chat(*m_chat, m_history);
 
-		delete m_chat;
+			delete m_chat;
+		}
 	}
 
 	void handleFailure()
 	{
-		LLTranslate::TranslationReceiver::handleFailure();
+		if(m_chat)
+		{
+			LLTranslate::TranslationReceiver::handleFailure();
+				m_chat->mText += " (?)";
 
-		m_chat->mText += " (?)";
+			add_floater_chat(*m_chat, m_history);
 
-		add_floater_chat(*m_chat, m_history);
-
-		delete m_chat;
+			delete m_chat;
+		}
 	}
 
 private:

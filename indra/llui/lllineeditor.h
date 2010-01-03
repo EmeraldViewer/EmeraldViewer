@@ -108,6 +108,7 @@ public:
 
 
 	virtual void spellReplace(SpellMenuBind* spellData);
+	virtual void insert(std::string what,S32 wher);
 	// LLEditMenuHandler overrides
 	virtual void	cut();
 	virtual BOOL	canCut() const;
@@ -131,6 +132,7 @@ public:
 	static void context_copy(void* data);
 	static void spell_correct(void* data);
 	static void spell_show(void* data);
+	static void translateText(void * data);
 	static void spell_add(void* data);
 	static void context_paste(void* data);
 	static void context_delete(void* data);
