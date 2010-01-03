@@ -1028,7 +1028,7 @@ void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 		{
 			time_t rawtime;
 			time ( &rawtime );
-			conn->notice((char *)name.c_str(), (char *)llformat("\001%s\001",ctime(&rawtime)));
+			conn->notice((char *)name.c_str(), llformat("\001%s\001",ctime(&rawtime)).c_str());
 		}
 		else
 		{
