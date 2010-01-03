@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<panel border="true" bottom="-409" enabled="true" follows="left|top|right|bottom" height="408"
+<panel border="true" bottom="-440" enabled="true" follows="left|top|right|bottom" height="440"
 	 label="Emerald" left="102" mouse_opaque="true" name="Emerald panel" width="517">
-	<tab_container label="Emerald Prefs" bottom="0" height="408" left="0" mouse_opaque="false"
+	<tab_container label="Emerald Prefs" bottom="0" height="440" left="0" mouse_opaque="false"
 		 name="tabs" tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
-		<tab_container label="Page 1" bottom="0" height="408" left="0" mouse_opaque="false"
+		<tab_container label="Page 1" bottom="0" height="440" left="0" mouse_opaque="false"
 			 name="tab" tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
-			<panel border="true" bottom="-408" follows="left|top|right|bottom" height="408" label="TP/Login"
+			<panel border="true" bottom="-440" follows="left|top|right|bottom" height="440" label="TP/Login"
 				 left="1" mouse_opaque="true" name="Teleport/Login" width="517">
 				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"
 					 name="EmeraldHelp_TeleportLogin" tool_tip="Click here for help regarding the settings in this page."
@@ -686,9 +686,9 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 control_name="EmeraldMegaprims" radio_style="false" width="270"/>
 			</panel>
 		</tab_container>
-		<tab_container label="Page 2" bottom="0" height="408" left="0" mouse_opaque="false"
+		<tab_container label="Page 2" bottom="0" height="440" left="0" mouse_opaque="false"
 			 name="tab2" tab_min_width="50" tab_position="top" width="500" bg_opaque_color="0,0,0,0.0">
-			<panel border="true" bottom="-408" follows="left|top|right|bottom" height="408" label="IRC"
+			<panel border="true" bottom="-440" follows="left|top|right|bottom" height="440" label="IRC"
 				 left="1" mouse_opaque="true" name="IRC" width="517">
 				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"
 					 name="EmeraldHelp_IRC" tool_tip="Click here for help regarding the settings in this page."
