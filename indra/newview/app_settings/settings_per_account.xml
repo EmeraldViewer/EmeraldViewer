@@ -1,6 +1,17 @@
 
 <llsd>
 	<map>
+    <key>EmeraldInventoryPreviousCount</key>
+    <map>
+      <key>Comment</key>
+      <string>Used to keep track of the number of items in inventory when fetching for progress reasons. DO NOT EDIT.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>S32</string>
+      <key>Value</key>
+      <integer>-1</integer>
+    </map>
     <key>EmeraldInventorySearchType</key>
     <map>
       <key>Comment</key>

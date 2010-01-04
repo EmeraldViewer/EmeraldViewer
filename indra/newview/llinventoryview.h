@@ -312,6 +312,8 @@ protected:
 
 	std::string					mFilterText;
 
+	S32							mItemCount;
+
 
 	// This container is used to hold all active inventory views. This
 	// is here to support the inventory toggle show button.
