@@ -418,10 +418,18 @@ LLUUID LLInventoryModel::createNewCategory(const LLUUID& parent_id,
 		lldebugs << "Attempt to create a AT_TEXTURE_TGA uncompresssed images category." << llendl;
 		return id;
 	}
-	else
-	if(preferred_type == LLAssetType::AT_IMAGE_JPEG)
+
+	else if(preferred_type == LLAssetType::AT_IMAGE_JPEG)
 	{
 		lldebugs << "Attempt to create a AT_IMAGE_JPEG uncompresssed images category." << llendl;
+		return id;
+	}else if(preferred_type == LLAssetType::AT_SCRIPT)
+	{
+		lldebugs << "Attempt to create a AT_Script scripts category." << llendl;
+		return id;
+	}else if(preferred_type == LLAssetType::AT_LSL_BYTECODE)
+	{
+		lldebugs << "Attempt to create a AT_LSL_BYTECODE scripts category." << llendl;
 		return id;
 	}
 
