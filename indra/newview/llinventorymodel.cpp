@@ -402,6 +402,27 @@ LLUUID LLInventoryModel::createNewCategory(const LLUUID& parent_id,
 	{
 		lldebugs << "Attempt to create simstate category." << llendl;
 		return id;
+	}else
+	if(preferred_type == LLAssetType::AT_SOUND_WAV)
+	{
+		lldebugs << "Attempt to create (wave) uncompressed sound category." << llendl;
+		return id;
+	}else
+	if(preferred_type == LLAssetType::AT_IMAGE_TGA)
+	{
+		lldebugs << "Attempt to create a AT_IMAGE_TGA uncompresssed images category." << llendl;
+		return id;
+	}else
+	if(preferred_type == LLAssetType::AT_TEXTURE_TGA)
+	{
+		lldebugs << "Attempt to create a AT_TEXTURE_TGA uncompresssed images category." << llendl;
+		return id;
+	}
+	else
+	if(preferred_type == LLAssetType::AT_IMAGE_JPEG)
+	{
+		lldebugs << "Attempt to create a AT_IMAGE_JPEG uncompresssed images category." << llendl;
+		return id;
 	}
 
 	id.generate();

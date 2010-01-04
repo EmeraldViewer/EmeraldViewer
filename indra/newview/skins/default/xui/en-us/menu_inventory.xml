@@ -109,6 +109,22 @@
 			<on_click filter="" function="Inventory.DoCreate" userdata="eyes" />
 		</menu_item_call>
 	</menu>
+  <menu bottom_delta="0" color="MenuDefaultBgColor" drop_shadow="true" height="175" left="0"
+	     mouse_opaque="false" name="Advanced" opaque="true" tear_off="false"
+	     width="125">
+    <menu_item_call bottom_delta="-18" height="18" label="Purge Item" left="0" mouse_opaque="true"
+		     name="Purge Item" width="128">
+      <on_click filter="" function="Inventory.DoToSelected" userdata="purge" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" height="18" label="Set Parent To Trash" left="0" mouse_opaque="true"
+		     name="Set Parent To Trash" width="128">
+      <on_click filter="" function="Inventory.DoToSelected" userdata="settotrash" />
+    </menu_item_call>
+    <menu_item_call bottom_delta="-18" height="18" label="Delete From Server" left="0" mouse_opaque="true"
+		     name="Delete From Server" width="128">
+      <on_click filter="" function="Inventory.DoToSelected" userdata="deletefromserver" />
+    </menu_item_call>
+  </menu>
 	<menu_item_call bottom_delta="-18" height="18" label="Teleport" left="0" mouse_opaque="true"
 	     name="Landmark Open" width="128">
 		<on_click filter="" function="Inventory.DoToSelected" userdata="open" />

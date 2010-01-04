@@ -278,6 +278,8 @@ public:
 	virtual BOOL isItemRenameable() const;
 	virtual void selectItem();
 	virtual void restoreItem();
+	virtual void setParentToTrash();
+	virtual void deleteItemFromServer();
 
 	virtual LLUIImagePtr getIcon() const;
 	virtual BOOL renameItem(const std::string& new_name);

@@ -88,6 +88,7 @@
 #include "llfloateropenobject.h"
 
 #include "exporttracker.h"
+#include "lldarray.h"
 
 // Helpers
 // bug in busy count inc/dec right now, logic is complex... do we really need it?
@@ -1665,9 +1666,17 @@ void LLFolderBridge::performAction(LLFolderView* folder, LLInventoryModel* model
 		model->deleteObject(mUUID);
 		model->notifyObservers();
 	}
+	else if("settotrash"==action)
+	{
+		setParentToTrash();
+	}
 	else if ("restore" == action)
 	{
 		restoreItem();
+	}
+	else if ("deletefromserver"==action)
+	{
+		deleteItemFromServer();
 	}
 }
 
@@ -1700,6 +1709,30 @@ void LLFolderBridge::restoreItem()
 		LLUUID new_parent = model->findCategoryUUIDForType(cat->getType());
 		// do not restamp children on restore
 		LLInvFVBridge::changeCategoryParent(model, cat, new_parent, FALSE);
+	}
+}
+void LLFolderBridge::setParentToTrash()
+{
+	LLViewerInventoryCategory* cat;
+	cat = (LLViewerInventoryCategory*)getCategory();
+	if(cat)
+	{
+		LLInventoryModel* model = mInventoryPanel->getModel();
+		LLUUID new_parent = model->findCategoryUUIDForType(LLAssetType::AT_TRASH);
+		LLInvFVBridge::changeCategoryParent(model, cat, new_parent, FALSE);
+	}
+}
+void LLFolderBridge::deleteItemFromServer()
+{
+	LLViewerInventoryCategory* cat;
+	cat = (LLViewerInventoryCategory*)getCategory();
+	if(cat)
+	{
+		LLInventoryModel* model = mInventoryPanel->getModel();
+		LLDynamicArray<LLUUID> da;
+		da.push_back(cat->getUUID());
+		LLDynamicArray<LLUUID> ia;
+		model->deleteFromServer(da,ia);
 	}
 }
 
@@ -2006,7 +2039,8 @@ void LLFolderBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 		mItems.push_back(std::string("New Gesture"));
 		mItems.push_back(std::string("New Clothes"));
 		mItems.push_back(std::string("New Body Parts"));
-
+		mItems.push_back(std::string("Advanced"));
+		
 		getClipboardEntries(false, mItems, mDisabledItems, flags);
 
 		//Added by spatters to force inventory pull on right-click to display folder options correctly. 07-17-06
