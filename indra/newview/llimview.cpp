@@ -830,14 +830,14 @@ LLUUID LLIMMgr::addSession(
 		{
 			noteMutedUsers(floater, ids);
 		}
-		//LLFloaterChatterBox::getInstance(LLSD())->showFloater(floater);
+		LLFloaterChatterBox::getInstance(LLSD())->showFloater(floater);
 	}
 	else
 	{
 		floater->open();
 	}
 	//mTabContainer->selectTabPanel(panel);
-	floater->setInputFocus(TRUE);
+	//floater->setInputFocus(TRUE);
 	return floater->getSessionID();
 }
 
@@ -887,7 +887,7 @@ LLUUID LLIMMgr::addSession(
 		floater->open();
 	}
 	//mTabContainer->selectTabPanel(panel);
-	floater->setInputFocus(TRUE);
+	//floater->setInputFocus(TRUE);
 	return floater->getSessionID();
 }
 
