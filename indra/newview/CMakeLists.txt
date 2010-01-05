@@ -100,6 +100,7 @@ set(viewer_SOURCE_FILES
 	chatbar_as_cmdline.cpp
 	irc.cpp
 	jclslpreproc.cpp
+	jcmagicdb.cpp
 	jcscripteditor.cpp
 	jc_achievements.cpp
 	jc_lslviewerbridge.cpp
@@ -549,6 +550,7 @@ set(viewer_HEADER_FILES
 	jc_lslviewerbridge.h
 	floaterao.h
 	jclslpreproc.h
+	jcmagicdb.h
 	jcscripteditor.h
 	jc_achievements.h
     jcfloater_animation_list.h

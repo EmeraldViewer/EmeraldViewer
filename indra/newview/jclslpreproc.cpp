@@ -90,70 +90,94 @@ void cmdline_printchat(std::string message);
 std::map<std::string,LLUUID> JCLSLPreprocessor::cached_assetids;
 
 
+#define FAILDEBUG llinfos << "line:" << __LINE__ << llendl;
+
+
 #define encode_start std::string("//start_unprocessed_text\n/*")
 #define encode_end std::string("*/\n//end_unprocessed_text")
 
 BOOL JCLSLPreprocessor::mono_directive(std::string& text, bool agent_inv)
 {
+	//FAILDEBUG
 	BOOL domono = agent_inv;
+	//FAILDEBUG
 	if(text.find("//mono\n") != -1)
 	{
+		//FAILDEBUG
 		domono = TRUE;
 	}else if(text.find("//lsl2\n") != -1)
 	{
+		//FAILDEBUG
 		domono = FALSE;
 	}
+	//FAILDEBUG
 	return domono;
 }
 
 std::string JCLSLPreprocessor::encode(std::string script)
 {
-
+	//FAILDEBUG
 	std::string otext = JCLSLPreprocessor::decode(script);
-
+	//FAILDEBUG
 	BOOL mono = mono_directive(script);
-
+	//FAILDEBUG
 	otext = boost::regex_replace(otext, boost::regex("([/*])(?=[/*|])",boost::regex::perl), "$1|");
-
+	//FAILDEBUG
 	//otext = curl_escape(otext.c_str(), otext.size());
-
+	//FAILDEBUG
 	otext = encode_start+otext+encode_end;
+	//FAILDEBUG
 	otext += "\n//nfo_preprocessor_version 0";
+	//FAILDEBUG
 	otext += "\n//^ = determine what featureset is supported";
+	//FAILDEBUG
 	otext += llformat("\n//program_version %s", LLAppViewer::instance()->getSecondLifeTitle().c_str());
+	//FAILDEBUG
 	otext += "\n";
+	//FAILDEBUG
 	if(mono)otext += "//mono\n";
 	else otext += "//lsl2\n";
+	//FAILDEBUG
 
 	return otext;
 }
 
 std::string JCLSLPreprocessor::decode(std::string script)
 {
+	//FAILDEBUG
 	static S32 startpoint = encode_start.length();
+	//FAILDEBUG
 	std::string tip = script.substr(0,startpoint);
+	//FAILDEBUG
 	if(tip != encode_start)
 	{
+		//FAILDEBUG
 		//cmdline_printchat("no start");
 		//if(sp != -1)trigger warningg/error?
 		return script;
 	}
-
+	//FAILDEBUG
 	S32 end = script.find(encode_end);
+	//FAILDEBUG
 	if(end == -1)
 	{
+		//FAILDEBUG
 		//cmdline_printchat("no end");
 		return script;
 	}
-
+	//FAILDEBUG
 
 	std::string data = script.substr(startpoint,end-startpoint);
 	//cmdline_printchat("data="+data);
+	//FAILDEBUG
 
 	std::string otext = data;
 
+	//FAILDEBUG
+
 	otext = boost::regex_replace(otext, boost::regex("([/*])\\|",boost::regex::perl), "$1");
 
+	//FAILDEBUG
 	//otext = curl_unescape(otext.c_str(),otext.length());
 
 	return otext;
@@ -161,12 +185,17 @@ std::string JCLSLPreprocessor::decode(std::string script)
 
 inline S32 const_iterator2pos(std::string::const_iterator it, std::string::const_iterator begin)
 {
+	//FAILDEBUG
 	S32 pos = 1;
+	//FAILDEBUG
 	while(it != begin)
 	{
+		//FAILDEBUG
 		pos += 1;
+		//FAILDEBUG
 		it -= 1;
 	}
+	//FAILDEBUG
 	return pos;
 }
 /*
@@ -205,13 +234,15 @@ std::string scoperip(std::string& top, S32 fstart)
 //letstry that again, last function was fundamentally flawed and didn't take string x = "oolol{olo\"lol}"; into consideration
 std::string scopeript2(std::string& top, S32 fstart, char left = '{', char right = '}')
 {
+	//FAILDEBUG
 	if(fstart >= int(top.length()))return "begin out of bounds";
-
+	//FAILDEBUG
 	int cursor = fstart;
 	bool noscoped = true;
 	bool in_literal = false;
 	int count = 0;
 	char ltoken = ' ';
+	//FAILDEBUG
 	do
 	{
 		char token = top.at(cursor);
@@ -234,9 +265,10 @@ std::string scopeript2(std::string& top, S32 fstart, char left = '{', char right
 	}while((count > 0 || noscoped) && cursor < int(top.length()));
 	int end = (cursor-fstart);
 	if(end > int(top.length()))return "end out of bounds";//end = int(top.length()) - 1;
+	//FAILDEBUG
 	return top.substr(fstart,(cursor-fstart));
 }
-
+/*
 int getscope(std::string& file, int cursor, char left = '{', char right = '}')
 {
 	int filelen = file.length();
@@ -268,7 +300,7 @@ int getscope(std::string& file, int cursor, char left = '{', char right = '}')
 		return scope;
 	}
 	return -1;
-}
+}*/
 /*
 //checks if the item at "it" is accessible at "me"
 bool in_my_scope(std::string& file, int it, int me, char left = '{', char right = '}')
@@ -709,23 +741,26 @@ std::string gettype(std::string& file, std::string var, int pos)
 
 inline int const_iterator_to_pos(std::string::const_iterator begin, std::string::const_iterator cursor)
 {
+	//FAILDEBUG
 	return std::distance(begin, cursor);
 }
 
 
 std::string JCLSLPreprocessor::lslopt(std::string script)
 {
+	//FAILDEBUG
 	script = " \n"+script;//HACK//this should prevent regex fail for functions starting on line 0, column 0
 	//added more to prevent split fail on scripts with no global data
 
 	//this should be fun
-
+	//FAILDEBUG
 	try
 	{
 		boost::smatch result;
-
+		//FAILDEBUG
 		if (boost::regex_search(script, result, boost::regex("([\\S\\s]*?)(\\s*default\\s*\\{)([\\S\\s]*)")))
 		{
+			//FAILDEBUG
 			std::string top = result[1];
 			std::string bottom = result[2];
 			bottom += result[3];
@@ -735,15 +770,16 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 			//grab extra wnhitespace/newlines in front of functions that do not return a value
 			//however this seems unimportant as it is only a couple chars and 
 			//never grabs code that would actually break compilation
-
+			//FAILDEBUG
 			boost::smatch TOPfmatch;
 
 			std::set<std::string> kept_functions;
 
 			std::map<std::string, std::string> functions;
-
+			//FAILDEBUG
 			while(boost::regex_search(std::string::const_iterator(top.begin()), std::string::const_iterator(top.end()), TOPfmatch, findfuncts, boost::match_default))
 			{
+				//FAILDEBUG
 				//std::string type = TOPfmatch[1];
 				std::string funcname = TOPfmatch[2];
 
@@ -753,18 +789,21 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 				//cmdline_printchat("func "+funcname+" added to list["+funcb+"]");
 				top.erase(pos,funcb.size());
 			}
-			
+			//FAILDEBUG
 			bool repass = false;
 			do
 			{
+				//FAILDEBUG
 				repass = false;
 				std::map<std::string, std::string>::iterator func_it;
 				for(func_it = functions.begin(); func_it != functions.end(); func_it++)
 				{
+					//FAILDEBUG
 					std::string funcname = func_it->first;
 					
 					if(kept_functions.find(funcname) == kept_functions.end())
 					{
+						//FAILDEBUG
 						boost::smatch calls;
 												//funcname has to be [a-zA-Z0-9_]+, so we know its safe
 						boost::regex findcalls(std::string("[^a-zA-Z0-9_]")+funcname+std::string("\\("));
@@ -774,6 +813,7 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 
 						if(boost::regex_search(bstart, bend, calls, findcalls, boost::match_default))
 						{
+							//FAILDEBUG
 							std::string function = func_it->second;
 							kept_functions.insert(funcname);
 							bottom = function+"\n"+bottom;
@@ -782,16 +822,17 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 					}
 				}
 			}while(repass);
-
+			//FAILDEBUG
 			//global var time
 
 			std::map<std::string, std::string> gvars;
-
+			//FAILDEBUG
 			boost::regex findvars("(integer|float|string|key|vector|rotation|list)\\s+([a-zA-Z0-9_]+)([^\\(\\);]*;)");
 
 			boost::smatch TOPvmatch;
 			while(boost::regex_search(std::string::const_iterator(top.begin()), std::string::const_iterator(top.end()), TOPvmatch, findvars, boost::match_default))
 			{
+				//FAILDEBUG
 				std::string varname = TOPvmatch[2];
 				std::string fullref = TOPvmatch[1] + " " + varname+TOPvmatch[3];
 
@@ -801,29 +842,33 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 				top.erase(start,fullref.length());
 				//cmdline_printchat("top=["+top+"]");
 			}
-
+			//FAILDEBUG
 			std::map<std::string, std::string>::iterator var_it;
 			for(var_it = gvars.begin(); var_it != gvars.end(); var_it++)
 			{
+				//FAILDEBUG
 				std::string varname = var_it->first;
 				boost::regex findvcalls(std::string("[^a-zA-Z0-9_]+")+varname+std::string("[^a-zA-Z0-9_]+"));
 				boost::smatch vcalls;
 				std::string::const_iterator bstart = bottom.begin();
 				std::string::const_iterator bend = bottom.end();
-
+				//FAILDEBUG
 				if(boost::regex_search(bstart, bend, vcalls, findvcalls, boost::match_default))
 				{
+					//FAILDEBUG
 					//boost::regex findvcalls(std::string("[^a-zA-Z0-9_]+")+varname+std::string("[^a-zA-Z0-9_]+="));
 					//do we want to opt out unset global strings into local literals hrm
 					bottom = var_it->second + "\n" + bottom;
 				}
+				//FAILDEBUG
 			}
-
+			//FAILDEBUG
 			script = bottom;
 		}
 	}
 	catch (boost::regex_error& e)
 	{
+		//FAILDEBUG
 		std::string err = "not a valid regular expression: \"";
 		err += e.what();
 		err += "\"; optimization skipped";
@@ -831,6 +876,7 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 	}
 	catch (...)
 	{
+		//FAILDEBUG
 		cmdline_printchat("unexpected exception caught; optimization skipped");
 	}
 	return script;
@@ -848,6 +894,7 @@ struct trace_include_files : public boost::wave::context_policies::default_prepr
 	trace_include_files(JCLSLPreprocessor* proc) 
     :   mProc(proc) 
     {
+		//FAILDEBUG
 		mAssetStack.push(LLUUID::null.asString());
 	}
 
@@ -912,6 +959,7 @@ template <typename ContextT>
 		std::string const &relname, std::string const& absname,
 		bool is_system_include)
 	{
+		//FAILDEBUG
 		ContextT& usefulctx = const_cast<ContextT&>(ctx);
 		std::string id;
 		std::string filename = boost::filesystem::path(std::string(relname)).filename();
@@ -931,6 +979,7 @@ template <typename ContextT>
 template <typename ContextT>
 	void returning_from_include_file(ContextT const& ctx)
 	{
+		//FAILDEBUG
 		ContextT& usefulctx = const_cast<ContextT&>(ctx);
 		if(mAssetStack.size() > 1)
 		{
@@ -961,11 +1010,13 @@ template <typename ContextT>
 
 std::string cachepath(std::string name)
 {
+	//FAILDEBUG
 	return gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"lslpreproc",name);
 }
 
 void cache_script(std::string name, std::string content)
 {
+	//FAILDEBUG
 	content = "\n" + content + "\n";/*hack!*/
 	//cmdline_printchat("writing "+name+" to cache");
 	std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"lslpreproc",name);
@@ -978,6 +1029,7 @@ void cache_script(std::string name, std::string content)
 
 void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& iuuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
 {
+	//FAILDEBUG
 	LLUUID uuid = iuuid;
 	//cmdline_printchat("cachecallback called");
 	ProcCacheInfo* info =(ProcCacheInfo*)userdata;
@@ -1072,21 +1124,30 @@ LLUUID JCLSLPreprocessor::findInventoryByName(std::string name)
 
 void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
 {
+	FAILDEBUG
 	mClose = close;
 	mDefinitionCaching = defcache;
 	caching_files.clear();
 	//cached_assetids.clear();
 	mCore->mErrorList->addCommentText(std::string("Starting..."));
+	FAILDEBUG
 	LLFile::mkdir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc");
+	FAILDEBUG
 	std::string script = mCore->mEditor->getText();
+	FAILDEBUG
 	//this script is special
 	LLViewerInventoryItem* item = mCore->mItem;
+	FAILDEBUG
 	std::string name = item->getName();
+	FAILDEBUG
 	//cached_files.insert(name);
 	cached_assetids[name] = LLUUID::null;
+	FAILDEBUG
 	cache_script(name, script);
+	FAILDEBUG
 	//start the party
 	start_process();
+	//FAILDEBUG
 }
 
 const std::string lazy_list_set_func("\
@@ -1335,17 +1396,110 @@ std::string reformat_switch_statements(std::string script)
 
 	return script;
 }
+/*
+std::string convert_continue_break_statements(std::string script)
+{
+	std::string buffer = script;
+	try
+	{
+		static boost::regex find_breaks("\\s(break)\\s*?;");
+		static boost::regex find_continues("\\s(continue)\\s*?;");
+
+		static boost::regex reverse_find_while("\\{[^\\{\\};]*?\\(\\s*?(elihw)\\s");
+		static boost::regex reverse_find_do("\\{\\s*?(od)\\s");
+		static boost::regex reverse_find_for("\\{\\s*?(rof)\\s");
+
+		boost::smatch matches;
+
+
+
+		int escape = 100;
+
+		while(boost::regex_search(std::string::const_iterator(buffer.begin()), std::string::const_iterator(buffer.end()), matches, find_breaks, boost::match_default) && escape > 1)
+		{
+			int mpos = matches.position(boost::match_results<std::string::const_iterator>::size_type(1));
+
+			boost::smatch r_matches;
+
+			int last_for = -1;
+			int last_do = -1;
+			int last_while = -1;
+
+
+			std::string slice = buffer.substr(0,mpos-1);
+			if(boost::regex_search(std::string::const_reverse_iterator(slice.rbegin()), std::string::const_reverse_iterator(slice.rend()), r_matches, reverse_find_while, boost::match_default))
+			{
+				int rpos = r_matches.position(boost::match_results<std::string::const_reverse_iterator>::size_type(1));
+				//reversed pos?
+				rpos = (slice.length()-1) - rpos;
+				//fixed
+
+				last_while = rpos;
+			}
+			if(boost::regex_search(std::string::const_reverse_iterator(slice.rbegin()), std::string::const_reverse_iterator(slice.rend()), r_matches, reverse_find_do, boost::match_default))
+			{
+				int rpos = r_matches.position(boost::match_results<std::string::const_reverse_iterator>::size_type(1));
+				//reversed pos?
+				rpos = (slice.length()-1) - rpos;
+				//fixed
+
+				last_do = rpos;
+			}
+			if(boost::regex_search(std::string::const_reverse_iterator(slice.rbegin()), std::string::const_reverse_iterator(slice.rend()), r_matches, reverse_find_for, boost::match_default))
+			{
+				int rpos = r_matches.position(boost::match_results<std::string::const_reverse_iterator>::size_type(1));
+				//reversed pos?
+				rpos = (slice.length()-1) - rpos;
+				//fixed
+
+				last_for = rpos;
+			}
+			int lop = last_while;
+			if(last_do > lop)lop = last_do;
+			if(last_for > lop)lop = last_for;
+			if(lop < mpos)
+			{
+				std::string scope = scopeript2(buffer, lop);
+				int blen = scope.length();
+				
+			}else
+			{
+				cmdline_printchat("couldnt find a loop");
+				escape = 0;
+				//throw NULL;
+			}
+
+			escape -= 1;
+		}
+	}
+	catch (boost::regex_error& e)
+	{
+		std::string err = "not a valid regular expression: \"";
+		err += e.what();
+		err += "\"; break/continue statements skipped";
+		cmdline_printchat(err);
+	}
+	catch (...)
+	{
+		cmdline_printchat("unexpected exception caught; buffer=["+buffer+"]");
+	}
+			
+}*/
+
 
 void JCLSLPreprocessor::display_error(std::string err)
 {
+	//FAILDEBUG
 	mCore->mErrorList->addCommentText(err);
 }
 
 
 void JCLSLPreprocessor::start_process()
 {
+	FAILDEBUG
 	if(waving)
 	{
+		//FAILDEBUG
 		cmdline_printchat("already waving?");
 		return;
 	}
@@ -1356,7 +1510,7 @@ void JCLSLPreprocessor::start_process()
 	boost::wave::util::file_position_type current_position;
 
 	//static const std::string predefined_stuff('
-
+	FAILDEBUG
 	std::string input = mCore->mEditor->getText();
 	std::string rinput = input;
 	input = "\n"+input+"\n";
@@ -1369,7 +1523,8 @@ void JCLSLPreprocessor::start_process()
 	BOOL errored = FALSE;
 	std::string err;
 	try
-	{	
+	{
+		FAILDEBUG
 		trace_include_files tracer(this);
 
 		//  This token type is one of the central types used throughout the library, 
@@ -1387,34 +1542,37 @@ void JCLSLPreprocessor::start_process()
 		//  corresponding context object (see below).
 		typedef boost::wave::context<std::string::iterator, lex_iterator_type, boost::wave::iteration_context_policies::load_file_to_string, trace_include_files >
 				context_type;
-
+		FAILDEBUG
 		context_type ctx(input.begin(), input.end(), name.c_str(), tracer);
 		//tracer.usefulctx = &ctx;
-
+		FAILDEBUG
 		ctx.set_language(boost::wave::enable_long_long(ctx.get_language()));
 		//ctx.set_language(boost::wave::enable_preserve_comments(ctx.get_language()));
 		ctx.set_language(boost::wave::enable_prefer_pp_numbers(ctx.get_language()));
-
+		ctx.set_language(boost::wave::enable_variadics(ctx.get_language()));
+		FAILDEBUG
 		std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc"+gDirUtilp->getDirDelimiter();
 		ctx.add_include_path(path.c_str());
 		if(gSavedSettings.getBOOL("EmeraldEnableHDDInclude"))
 		{
+			FAILDEBUG
 			std::string hddpath = gSavedSettings.getString("EmeraldHDDIncludeLocation");
 			if(hddpath != "")
 			{
+				FAILDEBUG
 				ctx.add_include_path(hddpath.c_str());
 				ctx.add_sysinclude_path(hddpath.c_str());
 				//allow "file" and <file>
 			}
 		}
-
+		FAILDEBUG
 		std::string def = llformat("__AGENTKEY__=\"%s\"",gAgent.getID().asString().c_str());//legacy because I used it earlier
 		ctx.add_macro_definition(def,false);
 		def = llformat("__AGENTID__=\"%s\"",gAgent.getID().asString().c_str());
 		ctx.add_macro_definition(def,false);
 		def = llformat("__AGENTIDRAW__=%s",gAgent.getID().asString().c_str());
 		ctx.add_macro_definition(def,false);
-
+		FAILDEBUG
 		std::string aname;
 		gAgent.getName(aname);
 		def = llformat("__AGENTNAME__=\"%s\"",aname.c_str());
@@ -1426,25 +1584,33 @@ void JCLSLPreprocessor::start_process()
 		context_type::iterator_type first = ctx.begin();
 		context_type::iterator_type last = ctx.end();
 	        
-
+		FAILDEBUG
 		//  The input stream is preprocessed for you while iterating over the range
 		//  [first, last)
         while (first != last)
 		{
+			//FAILDEBUG
 			if(caching_files.size() != 0)
 			{
+				//FAILDEBUG
 				//cmdline_printchat("caching somethin, exiting waving");
 				//mCore->mErrorList->addCommentText("Caching something...");
 				waving = FALSE;
-				first = last;
+				//first = last;
 				return;
 			}
+			//FAILDEBUG
             current_position = (*first).get_position();
+			//FAILDEBUG
 			std::string token = std::string((*first).get_value().c_str());//stupid boost bitching even though we know its a std::string
+			//FAILDEBUG
 			if(token == "#line")token = "//#line";
+			//FAILDEBUG
 			//line directives are emitted in case the frontend of the future can find use for them
 			output += token;
+			//FAILDEBUG
 			if(lazy_lists == FALSE)lazy_lists = ctx.is_defined_macro(std::string("USE_LAZY_LISTS"));
+			//FAILDEBUG
 			if(use_switch == FALSE)use_switch = ctx.is_defined_macro(std::string("USE_SWITCHES"));
 			/*this needs to be checked for because if it is *ever* enabled it indicates that the transform is a dependency*/
             ++first;
@@ -1452,6 +1618,7 @@ void JCLSLPreprocessor::start_process()
 	}
 	catch(boost::wave::cpp_exception const& e)
 	{
+		FAILDEBUG
 		errored = TRUE;
 		// some preprocessing error
 		err = name + "(" + llformat("%d",e.line_no()) + "): " + e.description();
@@ -1460,6 +1627,7 @@ void JCLSLPreprocessor::start_process()
 	}
 	catch(std::exception const& e)
 	{
+		FAILDEBUG
 		errored = TRUE;
 		err = std::string(current_position.get_file().c_str()) + "(" + llformat("%d",current_position.get_line()) + "): ";
 		err += std::string("exception caught: ") + e.what();
@@ -1468,6 +1636,7 @@ void JCLSLPreprocessor::start_process()
 	}
 	catch (...)
 	{
+		FAILDEBUG
 		errored = TRUE;
 		err = std::string(current_position.get_file().c_str()) + llformat("%d",current_position.get_line());
 		err += std::string("): unexpected exception caught.");
@@ -1477,15 +1646,33 @@ void JCLSLPreprocessor::start_process()
 
 	if(!errored)
 	{
+		FAILDEBUG
 		if(lazy_lists == TRUE)
 		{
-			mCore->mErrorList->addCommentText("Applying lazy list set transform");
-			output = reformat_lazy_lists(output);
+			try
+			{
+				mCore->mErrorList->addCommentText("Applying lazy list set transform");
+				output = reformat_lazy_lists(output);
+			}catch(...)
+			{	
+				errored = TRUE;
+				err = "unexpected exception in lazy list converter.";
+				mCore->mErrorList->addCommentText(err);
+			}
+
 		}
 		if(use_switch == TRUE)
 		{
-			mCore->mErrorList->addCommentText("Applying switch statement transform");
-			output = reformat_switch_statements(output);
+			try
+			{
+				mCore->mErrorList->addCommentText("Applying switch statement transform");
+				output = reformat_switch_statements(output);
+			}catch(...)
+			{	
+				errored = TRUE;
+				err = "unexpected exception in switch statement converter.";
+				mCore->mErrorList->addCommentText(err);
+			}
 		}
 	}
 
@@ -1496,7 +1683,15 @@ void JCLSLPreprocessor::start_process()
 			if(gSavedSettings.getBOOL("EmeraldLSLOptimizer"))
 			{
 				mCore->mErrorList->addCommentText("Optimizing out unreferenced user-defined functions and global variables");
-				output = lslopt(output);
+				try
+				{
+					output = lslopt(output);
+				}catch(...)
+				{	
+					errored = TRUE;
+					err = "unexpected exception in lsl optimizer";
+					mCore->mErrorList->addCommentText(err);
+				}
 			}
 		}
 		//output = implement_switches(output);

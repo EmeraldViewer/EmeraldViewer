@@ -39,7 +39,9 @@
 #if LL_WINDOWS
 #include <windows.h>
 #pragma warning (disable : 4005)
-#define LoadLibrary LoadLibraryA
+#define LOADLIB LoadLibraryA
+#else
+#define LOADLIB LoadLibrary
 #endif
 
 #if LL_WINDOWS
