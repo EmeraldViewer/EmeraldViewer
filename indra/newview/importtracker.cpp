@@ -201,8 +201,29 @@ void ImportTracker::get_update(S32 newid, BOOL justCreated, BOOL createSelected)
 				msg->addBOOL("IsTemporary", gSavedSettings.getBOOL("EmeraldBuildPrefs_Temporary"));
 				msg->addBOOL("IsPhantom", gSavedSettings.getBOOL("EmeraldBuildPrefs_Phantom") );
 				msg->addBOOL("CastsShadows", true );
-				msg->sendReliable(gAgent.getRegion()->getHost());				
+				msg->sendReliable(gAgent.getRegion()->getHost());
 
+				if(gSavedSettings.getBOOL("EmeraldBuildPrefs_EmbedItem"))
+				{
+					LLViewerInventoryItem* item = (LLViewerInventoryItem*)gInventory.getItem((LLUUID)gSavedSettings.getString("EmeraldBuildPrefs_Item"));
+					LLViewerObject* objectp = find((U32)newid);
+					if(objectp)
+						if(item)
+						{
+							if(item->getType()==LLAssetType::AT_LSL_TEXT)
+							{
+								LLToolDragAndDrop::dropScript(objectp,
+									item,
+									TRUE,
+									LLToolDragAndDrop::SOURCE_AGENT,
+									gAgent.getID());
+							}else
+							{
+								LLToolDragAndDrop::dropInventory(objectp,item,LLToolDragAndDrop::SOURCE_AGENT,gAgent.getID());
+							}
+						}
+				}
+				
 				//llinfos << "LGG SENDING CUBE TEXTURE.." << llendl;
 			}
 		break;

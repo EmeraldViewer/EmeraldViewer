@@ -158,6 +158,7 @@ BOOL JCInvDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 LLPanelEmerald* LLPanelEmerald::sInstance;
 
 JCInvDropTarget * LLPanelEmerald::mObjectDropTarget;
+JCInvDropTarget * LLPanelEmerald::mBuildObjectDropTarget;
 
 LLPanelEmerald::LLPanelEmerald()
 {
@@ -170,7 +171,9 @@ LLPanelEmerald::~LLPanelEmerald()
 {
 	sInstance = NULL;
 	delete mObjectDropTarget;
+	delete mBuildObjectDropTarget;
 	mObjectDropTarget = NULL;
+	mBuildObjectDropTarget = NULL;
 }
 
 void LLPanelEmerald::initHelpBtn(const std::string& name, const std::string& xml_alert)
@@ -286,6 +289,13 @@ BOOL LLPanelEmerald::postBuild()
 		mObjectDropTarget = new JCInvDropTarget("drop target", target_view->getRect(), IMAutoResponseItemDrop);//, mAvatarID);
 		addChild(mObjectDropTarget);
 	}
+	target_view = getChild<LLView>("build_item_add_disp_rect");
+	if(target_view)
+	{
+		if (mBuildObjectDropTarget) delete mBuildObjectDropTarget;
+		mBuildObjectDropTarget = new JCInvDropTarget("build drop target", target_view->getRect(),BuildAutoResponseItemDrop);
+		addChild(mBuildObjectDropTarget);
+	}
 
 	if(LLStartUp::getStartupState() == STATE_STARTED)
 	{
@@ -301,9 +311,22 @@ BOOL LLPanelEmerald::postBuild()
 		{
 			childSetValue("im_give_disp_rect_txt","Currently set to a item not on this account");
 		}
+		itemid = (LLUUID)gSavedSettings.getString("EmeraldBuildPrefs_Item");
+		item = gInventory.getItem(itemid);
+		if(item)
+		{
+			childSetValue("build_item_add_disp_rect_txt","Currently set to: "+item->getName());
+		}else if(itemid.isNull())
+		{
+			childSetValue("build_item_add_disp_rect_txt","Currently not set");
+		}else
+		{
+			childSetValue("build_item_add_disp_rect_txt","Currently set to a item not on this account");
+		}
 	}else
 	{
 		childSetValue("im_give_disp_rect_txt","Not logged in");
+		childSetValue("build_item_add_disp_rect_txt","Not logged in");
 	}
 
 	LLWString auto_response = utf8str_to_wstring( gSavedPerAccountSettings.getString("EmeraldInstantMessageResponse") );
@@ -412,6 +435,11 @@ void LLPanelEmerald::IMAutoResponseItemDrop(LLViewerInventoryItem* item)
 {
 	gSavedPerAccountSettings.setString("EmeraldInstantMessageResponseItemData", item->getUUID().asString());
 	sInstance->childSetValue("im_give_disp_rect_txt","Currently set to: "+item->getName());
+}
+void LLPanelEmerald::BuildAutoResponseItemDrop(LLViewerInventoryItem* item)
+{
+	gSavedSettings.setString("EmeraldBuildPrefs_Item", item->getUUID().asString());
+	sInstance->childSetValue("build_item_add_disp_rect_txt","Currently set to: "+item->getName());
 }
 
 void LLPanelEmerald::apply()

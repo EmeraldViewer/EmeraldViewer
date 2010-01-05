@@ -638,9 +638,9 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					<combo_item name="Medium" value="Medium">          Medium</combo_item>
 					<combo_item name="High" value="High">          High</combo_item>
 				</combo_box>
-				<check_box bottom_delta="-30" enabled="false" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom_delta="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Embed an item into the newly created object" left="20"
-					 mouse_opaque="true" name="EmeraldBuildPrefs_EmbedItem" radio_style="false" width="270"/>
+					 mouse_opaque="true" control_name="EmeraldBuildPrefs_EmbedItem" radio_style="false" width="270"/>
 				<view_border blevel_style="in" bottom_delta="-20" follows="left|top" height="16" left_delta="0"
 					 mouse_opaque="false" name="im_give_drop_target_rect" width="400"/>
 				<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false" bottom_delta="0"
@@ -648,10 +648,10 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 height="16" left_delta="0" mouse_opaque="true" name="Give inventory" tool_tip="Drop an inventory item here."
 					 v_pad="2" width="400">        Drop an inventory item here to have it added to the prim contents.</text>
 				<view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="0"
-					 mouse_opaque="false" name="im_give_disp_rect" width="400"/>
+					 mouse_opaque="false" name="build_item_add_disp_rect" width="400"/>
 				<text bg_visible="false" border_drop_shadow_visible="false" border_visible="false" bottom_delta="0"
 					 drop_shadow_visible="true" follows="left|top" font="SansSerifSmall" h_pad="0" halign="center"
-					 height="16" left_delta="0" mouse_opaque="true" name="im_give_disp_rect_txt" tool_tip=""
+					 height="16" left_delta="0" mouse_opaque="true" name="build_item_add_disp_rect_txt" tool_tip=""
 					 v_pad="2" width="400">        Currently set to: ITEM</text>
 				<view_border bevel_style="none" border_thickness="1" bottom_delta="-110" follows="top|left" height="85"
 					 left="5" name="PivotBorder" width="130"/>

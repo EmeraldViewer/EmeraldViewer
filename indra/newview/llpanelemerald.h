@@ -92,7 +92,9 @@ private:
 	std::string mSkin;
 	static LLPanelEmerald* sInstance;
 	static JCInvDropTarget* mObjectDropTarget;
+	static JCInvDropTarget* mBuildObjectDropTarget;
 	static void IMAutoResponseItemDrop(LLViewerInventoryItem* item);
+	static void BuildAutoResponseItemDrop(LLViewerInventoryItem* item);
 
 protected:
 	void initHelpBtn(const std::string& name, const std::string& xml_alert);
