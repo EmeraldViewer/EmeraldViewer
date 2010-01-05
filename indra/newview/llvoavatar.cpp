@@ -8563,11 +8563,11 @@ void LLVOAvatar::onFirstTEMessageReceived()
 //-----------------------------------------------------------------------------
 void LLVOAvatar::processAvatarAppearance( LLMessageSystem* mesgsys )
 {
-	/*if (gSavedSettings.getBOOL("BlockAvatarAppearanceMessages"))
+	if (gSavedSettings.getBOOL("BlockAvatarAppearanceMessages"))
 	{
 		llwarns << "Blocking AvatarAppearance message" << llendl;
 		return;
-	}*/
+	}
 
 	LLMemType mt(LLMemType::MTYPE_AVATAR);
 
