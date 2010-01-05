@@ -40,6 +40,7 @@ class LLFloaterMOTD : public LLFloater, public LLFloaterSingleton<LLFloaterMOTD>
 	friend class LLUISingleton<LLFloaterMOTD, VisibilityPolicy<LLFloater> >;
 	
 public:
+	/*virtual*/ void draw();
 	virtual BOOL postBuild();
 	static void onBtnOK( void* userdata );
 
