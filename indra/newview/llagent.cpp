@@ -6202,12 +6202,6 @@ bool LLAgent::teleportCore(bool is_local)
 		//return false; //This seems to fix getting stuck in TPs in the first place. --Liny
 	}
 
-	if(!getPhantom())
-	{
-		llwarns << "Attempt to teleport when phantom." << llendl;
-		return false;
-	}
-
 #if 0
 	// This should not exist. It has been added, removed, added, and now removed again.
 	// This change needs to come from the simulator. Otherwise, the agent ends up out of
