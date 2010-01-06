@@ -67,8 +67,6 @@ Ok, here is how this is suposed to work.
 #include "llfloater.h"
 #include "llversionviewer.h"
 #include "lltimer.h"
-#include "llagent.h"
-#include "llvoavatar.h"
 
 
 //static
@@ -755,8 +753,7 @@ void lggIrcThread::run()
 		atoi(mData.port.c_str()),
 		(char*)mData.nick.c_str(),
 		(char*)mData.nick.c_str(),
-		//(char*)mData.nick.c_str(),
-		(char*)gAgent.getAvatarObject()->getFullname().c_str(),
+		(char*)mData.nick.c_str(),
 		(char*)mData.serverPassword.c_str()))
 	{
 		msg("Fawk, couldnt connect, some error bzns");
