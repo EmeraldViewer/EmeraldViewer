@@ -507,12 +507,12 @@ void lggHunSpell_Wrapper::addWordToCustomDictionary(std::string wordToAdd)
 	if(!myHunspell)return;
 	myHunspell->add(wordToAdd.c_str());
 	std::string filename(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", "emerald_custom.dic"));
+	std::vector<std::string> lines;
 	if(gDirUtilp->fileExists(filename))
 	{
 		//get words already there..
 		llifstream importer(filename);
 		std::string line;
-		std::vector<std::string> lines;
 		getline( importer, line );//ignored the size
 		while( getline( importer, line ) ) lines.push_back(line);
 		importer.close();
