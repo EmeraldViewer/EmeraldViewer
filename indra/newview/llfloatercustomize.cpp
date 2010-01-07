@@ -1971,8 +1971,16 @@ LLFloaterCustomize::~LLFloaterCustomize()
 	delete mInventoryObserver;
 }
 
+/* Original pre-Z fix
 void LLFloaterCustomize::switchToDefaultSubpart()
 {
+	getCurrentWearablePanel()->switchToDefaultSubpart();
+}
+*/
+void LLFloaterCustomize::switchToDefaultSubpart()
+{
+	if(sCurrentWearableType == WT_INVALID)
+		setCurrentWearableType(WT_SHAPE);
 	getCurrentWearablePanel()->switchToDefaultSubpart();
 }
 

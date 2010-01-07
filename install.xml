@@ -181,9 +181,9 @@
 					<key>linux</key>
 					<map>
 						<key>md5sum</key>
-						<string>15149b8140d06f9bd1b8672b958c6915</string>
+						<string>b45ceb8a71c02f8bfb84b2ec1ffcc34e</string>
 						<key>url</key>
-						<uri>http://lawlinter.net/data/boost-1.36.0-linux-20091128.tar.bz2</uri>
+						<uri>http://lawlinter.net/data/boost-1.38.0-linux-20100107.tar.bz2</uri>
 					</map>
 					<key>linux64</key>
 					<map>
