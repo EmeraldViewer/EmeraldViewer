@@ -383,7 +383,7 @@ void LLViewerPartSourceScript::update(const F32 dt)
 				//llwarns << "Unknown source pattern " << (S32)mPartSysData.mPattern << llendl;
 			}
 
-			if (part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK) 
+			if ((part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK) && (mPartSysData.mBurstRadius != 0.0)) 
 			{
                 part->mApplyFollowSource = false;
 			}
