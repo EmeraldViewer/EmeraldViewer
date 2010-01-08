@@ -3040,12 +3040,12 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 	// TODO: Check if the source is an agent to decide whether to
 	// read the language value. Waiting on server fix for this.
 	// if (chat.mSourceType == CHAT_SOURCE_AGENT)
-	int languageSize = msg->getSize(_PREHASH_ChatData, _PREHASH_Language);
-	if (languageSize > 0)
-	{
-		msg->getString(_PREHASH_ChatData, _PREHASH_Language, language);
-		chat.mLanguage = language;
-	}
+	//int languageSize = msg->getSize(_PREHASH_ChatData, _PREHASH_Language);
+	//if (languageSize > 0)
+	//{
+	//	msg->getString(_PREHASH_ChatData, _PREHASH_Language, language);
+		chat.mLanguage = "";//language;
+	//}
 
 	BOOL is_busy = gAgent.getBusy();
 
