@@ -837,7 +837,7 @@ LLUUID LLIMMgr::addSession(
 		floater->open();
 	}
 	//mTabContainer->selectTabPanel(panel);
-	if(gSavedSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"))floater->setInputFocus(TRUE);
+	if(gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"))floater->setInputFocus(TRUE);
 	return floater->getSessionID();
 }
 
@@ -887,7 +887,7 @@ LLUUID LLIMMgr::addSession(
 		floater->open();
 	}
 	//mTabContainer->selectTabPanel(panel);
-	if(gSavedSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"))floater->setInputFocus(TRUE);
+	if(gSavedPerAccountSettings.getBOOL("EmeraldInstantMessageAnnounceStealFocus"))floater->setInputFocus(TRUE);
 	return floater->getSessionID();
 }
 
