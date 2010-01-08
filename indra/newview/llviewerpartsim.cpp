@@ -290,7 +290,7 @@ void LLViewerPartGroup::updateParticles(const F32 lastdt)
 		// "Drift" the object based on the source object
 		if (part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK)
 		{
-			if(part->mPartSourcep->getType() == LL_PART_SOURCE_SCRIPT)
+			if(part->mPartSourcep->getType() == LLViewerPartSource::LL_PART_SOURCE_SCRIPT)
 			{
 				LLViewerPartSourceScript* partsys = static_cast<LLViewerPartSourceScript*>(part->mPartSourcep.get());
 				if(partsys->mPartSysData.mBurstRadius != 0)
