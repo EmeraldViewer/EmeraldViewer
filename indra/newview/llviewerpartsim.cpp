@@ -287,17 +287,25 @@ void LLViewerPartGroup::updateParticles(const F32 lastdt)
 		const F32 cur_time = part->mLastUpdateTime + dt;
 		const F32 frac = cur_time / part->mMaxAge;
 
-        // Reset the offset from the source position
-		if (part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK)
-		{
-			part->mPosOffset = part->mPosAgent;
-			part->mPosOffset -= part->mPartSourcep->mPosAgent;
-		}
-        
 		// "Drift" the object based on the source object
 		if (part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK)
 		{
-			part->mPosAgent = part->mPartSourcep->mPosAgent;
+			if(part->mPartSourcep->mType == LL_PART_SOURCE_SCRIPT)
+			{
+				LLViewerPartSourceScript* partsys = static_cast<LLViewerPartSourceScript*>(part->mPartSourcep);
+				if(partsys->mPartSysData.mBurstRadius != 0)
+				{
+					part->mPosAgent = part->mPartSourcep->mPosAgent + part->mPosAgent;
+				}
+				else
+				{
+					part->mPosAgent = part->mPartSourcep->mPosAgent;
+				}
+			}
+			else
+			{
+				part->mPosAgent = part->mPartSourcep->mPosAgent;
+			}
 			part->mPosAgent += part->mPosOffset;
 		}
 
@@ -359,6 +367,14 @@ void LLViewerPartGroup::updateParticles(const F32 lastdt)
 				part->mPosAgent.mV[VZ] += -2.f*dz;
 				part->mVelocity.mV[VZ] *= -0.75f;
 			}
+		}
+
+
+		// Reset the offset from the source position
+		if (part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK)
+		{
+			part->mPosOffset = part->mPosAgent;
+			part->mPosOffset -= part->mPartSourcep->mPosAgent;
 		}
 
 		// Do color interpolation
