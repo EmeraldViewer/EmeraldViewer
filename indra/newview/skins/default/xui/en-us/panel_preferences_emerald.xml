@@ -248,7 +248,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 follows="left|top" font="SansSerifSmall" height="75" left_delta="0" max_length="225"
 					 mouse_opaque="true" name="im_response" width="230" word_wrap="true"/>
 				<check_box bottom_delta="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Send a item along with the response" left_delta="0"
+					 initial_value="false" label="Send an item along with the response" left_delta="0"
 					 mouse_opaque="true" name="EmeraldInstantMessageResponseItem" radio_style="false"
 					 width="270"/>
 				<view_border blevel_style="in" bottom_delta="-20" follows="left|top" height="16" left_delta="0"
@@ -363,13 +363,13 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 label="Show the Search Bar" left_delta="0" mouse_opaque="true" name="Search_bar-toggle"
 					 radio_style="false" width="270" control_name="ShowSearchBar"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 label="Always rez objects under the land group if possible." left_delta="0" mouse_opaque="true"
+					 label="Always rez objects under the land group if possible" left_delta="0" mouse_opaque="true"
 					 name="grouplandrez" radio_style="false" width="270" control_name="mm_alwaysRezWithLandGroup"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 label="Disables minimum camera zoom distance." left_delta="0" mouse_opaque="true"
+					 label="Disables minimum camera zoom distance" left_delta="0" mouse_opaque="true"
 					 name="EmMinZoomDist-toggle" radio_style="false" width="270" control_name="EmeraldDisableMinZoomDist"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 label="Allows the camera to move without constraints through prims. (Requires Restart)" left_delta="0" mouse_opaque="true"
+					 label="Allows the camera to move without constraints through prims (requires restart)" left_delta="0" mouse_opaque="true"
 					 name="EmIgnoreCamConstraints-toggle" radio_style="false" width="270" control_name="EmeraldIgnoreSimulatorCameraConstraints"/>
 				<check_box bottom_delta="-40" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Enable Restrained Life [RLVa] features" left_delta="0"
@@ -380,7 +380,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 initial_value="false" label="Enable LSL-Client Bridge" left_delta="0" mouse_opaque="true"
 					 name="EmeraldBuildBridge" radio_style="false" width="270" control_name="EmeraldBuildBridge"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Radar use bridge" left_delta="10" mouse_opaque="true"
+					 initial_value="false" label="Radar uses bridge" left_delta="10" mouse_opaque="true"
 					 name="EmeraldUseBridgeRadar" radio_style="false" width="270" control_name="EmeraldUseBridgeRadar"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="True online status in profiles" left_delta="0" mouse_opaque="true"
@@ -672,7 +672,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 label="Values are percent" left_delta="-5" mouse_opaque="true" tool_tip="Default settings are Percentages and every axis set at 50"
 					 name="EmPivotPercToggle" radio_style="false" width="100" control_name="EmeraldBuildPrefs_PivotIsPercent"/>
 				<check_box bottom_delta="60" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="true" label="Enable the highlighting of selected prims" left_delta="140"
+					 initial_value="true" label="Enable highlighting of selected prims" left_delta="140"
 					 mouse_opaque="true" name="EmBuildPrefsRenderHighlight_toggle" control_name="EmeraldRenderHighlightSelections"
 					 radio_style="false" width="270"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
@@ -933,7 +933,7 @@ the simulator for scripts to access.</text>
 					 label="Enable New Shiny rendering" left="5" mouse_opaque="true" name="EmeraldNewShiny"
 					 control_name="EmeraldNewShiny" width="126"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 label="Enable Shadow rendering" left="5" mouse_opaque="true" name="EmeraldShadowsON"
+					 label="Enable Shadow rendering (requires Ultra graphics setting)" left="5" mouse_opaque="true" name="EmeraldShadowsON"
 					 control_name="EmeraldShadowsON" width="126"/>
 				<!--
       <button bottom_delta="-40" follows="left|top" font="SansSerifSmall" height="20" label="Shadows ON" name="Emerald_ShadowsON" 
