@@ -289,7 +289,7 @@ public:
 	const LLTextSegment*	getPreviousSegment() const;
 	void getSelectedSegments(std::vector<const LLTextSegment*>& segments) const;
 
-	static bool		isPartOfWord(llwchar c) { return ( (c == '_') ||( c == '-') || (c == '\'') || LLStringOps::isAlnum((char)c)); }
+	static bool		isPartOfWord(llwchar c) { return ( (c == '_')  || (c == '\'') || LLStringOps::isAlnum((char)c)); }
 
 
 protected:
