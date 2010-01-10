@@ -121,6 +121,7 @@ set(viewer_SOURCE_FILES
 	lggbeammaps.cpp
 	floaterassetbrowser.cpp
 	lggircthread.cpp
+	linterface.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -570,6 +571,7 @@ set(viewer_HEADER_FILES
     lggircthread.h
     lggircdata.h
 	floaterassetbrowser.h
+	linterface.h
     llagent.h
     llagentaccess.h
     llagentdata.h
