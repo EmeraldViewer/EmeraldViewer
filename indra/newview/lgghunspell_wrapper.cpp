@@ -596,8 +596,11 @@ void lggHunSpell_Wrapper::addDictionary(std::string additionalDictionary)
 		gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries",
 		std::string(fullName2DictName(additionalDictionary)+".dic")
 		).c_str());
-	llinfos << "Adding additional dictionary -> " << dicpath.c_str() << llendl;
-	myHunspell->add_dic(dicpath.c_str());
+	if(gDirUtilp->fileExists(dicpath))
+	{
+		llinfos << "Adding additional dictionary -> " << dicpath.c_str() << llendl;
+		myHunspell->add_dic(dicpath.c_str());
+	}
 }
 std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 {
