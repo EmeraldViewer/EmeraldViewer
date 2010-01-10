@@ -390,7 +390,7 @@ void LLViewerPartSourceScript::update(const F32 dt)
             
             if (part->mFlags & LLPartData::LL_PART_TARGET_LINEAR_MASK)
             {
-                mPartSysData.mBurstRadius = 0;
+                mPartSysData.mBurstRadius = 0.0;
             }
 
 			LLViewerPartSim::getInstance()->addPart(part);
