@@ -46,7 +46,7 @@
 #include "llviewernetwork.h"
 #include "llcurl.h"
 #include "llviewerimagelist.h"
-
+#include "hippogridmanager.h"
 #include "llimagej2c.h"
 
 #include "llviewertexteditor.h"
@@ -444,8 +444,7 @@ void JCExportTracker::finalize(LLSD data)
 	header["Version"] = 2;
 	file["Header"] = header;
 	std::vector<std::string> uris;
-		LLViewerLogin* vl = LLViewerLogin::getInstance();
-		std::string grid_uri = vl->getCurrentGridURI();
+	std::string grid_uri = gHippoGridManager->getConnectedGrid()->getLoginUri();
 	//LLStringUtil::toLower(uris[0]);
 	file["Grid"] = grid_uri;
 	file["Objects"] = data;

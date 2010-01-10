@@ -202,6 +202,8 @@
 #include "lldxhardware.h"
 #endif
 
+#include "hippoGridManager.h"
+//#include "hippoLimits.h"
 #if COMPILE_OTR          // [$PLOTR$]
 #include "otr_wrapper.h"
 #include "lggircgrouphandler.h"
@@ -319,6 +321,10 @@ void update_texture_fetch()
 	LLAppViewer::getTextureFetch()->update(1); // unpauses the texture fetch thread
 	gImageList.updateImages(0.10f);
 }
+
+static std::vector<std::string> sAuthUris;
+static S32 sAuthUriNum = -1;
+
 void pass_process_sound_trigger(LLMessageSystem* msg,void**)
 {
 	process_sound_trigger(msg,0);
@@ -752,7 +758,6 @@ bool idle_startup()
 		else
 		{
 			// if not automatically logging in, display login dialog
-			// a valid grid is selected
 			firstname = gSavedSettings.getString("FirstName");
 			lastname = gSavedSettings.getString("LastName");
 			password = LLStartUp::loadPasswordFromDisk();
@@ -782,6 +787,8 @@ bool idle_startup()
 	if (STATE_LOGIN_SHOW == LLStartUp::getStartupState())
 	{
 		LL_DEBUGS("AppInit") << "Initializing Window" << LL_ENDL;
+		sAuthUris.clear();
+		sAuthUriNum = -1;
 		
 		gViewerWindow->getWindow()->setCursor(UI_CURSOR_ARROW);
 
@@ -801,14 +808,10 @@ bool idle_startup()
 			// Make sure the process dialog doesn't hide things
 			gViewerWindow->setShowProgress(FALSE);
 			
-			// Load login history
-			std::string login_hist_filepath = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "saved_logins.xml");
-			LLSavedLogins login_history = LLSavedLogins::loadFile(login_hist_filepath);
-
 			// Show the login dialog
 			login_show();
 			// connect dialog is already shown, so fill in the names
-			LLPanelLogin::setFields( firstname, lastname, password, login_history );
+			LLPanelLogin::setFields( firstname, lastname, password);
 
 			LLPanelLogin::giveFocus();
 
@@ -820,7 +823,7 @@ bool idle_startup()
 				LLChat chat;
 				chat.mText = "Autorelogging";
 				LLFloaterChat::addChat(chat);
-				LLPanelLogin::PublicConnect();
+//				LLPanelLogin::PublicConnect();
 			}
 		}
 		else
@@ -884,6 +887,19 @@ bool idle_startup()
 			web_login_key = gLoginHandler.getWebLoginKey();
 		}
 				
+		/* Jacek - Grid manager stuff that's changed with 1.23
+		if(!gLoginHandler.mPassword.empty())
+		{
+			firstname = gLoginHandler.mFirstName;
+			lastname = gLoginHandler.mLastName;
+			password = gLoginHandler.mPassword;
+			
+			gLoginHandler.mFirstName = "";
+			gLoginHandler.mLastName = "";
+			gLoginHandler.mPassword = "";
+			LLStartUp::setShouldAutoLogin(false);
+		}*/
+				
 		if (show_connect_box)
 		{
 			// TODO if not use viewer auth
@@ -899,13 +915,12 @@ bool idle_startup()
 		{
 			gSavedSettings.setString("FirstName", firstname);
 			gSavedSettings.setString("LastName", lastname);
-			if (!gSavedSettings.controlExists("RememberLogin")) gSavedSettings.declareBOOL("RememberLogin", false, "Remember login", false);
-			gSavedSettings.setBOOL("RememberLogin", LLPanelLogin::getRememberLogin());
 
-			LL_INFOS("AppInit") << "Attempting login as: " << firstname << " " << lastname << LL_ENDL;
+			//LL_INFOS("AppInit") << "Attempting login as: " << firstname << " " << lastname << " " << LL_ENDL;
 			gDebugInfo["LoginName"] = firstname + " " + lastname;	
 		}
 
+        gHippoGridManager->setCurrentGridAsConnected();
 		// create necessary directories
 		// *FIX: these mkdir's should error check
 		gDirUtilp->setLindenUserDir(firstname, lastname);
@@ -977,14 +992,13 @@ bool idle_startup()
 
 		if (show_connect_box)
 		{
-			// *TODO Remove
-/*			if ( LLPanelLogin::isGridComboDirty() )
+			if ( LLPanelLogin::isGridComboDirty() )
 			{
 				// User picked a grid from the popup, so clear the 
 				// stored uris and they will be reacquired from the grid choice.
 				sAuthUris.clear();
 			}
-*/			
+			
 			std::string location;
 			LLPanelLogin::getLocation( location );
 			LLURLSimString::setString( location );
@@ -1117,8 +1131,8 @@ bool idle_startup()
 			gSavedSettings.setBOOL("UseDebugMenus", TRUE);
 			requested_options.push_back("god-connect");
 		}
-		// *TODO Remove
-/*		std::vector<std::string> uris = LLViewerLogin::getInstance()->getLoginURIs();
+		std::vector<std::string> uris;
+		LLViewerLogin::getInstance()->getLoginURIs(uris);
 		std::vector<std::string>::const_iterator iter, end;
 		for (iter = uris.begin(), end = uris.end(); iter != end; ++iter)
 		{
@@ -1128,7 +1142,7 @@ bool idle_startup()
 							 rewritten.begin(), rewritten.end());
 		}
 		sAuthUriNum = 0;
-*/		auth_method = "login_to_simulator";
+		auth_method = "login_to_simulator";
 		
 		LLStringUtil::format_map_t args;
 		args["[APP_NAME]"] = LLAppViewer::instance()->getSecondLifeTitle();
@@ -1171,19 +1185,16 @@ bool idle_startup()
 		hashed_mac.finalize();
 		hashed_mac.hex_digest(hashed_mac_string);
 		
-		LLViewerLogin* vl = LLViewerLogin::getInstance();
-		std::string grid_uri = vl->getCurrentGridURI();
-		
-		llinfos << "Authenticating with " << grid_uri << llendl;
-
 		// TODO if statement here to use web_login_key
-		// sAuthUriNum = llclamp(sAuthUriNum, 0, (S32)sAuthUris.size()-1);
+		if(web_login_key.isNull()){
+		sAuthUriNum = llclamp(sAuthUriNum, 0, (S32)sAuthUris.size()-1);
 		LLUserAuth::getInstance()->authenticate(
-			grid_uri,
+			sAuthUris[sAuthUriNum],
 			auth_method,
 			firstname,
 			lastname,			
-			password, // web_login_key,
+			password, 
+			//web_login_key,
 			start.str(),
 			gSkipOptionalUpdate,
 			gAcceptTOS,
@@ -1192,6 +1203,22 @@ bool idle_startup()
 			requested_options,
 			hashed_mac_string,
 			LLAppViewer::instance()->getSerialNumber());
+		} else {
+		LLUserAuth::getInstance()->authenticate(
+			sAuthUris[sAuthUriNum],
+			auth_method,
+			firstname,
+			lastname,			
+			web_login_key,
+			start.str(),
+			gSkipOptionalUpdate,
+			gAcceptTOS,
+			gAcceptCriticalMessage,
+			gLastExecEvent,
+			requested_options,
+			hashed_mac_string,
+			LLAppViewer::instance()->getSerialNumber());
+		}
 
 		// reset globals
 		gAcceptTOS = FALSE;
@@ -1251,7 +1278,7 @@ bool idle_startup()
 		LL_DEBUGS("AppInit") << "STATE_LOGIN_PROCESS_RESPONSE" << LL_ENDL;
 		std::ostringstream emsg;
 		bool quit = false;
-		bool update = false;
+//		bool update = false;
 		std::string login_response;
 		std::string reason_response;
 		std::string message_response;
@@ -1272,8 +1299,8 @@ bool idle_startup()
 			else if(login_response == "indeterminate")
 			{
 				LL_INFOS("AppInit") << "Indeterminate login..." << LL_ENDL;
-				LLViewerLogin::getInstance()->setGridURIs(LLSRV::rewriteURI(LLUserAuth::getInstance()->getResponse("next_url")));
-				
+				sAuthUris = LLSRV::rewriteURI(LLUserAuth::getInstance()->getResponse("next_url"));
+				sAuthUriNum = 0;
 				auth_method = LLUserAuth::getInstance()->getResponse("next_method");
 				auth_message = LLUserAuth::getInstance()->getResponse("message");
 				if(auth_method.substr(0, 5) == "login")
@@ -1353,7 +1380,16 @@ bool idle_startup()
 				if(reason_response == "update")
 				{
 					auth_message = LLUserAuth::getInstance()->getResponse("message");
-					update = true;
+					if (show_connect_box)
+					{
+						update_app(TRUE, auth_message);
+						LLStartUp::setStartupState( STATE_UPDATE_CHECK );
+						return false;
+					}
+					else
+					{
+						quit = true;
+					}
 				}
 				if(reason_response == "optional")
 				{
@@ -1375,37 +1411,20 @@ bool idle_startup()
 		case LLUserAuth::E_SSL_CACERT:
 		case LLUserAuth::E_SSL_CONNECT_ERROR:
 		default:
-			if (LLViewerLogin::getInstance()->tryNextURI())
+			if (sAuthUriNum >= (int) sAuthUris.size() - 1)
 			{
-				static int login_attempt_number = 0;
+				emsg << "Unable to connect to " << LLAppViewer::instance()->getSecondLifeTitle() << ".\n";
+				emsg << LLUserAuth::getInstance()->errorMessage();
+			} else {
+				sAuthUriNum++;
 				std::ostringstream s;
 				LLStringUtil::format_map_t args;
-				args["[NUMBER]"] = llformat("%d", ++login_attempt_number);
+				args["[NUMBER]"] = llformat("%d", sAuthUriNum + 1);
 				auth_desc = LLTrans::getString("LoginAttempt", args);
 				LLStartUp::setStartupState( STATE_LOGIN_AUTHENTICATE );
 				return FALSE;
 			}
-			else
-			{
-				emsg << "Unable to connect to " << LLAppViewer::instance()->getSecondLifeTitle() << ".\n";
-				emsg << LLUserAuth::getInstance()->errorMessage();
-			}
 			break;
-		}
-
-		if (update || gSavedSettings.getBOOL("ForceMandatoryUpdate"))
-		{
-			gSavedSettings.setBOOL("ForceMandatoryUpdate", FALSE);
-			if (show_connect_box)
-			{
-				update_app(TRUE, auth_message);
-				LLStartUp::setStartupState( STATE_UPDATE_CHECK );
-				return false;
-			}
-			else
-			{
-				quit = true;
-			}
 		}
 
 		// Version update and we're not showing the dialog
@@ -1461,40 +1480,6 @@ bool idle_startup()
 				// Don't leave password from previous session sitting around
 				// during this login session.
 				LLStartUp::deletePasswordFromDisk();
-				password.assign(""); // clear the password so it isn't saved to login history either
-			}
-			
-			{
-				// Save the login history data to disk
-				std::string history_file = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "saved_logins.xml");
-
-				LLSavedLogins history_data = LLSavedLogins::loadFile(history_file);
-				LLViewerLogin* login_data = LLViewerLogin::getInstance();
-				EGridInfo grid_choice = login_data->getGridChoice();
-				history_data.deleteEntry(grid_choice, firstname, lastname);
-				if (gSavedSettings.getBOOL("RememberLogin"))
-				{
-					LLSavedLoginEntry login_entry(grid_choice, firstname, lastname, password);
-					if (grid_choice == GRID_INFO_OTHER)
-					{
-						std::string grid_uri = login_data->getCurrentGridURI();
-						std::string login_uri = login_data->getLoginPageURI();
-						std::string helper_uri = login_data->getHelperURI();
-						
-						if (!grid_uri.empty()) login_entry.setGridURI(LLURI(grid_uri));
-						if (!login_uri.empty()) login_entry.setLoginPageURI(LLURI(login_uri));
-						if (!helper_uri.empty()) login_entry.setHelperURI(LLURI(helper_uri));
-					}
-					history_data.addEntry(login_entry);
-				}
-				else
-				{
-					// Clear the old-style login data as well
-					gSavedSettings.setString("FirstName", std::string(""));
-					gSavedSettings.setString("LastName", std::string(""));
-				}
-				
-				LLSavedLogins::saveFile(history_data, history_file);
 			}
 			
 			// this is their actual ability to access content
@@ -1503,6 +1488,14 @@ bool idle_startup()
 			{
 				// agent_access can be 'A', 'M', and 'PG'.
 				gAgent.setMaturity(text[0]);
+			}
+			else // we're on an older sim version (prolly an opensim)
+				{
+				text = LLUserAuth::getInstance()->getResponse("agent_access");
+				if(!text.empty() && (text[0] == 'M'))
+					{
+					gAgent.setTeen(false);
+				}
 			}
 			
 			// this is the value of their preference setting for that content
@@ -1674,6 +1667,42 @@ bool idle_startup()
 				}
 			}
 
+            // Override grid info with anything sent in the login response
+			std::string tmp = LLUserAuth::getInstance()->getResponse("gridname");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setGridName(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("loginuri");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setLoginUri(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("welcome");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setLoginPage(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("loginpage");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setLoginPage(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("economy");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setHelperUri(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("helperuri");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setHelperUri(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("about");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setWebSite(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("website");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setWebSite(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("help");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setSupportUrl(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("support");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setSupportUrl(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("register");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setRegisterUrl(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("account");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setRegisterUrl(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("password");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setPasswordUrl(tmp);
+			tmp = LLUserAuth::getInstance()->getResponse("search");
+			if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setSearchUrl(tmp);
+            tmp = LLUserAuth::getInstance()->getResponse("currency");
+            if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setCurrencySymbol(tmp);
+            tmp = LLUserAuth::getInstance()->getResponse("real_currency");
+            if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setRealCurrencySymbol(tmp);
+            tmp = LLUserAuth::getInstance()->getResponse("directory_fee");
+            if (!tmp.empty()) gHippoGridManager->getConnectedGrid()->setDirectoryFee(atoi(tmp.c_str()));
+            gHippoGridManager->saveFile();
 
 			// JC: gesture loading done below, when we have an asset system
 			// in place.  Don't delete/clear user_credentials until then.
@@ -2739,13 +2768,14 @@ void login_show()
 					
 	LL_DEBUGS("AppInit") << "Setting Servers" << LL_ENDL;
 
+	//KOW
+/*
 	LLViewerLogin* vl = LLViewerLogin::getInstance();
-	LLPanelLogin::addServer(vl->getGridLabel(), vl->getGridChoice());
-
-	for(int grid_index = GRID_INFO_ADITI; grid_index < GRID_INFO_OTHER; ++grid_index)
+	for(int grid_index = 1; grid_index < GRID_INFO_OTHER; ++grid_index)
 	{
-		LLPanelLogin::addServer(vl->getKnownGridLabel((EGridInfo)grid_index), grid_index);
+		LLPanelLogin::addServer(vl->getKnownGridLabel(grid_index), grid_index);
 	}
+*/
 }
 
 // Callback for when login screen is closed.  Option 0 = connect, option 1 = quit.
@@ -3066,7 +3096,7 @@ bool update_dialog_callback(const LLSD& notification, const LLSD& response)
 	// *NOTE: This URL is also used in win_setup/lldownloader.cpp
 	LLURI update_url = LLURI::buildHTTP("secondlife.com", 80, "update.php", query_map);
 	
-	if(LLAppViewer::sUpdaterInfo)
+/*	if(LLAppViewer::sUpdaterInfo)
 	{
 		delete LLAppViewer::sUpdaterInfo ;
 	}
@@ -3139,14 +3169,16 @@ bool update_dialog_callback(const LLSD& notification, const LLSD& response)
 	LL_DEBUGS("AppInit") << "Calling updater: " << LLAppViewer::sUpdaterInfo->mUpdateExePath << LL_ENDL;
 
 	// Run the auto-updater.
-	system(LLAppViewer::sUpdaterInfo->mUpdateExePath.c_str()); /* Flawfinder: ignore */
-
+*/
+	//system(LLAppViewer::sUpdaterInfo->mUpdateExePath.c_str()); /* Flawfinder: ignore */
+/*
 #elif LL_LINUX || LL_SOLARIS
 	OSMessageBox("Automatic updating is not yet implemented for Linux.\n"
 		"Please download the latest version from www.secondlife.com.",
 		LLStringUtil::null, OSMB_OK);
 #endif
 	LLAppViewer::instance()->forceQuit();
+	*/
 	return false;
 }
 

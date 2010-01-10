@@ -64,7 +64,7 @@
 #include "llfilepicker.h"
 #include "llviewernetwork.h"
 #include "llsdserialize.h"
-
+#include "hippogridmanager.h"
 //static
 std::list<LLPanelPick*> LLPanelPick::sAllPanels;
 
@@ -252,9 +252,7 @@ void LLPanelPick::exportPick()
 	LLSD header;
 	header["Version"] = 2;
 	file["Header"] = header;
-	std::vector<std::string> uris;
-		LLViewerLogin* vl = LLViewerLogin::getInstance();
-		std::string grid_uri = vl->getCurrentGridURI();
+	std::string grid_uri = gHippoGridManager->getConnectedGrid()->getLoginUri();
 	//LLStringUtil::toLower(uris[0]);
 	file["Grid"] = grid_uri;
 	file["Data"] = datas;

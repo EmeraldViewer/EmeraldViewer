@@ -167,6 +167,7 @@
 #include "llcommandlineparser.h"
 
 #include "tsstuff.h"
+#include "hippoGridManager.h"
 // *FIX: These extern globals should be cleaned up.
 // The globals either represent state/config/resource-storage of either 
 // this app, or another 'component' of the viewer. App globals should be 
@@ -323,11 +324,6 @@ void updateFreezeTime(const LLSD& data)
 	LLAppViewer::sFreezeTime = data.asBoolean();
 }
 
-void handleCmdLineURIsUpdate(const LLSD& newvalue)
-{
-	LLViewerLogin::sCmdLineURIs = newvalue;
-}
-
 void idle_afk_check()
 {
 	// check idle timers
@@ -476,7 +472,7 @@ static void settings_modify()
 	gSavedSettings.setBOOL("VectorizeSkin", FALSE);
 #endif
 }
-
+/*
 void LLAppViewer::initGridChoice()
 {
 	// Load	up the initial grid	choice from:
@@ -486,31 +482,27 @@ void LLAppViewer::initGridChoice()
 
 	// Set the "grid choice", this is specified	by command line.
 	std::string	grid_choice	= gSavedSettings.getString("CmdLineGridChoice");
-	LLViewerLogin* vl = LLViewerLogin::getInstance();
-	vl->setGridChoice(grid_choice);
+	LLViewerLogin::getInstance()->setGridChoice(grid_choice);
 
 	// Load last server choice by default 
 	// ignored if the command line grid	choice has been	set
-	if(grid_choice.empty() && vl->getGridChoice() != GRID_INFO_OTHER)
+	if(grid_choice.empty())
 	{
 		S32	server = gSavedSettings.getS32("ServerChoice");
-		std::string custom_server = gSavedSettings.getString("CustomServer");
-		server = llclamp(server, 0,	(S32)GRID_INFO_COUNT - 1);
-		if(server == GRID_INFO_OTHER && !custom_server.empty())
+		//server = llclamp(server, 0,	(S32)GRID_INFO_COUNT - 1);
+		if(server == GRID_INFO_OTHER)
 		{
-			vl->setGridChoice(custom_server);
+			std::string custom_server = gSavedSettings.getString("CustomServer");
+			LLViewerLogin::getInstance()->setGridChoice(custom_server);
 		}
-		else if(server != (S32)GRID_INFO_NONE && server != GRID_INFO_OTHER)
+		else if(server != (S32)GRID_INFO_NONE)
 		{
-			vl->setGridChoice((EGridInfo)server);
-		}
-		else
-		{
-			vl->setGridChoice(DEFAULT_GRID_CHOICE);
+			llwarns << "setgridchoice = " << server << llendl;
+			LLViewerLogin::getInstance()->setGridChoice(server);
 		}
 	}
 }
-
+*/
 //virtual
 bool LLAppViewer::initSLURLHandler()
 {
@@ -681,8 +673,6 @@ bool LLAppViewer::init()
 
 	gSavedSettings.getControl("MainloopTimeoutDefault")->getSignal()->connect(&updateMainLoopTimeOutDefault);
 	gSavedSettings.getControl("FreezeTime")->getSignal()->connect(&updateFreezeTime);
-	gSavedSettings.getControl("CmdLineLoginURI")->getSignal()->connect(&handleCmdLineURIsUpdate);
-
 	// track number of times that app has run
 	mNumSessions = gSavedSettings.getS32("NumSessions");
 	mNumSessions++;
@@ -1831,7 +1821,6 @@ bool LLAppViewer::initConfiguration()
 	//Emerald: Fixes bug #22
 	gSavedSettings.getControl("MainloopTimeoutDefault")->getSignal()->connect(&updateMainLoopTimeOutDefault);
 	gSavedSettings.getControl("FreezeTime")->getSignal()->connect(&updateFreezeTime);
-	gSavedSettings.getControl("CmdLineLoginURI")->getSignal()->connect(&handleCmdLineURIsUpdate);
 		
 	// - read command line settings.
 	LLControlGroupCLP clp;
@@ -1969,7 +1958,14 @@ bool LLAppViewer::initConfiguration()
         }
     }
 
-    initGridChoice();
+	//init Hippo grid manager
+	if (!gHippoGridManager) {
+		gHippoGridManager = new HippoGridManager();
+		gHippoGridManager->init();
+	}
+
+
+    //initGridChoice();
 
 	// If we have specified crash on startup, set the global so we'll trigger the crash at the right time
 	if(clp.hasOption("crashonstartup"))

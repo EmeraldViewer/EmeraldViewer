@@ -67,6 +67,7 @@
 #include "llviewermenufile.h"
 #include "llviewermenu.h"
 #include "llviewernetwork.h"
+#include "hippogridmanager.h"
 
 //Maximum number of people you can select to do an operation on at once.
 #define MAX_FRIEND_SELECT 2000
@@ -784,8 +785,7 @@ void LLPanelFriends::onClickExport(void* user_data)
 		//count += 1;
 	}
 
-	LLViewerLogin* vl = LLViewerLogin::getInstance();
-	std::string grid_uri = vl->getCurrentGridURI();
+	std::string grid_uri = gHippoGridManager->getConnectedGrid()->getLoginUri();
 	//LLStringUtil::toLower(uris[0]);
 	llsd["GRID"] = grid_uri;
 
@@ -817,9 +817,7 @@ void LLPanelFriends::onClickImport(void* user_data)
 	LLSDSerialize::fromXMLDocument(data, importer);
 	if(data.has("GRID"))
 	{
-		LLViewerLogin* vl = LLViewerLogin::getInstance();
-		std::string grid_uri = vl->getCurrentGridURI();
-		std::string grid = grid_uri;
+		std::string grid = gHippoGridManager->getConnectedGrid()->getLoginUri();
 		if(grid != data["GRID"])return;
 		data.erase("GRID");
 	}
