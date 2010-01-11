@@ -29,7 +29,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sstream>
 #include "llviewerprecompiledheaders.h"
 
 #include "scriptcounter.h"
@@ -39,6 +38,7 @@
 #include "llwindow.h"
 #include "lltransfersourceasset.h"
 #include "llviewernetwork.h"
+#include <sstream>
 
 ScriptCounter* ScriptCounter::sInstance;
 U32 ScriptCounter::invqueries;

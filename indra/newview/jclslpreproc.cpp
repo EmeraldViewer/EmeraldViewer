@@ -744,13 +744,28 @@ inline int const_iterator_to_pos(std::string::const_iterator begin, std::string:
 	//FAILDEBUG
 	return std::distance(begin, cursor);
 }
+/*
+std::string hideliteral(std::string& scr)
+{
+	int it = 0;
+	int end = scr.length();
+	char last_token;
+	while(start < end)
+	{
+		char token = scr.at(it);
 
+		last_token = token;
+		it += 1;
+	}
+}
+*/
 
 std::string JCLSLPreprocessor::lslopt(std::string script)
 {
 	//FAILDEBUG
 	script = " \n"+script;//HACK//this should prevent regex fail for functions starting on line 0, column 0
 	//added more to prevent split fail on scripts with no global data
+
 
 	//this should be fun
 	//FAILDEBUG
@@ -1017,7 +1032,7 @@ std::string cachepath(std::string name)
 void cache_script(std::string name, std::string content)
 {
 	//FAILDEBUG
-	content = "\n" + content + "\n";/*hack!*/
+	content += "\n";/*hack!*/
 	//cmdline_printchat("writing "+name+" to cache");
 	std::string path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"lslpreproc",name);
 	LLAPRFile infile;
@@ -1513,7 +1528,7 @@ void JCLSLPreprocessor::start_process()
 	FAILDEBUG
 	std::string input = mCore->mEditor->getText();
 	std::string rinput = input;
-	input = "\n"+input+"\n";
+	input += "\n";
 	std::string output;
 	std::string name = mCore->mItem->getName();
 	//BOOL use_switches;

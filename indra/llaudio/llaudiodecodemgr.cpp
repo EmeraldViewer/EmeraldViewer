@@ -46,6 +46,8 @@
 #include "vorbis/codec.h"
 #include "vorbis/vorbisfile.h"
 
+#include <string>
+
 extern LLAudioEngine *gAudiop;
 
 LLAudioDecodeMgr *gAudioDecodeMgrp = NULL;
