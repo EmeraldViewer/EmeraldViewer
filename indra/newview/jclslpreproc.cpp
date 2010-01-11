@@ -996,7 +996,7 @@ template <typename ContextT>
 		std::string def = llformat("%s=\"%s\"",macro.c_str(),id.c_str());
 		usefulctx.add_macro_definition(def,false);
 
-		mAssetStack.push(filename);
+		mFileStack.push(filename);
 		macro = "__SHORTFILE__";
 		usefulctx.remove_macro_definition(macro, true);
 		def = llformat("%s=\"%s\"",macro.c_str(),filename.c_str());
