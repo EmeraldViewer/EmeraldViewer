@@ -95,8 +95,8 @@ include_directories(
 set(viewer_SOURCE_FILES
 	lgghunspell_wrapper.cpp
 	floaterlogin.cpp
-    hippoGridManager.cpp
-	hippoRestRequest.cpp
+    hippogridmanager.cpp
+	hipporestrequest.cpp
 	floaterao.cpp
 	importtracker.cpp
 	exporttracker.cpp
@@ -550,8 +550,8 @@ set(viewer_HEADER_FILES
     chatbar_as_cmdline.h
     importtracker.h
 	floaterlogin.h
-    hippoGridManager.h
-	hippoRestRequest.h
+    hippogridmanager.h
+	hipporestrequest.h
     irc.h
 	jc_lslviewerbridge.h
 	floaterao.h
