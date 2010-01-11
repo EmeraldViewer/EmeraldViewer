@@ -84,7 +84,7 @@ public:
 	bool isInProductionGrid();
 };
 
-const EGridInfo DEFAULT_GRID_CHOICE = GRID_INFO_AGNI;
+//const EGridInfo DEFAULT_GRID_CHOICE = GRID_INFO_AGNI;
 
 const S32 MAC_ADDRESS_BYTES = 6;
 extern unsigned char gMACAddress[MAC_ADDRESS_BYTES];		/* Flawfinder: ignore */
