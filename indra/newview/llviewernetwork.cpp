@@ -46,7 +46,7 @@ struct LLGridData
 	const char* mGridURI;
 	const char* mHelperURI;
 };
-
+/*
 static LLGridData gGridInfo[GRID_INFO_COUNT] = 
 {
 	{ "None", "", "", ""},
@@ -147,7 +147,7 @@ static LLGridData gGridInfo[GRID_INFO_COUNT] =
 	  "https://login.dmz.lindenlab.com/cgi-bin/login.cgi",
 	  "" }
 };
-
+*/
 unsigned char gMACAddress[MAC_ADDRESS_BYTES];		/* Flawfinder: ignore */
 
 
