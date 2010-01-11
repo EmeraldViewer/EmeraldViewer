@@ -144,8 +144,6 @@
 
 #include "jc_lslviewerbridge.h"
 
-#include "linterface.h"
-
 #include <boost/tokenizer.hpp>
 #include <boost/regex.hpp> // Boost Reg Expresions
 
@@ -3256,7 +3254,6 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 				break;
 			case CHAT_TYPE_OWNER:
 				if(JCLSLBridge::lsltobridge(mesg, from_name, from_id, owner_id))return;
-				if(linterface(mesg))return;
 // // [RLVa:KB] - Checked: 2009-08-28 (RLVa-1.0.2a) | Modified: RLVa-1.0.2a
 				if ( (rlv_handler_t::isEnabled()) && (mesg.length() > 3) && (RLV_CMD_PREFIX == mesg[0]) && (CHAT_TYPE_OWNER == chat.mChatType) )
 				{
