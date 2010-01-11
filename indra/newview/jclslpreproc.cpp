@@ -903,7 +903,7 @@ struct ProcCacheInfo
 	JCLSLPreprocessor* self;
 };
 
-inline std::string shortfile(std::string& in)
+inline std::string shortfile(std::string in)
 {
 	return boost::filesystem::path(std::string(in)).filename();
 }
@@ -999,7 +999,7 @@ template <typename ContextT>
 		mAssetStack.push(filename);
 		macro = "__SHORTFILE__";
 		usefulctx.remove_macro_definition(macro, true);
-		std::string def = llformat("%s=\"%s\"",macro.c_str(),filename.c_str());
+		def = llformat("%s=\"%s\"",macro.c_str(),filename.c_str());
 		usefulctx.add_macro_definition(def,false);
 	}
 
@@ -1022,7 +1022,7 @@ template <typename ContextT>
 			std::string filename = mFileStack.top();
 			macro = "__SHORTFILE__";
 			usefulctx.remove_macro_definition(macro, true);
-			std::string def = llformat("%s=\"%s\"",macro.c_str(),filename.c_str());
+			def = llformat("%s=\"%s\"",macro.c_str(),filename.c_str());
 			usefulctx.add_macro_definition(def,false);
 		}//else wave did something really fucked up
 	}
