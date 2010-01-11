@@ -16,7 +16,7 @@
 #include "llviewercontrol.h"
 #include "llweb.h"
 
-#include "hippoRestRequest.h"
+#include "hipporestrequest.h"
 
 
 // ********************************************************************
