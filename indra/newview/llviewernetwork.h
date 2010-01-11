@@ -35,7 +35,7 @@
 #define LL_LLVIEWERNETWORK_H
 
 class LLHost;
-
+/*
 enum EGridInfo
 {
 	GRID_INFO_NONE,
@@ -65,7 +65,7 @@ enum EGridInfo
 	GRID_INFO_OTHER, // IP address set via command line option
 	GRID_INFO_COUNT
 };
-
+*/
 /**
  * @brief A class to manage the viewer's login state.
  * 
