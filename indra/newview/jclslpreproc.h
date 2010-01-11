@@ -105,5 +105,7 @@ public:
 
 	BOOL mHDDInclude;
 
+	std::string mMainScriptName;
+
 	static Hunspell* LSLHunspell;
 };

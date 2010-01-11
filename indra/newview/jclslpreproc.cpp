@@ -903,6 +903,11 @@ struct ProcCacheInfo
 	JCLSLPreprocessor* self;
 };
 
+inline std::string shortfile(std::string& in)
+{
+	return boost::filesystem::path(std::string(in)).filename();
+}
+
 
 struct trace_include_files : public boost::wave::context_policies::default_preprocessing_hooks
 {
@@ -911,6 +916,8 @@ struct trace_include_files : public boost::wave::context_policies::default_prepr
     {
 		//FAILDEBUG
 		mAssetStack.push(LLUUID::null.asString());
+
+		mFileStack.push(proc->mMainScriptName);
 	}
 
 
@@ -977,7 +984,7 @@ template <typename ContextT>
 		//FAILDEBUG
 		ContextT& usefulctx = const_cast<ContextT&>(ctx);
 		std::string id;
-		std::string filename = boost::filesystem::path(std::string(relname)).filename();
+		std::string filename = shortfile(relname);//boost::filesystem::path(std::string(relname)).filename();
 		std::map<std::string,LLUUID>::iterator it = mProc->cached_assetids.find(filename);
 		if(it != mProc->cached_assetids.end())
 		{
@@ -987,6 +994,12 @@ template <typename ContextT>
 		std::string macro = "__ASSETID__";
 		usefulctx.remove_macro_definition(macro, true);
 		std::string def = llformat("%s=\"%s\"",macro.c_str(),id.c_str());
+		usefulctx.add_macro_definition(def,false);
+
+		mAssetStack.push(filename);
+		macro = "__SHORTFILE__";
+		usefulctx.remove_macro_definition(macro, true);
+		std::string def = llformat("%s=\"%s\"",macro.c_str(),filename.c_str());
 		usefulctx.add_macro_definition(def,false);
 	}
 
@@ -1004,6 +1017,13 @@ template <typename ContextT>
 			usefulctx.remove_macro_definition(macro, true);
 			std::string def = llformat("%s=\"%s\"",macro.c_str(),id.c_str());
 			usefulctx.add_macro_definition(def,false);
+
+			mFileStack.pop();
+			std::string filename = mFileStack.top();
+			macro = "__SHORTFILE__";
+			usefulctx.remove_macro_definition(macro, true);
+			std::string def = llformat("%s=\"%s\"",macro.c_str(),filename.c_str());
+			usefulctx.add_macro_definition(def,false);
 		}//else wave did something really fucked up
 	}
 
@@ -1015,6 +1035,8 @@ template <typename ContextT>
     JCLSLPreprocessor* mProc;
 
 	std::stack<std::string> mAssetStack;
+
+	std::stack<std::string> mFileStack;
 
 	//ContextT *usefulctx;
     //std::size_t include_depth;
@@ -1151,9 +1173,12 @@ void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
 	std::string script = mCore->mEditor->getText();
 	FAILDEBUG
 	//this script is special
+	//LLViewerInventoryItem* item = mCore->mItem;
 	LLViewerInventoryItem* item = mCore->mItem;
+	if(item)mMainScriptName = item->getName();
+	else mMainScriptName = "(Unknown)";
 	FAILDEBUG
-	std::string name = item->getName();
+	std::string name = mMainScriptName;
 	FAILDEBUG
 	//cached_files.insert(name);
 	cached_assetids[name] = LLUUID::null;
@@ -1530,7 +1555,8 @@ void JCLSLPreprocessor::start_process()
 	std::string rinput = input;
 	input += "\n";
 	std::string output;
-	std::string name = mCore->mItem->getName();
+	
+	std::string name = mMainScriptName;
 	//BOOL use_switches;
 	BOOL lazy_lists = gSavedSettings.getBOOL("EmeraldLSLLazyLists");
 	BOOL use_switch = gSavedSettings.getBOOL("EmeraldLSLSwitch");
