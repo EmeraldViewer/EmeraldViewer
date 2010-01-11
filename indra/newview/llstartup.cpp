@@ -202,7 +202,7 @@
 #include "lldxhardware.h"
 #endif
 
-#include "hippoGridManager.h"
+#include "hippogridmanager.h"
 //#include "hippoLimits.h"
 #if COMPILE_OTR          // [$PLOTR$]
 #include "otr_wrapper.h"

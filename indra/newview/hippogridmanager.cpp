@@ -2,7 +2,7 @@
 
 #include "llviewerprecompiledheaders.h"
 
-#include "hippoGridManager.h"
+#include "hippogridmanager.h"
 
 #include <cctype>
 

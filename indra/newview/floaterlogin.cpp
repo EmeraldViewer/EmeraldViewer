@@ -15,7 +15,7 @@
 #include "llurlsimstring.h"
 #include "lluictrlfactory.h"
 #include "floaterlogin.h"
-#include "hippoGridManager.h"
+#include "hippogridmanager.h"
 #include "llviewernetwork.h"
 #include "llpanellogin.h"
 

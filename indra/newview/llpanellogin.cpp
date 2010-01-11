@@ -36,7 +36,7 @@
 
 #include "llpanelgeneral.h"
 
-#include "hippoGridManager.h"
+#include "hippogridmanager.h"
 #include "floaterlogin.h"
 
 #include "indra_constants.h"		// for key and mask constants

@@ -167,7 +167,7 @@
 #include "llcommandlineparser.h"
 
 #include "tsstuff.h"
-#include "hippoGridManager.h"
+#include "hippogridmanager.h"
 // *FIX: These extern globals should be cleaned up.
 // The globals either represent state/config/resource-storage of either 
 // this app, or another 'component' of the viewer. App globals should be 
