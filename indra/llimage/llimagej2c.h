@@ -35,6 +35,7 @@
 
 #include "llimage.h"
 #include "llassettype.h"
+#include "emkdu.h"
 
 class LLImageJ2CImpl;
 class LLImageJ2C : public LLImageFormatted
@@ -78,11 +79,13 @@ public:
 	static void openDSO();
 	static void closeDSO();
 	static std::string getEngineInfo();
+	static bool useEMKDU;
 	
 protected:
 	friend class LLImageJ2CImpl;
 	friend class LLImageJ2COJ;
 	friend class LLImageJ2CKDU;
+	friend class EMKDU;
 	void decodeFailed();
 	void updateRawDiscardLevel();
 
@@ -91,6 +94,7 @@ protected:
 	F32 mRate;
 	BOOL mReversible;
 	LLImageJ2CImpl *mImpl;
+	EMKDU* emImpl;
 	std::string mLastError;
 };
 
