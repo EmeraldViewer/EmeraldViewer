@@ -255,6 +255,7 @@ BOOL LLPanelEmerald::postBuild()
 	childSetCommitCallback("EmeraldCmdTeleportToCam", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineKeyToName", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineOfferTp", onCommitApplyControl);
+	childSetCommitCallback("EmeraldCmdLineTP2", onCommitApplyControl);
 	childSetCommitCallback("EmeraldCmdLineAO", onCommitApplyControl);
 
 	childSetCommitCallback("X Modifier", onCommitSendAppearance);
