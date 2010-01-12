@@ -51,15 +51,15 @@ public:
 	S8 mDiscard;
 };
 
-class EMKDU
+class EMKDUImpl
 {	
 public:
-	EMKDU();
-	~EMKDU();
-	bool encodeData(EMImageData* image_data);
-	bool decodeData(EMImageData* image_data);
-	bool validateData(EMImageData* image_data, bool for_encode_decode = false);
-	EMImageDims getMetadata(EMImageData* image_data);
+	virtual ~EMKDUImpl() {}
+	virtual bool encodeData(EMImageData* image_data) = 0;
+	virtual bool decodeData(EMImageData* image_data) = 0;
+	virtual EMImageDims getMetadata(EMImageData* image_data) = 0;
+protected:
+	virtual bool validateData(EMImageData* image_data, bool for_encode_decode = false) = 0;
 };
 
 #endif //EM_KDU_H

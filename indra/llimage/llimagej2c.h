@@ -35,9 +35,10 @@
 
 #include "llimage.h"
 #include "llassettype.h"
-#include "emkdu.h"
+
 
 class LLImageJ2CImpl;
+class EMKDUImpl;
 class LLImageJ2C : public LLImageFormatted
 {
 protected:
@@ -85,7 +86,6 @@ protected:
 	friend class LLImageJ2CImpl;
 	friend class LLImageJ2COJ;
 	friend class LLImageJ2CKDU;
-	friend class EMKDU;
 	void decodeFailed();
 	void updateRawDiscardLevel();
 
@@ -94,7 +94,7 @@ protected:
 	F32 mRate;
 	BOOL mReversible;
 	LLImageJ2CImpl *mImpl;
-	EMKDU* emImpl;
+	EMKDUImpl* emImpl;
 	std::string mLastError;
 };
 

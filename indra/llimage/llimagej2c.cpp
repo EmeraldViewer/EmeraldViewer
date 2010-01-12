@@ -36,14 +36,15 @@
 #include "lldir.h"
 #include "llimagej2c.h"
 #include "llmemtype.h"
+#include "emkdu.h"
 
 typedef LLImageJ2CImpl* (*CreateLLImageJ2CFunction)();
 typedef void (*DestroyLLImageJ2CFunction)(LLImageJ2CImpl*);
 typedef const char* (*EngineInfoLLImageJ2CFunction)();
 
 //The Emerald variants of the above;
-typedef EMKDU* (*EmCreateImageFunction)();
-typedef void (*EmDestroyImageFunction)(EMKDU*);
+typedef EMKDUImpl* (*EmCreateImageFunction)();
+typedef void (*EmDestroyImageFunction)(EMKDUImpl*);
 typedef const char* (*EmEngineInfoFunction)();
 
 //some "private static" variables so we only attempt to load
@@ -99,6 +100,7 @@ void LLImageJ2C::openDSO()
 	j2cimpl_dso_handle      = NULL;
 	j2cimpl_dso_memory_pool = NULL;
 
+	apr_pool_create(&j2cimpl_dso_memory_pool, NULL);
 	rv = apr_dso_load(&j2cimpl_dso_handle,
 					  dso_path.c_str(),
 					  j2cimpl_dso_memory_pool);
