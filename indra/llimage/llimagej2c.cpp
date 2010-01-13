@@ -411,7 +411,6 @@ BOOL LLImageJ2C::decodeChannels(LLImageRaw *raw_imagep, F32 decode_time, S32 fir
 			{
 				raw_imagep->resize(img_data.mWidth, img_data.mHeight, img_data.mComponents);
 				memcpy(raw_imagep->getData(), img_data.mData, img_data.mLength);
-				delete img_data.mData;
 				img_data.mData = 0;
 			}
 			else
@@ -477,7 +476,6 @@ BOOL LLImageJ2C::encode(const LLImageRaw *raw_imagep, const char* comment_text, 
 		{
 			copyData(img_data.mData, (S32)img_data.mLength);
 			updateData();
-			delete img_data.mData;
 			img_data.mData = 0;
 		}
 
