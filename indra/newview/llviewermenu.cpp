@@ -7599,9 +7599,9 @@ class LLToolsShowSelectionHighlights : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		LLSelectMgr::sRectSelectInclusive = !LLSelectMgr::sRectSelectInclusive;
+		//LLSelectMgr::enableSilhouette = !LLSelectMgr::enableSilhouette;
 
-		gSavedSettings.setBOOL("EmeraldRenderHighlightSelections", LLSelectMgr::sRectSelectInclusive);
+		gSavedSettings.setBOOL("EmeraldRenderHighlightSelections",!gSavedSettings.getBOOL("EmeraldRenderHighlightSelections"));
 		return true;
 	}
 };
