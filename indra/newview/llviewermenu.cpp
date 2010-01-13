@@ -7594,6 +7594,18 @@ class LLToolsSelectBySurrounding : public view_listener_t
 	}
 };
 
+//How could you forget this, ragefayse - rkeast
+class LLToolsShowSelectionHighlights : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLSelectMgr::sRectSelectInclusive = !LLSelectMgr::sRectSelectInclusive;
+
+		gSavedSettings.setBOOL("EmeraldRenderHighlightSelections", LLSelectMgr::sRectSelectInclusive);
+		return true;
+	}
+};
+
 class LLToolsShowHiddenSelection : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -9245,6 +9257,8 @@ void initialize_menus()
 	addMenu(new LLToolsSelectOnlyMyObjects(), "Tools.SelectOnlyMyObjects");
 	addMenu(new LLToolsSelectOnlyMovableObjects(), "Tools.SelectOnlyMovableObjects");
 	addMenu(new LLToolsSelectBySurrounding(), "Tools.SelectBySurrounding");
+	//This needs to be hurrrrrr - rkeast
+	addMenu(new LLToolsShowSelectionHighlights(), "Tools.ShowSelectionHighlights");
 	addMenu(new LLToolsShowHiddenSelection(), "Tools.ShowHiddenSelection");
 	addMenu(new LLToolsShowSelectionLightRadius(), "Tools.ShowSelectionLightRadius");
 	addMenu(new LLToolsEditLinkedParts(), "Tools.EditLinkedParts");
