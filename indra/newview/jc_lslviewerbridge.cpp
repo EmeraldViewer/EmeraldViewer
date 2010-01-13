@@ -67,6 +67,8 @@
 
 #include "greenlife_utility_stream.h"
 
+#include "floaterao.h"
+
 #define vCatType (LLAssetType::EType)128
 #define vBridgeName "#LSL<->Client Bridge v0.05"
 #define vBridgeOpCat "#Emerald"
@@ -216,6 +218,36 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				data->reply = llformat("key2namereply|%s|",uniq.c_str());
 				data->source = source_id;
 				gCacheName->get(LLUUID(args[2].asString()), group, callbackname2key, data);
+				return true;
+			}
+			else if(cmd == "emao")
+			{
+				std::istringstream i(args[1].asString());
+				i >> cmd;
+				if (args[1].asString() == "on")
+				{
+					gSavedSettings.setBOOL("EmeraldAOEnabled",TRUE);
+					LLFloaterAO::run();
+				}
+				else if (args[1].asString() == "off")
+				{
+					gSavedSettings.setBOOL("EmeraldAOEnabled",FALSE);
+					LLFloaterAO::run();
+				}
+				else if (cmd == "state")
+				{
+					S32 chan = atoi(args[2].asString().c_str());
+					std::string tmp="off";
+					if(gSavedSettings.getBOOL("EmeraldAOEnabled"))tmp="on";
+					send_chat_to_object(tmp,chan,LLUUID(NULL));
+				}
+				return true;
+			}
+			else if(cmd == "emdd")
+			{
+				S32 chan = atoi(args[2].asString().c_str());
+				std::string tmp = llformat("%f",gSavedSettings.getF32("RenderFarClip"));
+				send_chat_to_object(tmp,chan,LLUUID(NULL));
 				return true;
 			}
 			else if(cmd == GUS::ping_command)
