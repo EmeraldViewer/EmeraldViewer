@@ -144,6 +144,9 @@ void LLImageJ2C::openDSO()
 
 	if(!all_functions_loaded)
 	{
+		dso_path = gDirUtilp->findFile(dso_name,
+				       gDirUtilp->getAppRODataDir(),
+				       gDirUtilp->getExecutableDir());
 		rv = apr_dso_load(&j2cimpl_dso_handle,
 						  dso_path.c_str(),
 						  j2cimpl_dso_memory_pool);
@@ -332,6 +335,7 @@ BOOL LLImageJ2C::updateData()
 	{
 		if(useEMKDU)
 		{
+			updateRawDiscardLevel();
 			EMImageData img_data;
 			img_data.mData = getData();
 			img_data.mLength = (U32)getDataSize();
@@ -400,6 +404,8 @@ BOOL LLImageJ2C::decodeChannels(LLImageRaw *raw_imagep, F32 decode_time, S32 fir
 			img_data.mData = getData();
 			img_data.mLength = (U32)getDataSize();
 			img_data.mDiscard = getRawDiscardLevel();
+			img_data.mHeight = getHeight();
+			img_data.mWidth = getWidth();
 			res = emImpl->decodeData(&img_data);
 			if(img_data.mData != getData())
 			{
