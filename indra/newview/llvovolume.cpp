@@ -508,8 +508,8 @@ void LLVOVolume::updateTextures()
 		{
 			S32 lod = llmin(mLOD, 3);
 			F32 lodf = ((F32)(lod + 1.0f)/4.f); 
-			F32 tex_size = lodf * MAX_SCULPT_REZ;
-			mSculptTexture->addTextureStats(2.f * tex_size * tex_size);
+			F32 tex_size = lodf * (1024.0f * 1024.0f);
+			mSculptTexture->addTextureStats(2.f * tex_size);
 			mSculptTexture->setBoostLevel(llmax((S32)mSculptTexture->getBoostLevel(),
 												(S32)LLViewerImage::BOOST_SCULPTED));
 		}
