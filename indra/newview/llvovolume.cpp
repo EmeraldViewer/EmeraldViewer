@@ -403,6 +403,11 @@ BOOL LLVOVolume::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 		mVolumeImpl->doIdleUpdate(agent, world, time);
 	}
 
+	if(mSculptTexture.notNull)
+	{
+		mSculptTexture->forceActive();
+	}
+
 	return TRUE;
 }
 
@@ -512,6 +517,7 @@ void LLVOVolume::updateTextures()
 			mSculptTexture->addTextureStats(2.f * tex_size);
 			mSculptTexture->setBoostLevel(llmax((S32)mSculptTexture->getBoostLevel(),
 												(S32)LLViewerImage::BOOST_SCULPTED));
+			mSculptTexture->forceActive();
 		}
 
 		S32 texture_discard = mSculptTexture->getDiscardLevel(); //try to match the texture
