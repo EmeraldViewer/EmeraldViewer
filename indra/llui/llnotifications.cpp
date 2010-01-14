@@ -52,22 +52,22 @@ public:
 		LLNotificationChannel("History", "Visible", &historyFilter, LLNotificationComparators::orderByUUID()),
 		mFileName(filename)
 	{
-		//connectChanged(boost::bind(&LLNotificationHistoryChannel::historyHandler, this, _1));
+		connectChanged(boost::bind(&LLNotificationHistoryChannel::historyHandler, this, _1));
 		loadPersistentNotifications();
 	}
 
 private:
-	/*bool historyHandler(const LLSD& payload)
+	bool historyHandler(const LLSD& payload)
 	{
 		// we ignore "load" messages, but rewrite the persistence file on any other
 		std::string sigtype = payload["sigtype"];
-		if (sigtype != "load")
+		/*if (sigtype != "load")
 		{
 			savePersistentNotifications();
-		}
+		}*/
 		return false;
 	}
-	*/
+	
 
 	// The history channel gets all notifications except those that have been cancelled
 	static bool historyFilter(LLNotificationPtr pNotification)
