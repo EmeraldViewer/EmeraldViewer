@@ -53,6 +53,7 @@
 #include "floateravatarlist.h"
 #include "floaterao.h"
 #include "llviewerobjectlist.h"
+#include "llviewertexteditor.h"
 #include "llvoavatar.h"
 
 #include <iosfwd>
@@ -291,6 +292,17 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				if(i >> text)
 				{
 					gChatBar->sendChatFromViewer(text, CHAT_TYPE_STOP, FALSE);
+				}
+			}else if (command == "clrchat")
+			{
+				LLFloaterChat* chat = LLFloaterChat::getInstance(LLSD());
+				if(chat)
+				{
+					LLViewerTextEditor*	history_editor = chat->getChild<LLViewerTextEditor>("Chat History Editor");
+					LLViewerTextEditor*	history_editor_with_mute = chat->getChild<LLViewerTextEditor>("Chat History Editor with mute");
+					history_editor->clear();
+					history_editor_with_mute->clear();
+					return false;
 				}
 			}
 		}
