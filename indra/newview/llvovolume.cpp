@@ -403,7 +403,7 @@ BOOL LLVOVolume::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 		mVolumeImpl->doIdleUpdate(agent, world, time);
 	}
 
-	if(mSculptTexture.notNull)
+	if(mSculptTexture.notNull())
 	{
 		mSculptTexture->forceActive();
 	}
