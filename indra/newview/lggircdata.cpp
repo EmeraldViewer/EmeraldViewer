@@ -89,17 +89,49 @@ std::string lggIrcData::toString()
 	return llformat("Name is %s\nNick is %s\nChannel is %s\nUUID is %s\nServer is %s",
 		name.c_str(),nick.c_str(),channel.c_str(),id.asString().c_str(),server.c_str());
 }
-lggIrcData::lggIrcData(std::string iserver, std::string iname, std::string iport, std::string inick, std::string ichannel, std::string iNickPassword, std::string iChannelpassword, std::string iServerPassword, BOOL iautoLogin, LLUUID iid):
-server(iserver),name(iname),port(iport),nick(inick),channel(ichannel),serverPassword(iServerPassword),channelPassword(iChannelpassword),nickPassword(iNickPassword),autoLogin(iautoLogin),id(iid)
+lggIrcData::lggIrcData(std::string iserver, std::string iname, std::string iport,
+					   std::string inick, std::string ichannel, std::string iNickPassword,
+					   std::string iChannelpassword, std::string iServerPassword,
+					   BOOL iautoLogin, LLUUID iid)
+  : server(iserver),
+	name(iname),
+	port(iport),
+	nick(inick),
+	channel(ichannel),
+	serverPassword(iServerPassword),
+	channelPassword(iChannelpassword),
+	nickPassword(iNickPassword),
+	autoLogin(iautoLogin),
+	id(iid)
 {
 }
 
-lggIrcData::lggIrcData():
-server("modularsystems.sl"),name("Emerald Chat"),port("8888"),
-nick(std::string(gAgent.getAvatarObject()->getNVPair("FirstName")->getString()+LLUUID::generateNewID().asString().substr(33))),
-channel("#emerald"),serverPassword(""),channelPassword(""),nickPassword(""),autoLogin(TRUE),id(LLUUID::generateNewID())
+lggIrcData::lggIrcData()
+  : server("modularsystems.sl"),
+  name("Emerald Chat"),
+  port("8888"),
+  channel("#emerald"),
+  serverPassword(""),
+  channelPassword(""),
+  nickPassword(""),
+  autoLogin(TRUE),
+  id(LLUUID::generateNewID())
 {
+	std::string first("Emerald");
+	// Prevents crash at startup where viewer object and NVPair may not exist yet.
+	// In the event that either of these happen. Name is replaced with "Emerald"
+	if(gAgent.getAvatarObject())
+	{
+		LLNameValue* first_name = gAgent.getAvatarObject()->getNVPair("FirstName");
+		// Ahh yes... nametag hacks. Check type!
+		if(first_name && (first_name->getTypeEnum() == NVT_STRING))
+		{
+			first = first_name->getString();
+		}
+	}
+	nick = std::string(first+LLUUID::generateNewID().asString().substr(33));
 }
+
 lggIrcData::~lggIrcData()
 {
 	
