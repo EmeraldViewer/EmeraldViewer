@@ -38,7 +38,6 @@ include(UI)
 include(UnixInstall)
 include(LLKDU)
 include(Emerald)
-include(LUA)
 include(HUNSPELL)
 include(ViewerMiscLibs)
 
@@ -75,7 +74,7 @@ include_directories(
     ${LLXML_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
-		${HUNSPELL_INCLUDE_DIR}
+	${HUNSPELL_INCLUDE_DIR}
     ${EMERALD_INCLUDE_DIRS}
     )
 
@@ -103,9 +102,9 @@ set(viewer_SOURCE_FILES
 	chatbar_as_cmdline.cpp
 	irc.cpp
 	jclslpreproc.cpp
-	jcmagicdb.cpp
-	jcscripteditor.cpp
-	jc_achievements.cpp
+#	jcmagicdb.cpp
+#	jcscripteditor.cpp
+#	jc_achievements.cpp
 	jc_lslviewerbridge.cpp
 	jcfloater_animation_list.cpp
 	jcfloater_areasearch.cpp
@@ -510,8 +509,6 @@ set(viewer_SOURCE_FILES
     llxmlrpctransaction.cpp
     noise.cpp
     pipeline.cpp
-    tsstuff.cpp
-    tslua.cpp
     rlvhandler.cpp
     rlvhelper.cpp
     rlvmultistringsearch.cpp
@@ -555,9 +552,9 @@ set(viewer_HEADER_FILES
 	jc_lslviewerbridge.h
 	floaterao.h
 	jclslpreproc.h
-	jcmagicdb.h
-	jcscripteditor.h
-	jc_achievements.h
+#	jcmagicdb.h
+#	jcscripteditor.h
+#	jc_achievements.h
     jcfloater_animation_list.h
     jcfloater_areasearch.h
     jcobjectpropertylist.h
@@ -969,8 +966,6 @@ set(viewer_HEADER_FILES
     noise.h
     pipeline.h
     randgauss.h
-    tsstuff.h
-    tslua.h
     VertexCache.h
     VorbisFramework.h
     rlvdefines.h
@@ -1403,7 +1398,6 @@ if (WINDOWS)
 		${ELFIO_LIBRARIES}
 		${EMERALD_LIBRARIES}
 		${HUNSPELL_LIBRARY}
-		${LUA_LIBRARY}
 		)
 else (WINDOWS)
 	target_link_libraries(${VIEWER_BINARY_NAME}
@@ -1449,9 +1443,8 @@ else (WINDOWS)
 		${XMLRPCEPI_LIBRARIES}
 		${ELFIO_LIBRARIES}
 		${EMERALD_LIBRARIES}
-		${LUA_LIBRARY}
-	        ${GCRYPT_LIBRARY}
-	        ${GPG-ERROR_LIBRARY}
+	    ${GCRYPT_LIBRARY}
+	    ${GPG-ERROR_LIBRARY}
 		${OTR_LIBRARY}
 		${HUNSPELL_LIBRARY}
 		${JSONCPP_LIBRARIES}

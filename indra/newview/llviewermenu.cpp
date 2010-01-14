@@ -229,8 +229,6 @@
 #include "exporttracker.h"
 #include "scriptcounter.h"
 
-#include "tsstuff.h"
-
 using namespace LLVOAvatarDefines;
 void init_client_menu(LLMenuGL* menu);
 void init_server_menu(LLMenuGL* menu);
@@ -5961,9 +5959,6 @@ class LLShowFloater : public view_listener_t
 		else if (floater_name == "assetcompare")
 		{
 			JCAssetComparer::toggle();
-		}else if (floater_name == "lua console")
-		{
-			LLFloaterLuaConsole::toggle(NULL);
 		}
 		return true;
 	}
@@ -6040,10 +6035,6 @@ class LLFloaterVisible : public view_listener_t
 			JCAssetComparer* instn = JCAssetComparer::getInstance();
 			if(!instn)new_value = false;
 			else new_value = instn->getVisible();
-		}
-		else if (floater_name == "lua console")
-		{
-			new_value = LLFloaterLuaConsole::isVisible();
 		}
 		gMenuHolder->findControl(control_name)->setValue(new_value);
 		return true;

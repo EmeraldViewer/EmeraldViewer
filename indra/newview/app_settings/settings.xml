@@ -14712,22 +14712,6 @@
 			<key>Value</key>
 			<string>secondlife</string>
 		</map>
-		<key>LuaConsoleRect</key>
-		<map>
-			<key>Comment</key>
-			<string>Rectangle for lua console</string>
-			<key>Persist</key>
-			<integer>1</integer>
-			<key>Type</key>
-			<string>Rect</string>
-			<key>Value</key>
-			<array>
-				<integer>0</integer>
-				<integer>203</integer>
-				<integer>425</integer>
-				<integer>53</integer>
-			</array>
-		</map>
 		<key>FloaterAnimationListRect</key>
 		<map>
 			<key>Comment</key>

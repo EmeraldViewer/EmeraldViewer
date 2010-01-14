@@ -166,7 +166,6 @@
 
 #include "llcommandlineparser.h"
 
-#include "tsstuff.h"
 #include "hippogridmanager.h"
 // *FIX: These extern globals should be cleaned up.
 // The globals either represent state/config/resource-storage of either 
@@ -908,8 +907,6 @@ bool LLAppViewer::init()
 
 	LLViewerJoystick::getInstance()->init(false);
 
-	TSStuff::init();
-
 	gSavedSettings.getControl("EmeraldDialogSpamEnabled")->getSignal()->connect(&dSpam);
 	dialogSpamOn = gSavedSettings.getBOOL("EmeraldDialogSpamEnabled");
 	gSavedSettings.getControl("EmeraldCardSpamEnabled")->getSignal()->connect(&cSpam);
@@ -1192,7 +1189,6 @@ bool LLAppViewer::mainLoop()
 
 bool LLAppViewer::cleanup()
 {
-	TSStuff::cleanupClass();
 	
 	//----------------------------------------------
 	//this test code will be removed after the test
