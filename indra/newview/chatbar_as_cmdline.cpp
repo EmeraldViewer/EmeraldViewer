@@ -301,7 +301,9 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					LLViewerTextEditor*	history_editor = chat->getChild<LLViewerTextEditor>("Chat History Editor");
 					LLViewerTextEditor*	history_editor_with_mute = chat->getChild<LLViewerTextEditor>("Chat History Editor with mute");
 					history_editor->clear();
+					history_editor->pruneSegments();
 					history_editor_with_mute->clear();
+					history_editor_with_mute->pruneSegments();
 					return false;
 				}
 			}
