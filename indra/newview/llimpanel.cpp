@@ -1175,7 +1175,8 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 		mVoiceChannel = new LLVoiceChannelGroup(mSessionUUID, mSessionLabel);
 		break;
 	case IM_SESSION_IRC_START:
-		mSessionLabel = "#"+mSessionLabel;
+		mSessionLabel = "<"+mSessionLabel+">";
+		setShortTitle(mSessionLabel);
 		mFactoryMap["active_speakers_panel"] = LLCallbackMap(createSpeakersPanel, this);
 		xml_filename =  "floater_instant_message_ad_hoc.xml";
 		mVoiceChannel = new LLVoiceChannelGroup(mSessionUUID, mSessionLabel);
@@ -1213,8 +1214,8 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 		mVoiceChannel = new LLVoiceChannelP2P(mSessionUUID, mSessionLabel, mOtherParticipantUUID);
 		break;
 	case IM_PRIVATE_IRC:
-		mSessionLabel = "#"+mSessionLabel;
-
+		mSessionLabel = mSessionLabel;
+		setShortTitle(mSessionLabel);
 		xml_filename = "floater_instant_message.xml";
 
 		mTextIMPossible = TRUE;
@@ -1964,6 +1965,15 @@ void LLFloaterIMPanel::onClickHistory( void* userdata )
 		//gCacheName->getFullName(self->mOtherParticipantUUID, fullname);
 		//if(fullname == "(Loading...)")
 			fullname= self->getTitle();
+			//dont allow bad files names
+		if(fullname.find_first_of("<",1))
+		{
+			char * curl_str = curl_escape(fullname.c_str(), fullname.size());
+			std::string escaped_filename(curl_str);
+			curl_free(curl_str);
+			curl_str = NULL;
+			fullname=escaped_filename;
+		}
 		sprintf(command, "\"%s\\%s.txt\"", gDirUtilp->getPerAccountChatLogsDir().c_str(),fullname.c_str());
 		gViewerWindow->getWindow()->ShellEx(command);
 

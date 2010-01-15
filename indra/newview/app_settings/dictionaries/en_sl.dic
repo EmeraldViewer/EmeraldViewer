@@ -1,4 +1,4 @@
-10893
+10894
 rez
 secondlife
 slex
@@ -10188,6 +10188,7 @@ llForceMouselook
 llFrand
 llGetAccel
 llGetAgentInfo
+llGetAgentLanguage
 llGetAgentSize
 llGetAlpha
 llGetAndResetTime

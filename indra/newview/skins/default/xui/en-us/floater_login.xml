@@ -12,14 +12,14 @@
 	    drop_shadow_visible="true" border_drop_shadow_visible="false">
     Select a grid:
   </text>
-  
+
   <scroll_list background_visible="true" bottom_delta="25" draw_border="true"
-	     draw_stripes="false" 
+	     draw_stripes="false"
 	     follows="top|left|bottom" height="340" left="5" multi_select="false"
 	     name="grid_selector" width="170">
     <column label="" name="grid" width="200" />
   </scroll_list>
-  
+
   <!-- Grid Selector Buttons -->
   <button label="Add" label_selected="Delete" enabled="true" name="btn_add"
 		height="18" width="55" left="5" bottom_delta="-20"
@@ -130,14 +130,14 @@
     Optional Fields
   </text>
   <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
-     bottom_delta="-22" drop_shadow_visible="true" follows="left|top"
+     bottom_delta="0" drop_shadow_visible="true" follows="left|top" visible="false"
      font="SansSerif" h_pad="0" halign="left" height="16"
      left_delta="0" mouse_opaque="true" name="loginpage_text" v_pad="0" width="120">
     Login Page:
   </text>
   <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="0"
 	     follows="left|top|right" font="SansSerifSmall" handle_edit_keys_directly="true"
-	     height="20" left_delta="90" max_length="255" mouse_opaque="true"
+	     height="20" left_delta="90" max_length="255" mouse_opaque="true" visible="false"
 	     name="loginpage" select_all_on_focus_received="true" width="320" />
 
   <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
@@ -194,8 +194,8 @@
 	     follows="left|top|right" font="SansSerifSmall" handle_edit_keys_directly="true"
 	     height="20" left_delta="90" max_length="255" mouse_opaque="true"
 	     name="password" select_all_on_focus_received="true" width="320" />
-  
-  <view_border bevel_style="none" border_thickness="1" bottom_delta="-4" follows="top|left" height="155" left_delta="-93" name="OptionalPrefsBorder" width="417" />
+
+  <view_border bevel_style="none" border_thickness="1" bottom_delta="-4" follows="top|left" height="133" left_delta="-93" name="OptionalPrefsBorder" width="417" />
 
   <!-- Combo box for multi avatar grid manager avatar name
 	<combo_box allow_text_entry="true" bevel_style="in" border_style="line" border_thickness="1"
@@ -249,7 +249,7 @@
   <button bottom="8" follows="right|bottom" font="SansSerif" halign="center"
      height="24" label="Apply" label_selected="Apply" left="385"
      mouse_opaque="true" name="btn_apply" scale_image="TRUE" width="100" />
-	<button bottom="8" follows="right|bottom" font="SansSerif" halign="center"
+  <button bottom="8" follows="right|bottom" font="SansSerif" halign="center"
 	     height="24" label="Undo" label_selected="Undo" left="490"
 	     mouse_opaque="true" name="btn_cancel" scale_image="TRUE" width="100" />
   <!--

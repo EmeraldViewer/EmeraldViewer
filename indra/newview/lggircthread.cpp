@@ -369,6 +369,9 @@ void lggIrcThread::whois(LLUUID who)
 }
 void lggIrcThread::whois(std::string user)
 {
+	if(user.find_first_of("<",1))user.erase(0,1);
+	if(user.find_last_of(">",1))user.erase(user.length()-1);
+
 	conn->raw((char *)std::string("WHOIS "+user+"\r\n").c_str());
 }
 int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, void * conn)
@@ -938,7 +941,7 @@ void lggIrcThread::sendChat(std::string chat)
 	}
 	else
 	{
-		msg(llformat("%s: %s",	conn->current_nick(),chat.c_str()),
+		msg(llformat("<%s>: %s",	conn->current_nick(),chat.c_str()),
 			gSavedSettings.getColor("EmeraldIRC_ColorChannel"),false);
 		conn->privmsg((char*)getChannel().c_str(),(char *)chat.c_str());
 	}
@@ -1001,6 +1004,7 @@ void lggIrcThread::notifyStuff()
 }
 void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 {
+	name = "<"+name+">";
 	LLUUID uid;
 	uid.generate(name+"lgg"+getChannel());//dont touch this one
 	BOOL found = false;
@@ -1112,26 +1116,10 @@ void lggIrcThread::msg(std::string message, LLColor4 color, bool notify)
 		}
 	}
 }
-// void lggIrcThread::msg(std::string message, std::string name, bool notify)
-// {
-// 	LLUUID uid;
-// 	uid.generate(name.substr(1)+"lgg"+getChannel());
-// 
-// 	floater = gIMMgr->findFloaterBySession(getMID());
-// 	floater->addHistoryLine(stripColorCodes(message),
-// 		gSavedSettings.getColor("IMChatColor"),
-// 		true,
-// 		uid,
-// 		name);
-// 	if(notify)notifyStuff();
-// 	if(gSavedSettings.getBOOL("IMInChatConsole"))
-// 	{				
-// 		chat.mText = std::string("IRC: ") + name + std::string(": ") + stripColorCodes(message);
-// 		LLFloaterChat::addChat( chat, TRUE );
-// 	}
-// }
+
 void lggIrcThread::msg(std::string message, std::string name, LLColor4 color, bool notify)
 {
+	name = "<"+name+">";
 	LLUUID uid;
 	uid.generate(name+"lgg"+getChannel().c_str());
 
@@ -1170,10 +1158,13 @@ void lggIrcThread::sendPrivateImToID(std::string msg, LLUUID id)
 		{
 			std::string name = conn->allcorespondingNick[i];
 			uid.generate(name+"lgg"+getChannel());
+			
 			LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
 			std::istringstream i(msg);
 			std::string command;
 			i >> command;
+			if(name.find_first_of("<",1))name.erase(0,1);
+			if(name.find_last_of(">",1))name.erase(name.length()-1);
 			
 			if(command == "/me")
 			{

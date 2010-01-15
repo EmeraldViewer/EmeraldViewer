@@ -84,7 +84,7 @@ void lggIrcProfileFloater::setData(LLSD idata)
 {
 	myLLSDdata=idata;
 
-	
+	myLLSDdata["NICK"]="<"+myLLSDdata["NICK"].asString()+">";
 	getChild<LLLineEditor>("EmIRCProfile_WhoNick")->setValue(myLLSDdata["NICK"].asString());
 	getChild<LLLineEditor>("EmIRCProfile_WhoUser")->setValue(myLLSDdata["USER"].asString());
 	getChild<LLLineEditor>("EmIRCProfile_WhoHost")->setValue(myLLSDdata["HOST"].asString());

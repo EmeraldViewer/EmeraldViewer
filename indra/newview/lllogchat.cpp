@@ -100,6 +100,15 @@ void LLLogChat::saveHistory(std::string filename, std::string line)
 		llinfos << "Filename is Empty!" << llendl;
 		return;
 	}
+	//dont allow bad files names
+	if(filename.find_first_of("<",1))
+	{
+		char * curl_str = curl_escape(filename.c_str(), filename.size());
+		std::string escaped_filename(curl_str);
+		curl_free(curl_str);
+		curl_str = NULL;
+		filename=escaped_filename;
+	}
 
 	LLFILE* fp = LLFile::fopen(LLLogChat::makeLogFileName(filename), "a"); 		/*Flawfinder: ignore*/
 	if (!fp)
@@ -120,6 +129,15 @@ void LLLogChat::loadHistory(std::string filename , void (*callback)(ELogLineType
 	{
 		llwarns << "Filename is Empty!" << llendl;
 		return ;
+	}
+	//dont allow bad files names
+	if(filename.find_first_of("<",1))
+	{
+		char * curl_str = curl_escape(filename.c_str(), filename.size());
+		std::string escaped_filename(curl_str);
+		curl_free(curl_str);
+		curl_str = NULL;
+		filename=escaped_filename;
 	}
 
 	LLFILE* fptr = LLFile::fopen(makeLogFileName(filename), "r");		/*Flawfinder: ignore*/

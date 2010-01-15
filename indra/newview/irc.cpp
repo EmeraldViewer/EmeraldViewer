@@ -354,7 +354,7 @@ LLSD IRC::getSpeakersLLSD()
 	while (cup)
 	{
 		LLSD speaker;
-		std::string strnick = std::string(cup->nick);
+		std::string strnick = "<"+std::string(cup->nick)+">";
 		LLUUID uid;
 		//llinfos << "Generating uuid from " << strnick << " and " << std::string(cup->channel) << llendl;
 		uid.generate(strnick+"lgg"+std::string(cup->channel));
@@ -368,7 +368,7 @@ LLSD IRC::getSpeakersLLSD()
 			allparticipants.push_back(uid);
 			allcorespondingNick.push_back(strnick);
 		}
-		if(strnick != "")
+		if(strnick != "<>")
 		{
 			//std::string toMakeUUID;
 			//LLMD5 hashedName;
