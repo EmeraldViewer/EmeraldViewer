@@ -428,13 +428,13 @@ void LLTextEditor::spell_show(void * data)
 
 std::vector<S32> LLTextEditor::getMisspelledWordsPositions()
 {
+	resetSpellDirty();
 	std::vector<S32> thePosesOfBadWords;
 	const LLWString& text = mWText;
 
 	S32 wordStart=0;
-	S32 wordEnd=0;
-
-	while(wordEnd < (S32)text.length())
+	S32 wordEnd=spellStart;//start at the scroll start
+	while(wordEnd < spellEnd)
 	{
 		//go through all the chars... XD	
 		if( LLTextEditor::isPartOfWord( text[wordEnd] ) ) 
@@ -2910,14 +2910,29 @@ void LLTextEditor::drawMisspelled()
 	if(mReadOnly)return;
 	if(glggHunSpell->highlightInRed || mOverRideAndShowMisspellings)
 	{
-		//update base
-		F32 elapsed = mSpellTimer.getElapsedTimeF32();
-		if(  (S32(elapsed / 1) & 1) )
+		S32 newSpellStart = getLineStart(mScrollbar->getDocPos());//start at the scroll start
+		S32 newSpellEnd = getLineStart(mScrollbar->getDocPos() + 1 + mScrollbar->getDocSize()-mScrollbar->getDocPosMax());//end at the end o.o
+		if(newSpellEnd!=spellEnd || newSpellStart!=spellStart)
 		{
-			if(isSpellDirty())
-			{
-				resetSpellDirty();
-				misspellLocations=getMisspelledWordsPositions();
+			spellEnd = newSpellEnd;
+			spellStart = newSpellStart;
+			misspellLocations=getMisspelledWordsPositions();
+		}else
+		{
+			//update base
+			if( ((getLength()<400)||(false))	&&(  (S32(mSpellTimer.getElapsedTimeF32() / 1) & 1) ))
+			{//if short length, update evry second
+				if(isSpellDirty())
+				{
+					misspellLocations=getMisspelledWordsPositions();
+				}
+			}
+			else if  (S32(mKeystrokeTimer.getElapsedTimeF32() / 2) & 1) 
+			{//if long length, update 2 seconds after stoped typing
+				if(isSpellDirty())
+				{
+					misspellLocations=getMisspelledWordsPositions();
+				}
 			}
 		}
 		//draw

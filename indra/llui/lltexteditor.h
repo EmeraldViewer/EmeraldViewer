@@ -506,6 +506,8 @@ private:
 	mutable std::string mUTF8Text;
 	mutable BOOL	mTextIsUpToDate;
 	LLWString		mPrevSpelledText;		// saved string so we know whether to respell or not
+	S32 spellStart;
+	S32 spellEnd;
 	std::vector<S32> misspellLocations;     // where all the mispelled words are
 	BOOL		mOverRideAndShowMisspellings;
 
