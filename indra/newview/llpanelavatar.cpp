@@ -1176,8 +1176,8 @@ void LLPanelAvatarPicks::onClickImport(void* data)
 	LLPanelPick* panel_pick = new LLPanelPick(FALSE);
 	LLTabContainer* tabs =  self->getChild<LLTabContainer>("picks tab");
 
-	panel_pick->importNewPick();
-	if(tabs)
+	bool import = panel_pick->importNewPick();
+	if(tabs && import)
 	{
 		tabs->addTabPanel(panel_pick, panel_pick->getPickName());
 		tabs->selectLastTab();

@@ -196,11 +196,11 @@ void LLPanelPick::initNewPick()
 }
 
 //Imports a new pick from an xml - RK
-void LLPanelPick::importNewPick()
+bool LLPanelPick::importNewPick()
 {
 	LLFilePicker& file_picker = LLFilePicker::instance();
 
-	if(!file_picker.getOpenFile(LLFilePicker::FFLOAD_XML)) return;// User canceled load.
+	if(!file_picker.getOpenFile(LLFilePicker::FFLOAD_XML)) return false;// User canceled load.
 	else
 	{
 		std::string file = file_picker.getFirstFile();
@@ -226,6 +226,7 @@ void LLPanelPick::importNewPick()
 		mImporting = true;
 
 		sendPickInfoUpdate();
+		return true;
 	}
 }
 
