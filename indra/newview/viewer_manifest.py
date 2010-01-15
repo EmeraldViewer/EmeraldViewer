@@ -422,7 +422,7 @@ class DarwinManifest(ViewerManifest):
             self.path("../../libraries/universal-darwin/lib_release/libalut.dylib", "MacOS/libalut.dylib");
 	    
 	    # Lua lib
-	    self.path("../../libraries/universal-darwin/lib_release/liblua5.1.dylib", "MacOS/liblua5.1.dylib");
+	    #self.path("../../libraries/universal-darwin/lib_release/liblua5.1.dylib", "MacOS/liblua5.1.dylib");
 
 	    # otr lib and deps
 	    self.path("../../libraries/universal-darwin/lib_release/libotr.dylib", "MacOS/libotr.dylib");
@@ -705,9 +705,10 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libopenjpeg.so.1.3.0", "libopenjpeg.so.1.3")
             self.path("libalut.so")
             self.path("libopenal.so", "libopenal.so.1")
-            self.path("liblua5.1.so")
+#            self.path("liblua5.1.so")
+            self.path("libz.so.1", "libz.so")
             self.path("libotr.so.2.2.0", "libotr.so.2")
-            self.path("libhunspell-1.2.so.0.0.0", "libhunspell-1.2.so")
+            self.path("libhunspell-1.2.so.0.0.0", "libhunspell-1.2.so.0")
             self.end_prefix("lib")
 
             # Vivox runtimes

@@ -51,7 +51,7 @@ include(libotr)
 
 if (DARWIN OR LINUX)
     include(libotrb)
-    include(libhunspellb)
+#    include(libhunspellb)
 endif (DARWIN OR LINUX)
 
 include_directories(
@@ -74,7 +74,7 @@ include_directories(
     ${LLXML_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
-	${HUNSPELL_INCLUDE_DIR}
+		${HUNSPELL_INCLUDE_DIR}
     ${EMERALD_INCLUDE_DIRS}
     )
 

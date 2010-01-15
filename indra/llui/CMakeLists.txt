@@ -12,6 +12,7 @@ include(LLRender)
 include(LLWindow)
 include(LLVFS)
 include(LLXML)
+include(HUNSPELL)
 
 include_directories(
     ${LLAUDIO_INCLUDE_DIRS}
