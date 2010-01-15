@@ -49,6 +49,7 @@
 #include "llviewerparcelmgr.h"
 #include "llviewerregion.h"
 #include "lluictrlfactory.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 
 LLFloaterTopObjects* LLFloaterTopObjects::sInstance = NULL;

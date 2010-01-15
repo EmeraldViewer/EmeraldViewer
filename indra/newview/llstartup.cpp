@@ -193,6 +193,11 @@
 #include "jc_lslviewerbridge.h"
 #include "wlfPanel_AdvSettings.h"
 #include "floaterao.h"
+
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 #if LL_LIBXUL_ENABLED
 #include "llmozlib.h"
 #endif // LL_LIBXUL_ENABLED
@@ -2333,6 +2338,14 @@ bool idle_startup()
 		{
 			LLInventoryView::toggleVisibility(NULL);
 		}
+
+// [RLVa:KB] - Checked: 2009-11-27 (RLVa-1.1.0f) | Added: RLVa-1.1.0f
+		if (rlv_handler_t::isEnabled())
+		{
+			// Regularly process a select subset of retained commands during logon
+			gIdleCallbacks.addFunction(RlvHandler::onIdleStartup, new LLTimer());
+		}
+// [/RLVa:KB]
 
 		LLStartUp::setStartupState( STATE_MISC );
 		return FALSE;

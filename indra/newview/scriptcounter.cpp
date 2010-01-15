@@ -32,12 +32,15 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "scriptcounter.h"
+#include "llselectmgr.h"
 #include "llviewerobjectlist.h"
 #include "llvoavatar.h"
 #include "llviewerregion.h"
 #include "llwindow.h"
 #include "lltransfersourceasset.h"
+#include "llviewercontrol.h"
 #include "llviewernetwork.h"
+#include "llviewerobject.h"
 #include <sstream>
 
 ScriptCounter* ScriptCounter::sInstance;

@@ -77,6 +77,10 @@
 #include "llstylemap.h"
 #include "mfdkeywordfloater.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 // Used for LCD display
 extern void AddNewIMToLCD(const std::string &newLine);
 extern void AddNewChatToLCD(const std::string &newLine);

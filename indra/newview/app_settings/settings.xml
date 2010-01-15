@@ -153,6 +153,17 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
+		<key>RLVaEnableCompositeFolders</key>
+		<map>
+			<key>Comment</key>
+			<string>Enables composite folders for shared inventory</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>RLVaEnableLegacyNaming</key>
 		<map>
 			<key>Comment</key>
@@ -167,7 +178,7 @@
 		<key>RLVaEnableWear</key>
 		<map>
 			<key>Comment</key>
-			<string>When TRUE, enables the "Wear" option on the inventory item context menu for attachments.</string>
+			<string>Enables the "Wear" option on the inventory item context menu for attachments</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
@@ -175,10 +186,21 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
+		<key>RLVaEnableSharedWear</key>
+		<map>
+			<key>Comment</key>
+			<string>Attachments in the shared #RLV folder can be force-attached without needing to specify an attachment point (as long as no attachment is non-detachable)</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>0</integer>
+		</map>
 		<key>RLVaHideLockedLayers</key>
 		<map>
 			<key>Comment</key>
-			<string>When TRUE, hides worn but "remove outfit" restricted clothing layers from @getoufit</string>
+			<string>Hides "remove outfit" restricted worn clothing layers from @getoufit</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
@@ -189,13 +211,24 @@
 		<key>RLVaHideLockedAttachments</key>
 		<map>
 			<key>Comment</key>
-			<string>When TRUE, hides worn but "no detach" restricted attachments from @getattach</string>
+			<string>Hides non-detachable worn attachments from @getattach</string>
 			<key>Persist</key>
 			<integer>1</integer>
 			<key>Type</key>
 			<string>Boolean</string>
 			<key>Value</key>
 			<integer>0</integer>
+		</map>
+		<key>RLVaSharedInvAutoRename</key>
+		<map>
+			<key>Comment</key>
+			<string>Automatically renames shared inventory items when worn</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
 		</map>
 		<key>RLVaShowNameTags</key>
 		<map>

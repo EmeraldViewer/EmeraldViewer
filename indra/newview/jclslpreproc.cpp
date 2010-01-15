@@ -34,6 +34,7 @@
 #include "jclslpreproc.h"
 
 #include "llagent.h"
+#include "llappviewer.h"
 
 #include "emerald.h"
 
@@ -45,6 +46,7 @@
 
 #include "llinventorymodel.h"
 
+#include "llviewercontrol.h"
 #include "llversionviewer.h"
 
 #include <iostream>

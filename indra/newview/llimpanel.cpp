@@ -88,6 +88,10 @@
 #include "mfdkeywordfloater.h"
 #endif // USE_OTR // [/$PLOTR$]
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 //
 // Constants
 //
@@ -3035,18 +3039,18 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 			}
 			//utf8_text = utf8str_truncate(utf8_text, MAX_MSG_BUF_SIZE - 1);
 
-// [RLVa:KB] - Alternate: Emerald-370 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-1.0.0g
+// [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-1.0.0g
 			if (gRlvHandler.hasBehaviour(RLV_BHVR_SENDIM))
 			{
 				if (IM_NOTHING_SPECIAL == mDialog)			// One-on-one IM: allow if recipient is a sendim exception
 				{
 					if (!gRlvHandler.isException(RLV_BHVR_SENDIM, mOtherParticipantUUID))
-						utf8_text = rlv_handler_t::cstrBlockedSendIM;
+						utf8_text = RlvStrings::getString(RLV_STRING_BLOCKED_SENDIM);
 				}
 				else if (gAgent.isInGroup(mSessionUUID))	// Group chat: allow if recipient is a sendim exception
 				{
 					if (!gRlvHandler.isException(RLV_BHVR_SENDIM, mSessionUUID))
-						utf8_text = rlv_handler_t::cstrBlockedSendIM;
+						utf8_text = RlvStrings::getString(RLV_STRING_BLOCKED_SENDIM);
 				}
 				else if (mSpeakers)							// Conference chat: allow if all participants are sendim exceptions
 				{
@@ -3059,14 +3063,14 @@ void LLFloaterIMPanel::sendMsg(bool ooc)
 						LLSpeaker* pSpeaker = *itSpeaker;
 						if ( (gAgent.getID() != pSpeaker->mID) && (!gRlvHandler.isException(RLV_BHVR_SENDIM, pSpeaker->mID)) )
 						{
-							utf8_text = rlv_handler_t::cstrBlockedSendIM;
+							utf8_text = RlvStrings::getString(RLV_STRING_BLOCKED_SENDIM);
 							break;
 						}
 					}
 				}
 				else										// Catch all fall-through
 				{
-					utf8_text = rlv_handler_t::cstrBlockedSendIM;
+					utf8_text = RlvStrings::getString(RLV_STRING_BLOCKED_SENDIM);
 				}
 			}
 // [/RLVa:KB]

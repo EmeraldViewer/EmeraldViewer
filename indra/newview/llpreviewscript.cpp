@@ -86,6 +86,10 @@
 #include "llviewercontrol.h"
 #include "llappviewer.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 #include "llpanelinventory.h"
 
 #include "jclslpreproc.h"

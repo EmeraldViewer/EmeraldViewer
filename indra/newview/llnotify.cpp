@@ -55,7 +55,7 @@
 #include "lloverlaybar.h" // for gOverlayBar
 #include "lluictrlfactory.h"
 
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-10 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
+// [RLVa:KB] - Version: 1.23.4
 #include "rlvhandler.h"
 // [/RLVa:KB]
 

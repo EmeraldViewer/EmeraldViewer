@@ -9,6 +9,8 @@
 #include "llagent.h"
 #include "llframetimer.h"
 #include "llprimitive.h"
+#include "llviewercontrol.h"
+#include "llviewerobjectlist.h"
 #include "llviewerregion.h"
 #include "llvolumemessage.h"
 #include "llchat.h"

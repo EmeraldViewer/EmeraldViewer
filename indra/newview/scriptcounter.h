@@ -31,7 +31,7 @@
 
 
 #include "llagent.h"
-
+#include "llvoinventorylistener.h"
 
 class ScriptCounter : public LLVOInventoryListener
 {

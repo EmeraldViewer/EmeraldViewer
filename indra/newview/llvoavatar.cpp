@@ -119,7 +119,7 @@
 #include "boost/lexical_cast.hpp"
 
 // [RLVa:KB]
-#include "llstartup.h"
+#include "rlvhandler.h"
 // [/RLVa:KB]
 
 using namespace LLVOAvatarDefines;
@@ -3499,7 +3499,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	BOOL render_name =	visible_chat ||
 						(visible_avatar &&
 // [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.0h
-						( (!fRlvShowNames) || (RlvSettings::fShowNameTags) ) &&
+						( (!fRlvShowNames) || (RlvSettings::getShowNameTags()) ) &&
 // [/RLVa:KB]
 						((sRenderName == RENDER_NAME_ALWAYS) ||
 						(sRenderName == RENDER_NAME_FADE && time_visible < NAME_SHOW_TIME)));
@@ -3677,7 +3677,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				}
 				else
 				{
-					line = gRlvHandler.getAnonym(line.assign(firstname->getString()).append(" ").append(lastname->getString()));
+					line = RlvStrings::getAnonym(line.assign(firstname->getString()).append(" ").append(lastname->getString()));
 				}
 // [/RLVa:KB]
 				BOOL need_comma = FALSE;
@@ -6985,6 +6985,20 @@ LLViewerObject* LLVOAvatar::getWornAttachment( const LLUUID& inv_item_id )
 	}
 	return NULL;
 }
+
+// [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
+LLViewerJointAttachment* LLVOAvatar::getWornAttachmentPoint(const LLUUID& inv_item_id)
+{
+	for (attachment_map_t::const_iterator itAttach = mAttachmentPoints.begin(); 
+			itAttach != mAttachmentPoints.end(); ++itAttach)
+	{
+		LLViewerJointAttachment* pAttachPt = itAttach->second;
+		if (pAttachPt->getItemID() == inv_item_id)
+			return pAttachPt;
+	}
+	return NULL;
+}
+// [/RLVa:KB]
 
 const std::string LLVOAvatar::getAttachedPointName(const LLUUID& inv_item_id)
 {

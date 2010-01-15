@@ -511,6 +511,7 @@ set(viewer_SOURCE_FILES
     pipeline.cpp
     rlvhandler.cpp
     rlvhelper.cpp
+    rlvcommon.cpp
     rlvmultistringsearch.cpp
     rlvextensions.cpp
     rlvfloaterbehaviour.cpp
@@ -969,9 +970,9 @@ set(viewer_HEADER_FILES
     VertexCache.h
     VorbisFramework.h
     rlvdefines.h
-    rlvevent.h
     rlvhandler.h
     rlvhelper.h
+    rlvcommon.h
     rlvmultistringsearch.h
     rlvextensions.h
     rlvfloaterbehaviour.h

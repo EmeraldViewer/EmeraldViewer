@@ -68,6 +68,10 @@
 #include "llscrolllistctrl.h"
 #include "floateravatarlist.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 #if LL_DARWIN
 
 	#include "llresizehandle.h"

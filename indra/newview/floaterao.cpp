@@ -29,6 +29,7 @@
 #include "llpanelinventory.h"
 #include "llinventorybridge.h"
 
+#include "llboost.h"
 #include <boost/regex.hpp>
 
 void cmdline_printchat(std::string message);

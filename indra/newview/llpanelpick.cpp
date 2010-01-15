@@ -60,6 +60,10 @@
 #include "llviewerregion.h"
 #include "llviewerwindow.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 //For pick import and export - RK
 #include "llfilepicker.h"
 #include "llviewernetwork.h"

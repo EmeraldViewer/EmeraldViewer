@@ -45,12 +45,16 @@
 #include "llviewerwindow.h"
 #include "llrendersphere.h"
 #include "llselectmgr.h"
+#include "llviewercontrol.h"
 #include "llglheaders.h"
 #include "llresmgr.h"
 
 
 #include "llxmltree.h"
 
+// [RLVa:KB] - Emerald specific
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 BOOL LLHUDEffectLookAt::sDebugLookAt = FALSE;
 
@@ -551,7 +555,7 @@ void LLHUDEffectLookAt::render()
 			// Show anonyms in place of actual names when @shownames=n restricted
 			if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 			{
-				text = gRlvHandler.getAnonym(text);
+				text = RlvStrings::getAnonym(text);
 			}
 // [/RLVa:KB]
 

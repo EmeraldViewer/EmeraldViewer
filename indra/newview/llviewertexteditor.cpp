@@ -62,6 +62,10 @@
 
 #include "llappviewer.h" // for gPacificDaylightTime
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 static LLRegisterWidget<LLViewerTextEditor> r("text_editor");
 
 ///----------------------------------------------------------------------------
@@ -96,9 +100,10 @@ public:
 		}
 		else
 		{
-// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
-			if ( (rlv_handler_t::isEnabled()) && (gRlvHandler.hasBehaviour(RLV_BHVR_VIEWNOTE)) )
+// [RLVa:KB] - Checked: 2009-11-11 (RLVa-1.1.0a) | Modified: RLVa-1.1.0a
+			if (gRlvHandler.hasBehaviour(RLV_BHVR_VIEWNOTE))
 			{
+				RlvNotifications::notifyBlockedViewNote();
 				return;
 			}
 // [/RLVa:KB]
@@ -1357,9 +1362,10 @@ BOOL LLViewerTextEditor::openEmbeddedItem(LLInventoryItem* item, llwchar wc)
 
 void LLViewerTextEditor::openEmbeddedTexture( LLInventoryItem* item, llwchar wc )
 {
-// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-10-13 (RLVa-1.0.5c) | Added: RLVa-1.0.5c
+// [RLVa:KB] - Checked: 2009-11-11 (RLVa-1.1.0a) | Modified: RLVa-1.1.0a
 	if (gRlvHandler.hasBehaviour(RLV_BHVR_VIEWTEXTURE))
 	{
+		RlvNotifications::notifyBlockedViewTexture();
 		return;
 	}
 // [/RLVa:KB]

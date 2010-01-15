@@ -42,6 +42,7 @@
 
 #include "jcfloater_areasearch.h"
 
+#include "llviewercontrol.h"
 #include "llviewerobjectlist.h"
 
 #include "llcategory.h"

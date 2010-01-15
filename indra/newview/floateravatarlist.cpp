@@ -17,6 +17,7 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llavatarconstants.h"
+#include "llappviewer.h"
 #include "floateravatarlist.h"
 
 #include "lluictrlfactory.h"
@@ -30,6 +31,7 @@
 #include "llregionflags.h"
 #include "llfloaterreporter.h"
 #include "llagent.h"
+#include "llselectmgr.h"
 #include "llviewerregion.h"
 #include "lltracker.h"
 #include "llviewercontrol.h"
@@ -43,6 +45,10 @@
 #include "llchat.h"
 #include "llfloaterchat.h"
 #include "llcallbacklist.h"
+
+// [RLVa:KB] - Emerald specific
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 #include <time.h>
 #include <string.h>
@@ -138,12 +144,12 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 {
 	if(gSavedSettings.getBOOL("EmeraldRadarChatAlerts") && (strcmp(name.c_str(),"(???) (???)") == 1))
 	{
-		// [RLVa:KB] - Alternate: Emerald-370
+// [RLVa:KB] - Alternate: Emerald-370
 		if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES))
 		{
-			name = gRlvHandler.getAnonym(name);
+			name = RlvStrings::getAnonym(name);
 		}
-		// [/RLVa:KB]
+// [/RLVa:KB]
 
 		LLChat chat;
 		switch(type)

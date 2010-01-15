@@ -35,6 +35,7 @@
 #include "jc_lslviewerbridge.h"
 #include "llchatbar.h"
 #include "llagent.h"
+#include "llappviewer.h"
 #include "stdtypes.h"
 #include "llviewerregion.h"
 #include "llworld.h"

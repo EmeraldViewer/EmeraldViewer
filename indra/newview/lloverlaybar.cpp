@@ -66,6 +66,10 @@
 #include "llselectmgr.h"
 #include "wlfPanel_AdvSettings.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 //
 // Globals
 //

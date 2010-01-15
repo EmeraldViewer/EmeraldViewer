@@ -42,6 +42,7 @@
 #include "llvoavatar.h"
 #include "llviewerobject.h"
 #include "llchat.h"
+#include "llviewercontrol.h"
 #include "llviewerstats.h"
 #include "llfloaterchat.h"
 
