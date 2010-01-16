@@ -926,7 +926,7 @@ bool LLTextureFetchWorker::doWork(S32 param)
 		}
 		S32 datasize = mFormattedImage->getDataSize();
 		llassert_always(datasize);
-		setPriority(LLWorkerThread::PRIORITY_LOW | mWorkPriority); // Set priority first since Responder may change it
+		setPriority(LLWorkerThread::PRIORITY_HIGH | mWorkPriority); // Set priority first since Responder may change it
 		U32 cache_priority = mWorkPriority;
 		mWritten = FALSE;
 		mState = WAIT_ON_WRITE;
