@@ -245,7 +245,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 h_pad="0" halign="left" height="20" left_delta="-10" mouse_opaque="false"
 					 name="text_box1" v_pad="0" width="425">Response Text: (Use #f for recipient's first name,#l for last name,#t for timestamp):</text>
 				<text_editor type="string" length="1" bottom_delta="-85" embedded_items="false" enabled="true"
-					 follows="left|top" font="SansSerifSmall" height="75" left_delta="0" max_length="225"
+					 follows="left|top" font="SansSerifSmall" height="75" left_delta="0" max_length="1100"
 					 mouse_opaque="true" name="im_response" width="230" word_wrap="true"/>
 				<check_box bottom_delta="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Send an item along with the response" left_delta="0"
