@@ -2910,29 +2910,20 @@ void LLTextEditor::drawMisspelled()
 	if(mReadOnly)return;
 	if(glggHunSpell->highlightInRed || mOverRideAndShowMisspellings)
 	{
-		S32 newSpellStart = getLineStart(mScrollbar->getDocPos());//start at the scroll start
-		S32 newSpellEnd = getLineStart(mScrollbar->getDocPos() + 1 + mScrollbar->getDocSize()-mScrollbar->getDocPosMax());//end at the end o.o
-		if(newSpellEnd!=spellEnd || newSpellStart!=spellStart)
+		if(
+			( ((getLength()<400)||(false))	&&(  (S32(mSpellTimer.getElapsedTimeF32() / 1) & 1) ))
+			||
+			(S32(mKeystrokeTimer.getElapsedTimeF32() / 1) & 1) 
+			)
 		{
-			spellEnd = newSpellEnd;
-			spellStart = newSpellStart;
-			misspellLocations=getMisspelledWordsPositions();
-		}else
-		{
-			//update base
-			if( ((getLength()<400)||(false))	&&(  (S32(mSpellTimer.getElapsedTimeF32() / 1) & 1) ))
-			{//if short length, update evry second
-				if(isSpellDirty())
-				{
-					misspellLocations=getMisspelledWordsPositions();
-				}
-			}
-			else if  (S32(mKeystrokeTimer.getElapsedTimeF32() / 2) & 1) 
-			{//if long length, update 2 seconds after stoped typing
-				if(isSpellDirty())
-				{
-					misspellLocations=getMisspelledWordsPositions();
-				}
+			S32 newSpellStart = getLineStart(mScrollbar->getDocPos());//start at the scroll start
+			S32 newSpellEnd = getLineStart(mScrollbar->getDocPos() + 1 + mScrollbar->getDocSize()-mScrollbar->getDocPosMax());//end at the end o.o
+		
+			if((isSpellDirty())||(newSpellEnd!=spellEnd || newSpellStart!=spellStart))
+			{
+				spellEnd = newSpellEnd;
+				spellStart = newSpellStart;
+				misspellLocations=getMisspelledWordsPositions();
 			}
 		}
 		//draw
