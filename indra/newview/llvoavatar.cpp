@@ -2648,6 +2648,13 @@ BOOL LLVOAvatar::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 		return TRUE;
 	}
 
+	//Zwag: Make sure all composites and bakes are active.
+	for(U8 i=0;i<getNumTEs();++i)
+	{
+		LLViewerImage* te = getTEImage(i);
+		te->forceActive();
+	}
+
 	idleUpdateVoiceVisualizer( voice_enabled );
 	idleUpdateMisc( detailed_update );
 	idleUpdateAppearanceAnimation();
