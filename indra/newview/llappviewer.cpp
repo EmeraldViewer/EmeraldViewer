@@ -334,7 +334,9 @@ void idle_afk_check()
 #ifdef RLV_EXTENSION_CMD_ALLOWIDLE
 	if ( (gAllowIdleAFK || gRlvHandler.hasBehaviour(RLV_BHVR_ALLOWIDLE)) && 
 		 (gAwayTriggerTimer.getElapsedTimeF32() > gSavedSettings.getF32("AFKTimeout")))
-#endif // RLV_EXTENSION_CMD_ALLOWIDLE
+#else // RLV_EXTENSION_CMD_ALLOWIDLE
+	if (gAllowIdleAFK && (gAwayTriggerTimer.getElapsedTimeF32() > gSavedSettings.getF32("AFKTimeout")))
+#endif
 // [/RLVa:KB]
 	{
 		gAgent.setAFK();
