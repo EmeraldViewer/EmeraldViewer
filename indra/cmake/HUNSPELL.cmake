@@ -1,7 +1,7 @@
 # -*- cmake -*-
 
 if (STANDALONE)
-	include(FindHunspell)
+	include(FindHunSpell)
 else (STANDALONE)
 # Uncomment this if ever added to install.xml
 #	include(Prebuilt)
