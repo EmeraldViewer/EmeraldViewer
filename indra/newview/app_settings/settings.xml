@@ -4205,17 +4205,28 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
-		<key>EmeraldCmdLineAO</key>
-		<map>
-			<key>Comment</key>
-			<string>Turn AO on/off</string>
-			<key>Persist</key>
-			<integer>1</integer>
-			<key>Type</key>
-			<string>String</string>
-			<key>Value</key>
-			<string>cao</string>
-		</map>
+    <key>EmeraldCmdLineAO</key>
+    <map>
+      <key>Comment</key>
+      <string>Turn AO on/off</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>cao</string>
+    </map>
+    <key>EmeraldCmdLineClearChat</key>
+    <map>
+      <key>Comment</key>
+      <string>Clear chat hsitory to stop lag from chat spam</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>String</string>
+      <key>Value</key>
+      <string>clrchat</string>
+    </map>
 		<key>EmeraldCmdLineHeight</key>
 		<map>
 			<key>Comment</key>

@@ -293,7 +293,8 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				{
 					gChatBar->sendChatFromViewer(text, CHAT_TYPE_STOP, FALSE);
 				}
-			}else if (command == "clrchat")
+			}
+			else if(command == gSavedSettings.getString("EmeraldCmdLineClearChat"))
 			{
 				LLFloaterChat* chat = LLFloaterChat::getInstance(LLSD());
 				if(chat)
