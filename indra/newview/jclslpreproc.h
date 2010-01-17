@@ -44,6 +44,9 @@ public:
 	virtual void fire(std::string output) = 0;
 };*/
 
+//#define DARWINPREPROC
+//force preproc on mac
+
 class JCLSLPreprocessor
 {
 public:
@@ -64,7 +67,7 @@ public:
 	std::string lslopt(std::string script);
 
 
-	std::vector<std::string> scan_includes(std::string filename, std::string script);
+	//std::vector<std::string> scan_includes(std::string filename, std::string script);
 
 	static LLUUID findInventoryByName(std::string name);
 

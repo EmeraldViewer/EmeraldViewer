@@ -54,6 +54,7 @@
 #include <string>
 #include <vector>
 
+#if !defined(LL_DARWIN) || defined(DARWINPREPROC)
 
 //apparently LL #defined this function which happens to precisely match
 //a boost::wave function name, destroying the internet, silly grey furries
@@ -97,24 +98,6 @@ std::map<std::string,LLUUID> JCLSLPreprocessor::cached_assetids;
 
 #define encode_start std::string("//start_unprocessed_text\n/*")
 #define encode_end std::string("*/\n//end_unprocessed_text")
-
-BOOL JCLSLPreprocessor::mono_directive(std::string& text, bool agent_inv)
-{
-	//FAILDEBUG
-	BOOL domono = agent_inv;
-	//FAILDEBUG
-	if(text.find("//mono\n") != -1)
-	{
-		//FAILDEBUG
-		domono = TRUE;
-	}else if(text.find("//lsl2\n") != -1)
-	{
-		//FAILDEBUG
-		domono = FALSE;
-	}
-	//FAILDEBUG
-	return domono;
-}
 
 std::string JCLSLPreprocessor::encode(std::string script)
 {
@@ -1121,46 +1104,6 @@ void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& iuuid, LLA
 	if(info)delete info;
 }
 
-class ScriptMatches : public LLInventoryCollectFunctor
-{
-public:
-	ScriptMatches(std::string name)
-	{
-		sName = name;
-	}
-	virtual ~ScriptMatches() {}
-	virtual bool operator()(LLInventoryCategory* cat,
-							LLInventoryItem* item)
-	{
-		if(item)
-		{
-			//LLViewerInventoryCategory* folderp = gInventory.getCategory((item->getParentUUID());
-			if(item->getName() == sName)
-			{
-				if(item->getType() == LLAssetType::AT_LSL_TEXT)return true;
-			}
-			//return (item->getName() == sName);// && cat->getName() == "#v");
-		}
-		return false;
-	}
-private:
-	std::string sName;
-};
-
-LLUUID JCLSLPreprocessor::findInventoryByName(std::string name)
-{
-	LLViewerInventoryCategory::cat_array_t cats;
-	LLViewerInventoryItem::item_array_t items;
-	ScriptMatches namematches(name);
-	gInventory.collectDescendentsIf(gAgent.getInventoryRootID(),cats,items,FALSE,namematches);
-
-	if (items.count())
-	{
-		return items[0]->getUUID();
-	}
-	return LLUUID::null;
-}
-
 void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
 {
 	FAILDEBUG
@@ -1529,12 +1472,6 @@ std::string convert_continue_break_statements(std::string script)
 }*/
 
 
-void JCLSLPreprocessor::display_error(std::string err)
-{
-	//FAILDEBUG
-	mCore->mErrorList->addCommentText(err);
-}
-
 
 void JCLSLPreprocessor::start_process()
 {
@@ -1768,3 +1705,105 @@ void JCLSLPreprocessor::start_process()
 		LSLHunspell = new Hunspell(
 	}
 }*/
+
+#else
+
+std::string encode(std::string script)
+{
+	display_error("(encode) Warning: Preprocessor not supported in this build.");
+	return script;
+}
+
+std::string decode(std::string script)
+{
+	display_error("(decode) Warning: Preprocessor not supported in this build.");
+	return script;
+}
+
+std::string lslopt(std::string script)
+{
+	display_error("(lslopt) Warning: Preprocessor not supported in this build.");
+	return script;
+}
+
+
+class ScriptMatches : public LLInventoryCollectFunctor
+{
+public:
+	ScriptMatches(std::string name)
+	{
+		sName = name;
+	}
+	virtual ~ScriptMatches() {}
+	virtual bool operator()(LLInventoryCategory* cat,
+							LLInventoryItem* item)
+	{
+		if(item)
+		{
+			//LLViewerInventoryCategory* folderp = gInventory.getCategory((item->getParentUUID());
+			if(item->getName() == sName)
+			{
+				if(item->getType() == LLAssetType::AT_LSL_TEXT)return true;
+			}
+			//return (item->getName() == sName);// && cat->getName() == "#v");
+		}
+		return false;
+	}
+private:
+	std::string sName;
+};
+
+LLUUID JCLSLPreprocessor::findInventoryByName(std::string name)
+{
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	ScriptMatches namematches(name);
+	gInventory.collectDescendentsIf(gAgent.getInventoryRootID(),cats,items,FALSE,namematches);
+
+	if (items.count())
+	{
+		return items[0]->getUUID();
+	}
+	return LLUUID::null;
+}
+
+void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
+{
+}
+
+void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
+{
+	LLTextEditor* outfield = mCore->mPostEditor;
+	if(outfield)
+	{
+		outfield->setText(LLStringExplicit(output));
+	}
+	mCore->doSaveComplete((void*)mCore,close);
+}
+
+#endif
+
+void JCLSLPreprocessor::display_error(std::string err)
+{
+	//FAILDEBUG
+	mCore->mErrorList->addCommentText(err);
+}
+
+
+BOOL JCLSLPreprocessor::mono_directive(std::string& text, bool agent_inv)
+{
+	//FAILDEBUG
+	BOOL domono = agent_inv;
+	//FAILDEBUG
+	if(text.find("//mono\n") != -1)
+	{
+		//FAILDEBUG
+		domono = TRUE;
+	}else if(text.find("//lsl2\n") != -1)
+	{
+		//FAILDEBUG
+		domono = FALSE;
+	}
+	//FAILDEBUG
+	return domono;
+}
