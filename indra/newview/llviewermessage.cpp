@@ -2567,6 +2567,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 				{
 					name = "no name";
 					chat.mFromName = name;
+					
 				}
 
 			std::ostringstream link;

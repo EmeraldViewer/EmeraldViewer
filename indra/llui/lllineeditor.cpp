@@ -93,17 +93,17 @@ static LLRegisterWidget<LLLineEditor> r1("line_editor");
 //
 // Member functions
 //
-class ChatTranslationReceiver : public LLTranslate::TranslationReceiver
+class LineChatTranslationReceiver : public LLTranslate::TranslationReceiver
 {
 public :
-	ChatTranslationReceiver(const std::string &toLang, LLLineEditor* line): LLTranslate::TranslationReceiver("", toLang),
+	LineChatTranslationReceiver(const std::string &toLang, LLLineEditor* line): LLTranslate::TranslationReceiver("", toLang),
 		m_line(line)	
 	{
 	}
 
-	static boost::intrusive_ptr<ChatTranslationReceiver> build(const std::string &toLang,LLLineEditor* line)
+	static boost::intrusive_ptr<LineChatTranslationReceiver> build(const std::string &toLang,LLLineEditor* line)
 	{
-		return boost::intrusive_ptr<ChatTranslationReceiver>(new ChatTranslationReceiver(toLang,line));
+		return boost::intrusive_ptr<LineChatTranslationReceiver>(new LineChatTranslationReceiver(toLang,line));
 	}
 
 protected:
@@ -495,7 +495,7 @@ void LLLineEditor::translateText(void * data)
 {
 	LLLineEditor* line = (LLLineEditor*)data;
 	const std::string &toLang = LLTranslate::getTranslateLanguage();
-	LLHTTPClient::ResponderPtr result = ChatTranslationReceiver::build(toLang,line);
+	LLHTTPClient::ResponderPtr result = LineChatTranslationReceiver::build(toLang,line);
 	S32 left_pos = llmin( line->mSelectionStart, line->mSelectionEnd );
 	S32 length = abs( line->mSelectionStart - line->mSelectionEnd );
 	LLTranslate::translateMessage(result,"", toLang, line->mText.getString().substr(left_pos, length));

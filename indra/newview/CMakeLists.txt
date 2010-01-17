@@ -1095,6 +1095,25 @@ if (WINDOWS)
         res/lltoolzoomout.cur
         res/emerald_icon.png
         res/emerald_icon.ico
+        res/emeraldicon1.ico
+        res/emeraldicon2.ico
+        res/emeraldicon3.ico
+        res/emeraldicon4.ico
+        res/emeraldicon5.ico
+        res/emeraldicon6.ico
+        res/emeraldicon7.ico
+        res/emeraldicon8.ico
+        res/emeraldicon9.ico
+        res/emeraldicon10.ico
+        res/emeraldicon11.ico
+        res/emeraldicon12.ico
+        res/emeraldicon13.ico
+        res/emeraldicon14.ico
+        res/emeraldicon15.ico
+        res/emeraldicon16.ico
+        res/emeraldicon17.ico
+        res/emeraldicon18.ico
+        res/emeraldicon19.ico
         res/resource.h
         res/toolbuy.cur
         res/toolopen.cur
