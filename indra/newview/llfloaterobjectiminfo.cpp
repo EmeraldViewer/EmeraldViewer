@@ -228,7 +228,7 @@ void LLFloaterObjectIMInfo::update(const LLUUID& object_id, const std::string& n
 
 	if (tempname.length() < 1)
 	{
-		tempname = "no name";
+		tempname = ">>";
 //		chat.mFromName = name;
 		childSetText("ObjectName",tempname);
 	}

@@ -2565,7 +2565,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 
 				if (tempname.length() < 1)
 				{
-					name = "no name";
+					name = ">>";
 					chat.mFromName = name;
 					
 				}
@@ -3144,7 +3144,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		
 		if (tempname.length() < 1)
 		{
-			from_name = "no name";
+			from_name = ">>";
 			chat.mFromName = from_name;
 		}
 
