@@ -4,7 +4,7 @@ project(viewer)
 
 include(00-Common)
 include(Boost)
-include(BuildVersion)
+#include(BuildVersion)
 include(DBusGlib)
 include(DirectX)
 include(ELFIO)
@@ -1361,6 +1361,7 @@ if (WINDOWS)
         ARGS
           ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
           --configuration=${CMAKE_CFG_INTDIR}
+          --version=${VERSION_VIEWER}
           --channel=${VIEWER_CHANNEL}
           --login_channel=${VIEWER_LOGIN_CHANNEL}
           --grid=${GRID}
@@ -1471,7 +1472,7 @@ else (WINDOWS)
 		)
 endif (WINDOWS)
 
-build_version(viewer)
+#build_version(viewer)
 
 set(ARTWORK_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH
     "Path to artwork files.")
@@ -1485,7 +1486,7 @@ if (LINUX)
       DEPENDS ${VIEWER_BINARY_NAME}
       )
 
-  set(product Emerald-${ARCH}-${viewer_VERSION})
+  set(product Emerald-${ARCH}-${VERSION_VIEWER})
 
   add_custom_command(
       OUTPUT ${product}.tar.bz2
@@ -1493,6 +1494,7 @@ if (LINUX)
       ARGS
         ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
         --grid=${GRID}
+        --version=${VERSION_VIEWER}
         --channel=${VIEWER_CHANNEL}
         --login_channel=${VIEWER_LOGIN_CHANNEL}
         --installer_name=${product}
@@ -1553,6 +1555,7 @@ if (DARWIN)
           ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
           --grid=${GRID}
           --configuration=${CMAKE_CFG_INTDIR}
+          --version=${VERSION_VIEWER}
           --channel=${VIEWER_CHANNEL}
           --login_channel=${VIEWER_LOGIN_CHANNEL}
           --source=${CMAKE_CURRENT_SOURCE_DIR}
@@ -1573,6 +1576,7 @@ if (DARWIN)
           --grid=${GRID}
           --configuration=${CMAKE_CFG_INTDIR}
           --channel=${VIEWER_CHANNEL}
+          --version=${VERSION_VIEWER}
           --login_channel=${VIEWER_LOGIN_CHANNEL}
           --source=${CMAKE_CURRENT_SOURCE_DIR}
           --artwork=${ARTWORK_DIR}
