@@ -5,11 +5,7 @@
 # with the version specified
 
 # The "cmake -E touch" command was released with 2.4.8.
-if (DARWIN)
-  cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
-else (DARWIN)
-  cmake_minimum_required(VERSION 2.4.8 FATAL_ERROR)
-endif (DARWIN)
+cmake_minimum_required(VERSION 2.4.8 FATAL_ERROR)
 
 # This makes cmake 2.6 not complain about version 2.4 compatibility.
 if (COMMAND cmake_policy)
@@ -24,10 +20,10 @@ project(${ROOT_PROJECT_NAME})
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(Variables)
-include(Utils)
 
-# Load version data and build data
-load_version_data()
+if (DARWIN)
+  cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
+endif (DARWIN)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING

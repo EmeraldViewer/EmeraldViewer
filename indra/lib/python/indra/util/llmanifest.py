@@ -40,8 +40,6 @@ import sys
 import tarfile
 import errno
 
-from indra.util import llversion
-
 def path_ancestors(path):
     drive, path = os.path.splitdrive(os.path.normpath(path))
     result = []
@@ -77,6 +75,28 @@ def get_default_platform(dummy):
             'darwin':'darwin'
             }[sys.platform]
 
+def get_default_version(srctree):
+    # look up llversion.h and parse out the version info
+    paths = [os.path.join(srctree, x, 'llversionviewer.h') for x in ['llcommon', '../llcommon', '../../indra/llcommon.h']]
+    for p in paths:
+        if os.path.exists(p):
+            contents = open(p, 'r').read()
+            major = re.search("LL_VERSION_MAJOR\s=\s([0-9]+)", contents).group(1)
+            minor = re.search("LL_VERSION_MINOR\s=\s([0-9]+)", contents).group(1)
+            patch = re.search("LL_VERSION_PATCH\s=\s([0-9]+)", contents).group(1)
+            build = re.search("LL_VERSION_BUILD\s=\s([0-9]+)", contents).group(1)
+            return major, minor, patch, build
+
+def get_channel(srctree):
+    # look up llversionserver.h and parse out the version info
+    paths = [os.path.join(srctree, x, 'llversionviewer.h') for x in ['llcommon', '../llcommon', '../../indra/llcommon.h']]
+    for p in paths:
+        if os.path.exists(p):
+            contents = open(p, 'r').read()
+            channel = re.search("LL_CHANNEL\s=\s\"(.+)\";\s*$", contents, flags = re.M).group(1)
+            return channel
+    
+
 DEFAULT_SRCTREE = os.path.dirname(sys.argv[0])
 DEFAULT_CHANNEL = 'Second Life Release'
 
@@ -111,7 +131,7 @@ ARGUMENTS=[
          default=""),
     dict(name='channel',
          description="""The channel to use for updates, packaging, settings name, etc.""",
-         default=DEFAULT_CHANNEL),
+         default=get_channel),
     dict(name='login_channel',
          description="""The channel to use for login handshake/updates only.""",
          default=None),
@@ -138,7 +158,7 @@ ARGUMENTS=[
     dict(name='version',
          description="""This specifies the version of Second Life that is
         being packaged up.""",
-         default=None)
+         default=get_default_version)
     ]
 
 def usage(srctree=""):
@@ -195,9 +215,7 @@ def main():
                 args[arg['name']] = default
 
     # fix up version
-    if args.get('version') is None:
-        args['version'] = llversion.get_viewer_version().split('.')
-    elif isinstance(args['version'], str):
+    if isinstance(args.get('version'), str):
         args['version'] = args['version'].split('.')
         
     # default and agni are default
