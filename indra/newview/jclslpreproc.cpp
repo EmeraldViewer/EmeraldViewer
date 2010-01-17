@@ -54,6 +54,46 @@
 #include <string>
 #include <vector>
 
+class ScriptMatches : public LLInventoryCollectFunctor
+{
+public:
+	ScriptMatches(std::string name)
+	{
+		sName = name;
+	}
+	virtual ~ScriptMatches() {}
+	virtual bool operator()(LLInventoryCategory* cat,
+							LLInventoryItem* item)
+	{
+		if(item)
+		{
+			//LLViewerInventoryCategory* folderp = gInventory.getCategory((item->getParentUUID());
+			if(item->getName() == sName)
+			{
+				if(item->getType() == LLAssetType::AT_LSL_TEXT)return true;
+			}
+			//return (item->getName() == sName);// && cat->getName() == "#v");
+		}
+		return false;
+	}
+private:
+	std::string sName;
+};
+
+LLUUID JCLSLPreprocessor::findInventoryByName(std::string name)
+{
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	ScriptMatches namematches(name);
+	gInventory.collectDescendentsIf(gAgent.getInventoryRootID(),cats,items,FALSE,namematches);
+
+	if (items.count())
+	{
+		return items[0]->getUUID();
+	}
+	return LLUUID::null;
+}
+
 #if !defined(LL_DARWIN) || defined(DARWINPREPROC)
 
 //apparently LL #defined this function which happens to precisely match
@@ -1724,47 +1764,6 @@ std::string lslopt(std::string script)
 {
 	display_error("(lslopt) Warning: Preprocessor not supported in this build.");
 	return script;
-}
-
-
-class ScriptMatches : public LLInventoryCollectFunctor
-{
-public:
-	ScriptMatches(std::string name)
-	{
-		sName = name;
-	}
-	virtual ~ScriptMatches() {}
-	virtual bool operator()(LLInventoryCategory* cat,
-							LLInventoryItem* item)
-	{
-		if(item)
-		{
-			//LLViewerInventoryCategory* folderp = gInventory.getCategory((item->getParentUUID());
-			if(item->getName() == sName)
-			{
-				if(item->getType() == LLAssetType::AT_LSL_TEXT)return true;
-			}
-			//return (item->getName() == sName);// && cat->getName() == "#v");
-		}
-		return false;
-	}
-private:
-	std::string sName;
-};
-
-LLUUID JCLSLPreprocessor::findInventoryByName(std::string name)
-{
-	LLViewerInventoryCategory::cat_array_t cats;
-	LLViewerInventoryItem::item_array_t items;
-	ScriptMatches namematches(name);
-	gInventory.collectDescendentsIf(gAgent.getInventoryRootID(),cats,items,FALSE,namematches);
-
-	if (items.count())
-	{
-		return items[0]->getUUID();
-	}
-	return LLUUID::null;
 }
 
 void JCLSLPreprocessor::JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat)
