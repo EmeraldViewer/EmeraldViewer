@@ -193,6 +193,7 @@
 #include "jc_lslviewerbridge.h"
 #include "wlfPanel_AdvSettings.h"
 #include "floaterao.h"
+#include "scriptcounter.h"
 
 // [RLVa:KB]
 #include "rlvhandler.h"
@@ -3229,6 +3230,7 @@ void pass_processObjectPropertiesFamily(LLMessageSystem *msg, void**)
 	LLSelectMgr::processObjectPropertiesFamily(msg,0);
 	JCFloaterAnimList::processObjectPropertiesFamily(msg,0);
 	JCFloaterAreaSearch::processObjectPropertiesFamily(msg,0);
+	ScriptCounter::processObjectPropertiesFamily(msg,0);
 }
 
 void pass_processObjectProperties(LLMessageSystem *msg, void**)

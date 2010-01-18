@@ -45,7 +45,7 @@ private:
 	static LLSD* getprim(LLUUID id);
 	static void completechk();
 public:
-	static void processObjectProperties(LLMessageSystem* msg, void** user_data);
+	static void processObjectPropertiesFamily(LLMessageSystem* msg, void** user_data);
 	void inventoryChanged(LLViewerObject* obj,
 								 InventoryObjectList* inv,
 								 S32 serial_num,
@@ -65,6 +65,7 @@ private:
 	static U32 status;
 	static U32 invqueries;
 	static U32 scriptcount;
+	static LLUUID reqObjectID;
 	static std::set<std::string> objIDS;
 	static LLDynamicArray<LLUUID> delUUIDS;
 	static bool doDelete;

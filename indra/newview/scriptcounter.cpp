@@ -47,6 +47,7 @@ ScriptCounter* ScriptCounter::sInstance;
 U32 ScriptCounter::invqueries;
 U32 ScriptCounter::status;
 U32 ScriptCounter::scriptcount;
+LLUUID ScriptCounter::reqObjectID;
 LLDynamicArray<LLUUID> ScriptCounter::delUUIDS;
 bool ScriptCounter::doDelete;
 std::set<std::string> ScriptCounter::objIDS;
@@ -72,6 +73,26 @@ void ScriptCounter::init()
 LLVOAvatar* find_avatar_from_object( LLViewerObject* object );
 
 LLVOAvatar* find_avatar_from_object( const LLUUID& object_id );
+
+void ScriptCounter::processObjectPropertiesFamily(LLMessageSystem* msg, void** user_data)
+{
+	LLUUID object_id;
+	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_ObjectID,object_id );
+	std::string name;
+	msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Name, name);
+	if(reqObjectID.notNull())
+	if(object_id == reqObjectID)
+	{
+		if(invqueries != 0)
+		{
+			if(doDelete)
+				cmdline_printchat("Deleting scripts from object "+name+". Please wait.");
+			else
+				cmdline_printchat("Counting scripts on object "+name+". Please wait.");
+		}
+		reqObjectID.setNull();
+	}
+}
 
 void ScriptCounter::serializeSelection(bool delScript)
 {
@@ -125,32 +146,49 @@ void ScriptCounter::serializeSelection(bool delScript)
 		std::ostringstream stream;
 		stream << iObject;
 		std::string objectCount=stream.str();
-		if(doDelete==true)
-			cmdline_printchat("Deleting scripts from "+objectCount+" objects. Please wait.");
+		if((iObject != 1) || foo->isAvatar())
+		{
+			if(doDelete==true)
+				cmdline_printchat("Deleting scripts from "+objectCount+" objects. Please wait.");
+			else
+			{
+				if(foo->isAvatar())
+				{
+					int valid=1;
+					LLVOAvatar *av=find_avatar_from_object(foo);
+					LLNameValue *firstname;
+					LLNameValue *lastname;
+					if(!av)
+					  valid=0;
+					else
+					{
+					  firstname = av->getNVPair("FirstName");
+					  lastname = av->getNVPair("LastName");
+					  if(!firstname || !lastname)
+						valid=0;
+					  if(valid)
+					  cmdline_printchat("Counting scripts from "+objectCount+" attachments on "+firstname->getString()+" "+lastname->getString()+". Please wait.");
+					}
+					if(!valid)
+						cmdline_printchat("Counting scripts from "+objectCount+" attachments on avatar. Please wait.");
+				}
+				else
+					cmdline_printchat("Counting scripts from "+objectCount+" objects. Please wait.");
+			}
+		}
 		else
 		{
-			if(foo->isAvatar())
-			{
-				int valid=1;
-				LLVOAvatar *av=find_avatar_from_object(foo);
-				LLNameValue *firstname;
-				LLNameValue *lastname;
-				if(!av)
-				  valid=0;
-				else
-				{
-				  firstname = av->getNVPair("FirstName");
-				  lastname = av->getNVPair("LastName");
-				  if(!firstname || !lastname)
-					valid=0;
-				  if(valid)
-				  cmdline_printchat("Counting scripts from "+objectCount+" attachments on "+firstname->getString()+" "+lastname->getString()+". Please wait.");
-				}
-				if(!valid)
-					cmdline_printchat("Counting scripts from "+objectCount+" attachments on avatar. Please wait.");
-			}
-			else
-				cmdline_printchat("Counting scripts from "+objectCount+" objects. Please wait.");
+			
+			reqObjectID=((LLViewerObject*)foo->getRoot())->getID();
+			LLMessageSystem* msg = gMessageSystem;
+			msg->newMessageFast(_PREHASH_RequestObjectPropertiesFamily);
+			msg->nextBlockFast(_PREHASH_AgentData);
+			msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+			msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+			msg->nextBlockFast(_PREHASH_ObjectData);
+			msg->addU32Fast(_PREHASH_RequestFlags, 0 );
+			msg->addUUIDFast(_PREHASH_ObjectID, reqObjectID);
+			gAgent.sendReliableMessage();
 		}
 		serialize(catfayse);
 	}
@@ -210,6 +248,7 @@ void ScriptCounter::completechk()
 		else
 			sstr << "Scripts counted. Result: ";
 		sstr << scriptcount;
+		reqObjectID.setNull();
 		cmdline_printchat(sstr.str());
 		scriptcount=0;
 		objIDS.clear();
