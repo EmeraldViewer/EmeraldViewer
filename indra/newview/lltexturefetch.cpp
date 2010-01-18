@@ -1378,7 +1378,8 @@ bool LLTextureFetch::createRequest(const std::string& filename, const LLUUID& id
 	}
 	else
 	{
-		desired_size = FIRST_PACKET_SIZE;
+		//Zwag: This appears to fix a lot of broken textures when using llkdu and emkdu.
+		desired_size = 1024;
 		desired_discard = MAX_DISCARD_LEVEL;
 	}
 

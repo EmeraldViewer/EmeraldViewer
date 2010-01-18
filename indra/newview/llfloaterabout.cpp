@@ -126,13 +126,13 @@ LLFloaterAbout::LLFloaterAbout()
 		+ llformat(" %d.%d.%d (%d) %s %s (%s) %s\n",
 			LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VIEWER_BUILD,
 			__DATE__, __TIME__,
-			gSavedSettings.getString("VersionChannelName"), ASSTRING(EMERALD_BRANCH));
+			LL_DEFAULT_VIEWER_CHANNEL, ASSTRING(EMERALD_BRANCH));
 #else
 	std::string version = LLAppViewer::instance()->getSecondLifeTitle()
 		+ llformat(" %d.%d.%d (%d) %s %s (%s)\n",
 			LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD,
 			__DATE__, __TIME__,
-			gSavedSettings.getString("VersionChannelName").c_str());
+			LL_DEFAULT_VIEWER_CHANNEL;
 #endif
 	support_widget->appendColoredText(version, FALSE, FALSE, gColors.getColor("TextFgReadOnlyColor"));
 	support_widget->appendStyledText(LLTrans::getString("ReleaseNotes"), false, false, viewer_link_style);
@@ -320,7 +320,7 @@ static std::string get_viewer_release_notes_url()
 		<< LL_VERSION_BUILD;
 
 	LLSD query;
-	query["channel"] = gSavedSettings.getString("VersionChannelName");
+	query["channel"] = LL_DEFAULT_VIEWER_CHANNEL;
 	query["version"] = version.str();
 
 	std::ostringstream url;

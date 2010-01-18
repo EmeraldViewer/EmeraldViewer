@@ -651,7 +651,7 @@ bool LLAppViewer::init()
 
 	// Build a string representing the current version number.
     gCurrentVersion = llformat("%s %d.%d.%d.%d", 
-        gSavedSettings.getString("VersionChannelName").c_str(), 
+        LL_DEFAULT_VIEWER_CHANNEL, 
         LL_VERSION_MAJOR, 
         LL_VERSION_MINOR, 
         LL_VERSION_PATCH, 
@@ -2394,7 +2394,7 @@ void LLAppViewer::writeSystemInfo()
 {
 	gDebugInfo["SLLog"] = LLError::logFileName();
 
-	gDebugInfo["ClientInfo"]["Name"] = gSavedSettings.getString("VersionChannelName");
+	gDebugInfo["ClientInfo"]["Name"] = LL_DEFAULT_VIEWER_CHANNEL;
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
 	gDebugInfo["ClientInfo"]["PatchVersion"] = LL_VERSION_PATCH;
@@ -2485,7 +2485,7 @@ void LLAppViewer::handleViewerCrash()
 	
 	//We already do this in writeSystemInfo(), but we do it again here to make /sure/ we have a version
 	//to check against no matter what
-	gDebugInfo["ClientInfo"]["Name"] = gSavedSettings.getString("VersionChannelName");
+	gDebugInfo["ClientInfo"]["Name"] = LL_DEFAULT_VIEWER_CHANNEL;
 
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
@@ -4156,7 +4156,7 @@ void LLAppViewer::handleLoginComplete()
 	initMainloopTimeout("Mainloop Init");
 
 	// Store some data to DebugInfo in case of a freeze.
-	gDebugInfo["ClientInfo"]["Name"] = gSavedSettings.getString("VersionChannelName");
+	gDebugInfo["ClientInfo"]["Name"] = LL_DEFAULT_VIEWER_CHANNEL;
 
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
