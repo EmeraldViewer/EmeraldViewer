@@ -132,7 +132,7 @@ LLFloaterAbout::LLFloaterAbout()
 		+ llformat(" %d.%d.%d (%d) %s %s (%s)\n",
 			LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD,
 			__DATE__, __TIME__,
-			LL_DEFAULT_VIEWER_CHANNEL;
+			LL_DEFAULT_VIEWER_CHANNEL);
 #endif
 	support_widget->appendColoredText(version, FALSE, FALSE, gColors.getColor("TextFgReadOnlyColor"));
 	support_widget->appendStyledText(LLTrans::getString("ReleaseNotes"), false, false, viewer_link_style);
