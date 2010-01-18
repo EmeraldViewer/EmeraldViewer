@@ -18,6 +18,10 @@
 #include "llfocusmgr.h"
 #include "llview.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 // Externs
 extern LLInventoryModel gInventory;
 
@@ -50,6 +54,13 @@ LLFloaterAssetBrowser::LLFloaterAssetBrowser()
 // static
 void LLFloaterAssetBrowser::show(void*)
 {
+// [RLVa:KB] - Alternate: Emerald-1371 | Checked: 2010-01-17 (RLVa-1.1.0) | Added: RLVa-1.1.0
+	if (gRlvHandler.hasBehaviour(RLV_BHVR_SHOWINV))
+	{
+		return;
+	}
+// [/RLVa:KB]
+
     if (!sInstance)
 	sInstance = new LLFloaterAssetBrowser();
 

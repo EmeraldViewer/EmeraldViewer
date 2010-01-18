@@ -5049,9 +5049,9 @@ void LLAgent::onAnimStop(const LLUUID& id)
 #ifdef RLV_EXTENSION_CMD_ALLOWIDLE
 		if (!gRlvHandler.hasBehaviour(RLV_BHVR_ALLOWIDLE))
 			clearAFK();
-#else // RLV_EXTENSION_CMD_ALLOWIDLE
+#else
 		clearAFK();
-#endif
+#endif // RLV_EXTENSION_CMD_ALLOWIDLE
 // [/RLVa:KB]
 
 	}

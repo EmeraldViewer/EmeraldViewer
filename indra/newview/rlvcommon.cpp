@@ -3,6 +3,7 @@
 #include "llappviewer.h"
 #include "lluictrlfactory.h"
 #include "llversionviewer.h"
+#include "llviewermenu.h"
 #include "llvoavatar.h"
 
 #include "rlvcommon.h"
@@ -299,6 +300,22 @@ std::string RlvStrings::getVersion()
 std::string RlvStrings::getVersionNum() 
 {
 	return llformat("%d%02d%02d%02d", RLV_VERSION_MAJOR, RLV_VERSION_MINOR, RLV_VERSION_PATCH, RLV_VERSION_BUILD);
+}
+
+// ============================================================================
+// Generic menu enablers
+//
+
+bool RlvEnableIfNot::handleEvent(LLPointer<LLEvent>, const LLSD& userdata)
+{
+	bool fEnable = true;
+	if (rlv_handler_t::isEnabled())
+	{
+		ERlvBehaviour eBhvr = RlvCommand::getBehaviourFromString(userdata["data"].asString());
+		fEnable = (eBhvr != RLV_BHVR_UNKNOWN) ? !gRlvHandler.hasBehaviour(eBhvr) : true;
+	}
+	gMenuHolder->findControl(userdata["control"].asString())->setValue(fEnable);
+	return true;
 }
 
 // ============================================================================

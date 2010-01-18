@@ -2048,7 +2048,16 @@ class LLObjectDerender : public view_listener_t
 		if (!(id == gAgentID))
 		{
 			LLViewerObject *objectp = gObjectList.findObject(id);
-			if (objectp)
+//			if (objectp)
+// [RLVa:KB] - Alternate: Emerald-1371 | Checked: 2009-01-17 (RLVa-1.1.0) | Added: RLVa-1.1.0
+			LLVOAvatar* pAvatar = NULL;
+			// Don't allow derendering this avie's own attachments when RLV is enabled
+			if (
+				 (objectp) && 
+				 ( (!rlv_handler_t::isEnabled()) || 
+				   ((pAvatar = find_avatar_from_object(objectp)) == NULL) || (pAvatar->getID() != gAgent.getID()) )
+			   )
+// [/RLVa:KB]
 			{
 				gObjectList.killObject(objectp);
 			}
@@ -2056,6 +2065,37 @@ class LLObjectDerender : public view_listener_t
 		return true;
 	}
 };
+
+// [RLVa:KB] - Alternate: Emerald-1371 | Checked: 2009-01-17 (RLVa-1.1.0) | Added: RLVa-1.1.0
+class LLObjectEnableDerender : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent>, const LLSD& userdata)
+	{
+		bool fEnable = true;
+
+		// Don't allow derendering this avie's own attachments when RLV is enabled
+		if (rlv_handler_t::isEnabled())
+		{
+			LLObjectSelectionHandle hSelect = LLSelectMgr::getInstance()->getSelection();
+			if ( (hSelect.notNull()) && (hSelect->isAttachment()) )
+			{
+				LLViewerObject* pObj = hSelect->getFirstRootObject(TRUE);
+
+				// Get the attachment's owner
+				while ( (pObj) && (pObj->isAttachment()) )
+					pObj = (LLViewerObject*)pObj->getParent();
+
+				fEnable = (pObj->getID() != gAgent.getID());
+			}
+		}
+
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(fEnable);
+		return true;
+	}
+};
+// [/RLVa:KB]
+
+
 //---------------------------------------------------------------------------
 // Land pie menu
 //---------------------------------------------------------------------------
@@ -9334,6 +9374,9 @@ void initialize_menus()
 	addMenu(new LLObjectEdit(), "Object.Edit");
 	addMenu(new LLObjectInspect(), "Object.Inspect");
 	addMenu(new LLObjectDerender(), "Object.DERENDER"); //Phox: Added visible mute here.
+// [RLVa:KB] - Alternate: Emerald-1371 | Checked: 2009-01-17 (RLVa-1.1.0) | Added: RLVa-1.1.0
+	addMenu(new LLObjectEnableDerender(), "Object.EnableDerender");
+// [/RLVa:KB]
 	addMenu(new LLObjectEnableOpen(), "Object.EnableOpen");
 	addMenu(new LLObjectEnableTouch(), "Object.EnableTouch");
 	addMenu(new LLObjectEnableSitOrStand(), "Object.EnableSitOrStand");
@@ -9384,4 +9427,11 @@ void initialize_menus()
 	addMenu(new LLSomethingSelectedNoHUD(), "SomethingSelectedNoHUD");
 	addMenu(new LLEditableSelected(), "EditableSelected");
 	addMenu(new LLEditableSelectedMono(), "EditableSelectedMono");
+
+// [RLVa:KB] - Checked: 2010-01-17 (RLVa-1.1.0) | Added: RLVa-1.1.0
+	if (rlv_handler_t::isEnabled())
+	{
+		addMenu(new RlvEnableIfNot(), "RLV.EnableIfNot");
+	}
+// [/RLVa:KB]
 }

@@ -21,6 +21,8 @@
 #include "llviewerregion.h"
 #include "llviewerwindow.h"
 #include "llworld.h"
+#include "floateravatarlist.h"
+#include "floaterassetbrowser.h"
 #include "pipeline.h"
 
 #include "rlvhandler.h"
@@ -1668,6 +1670,10 @@ ERlvCmdRet RlvHandler::processAddRemCommand(const LLUUID& idObj, const RlvComman
 				{
 					// Close all open inventory windows
 					LLInventoryView::closeAll();
+
+					// Emerald-specific: close the asset browser window
+					if ( (LLFloaterAssetBrowser::getInstance()) && (LLFloaterAssetBrowser::getInstance()->getVisible()) )
+						LLFloaterAssetBrowser::getInstance()->close();
 				}
 			}
 			break;
@@ -1738,6 +1744,10 @@ ERlvCmdRet RlvHandler::processAddRemCommand(const LLUUID& idObj, const RlvComman
 
 					// Close the "Active Speakers" panel if it's currently visible
 					LLFloaterChat::getInstance()->childSetVisible("active_speakers_panel", false);
+
+					// Emerald-specific
+					if ( (LLFloaterAvatarList::getInstance()) && (LLFloaterAvatarList::getInstance()->getVisible()) )
+						LLFloaterAvatarList::getInstance()->close();
 				}
 				else
 				{

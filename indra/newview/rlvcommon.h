@@ -1,8 +1,9 @@
 #ifndef RLV_COMMON_H
 #define RLV_COMMON_H
 
-#include "llviewercontrol.h"
+#include "llmemberlistener.h"
 #include "llselectmgr.h"
+#include "llviewercontrol.h"
 #include "rlvdefines.h"
 
 // ============================================================================
@@ -125,6 +126,15 @@ public:
 	virtual bool onForceCommand(const LLUUID& idObj, const RlvCommand& rlvCmd, ERlvCmdRet& cmdRet)  { return false; }
 };
 typedef bool (RlvCommandHandler::*rlvCommandHandler)(const LLUUID& idObj, const RlvCommand& rlvCmd, ERlvCmdRet& cmdRet);
+
+// ============================================================================
+// Generic menu enablers
+//
+
+class RlvEnableIfNot : public LLMemberListener<LLView>
+{
+	bool handleEvent(LLPointer<LLEvent>, const LLSD&);
+};
 
 // ============================================================================
 // Selection functors
