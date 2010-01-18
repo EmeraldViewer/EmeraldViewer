@@ -77,6 +77,7 @@ void ScriptCounter::serializeSelection(bool delScript)
 {
 	LLDynamicArray<LLViewerObject*> catfayse;
 	LLViewerObject* foo=LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+	int iObject=0;
 	if(foo)
 	{
 		if(foo->isAvatar())
@@ -92,7 +93,11 @@ void ScriptCounter::serializeSelection(bool delScript)
 					if (!attachment->getValid())
 						continue ;
 					LLViewerObject* object = attachment->getObject();
-					if(object)catfayse.put(object);
+					if(object)
+					{
+						catfayse.put(object);
+						iObject++;
+					}
 				}
 			}
 		}
@@ -103,7 +108,11 @@ void ScriptCounter::serializeSelection(bool delScript)
 			{
 				LLSelectNode* selectNode = *iter;
 				LLViewerObject* object = selectNode->getObject();
-				if(object)catfayse.put(object);
+				if(object)
+				{
+					catfayse.put(object);
+					iObject++;
+				}
 			}
 			doDelete=delScript;
 		}
@@ -113,10 +122,36 @@ void ScriptCounter::serializeSelection(bool delScript)
 			gMessageSystem->mPacketRing.setOutBandwidth(128000);
 			gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 		}
+		std::ostringstream stream;
+		stream << iObject;
+		std::string objectCount=stream.str();
 		if(doDelete==true)
-			cmdline_printchat("Deleting scripts. Please wait.");
+			cmdline_printchat("Deleting scripts from "+objectCount+" objects. Please wait.");
 		else
-			cmdline_printchat("Counting scripts. Please wait.");
+		{
+			if(foo->isAvatar())
+			{
+				int valid=1;
+				LLVOAvatar *av=find_avatar_from_object(foo);
+				LLNameValue *firstname;
+				LLNameValue *lastname;
+				if(!av)
+				  valid=0;
+				else
+				{
+				  firstname = av->getNVPair("FirstName");
+				  lastname = av->getNVPair("LastName");
+				  if(!firstname || !lastname)
+					valid=0;
+				  if(valid)
+				  cmdline_printchat("Counting scripts from "+objectCount+" attachments on "+firstname->getString()+" "+lastname->getString()+". Please wait.");
+				}
+				if(!valid)
+					cmdline_printchat("Counting scripts from "+objectCount+" attachments on avatar. Please wait.");
+			}
+			else
+				cmdline_printchat("Counting scripts from "+objectCount+" objects. Please wait.");
+		}
 		serialize(catfayse);
 	}
 }
