@@ -12,12 +12,12 @@ else (STANDALONE)
 
 #	You must have symlinks such as zlib.so -> zlib.so.1 or it doesn't get found.. HATE HATE HATE HATE
 	find_library(Z_RELEASE
-								NAMES z zlib zdll z1g
+								NAMES z zlib zdll z1g llz
 								PATHS ${ARCH_PREBUILT_DIRS_RELEASE}
 								NO_DEFAULT_PATH
 								)
 	find_library(Z_DEBUG
-								NAMES z zlibd zdll z1g
+								NAMES z zlibd zdll z1g llz
 								PATHS ${ARCH_PREBUILT_DIRS_DEBUG}
 								NO_DEFAULT_PATH
 								)
