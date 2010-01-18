@@ -496,7 +496,8 @@ BOOL LLImageJ2C::encode(const LLImageRaw *raw_imagep, const char* comment_text, 
 S32 LLImageJ2C::calcHeaderSizeJ2C()
 {
 	//Zwag: This change appears to fix a lot of problems with llkdu and emkdu for image decoding.
-	return 800; //2048; // ??? hack... just needs to be >= actual header size...
+	//Zwag: rolled back for now. Caused problems with some smaller textures :S
+	return 600; //2048; // ??? hack... just needs to be >= actual header size...
 }
 
 //static
