@@ -293,476 +293,7 @@ std::string scopeript2(std::string& top, S32 fstart, char left = '{', char right
 	//FAILDEBUG
 	return top.substr(fstart,(cursor-fstart));
 }
-/*
-int getscope(std::string& file, int cursor, char left = '{', char right = '}')
-{
-	int filelen = file.length();
-	if(cursor < filelen)
-	{
-		int pos = 0;
-		bool in_literal = false;
-		int scope = 0;
-		char ltoken = ' ';
-		do
-		{
-			char token = file.at(pos);
-			if(token == '"' && ltoken != '\\')in_literal = !in_literal;
-			else if(token == '\\' && ltoken == '\\')token = ' ';
-			else if(!in_literal)
-			{
-				if(token == left)
-				{
-					scope += 1;
-				}else if(token == right)
-				{
-					scope -= 1;
-				}
-			}
-			ltoken = token;
-			pos += 1;
-		}while(pos <= cursor);
 
-		return scope;
-	}
-	return -1;
-}*/
-/*
-//checks if the item at "it" is accessible at "me"
-bool in_my_scope(std::string& file, int it, int me, char left = '{', char right = '}')
-{
-	int scope = getscope(file, me);
-	if(me < it)return false;//the future isnt behind us
-	bool accessible = true;
-	bool in_literal = false;
-	int relative_scope = scope;
-	int out_of_scope = 0;
-	char ltoken = ' ';
-	do
-	{
-		char token = file.at(me);
-		if(ltoken == '"' && token != '\\')in_literal = !in_literal;
-		else if(ltoken == '\\' && token == '\\')token = ' ';
-		else if(!in_literal)
-		{
-			if(token == left)
-			{
-				relative_scope -= 1;
-				out_of_scope -= 1;
-				if(out_of_scope < 0)out_of_scope = 0;
-			}else if(token == right)
-			{
-				relative_scope += 1;
-				out_of_scope += 1;
-			}
-		}
-		ltoken = token;
-		me -= 1;
-	}while(it < me);
-	if(out_of_scope > 0)accessible = false;
-	return accessible;
-}
-
-static std::map<std::string, std::string> llFuncs;
-void init_funcs()
-{
-	llFuncs.clear();
-	llFuncs[std::string("llSin")] = std::string("float");
-	llFuncs[std::string("llCos")] = std::string("float");
-	llFuncs[std::string("llTan")] = std::string("float");
-	llFuncs[std::string("llAtan2")] = std::string("float");
-	llFuncs[std::string("llSqrt")] = std::string("float");
-	llFuncs[std::string("llPow")] = std::string("float");
-	llFuncs[std::string("llAbs")] = std::string("integer");
-	llFuncs[std::string("llFabs")] = std::string("float");
-	llFuncs[std::string("llFrand")] = std::string("float");
-	llFuncs[std::string("llFloor")] = std::string("integer");
-	llFuncs[std::string("llCeil")] = std::string("integer");
-	llFuncs[std::string("llRound")] = std::string("integer");
-	llFuncs[std::string("llVecMag")] = std::string("float");
-	llFuncs[std::string("llVecNorm")] = std::string("vector");
-	llFuncs[std::string("llVecDist")] = std::string("float");
-	llFuncs[std::string("llRot2Euler")] = std::string("vector");
-	llFuncs[std::string("llEuler2Rot")] = std::string("rotation");
-	llFuncs[std::string("llAxes2Rot")] = std::string("rotation");
-	llFuncs[std::string("llRot2Fwd")] = std::string("vector");
-	llFuncs[std::string("llRot2Left")] = std::string("vector");
-	llFuncs[std::string("llRot2Up")] = std::string("vector");
-	llFuncs[std::string("llRotBetween")] = std::string("rotation");
-	llFuncs[std::string("llWhisper")] = std::string("void");
-	llFuncs[std::string("llSay")] = std::string("void");
-	llFuncs[std::string("llShout")] = std::string("void");
-	llFuncs[std::string("llListen")] = std::string("integer");
-	llFuncs[std::string("llListenControl")] = std::string("void");
-	llFuncs[std::string("llListenRemove")] = std::string("void");
-	llFuncs[std::string("llSensor")] = std::string("void");
-	llFuncs[std::string("llSensorRepeat")] = std::string("void");
-	llFuncs[std::string("llSensorRemove")] = std::string("void");
-	llFuncs[std::string("llDetectedName")] = std::string("string");
-	llFuncs[std::string("llDetectedKey")] = std::string("key");
-	llFuncs[std::string("llDetectedOwner")] = std::string("key");
-	llFuncs[std::string("llDetectedType")] = std::string("integer");
-	llFuncs[std::string("llDetectedPos")] = std::string("vector");
-	llFuncs[std::string("llDetectedVel")] = std::string("vector");
-	llFuncs[std::string("llDetectedGrab")] = std::string("vector");
-	llFuncs[std::string("llDetectedRot")] = std::string("rotation");
-	llFuncs[std::string("llDetectedGroup")] = std::string("integer");
-	llFuncs[std::string("llDetectedLinkNumber")] = std::string("integer");
-	llFuncs[std::string("llDie")] = std::string("void");
-	llFuncs[std::string("llGround")] = std::string("float");
-	llFuncs[std::string("llCloud")] = std::string("float");
-	llFuncs[std::string("llWind")] = std::string("vector");
-	llFuncs[std::string("llSetStatus")] = std::string("void");
-	llFuncs[std::string("llGetStatus")] = std::string("integer");
-	llFuncs[std::string("llSetScale")] = std::string("void");
-	llFuncs[std::string("llGetScale")] = std::string("vector");
-	llFuncs[std::string("llSetColor")] = std::string("void");
-	llFuncs[std::string("llGetAlpha")] = std::string("float");
-	llFuncs[std::string("llSetAlpha")] = std::string("void");
-	llFuncs[std::string("llGetColor")] = std::string("vector");
-	llFuncs[std::string("llSetTexture")] = std::string("void");
-	llFuncs[std::string("llScaleTexture")] = std::string("void");
-	llFuncs[std::string("llOffsetTexture")] = std::string("void");
-	llFuncs[std::string("llRotateTexture")] = std::string("void");
-	llFuncs[std::string("llGetTexture")] = std::string("string");
-	llFuncs[std::string("llSetPos")] = std::string("void");
-	llFuncs[std::string("llGetPos")] = std::string("vector");
-	llFuncs[std::string("llGetLocalPos")] = std::string("vector");
-	llFuncs[std::string("llSetRot")] = std::string("void");
-	llFuncs[std::string("llGetRot")] = std::string("rotation");
-	llFuncs[std::string("llGetLocalRot")] = std::string("rotation");
-	llFuncs[std::string("llSetForce")] = std::string("void");
-	llFuncs[std::string("llGetForce")] = std::string("vector");
-	llFuncs[std::string("llTarget")] = std::string("integer");
-	llFuncs[std::string("llTargetRemove")] = std::string("void");
-	llFuncs[std::string("llRotTarget")] = std::string("integer");
-	llFuncs[std::string("llRotTargetRemove")] = std::string("void");
-	llFuncs[std::string("llMoveToTarget")] = std::string("void");
-	llFuncs[std::string("llStopMoveToTarget")] = std::string("void");
-	llFuncs[std::string("llApplyImpulse")] = std::string("void");
-	llFuncs[std::string("llApplyRotationalImpulse")] = std::string("void");
-	llFuncs[std::string("llSetTorque")] = std::string("void");
-	llFuncs[std::string("llGetTorque")] = std::string("vector");
-	llFuncs[std::string("llSetForceAndTorque")] = std::string("void");
-	llFuncs[std::string("llGetVel")] = std::string("vector");
-	llFuncs[std::string("llGetAccel")] = std::string("vector");
-	llFuncs[std::string("llGetOmega")] = std::string("vector");
-	llFuncs[std::string("llGetTimeOfDay")] = std::string("float");
-	llFuncs[std::string("llGetWallclock")] = std::string("float");
-	llFuncs[std::string("llGetTime")] = std::string("float");
-	llFuncs[std::string("llResetTime")] = std::string("void");
-	llFuncs[std::string("llGetAndResetTime")] = std::string("float");
-	llFuncs[std::string("llSound")] = std::string("void");
-	llFuncs[std::string("llPlaySound")] = std::string("void");
-	llFuncs[std::string("llLoopSound")] = std::string("void");
-	llFuncs[std::string("llLoopSoundMaster")] = std::string("void");
-	llFuncs[std::string("llLoopSoundSlave")] = std::string("void");
-	llFuncs[std::string("llPlaySoundSlave")] = std::string("void");
-	llFuncs[std::string("llTriggerSound")] = std::string("void");
-	llFuncs[std::string("llStopSound")] = std::string("void");
-	llFuncs[std::string("llPreloadSound")] = std::string("void");
-	llFuncs[std::string("llGetSubString")] = std::string("string");
-	llFuncs[std::string("llDeleteSubString")] = std::string("string");
-	llFuncs[std::string("llInsertString")] = std::string("string");
-	llFuncs[std::string("llToUpper")] = std::string("string");
-	llFuncs[std::string("llToLower")] = std::string("string");
-	llFuncs[std::string("llGiveMoney")] = std::string("void");
-	llFuncs[std::string("llMakeExplosion")] = std::string("void");
-	llFuncs[std::string("llMakeFountain")] = std::string("void");
-	llFuncs[std::string("llMakeSmoke")] = std::string("void");
-	llFuncs[std::string("llMakeFire")] = std::string("void");
-	llFuncs[std::string("llRezObject")] = std::string("void");
-	llFuncs[std::string("llLookAt")] = std::string("void");
-	llFuncs[std::string("llStopLookAt")] = std::string("void");
-	llFuncs[std::string("llSetTimerEvent")] = std::string("void");
-	llFuncs[std::string("llSleep")] = std::string("void");
-	llFuncs[std::string("llGetMass")] = std::string("float");
-	llFuncs[std::string("llCollisionFilter")] = std::string("void");
-	llFuncs[std::string("llTakeControls")] = std::string("void");
-	llFuncs[std::string("llReleaseControls")] = std::string("void");
-	llFuncs[std::string("llAttachToAvatar")] = std::string("void");
-	llFuncs[std::string("llDetachFromAvatar")] = std::string("void");
-	llFuncs[std::string("llTakeCamera")] = std::string("void");
-	llFuncs[std::string("llReleaseCamera")] = std::string("void");
-	llFuncs[std::string("llGetOwner")] = std::string("key");
-	llFuncs[std::string("llInstantMessage")] = std::string("void");
-	llFuncs[std::string("llEmail")] = std::string("void");
-	llFuncs[std::string("llGetNextEmail")] = std::string("void");
-	llFuncs[std::string("llGetKey")] = std::string("key");
-	llFuncs[std::string("llSetBuoyancy")] = std::string("void");
-	llFuncs[std::string("llSetHoverHeight")] = std::string("void");
-	llFuncs[std::string("llStopHover")] = std::string("void");
-	llFuncs[std::string("llMinEventDelay")] = std::string("void");
-	llFuncs[std::string("llSoundPreload")] = std::string("void");
-	llFuncs[std::string("llRotLookAt")] = std::string("void");
-	llFuncs[std::string("llStringLength")] = std::string("integer");
-	llFuncs[std::string("llStartAnimation")] = std::string("void");
-	llFuncs[std::string("llStopAnimation")] = std::string("void");
-	llFuncs[std::string("llPointAt")] = std::string("void");
-	llFuncs[std::string("llStopPointAt")] = std::string("void");
-	llFuncs[std::string("llTargetOmega")] = std::string("void");
-	llFuncs[std::string("llGetStartParameter")] = std::string("integer");
-	llFuncs[std::string("llGodLikeRezObject")] = std::string("void");
-	llFuncs[std::string("llRequestPermissions")] = std::string("void");
-	llFuncs[std::string("llGetPermissionsKey")] = std::string("key");
-	llFuncs[std::string("llGetPermissions")] = std::string("integer");
-	llFuncs[std::string("llGetLinkNumber")] = std::string("integer");
-	llFuncs[std::string("llSetLinkColor")] = std::string("void");
-	llFuncs[std::string("llCreateLink")] = std::string("void");
-	llFuncs[std::string("llBreakLink")] = std::string("void");
-	llFuncs[std::string("llBreakAllLinks")] = std::string("void");
-	llFuncs[std::string("llGetLinkKey")] = std::string("key");
-	llFuncs[std::string("llGetLinkName")] = std::string("string");
-	llFuncs[std::string("llGetInventoryNumber")] = std::string("integer");
-	llFuncs[std::string("llGetInventoryName")] = std::string("string");
-	llFuncs[std::string("llSetScriptState")] = std::string("void");
-	llFuncs[std::string("llGetEnergy")] = std::string("float");
-	llFuncs[std::string("llGiveInventory")] = std::string("void");
-	llFuncs[std::string("llRemoveInventory")] = std::string("void");
-	llFuncs[std::string("llSetText")] = std::string("void");
-	llFuncs[std::string("llWater")] = std::string("float");
-	llFuncs[std::string("llPassTouches")] = std::string("void");
-	llFuncs[std::string("llRequestAgentData")] = std::string("key");
-	llFuncs[std::string("llRequestInventoryData")] = std::string("key");
-	llFuncs[std::string("llSetDamage")] = std::string("void");
-	llFuncs[std::string("llTeleportAgentHome")] = std::string("void");
-	llFuncs[std::string("llModifyLand")] = std::string("void");
-	llFuncs[std::string("llCollisionSound")] = std::string("void");
-	llFuncs[std::string("llCollisionSprite")] = std::string("void");
-	llFuncs[std::string("llGetAnimation")] = std::string("string");
-	llFuncs[std::string("llResetScript")] = std::string("void");
-	llFuncs[std::string("llMessageLinked")] = std::string("void");
-	llFuncs[std::string("llPushObject")] = std::string("void");
-	llFuncs[std::string("llPassCollisions")] = std::string("void");
-	llFuncs[std::string("llGetScriptName")] = std::string("void");
-	llFuncs[std::string("llGetNumberOfSides")] = std::string("integer");
-	llFuncs[std::string("llAxisAngle2Rot")] = std::string("rotation");
-	llFuncs[std::string("llRot2Axis")] = std::string("vector");
-	llFuncs[std::string("llRot2Angle")] = std::string("float");
-	llFuncs[std::string("llAcos")] = std::string("float");
-	llFuncs[std::string("llAsin")] = std::string("float");
-	llFuncs[std::string("llAngleBetween")] = std::string("float");
-	llFuncs[std::string("llGetInventoryKey")] = std::string("key");
-	llFuncs[std::string("llAllowInventoryDrop")] = std::string("void");
-	llFuncs[std::string("llGetSunDirection")] = std::string("vector");
-	llFuncs[std::string("llGetTextureOffset")] = std::string("vector");
-	llFuncs[std::string("llGetTextureScale")] = std::string("vector");
-	llFuncs[std::string("llGetTextureRot")] = std::string("float");
-	llFuncs[std::string("llSubStringIndex")] = std::string("integer");
-	llFuncs[std::string("llGetOwnerKey")] = std::string("key");
-	llFuncs[std::string("llGetCenterOfMass")] = std::string("vector");
-	llFuncs[std::string("llListSort")] = std::string("list");
-	llFuncs[std::string("llGetListLength")] = std::string("integer");
-	llFuncs[std::string("llList2Integer")] = std::string("integer");
-	llFuncs[std::string("llList2Float")] = std::string("float");
-	llFuncs[std::string("llList2String")] = std::string("string");
-	llFuncs[std::string("llList2Key")] = std::string("key");
-	llFuncs[std::string("llList2Vector")] = std::string("vector");
-	llFuncs[std::string("llList2Rot")] = std::string("rotation");
-	llFuncs[std::string("llList2List")] = std::string("list");
-	llFuncs[std::string("llDeleteSubList")] = std::string("list");
-	llFuncs[std::string("llGetListEntryType")] = std::string("integer");
-	llFuncs[std::string("llList2CSV")] = std::string("string");
-	llFuncs[std::string("llCSV2List")] = std::string("list");
-	llFuncs[std::string("llListRandomize")] = std::string("list");
-	llFuncs[std::string("llList2ListStrided")] = std::string("list");
-	llFuncs[std::string("llGetRegionCorner")] = std::string("vector");
-	llFuncs[std::string("llListInsertList")] = std::string("list");
-	llFuncs[std::string("llListFindList")] = std::string("integer");
-	llFuncs[std::string("llGetObjectName")] = std::string("string");
-	llFuncs[std::string("llSetObjectName")] = std::string("void");
-	llFuncs[std::string("llGetDate")] = std::string("string");
-	llFuncs[std::string("llEdgeOfWorld")] = std::string("integer");
-	llFuncs[std::string("llGetAgentInfo")] = std::string("integer");
-	llFuncs[std::string("llAdjustSoundVolume")] = std::string("void");
-	llFuncs[std::string("llSetSoundQueueing")] = std::string("void");
-	llFuncs[std::string("llSetSoundRadius")] = std::string("void");
-	llFuncs[std::string("llKey2Name")] = std::string("string");
-	llFuncs[std::string("llSetTextureAnim")] = std::string("void");
-	llFuncs[std::string("llTriggerSoundLimited")] = std::string("void");
-	llFuncs[std::string("llEjectFromLand")] = std::string("void");
-	llFuncs[std::string("llParseString2List")] = std::string("list");
-	llFuncs[std::string("llOverMyLand")] = std::string("integer");
-	llFuncs[std::string("llGetLandOwnerAt")] = std::string("key");
-	llFuncs[std::string("llGetNotecardLine")] = std::string("key");
-	llFuncs[std::string("llGetAgentSize")] = std::string("vector");
-	llFuncs[std::string("llSameGroup")] = std::string("integer");
-	llFuncs[std::string("llUnSit")] = std::string("key");
-	llFuncs[std::string("llGroundSlope")] = std::string("vector");
-	llFuncs[std::string("llGroundNormal")] = std::string("vector");
-	llFuncs[std::string("llGroundCountour")] = std::string("vector");
-	llFuncs[std::string("llGetAttached")] = std::string("integer");
-	llFuncs[std::string("llGetFreeMemory")] = std::string("integer");
-	llFuncs[std::string("llGetRegionName")] = std::string("string");
-	llFuncs[std::string("llGetRegionTimeDilation")] = std::string("float");
-	llFuncs[std::string("llGetRegionFPS")] = std::string("float");
-	llFuncs[std::string("llParticleSystem")] = std::string("void");
-	llFuncs[std::string("llGroundRepel")] = std::string("void");
-	llFuncs[std::string("llGiveInventoryList")] = std::string("void");
-	llFuncs[std::string("llSetVehicleType")] = std::string("void");
-	llFuncs[std::string("llSetVehicleFloatParam")] = std::string("void");
-	llFuncs[std::string("llSetVehicleVectorParam")] = std::string("void");
-	llFuncs[std::string("llSetVehicleVectorParam")] = std::string("void");
-	llFuncs[std::string("llSetVehicleFlags")] = std::string("void");
-	llFuncs[std::string("llRemoveVehicleFlags")] = std::string("void");
-	llFuncs[std::string("llSitTarget")] = std::string("void");
-	llFuncs[std::string("llAvatarOnSitTarget")] = std::string("key");
-	llFuncs[std::string("llAddToLandPassList")] = std::string("void");
-	llFuncs[std::string("llSetTouchText")] = std::string("void");
-	llFuncs[std::string("llSetSitText")] = std::string("void");
-	llFuncs[std::string("llSetCameraEyeOffset")] = std::string("void");
-	llFuncs[std::string("llSetCameraAtOffset")] = std::string("void");
-	llFuncs[std::string("llDumpList2String")] = std::string("string");
-	llFuncs[std::string("llScriptDanger")] = std::string("integer");
-	llFuncs[std::string("llDialog")] = std::string("void");
-	llFuncs[std::string("llVolumeDetect")] = std::string("void");
-	llFuncs[std::string("llResetOtherScript")] = std::string("void");
-	llFuncs[std::string("llGetScriptState")] = std::string("integer");
-	llFuncs[std::string("llScriptLibraryFunction")] = std::string("void");
-	llFuncs[std::string("llSetRemoteScriptAccessPin")] = std::string("void");
-	llFuncs[std::string("llRemoteLoadScriptPin")] = std::string("void");
-	llFuncs[std::string("llOpenRemoteDataChannel")] = std::string("void");
-	llFuncs[std::string("llSendRemoteData")] = std::string("void");
-	llFuncs[std::string("llRemoteDataReply")] = std::string("void");
-	llFuncs[std::string("llCloseRemoteDataChannel")] = std::string("void");
-	llFuncs[std::string("llMD5String")] = std::string("string");
-	llFuncs[std::string("llSetPrimitiveParams")] = std::string("void");
-	llFuncs[std::string("llStringToBase64")] = std::string("string");
-	llFuncs[std::string("llBase64ToString")] = std::string("string");
-	llFuncs[std::string("llXorBase64Strings")] = std::string("void");
-	llFuncs[std::string("llRemoteDataSetRegion")] = std::string("void");
-	llFuncs[std::string("llLog10")] = std::string("float");
-	llFuncs[std::string("llLog")] = std::string("float");
-	llFuncs[std::string("llGetAnimationList")] = std::string("list");
-	llFuncs[std::string("llSetParcelMusicURL")] = std::string("void");
-	llFuncs[std::string("llGetRootPosition")] = std::string("vector");
-	llFuncs[std::string("llGetRootRotation")] = std::string("rotation");
-	llFuncs[std::string("llGetObjectDesc")] = std::string("string");
-	llFuncs[std::string("llSetObjectDesc")] = std::string("void");
-	llFuncs[std::string("llGetCreator")] = std::string("key");
-	llFuncs[std::string("llGetTimestamp")] = std::string("string");
-	llFuncs[std::string("llSetLinkAlpha")] = std::string("void");
-	llFuncs[std::string("llGetNumberOfPrims")] = std::string("integer");
-	llFuncs[std::string("llGetNumberOfNotecardLines")] = std::string("key");
-	llFuncs[std::string("llGetBoundingBox")] = std::string("list");
-	llFuncs[std::string("llGetGeometricCenter")] = std::string("vector");
-	llFuncs[std::string("llGetPrimitiveParams")] = std::string("list");
-	llFuncs[std::string("llIntegerToBase64")] = std::string("void");
-	llFuncs[std::string("llBase64ToInteger")] = std::string("void");
-	llFuncs[std::string("llGetGMTclock")] = std::string("float");
-	llFuncs[std::string("llGetSimulatorHostname")] = std::string("void");
-	llFuncs[std::string("llSetLocalRot")] = std::string("void");
-	llFuncs[std::string("llParseStringKeeps")] = std::string("list");
-	llFuncs[std::string("llRezAtRoot")] = std::string("void");
-	llFuncs[std::string("llGetObjectPermMask")] = std::string("integer");
-	llFuncs[std::string("llSetObjectPermMask")] = std::string("void");
-	llFuncs[std::string("llGetInventoryPermMask")] = std::string("integer");
-	llFuncs[std::string("llSetInventoryPermMask")] = std::string("void");
-	llFuncs[std::string("llGetInventoryCreator")] = std::string("key");
-	llFuncs[std::string("llOwnerSay")] = std::string("void");
-	llFuncs[std::string("llRequestSimulatorData")] = std::string("key");
-	llFuncs[std::string("llForceMouselook")] = std::string("void");
-	llFuncs[std::string("llGetObjectMass")] = std::string("float");
-	llFuncs[std::string("llListReplaceList")] = std::string("list");
-	llFuncs[std::string("lloadURL")] = std::string("void");
-	llFuncs[std::string("llParcelMediaCommandList")] = std::string("void");
-	llFuncs[std::string("llParcelMediaQuery")] = std::string("void");
-	llFuncs[std::string("llModPow")] = std::string("integer");
-	llFuncs[std::string("llGetInventoryType")] = std::string("integer");
-	llFuncs[std::string("llSetPayPrice")] = std::string("void");
-	llFuncs[std::string("llGetCameraPos")] = std::string("vector");
-	llFuncs[std::string("llGetCameraRot")] = std::string("rotation");
-	llFuncs[std::string("llSetPrimURL")] = std::string("void");
-	llFuncs[std::string("llRefreshPrimURL")] = std::string("void");
-	llFuncs[std::string("llEscapeURL")] = std::string("string");
-	llFuncs[std::string("llUnescapeURL")] = std::string("string");
-	llFuncs[std::string("llMapDestination")] = std::string("void");
-	llFuncs[std::string("llAddToLandBanList")] = std::string("void");
-	llFuncs[std::string("llRemoveFromLandPassList")] = std::string("void");
-	llFuncs[std::string("llRemoveFromLandBanList")] = std::string("void");
-	llFuncs[std::string("llSetCameraParams")] = std::string("");
-	llFuncs[std::string("llClearCameraParams")] = std::string("");
-	llFuncs[std::string("llListStatistics")] = std::string("float");
-	llFuncs[std::string("llGetUnixTime")] = std::string("integer");
-	llFuncs[std::string("llGetParcelFlags")] = std::string("integer");
-	llFuncs[std::string("llGetRegionFlags")] = std::string("integer");
-	llFuncs[std::string("llXorBase64StringsCorrect")] = std::string("string");
-	llFuncs[std::string("llHTTPRequest")] = std::string("void");
-	llFuncs[std::string("llResetLandBanList")] = std::string("void");
-	llFuncs[std::string("llResetLandPassList")] = std::string("void");
-	llFuncs[std::string("llGetObjectPrimCount")] = std::string("integer");
-	llFuncs[std::string("llGetParcelPrimOwners")] = std::string("void");
-	llFuncs[std::string("llGetParcelPrimCount")] = std::string("integer");
-	llFuncs[std::string("llGetParcelMaxPrims")] = std::string("integer");
-	llFuncs[std::string("llGetParcelDetails")] = std::string("list");
-	llFuncs[std::string("llSetLinkPrimitiveParams")] = std::string("void");
-	llFuncs[std::string("llSetLinkTexture")] = std::string("void");
-	llFuncs[std::string("llStringTrim")] = std::string("string");
-	llFuncs[std::string("llRegionSay")] = std::string("void");
-	llFuncs[std::string("llGetObjectDetails")] = std::string("list");
-	llFuncs[std::string("llSetClickAction")] = std::string("void");
-	llFuncs[std::string("llGetRegionAgentCount")] = std::string("integer");
-	llFuncs[std::string("llTextBox")] = std::string("void");
-	llFuncs[std::string("llGetAgentLanguage")] = std::string("void");
-	llFuncs[std::string("llDetectedTouchUV")] = std::string("vector");
-	llFuncs[std::string("llDetectedTouchFace")] = std::string("integer");
-	llFuncs[std::string("llDetectedTouchPos")] = std::string("vector");
-	llFuncs[std::string("llDetectedTouchNormal")] = std::string("vector");
-	llFuncs[std::string("llDetectedTouchBinormal")] = std::string("vector");
-	llFuncs[std::string("llDetectedTouchST")] = std::string("vector");
-	llFuncs[std::string("llSHA1String")] = std::string("string");
-	llFuncs[std::string("llGetFreeURLs")] = std::string("integer");
-	llFuncs[std::string("llRequestURL")] = std::string("key");
-	llFuncs[std::string("llRequestSecureURL")] = std::string("key");
-	llFuncs[std::string("llReleaseURL")] = std::string("void");
-	llFuncs[std::string("llHTTPResponse")] = std::string("void");
-	llFuncs[std::string("llGetHTTPHeader")] = std::string("string");
-	llFuncs[std::string("llGetHTTPHeader")] = std::string("string");
-	llFuncs[std::string("integer")] = std::string("integer");
-	llFuncs[std::string("float")] = std::string("float");
-	llFuncs[std::string("string")] = std::string("string");
-	llFuncs[std::string("key")] = std::string("key");
-	llFuncs[std::string("vector")] = std::string("vector");
-	llFuncs[std::string("rotation")] = std::string("rotation");
-	llFuncs[std::string("list")] = std::string("list");
-}
-
-std::string gettype(std::string& file, std::string var, int pos)
-{
-	static bool init_func_types = true;
-	if(init_func_types)
-	{
-		init_func_types = false;
-		init_funcs();
-	}
-	//in_my_scope(std::string& file, int it, int me, char left = '{', char right = '}')
-	//int scope = getscope(file, pos);
-//todo//(\S*?)\s*
-	{
-		boost::smatch matches;
-		std::string::const_iterator start = var.begin();
-		var += " ";
-		if(boost::regex_search(start, std::string::const_iterator(var.end()), matches, boost::regex("[^a-zA-Z0-9_]*?([a-zA-Z0-9_]*?)\\s+?"), boost::match_default))
-		{
-			var = matches[1];
-		}
-	}
-	if(llFuncs.find(var) != llFuncs.end())return llFuncs[var];
-	else
-	{
-		boost::smatch matches;
-		std::string::const_iterator start = file.begin();
-		while(boost::regex_search(start, std::string::const_iterator(file.end()), matches, boost::regex("(integer|float|string|key|vector|rotation|list)\\s+?"+var+"\\s*?[;=]"), boost::match_default))
-		{
-			std::string type = matches[1];
-			if(in_my_scope(file, matches.position(0), pos))
-			{
-				return type;
-			}
-			start = matches[0].second;
-		}
-	}
-	return std::string("-1");
-}*/
 
 inline int const_iterator_to_pos(std::string::const_iterator begin, std::string::const_iterator cursor)
 {
@@ -785,13 +316,53 @@ std::string hideliteral(std::string& scr)
 }
 */
 
+std::string shredder(std::string text)//, char badchar, char replacement)
+{
+	//FAILDEBUG
+	int cursor = 0;
+	if(int(text.length() == 0)return "wat";
+	bool noscoped = true;
+	bool in_literal = false;
+	int count = 0;
+	char ltoken = ' ';
+	//FAILDEBUG
+	do
+	{
+		char token = text[cursor];
+		if(token == '"' && ltoken != '\\')in_literal = !in_literal;
+		else if(token == '\\' && ltoken == '\\')token = ' ';
+		else if(!in_literal)
+		{
+			if(
+				token == '#' || 
+				token == '$' || 
+				token == '\\' || 
+				token == '\'' || 
+				token == '?'
+				)
+			{
+				text[cursor] = replacement;
+			}
+		}
+		ltoken = token;
+		cursor += 1;
+	}while(cursor < int(text.length()));
+
+	return text;
+}
+
 std::string JCLSLPreprocessor::lslopt(std::string script)
 {
 	//FAILDEBUG
 	script = " \n"+script;//HACK//this should prevent regex fail for functions starting on line 0, column 0
 	//added more to prevent split fail on scripts with no global data
 
-
+	// (`), hash/number sign (#), dollar sign ($), backslash (\), right single quote ('), and question mark (?)
+	script = shredder(script);
+	//script = shredder(script, '$', ' ');
+	//script = shredder(script, '\\', ' ');
+	//script = shredder(script, '\'', ' ');
+	//script = shredder(script, '?', ' ');
 	//this should be fun
 	//FAILDEBUG
 	try
