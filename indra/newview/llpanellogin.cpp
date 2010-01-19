@@ -798,8 +798,7 @@ void LLPanelLogin::loadLoginPage()
 	if (!sInstance) return;
 	
 
-	//std::string login_page = EMERALD_LOGIN_PAGE;
-	std::string login_page = sInstance->getString( "real_url" );//LLViewerLogin::getInstance()->getLoginPageURI();
+	std::string login_page = EMERALD_LOGIN_PAGE;
 	if (login_page.empty()) {
 		sInstance->setSiteIsAlive(false);
 		return;
