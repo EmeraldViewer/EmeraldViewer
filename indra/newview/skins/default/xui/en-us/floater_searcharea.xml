@@ -16,7 +16,7 @@
 		    name="result_list"
 		    left="10"
 		    right="-10"
-		    top="-180"
+		    top="-100"
 		    bottom="10"
 		    column_padding="0"
 		    can_resize="true"
@@ -42,7 +42,7 @@
   <check_box visible="false" enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="payable" label="Payable Object" />
   <check_box visible="false" enabled="false" bottom_delta="-20" follows="left|top" left_delta="0" name="buyable" label="Buyable Object" />
   
-  <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="-125"
+  <line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="-40"
            follows="left|top" font="SansSerifSmall" height="20" left_delta="-200"
            max_length="256" mouse_opaque="true"
            tool_tip="" name="Name query chunk" label="Name query chunk" width="200" />
