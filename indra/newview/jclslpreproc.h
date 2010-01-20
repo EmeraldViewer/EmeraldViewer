@@ -30,19 +30,7 @@
  */
 
 #include "llviewerprecompiledheaders.h"
-
 #include "llpreviewscript.h"
-
-#if LL_WINDOWS
-#include "hunspell/hunspelldll.h"
-#else
-#include "hunspell.hxx"
-#endif
-/*class JCLSLPreprocessorCallback : public LLRefCount
-{
-public:
-	virtual void fire(std::string output) = 0;
-};*/
 
 //#define DARWINPREPROC
 //force preproc on mac
@@ -52,41 +40,20 @@ class JCLSLPreprocessor
 public:
 
 	JCLSLPreprocessor(LLScriptEdCore* corep)
-		: mCore(corep), waving(FALSE), mClose(FALSE)/*,
-		state(IDLE),
-		last(0),
-		groupcounter(0),
-		updated(0)
-		*/{}
+		: mCore(corep), waving(FALSE), mClose(FALSE)
+	{}
 
-	static BOOL mono_directive(std::string& text, bool agent_inv = true);
-
+	static bool mono_directive(std::string& text, bool agent_inv = true);
 	std::string encode(std::string script);
 	std::string decode(std::string script);
-
 	std::string lslopt(std::string script);
-
-
-	//std::vector<std::string> scan_includes(std::string filename, std::string script);
-
 	static LLUUID findInventoryByName(std::string name);
-
-	static void JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type, void *userdata, S32 result, LLExtStat extstat);
-
+	static void JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type,
+									void *userdata, S32 result, LLExtStat extstat);
 	void preprocess_script(BOOL close = FALSE, BOOL defcache = FALSE);
 	void start_process();
-
 	void display_error(std::string err);
 
-	//void getfuncmatches(std::string token);
-
-	std::set<std::string> caching_files;
-
-	std::set<std::string> defcached_files;
-
-	BOOL mDefinitionCaching;
-
-	static std::map<std::string,LLUUID> cached_assetids;
 	//dual function, determines if files have been modified this session and if we have cached them
 	//also assetids exposed in-preprocessing as a predefined macro for use in include once style include files, e.g. #define THISFILE file_ ## __ASSETIDRAW__
 	//in case it isn't obvious, the viewer only sets the asset id on a successful script save (of a full perm script), or in preproc on-cache
@@ -97,18 +64,15 @@ public:
 	//as this isn't the case I'm not going to preserve this structure across logins.
 
 	//(it seems rather dumb that readable scripts don't show the asset id without a DL, but thats beside the point.)
+	static std::map<std::string,LLUUID> cached_assetids;
 
-	//static std::vector<LLUUID> unchanged_assets;
+	std::set<std::string> caching_files;
+	std::set<std::string> defcached_files;
+	bool mDefinitionCaching;
 
 	LLScriptEdCore* mCore;
-
 	BOOL waving;
-
 	BOOL mClose;
-
 	BOOL mHDDInclude;
-
 	std::string mMainScriptName;
-
-	static Hunspell* LSLHunspell;
 };
