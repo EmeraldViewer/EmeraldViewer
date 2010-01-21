@@ -232,14 +232,13 @@ inline int const_iterator_to_pos(std::string::const_iterator begin, std::string:
 	return std::distance(begin, cursor);
 }
 
-std::string shredder(std::string text)
+void shredder(std::string& text)
 {
-	std::string output;
-	output.reserve(text.length());
 	int cursor = 0;
 	if(int(text.length()) == 0)
 	{
-		return "Zero length scripts are bad.";
+		text = "y u do dis?";
+		return;
 	}
 	char ltoken = ' ';
 	do
@@ -249,7 +248,6 @@ std::string shredder(std::string text)
 		{
 			while(((token != '"') || ((token == '"') && (ltoken == '\\'))) && (cursor < int(text.length())))
 			{
-				output.push_back(token);
 				ltoken = token;
 				++cursor;
 				token = text[cursor];
@@ -269,15 +267,11 @@ std::string shredder(std::string text)
 		   token == '?' ||
 		   token >= 0x7F))
 		{
-			++cursor;
-			continue;
+			text[cursor] = ' ';
 		}
 		ltoken = token;
 		++cursor;
-		output.push_back(token);
 	}while(cursor < int(text.length()));
-
-	return output;
 }
 
 std::string JCLSLPreprocessor::lslopt(std::string script)
@@ -288,7 +282,7 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 	//this should be fun
 
 	//Removes invalid characters from the script.
-	script = shredder(script);
+	shredder(script);
 	
 	try
 	{
