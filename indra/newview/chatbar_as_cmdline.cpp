@@ -81,7 +81,7 @@ LLViewerInventoryItem::item_array_t findInventoryInFolder(const std::string& ifo
 	LLUUID folder = gInventory.findCategoryByName(ifolder);
 	LLViewerInventoryCategory::cat_array_t cats;
 	LLViewerInventoryItem::item_array_t items;
-	ObjectContentNameMatches objectnamematches(ifolder);
+	//ObjectContentNameMatches objectnamematches(ifolder);
 	gInventory.collectDescendents(folder,cats,items,FALSE);//,objectnamematches);
 
 	return items;
