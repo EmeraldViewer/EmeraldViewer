@@ -57,7 +57,6 @@
 #include "llvoavatar.h"
 #include "lltooldraganddrop.h"
 #include "llinventorymodel.h"
-#include "llselectmgr.h"
 
 #include <iosfwd>
 
@@ -75,6 +74,18 @@ void cmdline_tp2name(std::string target);
 
 LLUUID cmdline_partial_name2key(std::string name);
 
+
+
+LLViewerInventoryItem::item_array_t findInventoryInFolder(const std::string& ifolder)
+{
+	LLUUID folder = gInventory.findCategoryByName(ifolder);
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	ObjectContentNameMatches objectnamematches(ifolder);
+	gInventory.collectDescendents(folder,cats,items,FALSE);//,objectnamematches);
+
+	return items;
+}
 
 class JCZface : public LLEventTimer
 {
@@ -180,7 +191,6 @@ private:
 	std::set<U32> done_prims;
 	
 };
-
 
 
 
@@ -442,14 +452,6 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 							new JCZface(lolstack, sdest, 2.5f);
 						}
 					}else cmdline_printchat("no size");
-				}
-			}else if(command == "ztake")
-			{
-				std::string flip;
-				if(i >> flip)
-				{
-					if(flip == "on")new JCZtake();
-					else if(flip == "off")JCZtake::ztakeon = FALSE;
 				}
 			}
 		}
