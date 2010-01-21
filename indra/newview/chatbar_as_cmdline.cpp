@@ -142,7 +142,7 @@ public:
 	{
 		{
 			LLViewerObject* root_object = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject();
-			if(root_object && !root_object->isDead());
+			if(root_object && !root_object->isDead())
 			{
 				LLViewerObject::child_list_t children=root_object->getChildren();
 				LLMessageSystem    *msg = gMessageSystem;
