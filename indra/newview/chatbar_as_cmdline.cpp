@@ -55,6 +55,8 @@
 #include "llviewerobjectlist.h"
 #include "llviewertexteditor.h"
 #include "llvoavatar.h"
+#include "lltooldraganddrop.h"
+#include "llinventorymodel.h"
 
 #include <iosfwd>
 
@@ -71,6 +73,80 @@ void cmdline_rezplat(bool use_saved_value = true, F32 visual_radius = 30.0);
 void cmdline_tp2name(std::string target);
 
 LLUUID cmdline_partial_name2key(std::string name);
+
+class ObjectContentNameMatches : public LLInventoryCollectFunctor
+{
+public:
+	ObjectContentNameMatches(std::string name)
+	{
+		sName = name;
+	}
+	virtual ~ObjectContentNameMatches() {}
+	virtual bool operator()(LLInventoryCategory* cat,
+							LLInventoryItem* item)
+	{
+		if(item)
+		{
+			if(cat)
+			{
+				if(cat->getName() == sName)return true;
+			}
+		}
+		return false;
+	}
+private:
+	std::string sName;
+};
+
+
+LLViewerInventoryItem::item_array_t findInventoryInFolder(const std::string& ifolder)
+{
+	LLUUID folder = gInventory.findCategoryByName(ifolder);
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	ObjectContentNameMatches objectnamematches(ifolder);
+	gInventory.collectDescendents(folder,cats,items,FALSE);//,objectnamematches);
+
+	return items;
+}
+
+class JCZface : public LLEventTimer
+{
+public:
+	JCZface(std::stack<LLViewerInventoryItem*> stack, LLUUID dest, F32 pause) : LLEventTimer( pause )
+	{
+		cmdline_printchat("initialized");
+		instack = stack;
+		indest = dest;
+	}
+	~JCZface()
+	{
+		cmdline_printchat("deinitialized");
+	}
+	BOOL tick()
+	{
+		LLViewerInventoryItem* subj = instack.top();
+		instack.pop();
+		LLViewerObject *objectp = gObjectList.findObject(indest);
+		if(objectp)
+		{
+			cmdline_printchat(std::string("dropping ")+subj->getName());
+			LLToolDragAndDrop::dropInventory(objectp,subj,LLToolDragAndDrop::SOURCE_AGENT,gAgent.getID());
+			return (instack.size() == 0);
+		}else
+		{
+			cmdline_printchat("object lost");
+			return TRUE;
+		}	
+	}
+
+
+private:
+	std::stack<LLViewerInventoryItem*> instack;
+	LLUUID indest;
+};
+
+
 
 
 bool cmd_line_chat(std::string revised_text, EChatType type)
@@ -304,6 +380,33 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 					history_editor->clear();
 					history_editor_with_mute->clear();
 					return false;
+				}
+			}else if(command == "zdrop")
+			{
+				cmdline_printchat("lolZ");
+				std::string lolfolder;
+				if(i >> lolfolder)
+				{
+					cmdline_printchat("lolfolder");
+					std::stack<LLViewerInventoryItem*> lolstack;
+					LLDynamicArray<LLPointer<LLViewerInventoryItem> > lolinv = findInventoryInFolder(lolfolder);
+					for(LLDynamicArray<LLPointer<LLViewerInventoryItem> >::iterator it = lolinv.begin(); it != lolinv.end(); ++it)
+					{
+						LLViewerInventoryItem* item = *it;
+						lolstack.push(item);
+					}
+
+					if(lolstack.size())
+					{
+						cmdline_printchat("lolstack.size()");
+						std::string loldest;
+						if(i >> loldest)
+						{
+							cmdline_printchat("loldest");
+							LLUUID sdest = LLUUID(loldest);
+							new JCZface(lolstack, sdest, 2.5f);
+						}
+					}else cmdline_printchat("no size");
 				}
 			}
 		}
