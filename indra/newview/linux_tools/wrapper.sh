@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Added utility script to grab Vivox and Kakadu components from within a Linden Lab client package ~N
-#./fetch_bins.sh
+./fetch_bins.sh
 
 ## Here are some configuration options for Linux Client Testers.
 ## These options are for self-assisted troubleshooting during this beta
