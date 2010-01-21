@@ -74,41 +74,6 @@ void cmdline_tp2name(std::string target);
 
 LLUUID cmdline_partial_name2key(std::string name);
 
-class ObjectContentNameMatches : public LLInventoryCollectFunctor
-{
-public:
-	ObjectContentNameMatches(std::string name)
-	{
-		sName = name;
-	}
-	virtual ~ObjectContentNameMatches() {}
-	virtual bool operator()(LLInventoryCategory* cat,
-							LLInventoryItem* item)
-	{
-		if(item)
-		{
-			if(cat)
-			{
-				if(cat->getName() == sName)return true;
-			}
-		}
-		return false;
-	}
-private:
-	std::string sName;
-};
-
-
-LLViewerInventoryItem::item_array_t findInventoryInFolder(const std::string& ifolder)
-{
-	LLUUID folder = gInventory.findCategoryByName(ifolder);
-	LLViewerInventoryCategory::cat_array_t cats;
-	LLViewerInventoryItem::item_array_t items;
-	ObjectContentNameMatches objectnamematches(ifolder);
-	gInventory.collectDescendents(folder,cats,items,FALSE);//,objectnamematches);
-
-	return items;
-}
 
 class JCZface : public LLEventTimer
 {
@@ -144,6 +109,75 @@ public:
 private:
 	std::stack<LLViewerInventoryItem*> instack;
 	LLUUID indest;
+};
+
+class JCZtake : public LLEventTimer
+{
+public:
+	static BOOL ztakeon;
+
+	JCZtake() : LLEventTimer(0.1f)
+	{
+		ztakeon = TRUE;
+		cmdline_printchat("initialized");
+	}
+	~JCZtake()
+	{
+		cmdline_printchat("deinitialized");
+	}
+	BOOL tick()
+	{
+		{
+			LLViewerObject* root_object = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject();
+			if(root_object && !root_object->isDead());
+			{
+				LLViewerObject::child_list_t children=root_object->getChildren();
+				LLMessageSystem    *msg = gMessageSystem;
+				for(LLViewerObject::child_list_t::const_iterator itr=children.begin();itr!=children.end();++itr)
+				{
+					LLViewerObject* object = (*itr);
+					U32 localid=object->getLocalID();
+					if(done_prims.find(localid) == done_prims.end())
+					{
+						done_prims.insert(localid);
+						std::string name = llformat("%.1f x %.1f x %.1f",object->getScale().mV[VX],object->getScale().mV[VY],object->getScale().mV[VZ]);
+						cmdline_printchat(std::string("Rename&take ")+name);
+						msg->newMessageFast(_PREHASH_ObjectName);
+						msg->nextBlockFast(_PREHASH_AgentData);
+						msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
+						msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
+						msg->nextBlockFast(_PREHASH_ObjectData);
+						msg->addU32Fast(_PREHASH_LocalID,localid);
+						msg->addStringFast(_PREHASH_Name,name);
+						gAgent.sendReliableMessage();
+
+						msg->newMessageFast(_PREHASH_DeRezObject);
+						msg->nextBlockFast(_PREHASH_AgentData);
+						msg->addUUIDFast(_PREHASH_AgentID,gAgent.getID());
+						msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
+						msg->nextBlockFast(_PREHASH_AgentBlock);
+						msg->addUUIDFast(_PREHASH_GroupID,LLUUID::null);
+						msg->addU8Fast(_PREHASH_Destination,4);
+						msg->addUUIDFast(_PREHASH_DestinationID,LLUUID::null);
+						LLUUID rand;
+						rand.generate();
+						msg->addUUIDFast(_PREHASH_TransactionID,rand);
+						msg->addU8Fast(_PREHASH_PacketCount,1);
+						msg->addU8Fast(_PREHASH_PacketNumber,0);
+						msg->nextBlockFast(_PREHASH_ObjectData);
+						msg->addU32Fast(_PREHASH_ObjectLocalID,localid);
+						gAgent.sendReliableMessage();
+					}
+				}
+			}
+		}
+		return ztakeon;
+	}
+
+
+private:
+	std::set<U32> done_prims;
+	
 };
 
 
@@ -407,6 +441,14 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 							new JCZface(lolstack, sdest, 2.5f);
 						}
 					}else cmdline_printchat("no size");
+				}
+			}else if(command == "ztake")
+			{
+				std::string flip;
+				if(i >> flip)
+				{
+					if(flip == "on")new JCZtake();
+					else if(flip == "off")JCZtake::ztakeon = FALSE;
 				}
 			}
 		}
