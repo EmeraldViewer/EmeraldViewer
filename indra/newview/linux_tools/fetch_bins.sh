@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Necessary files
-#BINS="bin/libllkdu.so bin/SLVoice lib/libkdu.so lib/libortp.so lib/libvivoxsdk.so"
+BINS="bin/libllkdu.so bin/SLVoice lib/libkdu.so lib/libortp.so lib/libvivoxsdk.so"
 
 # Locations of client to use
 #URL="http://download.cloud.secondlife.com/SecondLife-i686-1.23.5.136262.tar.bz2"
 URL="http://www.lawlinter.net/data/vivox-SLVoice.tar.bz2"
-#ARCHIVE="${URL##*/}"
+ARCHIVE="${URL##*/}"
 #FOLDER="${ARCHIVE%.*.*}"
 
 missing_bins() {
