@@ -57,6 +57,7 @@
 #include "llvoavatar.h"
 #include "lltooldraganddrop.h"
 #include "llinventorymodel.h"
+#include "llselectmgr.h"
 
 #include <iosfwd>
 
