@@ -186,21 +186,6 @@ std::string JCLSLPreprocessor::decode(std::string script)
 	return otext;
 }
 
-inline S32 const_iterator2pos(std::string::const_iterator it, std::string::const_iterator begin)
-{
-	
-	S32 pos = 1;
-	
-	while(it != begin)
-	{
-		
-		pos += 1;
-		
-		it -= 1;
-	}
-	
-	return pos;
-}
 
 std::string scopeript2(std::string& top, S32 fstart, char left = '{', char right = '}')
 {
@@ -247,6 +232,53 @@ inline int const_iterator_to_pos(std::string::const_iterator begin, std::string:
 	return std::distance(begin, cursor);
 }
 
+std::string shredder(std::string text)
+{
+	std::string output;
+	output.reserve(text.length());
+	int cursor = 0;
+	if(int(text.length()) == 0)
+	{
+		return "Zero length scripts are bad.";
+	}
+	char ltoken = ' ';
+	do
+	{
+		char token = text[cursor];
+		if (token == '"' && ltoken != '\\')
+		{
+			while(((token != '"') || ((token == '"') && (ltoken == '\\'))) && (cursor < int(text.length())))
+			{
+				output.push_back(token);
+				ltoken = token;
+				++cursor;
+				token = text[cursor];
+			}
+		}
+		else if (token == '\\' && ltoken == '\\')
+		{
+			token = ' ';
+		}
+
+		if(token != 0xA && token != 0x9 && (
+		   token < 0x20 ||
+		   token == '#' || 
+		   token == '$' || 
+		   token == '\\' || 
+		   token == '\'' || 
+		   token == '?' ||
+		   token >= 0x7F))
+		{
+			++cursor;
+			continue;
+		}
+		ltoken = token;
+		++cursor;
+		output.push_back(token);
+	}while(cursor < int(text.length()));
+
+	return output;
+}
 
 std::string JCLSLPreprocessor::lslopt(std::string script)
 {
@@ -254,6 +286,9 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 	script = " \n"+script;//HACK//this should prevent regex fail for functions starting on line 0, column 0
 	//added more to prevent split fail on scripts with no global data
 	//this should be fun
+
+	//Removes invalid characters from the script.
+	script = shredder(script);
 	
 	try
 	{
@@ -272,9 +307,7 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 			//never grabs code that would actually break compilation
 			
 			boost::smatch TOPfmatch;
-
 			std::set<std::string> kept_functions;
-
 			std::map<std::string, std::string> functions;
 			
 			while(boost::regex_search(std::string::const_iterator(top.begin()), std::string::const_iterator(top.end()), TOPfmatch, findfuncts, boost::match_default))
@@ -322,14 +355,11 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 					}
 				}
 			}while(repass);
-			
-			//global var time
 
 			std::map<std::string, std::string> gvars;
-			
 			boost::regex findvars("(integer|float|string|key|vector|rotation|list)\\s+([a-zA-Z0-9_]+)([^\\(\\);]*;)");
-
 			boost::smatch TOPvmatch;
+			
 			while(boost::regex_search(std::string::const_iterator(top.begin()), std::string::const_iterator(top.end()), TOPvmatch, findvars, boost::match_default))
 			{
 				
@@ -337,10 +367,8 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 				std::string fullref = TOPvmatch[1] + " " + varname+TOPvmatch[3];
 
 				gvars[varname] = fullref;
-				//cmdline_printchat("var "+varname+" added to list as ["+fullref+"]");
 				int start = const_iterator_to_pos(std::string::const_iterator(top.begin()), TOPvmatch[1].first);
 				top.erase(start,fullref.length());
-				//cmdline_printchat("top=["+top+"]");
 			}
 			
 			std::map<std::string, std::string>::iterator var_it;
@@ -355,12 +383,8 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 				
 				if(boost::regex_search(bstart, bend, vcalls, findvcalls, boost::match_default))
 				{
-					
-					//boost::regex findvcalls(std::string("[^a-zA-Z0-9_]+")+varname+std::string("[^a-zA-Z0-9_]+="));
-					//do we want to opt out unset global strings into local literals hrm
 					bottom = var_it->second + "\n" + bottom;
 				}
-				
 			}
 			
 			script = bottom;
