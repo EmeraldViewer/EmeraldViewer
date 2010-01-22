@@ -48,13 +48,13 @@
 #else
 #define LOADLIB LoadLibrary
 #endif
-#if LL_WINDOWS
+//#if LL_WINDOWS
 #include "fmoddyn.h"
 #define FMOD_API(x) gFmod->x
 FMOD_INSTANCE* gFmod = NULL;
-#else //LL_WINDOWS
-#define FMOD_API(x) x
-#endif //LL_WINDOWS
+//#else //LL_WINDOWS
+//#define FMOD_API(x) x
+//#endif //LL_WINDOWS
 #include "fmod.h"
 #include "fmod_errors.h"
 #include "lldir.h"
@@ -111,13 +111,19 @@ bool LLAudioEngine_FMOD::init(const S32 num_channels, void* userdata)
 #if LL_WINDOWS
 	gFmod = FMOD_CreateInstance("fmod.dll");
 #endif
+#if LL_LINUX
+	gFmod = FMOD_CreateInstance("libfmod-3.75.so");
+#endif
+#if LL_DARWIN
+	gFmod = FMOD_CreateInstance("libfmodwrapper.dylib");
+#endif
 
-#if LL_WINDOWS
+//#if LL_WINDOWS
 	if(!gFmod) {
 		LL_WARNS("AppInit") << "LLAudioEngine_FMOD::init(), error: Cannot load FMOD" << LL_ENDL;
 		return false;
 	}
-#endif //LL_WINDOWS
+//#endif //LL_WINDOWS
 	mFadeIn = -10000;
 
 	LLAudioEngine::init(num_channels, userdata);

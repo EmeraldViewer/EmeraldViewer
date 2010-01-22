@@ -1258,23 +1258,24 @@ endif (OPENAL)
 if (FMOD)
   set(LLSTARTUP_COMPILE_FLAGS "${LLSTARTUP_COMPILE_FLAGS} -DLL_FMOD")
 
-  if (NOT WINDOWS)
+	# This is supposed to build a .dylib from the static FMOD library for Darwin
+	# We shouldn't have to link FMOD in the viewer, since we load it dynamically ~Disc
+  if (DARWIN)
     set(fmodwrapper_SOURCE_FILES fmodwrapper.cpp)
     add_library(fmodwrapper SHARED ${fmodwrapper_SOURCE_FILES})
     set(fmodwrapper_needed_LIBRARIES ${FMOD_LIBRARY})
-    if (DARWIN)
-      list(APPEND fmodwrapper_needed_LIBRARIES ${CARBON_LIBRARY})
-      set_target_properties(
-        fmodwrapper
-        PROPERTIES
-        BUILD_WITH_INSTALL_RPATH 1
-        INSTALL_NAME_DIR "@executable_path/../Resources"
-        LINK_FLAGS "-unexported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/fmod_hidden_symbols.exp"
-        )
-    endif (DARWIN)
-    set(FMODWRAPPER_LIBRARY fmodwrapper)
-    target_link_libraries(fmodwrapper ${fmodwrapper_needed_LIBRARIES})
-  endif (NOT WINDOWS)
+    list(APPEND fmodwrapper_needed_LIBRARIES ${CARBON_LIBRARY})
+    set_target_properties(
+      fmodwrapper
+      PROPERTIES
+      BUILD_WITH_INSTALL_RPATH 1
+      INSTALL_NAME_DIR "@executable_path/../Resources"
+      LINK_FLAGS "-unexported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/fmod_hidden_symbols.exp"
+      )
+     # Avoid linking FMOD in the viewer
+#    set(FMODWRAPPER_LIBRARY fmodwrapper)
+#    target_link_libraries(fmodwrapper ${fmodwrapper_needed_LIBRARIES})
+  endif (DARWIN)
 endif (FMOD)
 
 set_source_files_properties(llstartup.cpp PROPERTIES COMPILE_FLAGS "${LLSTARTUP_COMPILE_FLAGS}")
@@ -1453,7 +1454,7 @@ else (WINDOWS)
 		${BOOST_THREAD_LIBRARY}
 		${DBUSGLIB_LIBRARIES}
 		${OPENGL_LIBRARIES}
-		${FMODWRAPPER_LIBRARY}
+#		${FMODWRAPPER_LIBRARY}
 		${OPENGL_LIBRARIES}
 		${MOZLIB_LIBRARIES}
 		${SDL_LIBRARY}

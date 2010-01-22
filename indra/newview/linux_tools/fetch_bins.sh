@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Necessary files
-BINS="bin/SLVoice lib/libortp.so lib/libvivoxsdk.so"
+BINS="bin/SLVoice bin/libemkdu.so lib/libortp.so lib/libvivoxsdk.so lib/libfmod-3.75.so"
 
 # Locations of client to use
 #URL="http://download.cloud.secondlife.com/SecondLife-i686-1.23.5.136262.tar.bz2"
-URL="http://www.lawlinter.net/data/vivox-SLVoice.tar.bz2"
+URL="http://www.modularsystems.sl/box/fmod-vivox-kdu.tar.bz2"
 ARCHIVE="${URL##*/}"
 #FOLDER="${ARCHIVE%.*.*}"
 

@@ -491,10 +491,12 @@ class DarwinManifest(ViewerManifest):
 #                self.path("vivox-runtime/universal-darwin/SLVoice", "SLVoice")
 
                 # llkdu dynamic library
-                self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
+                # This should be downloaded and unpacked for the user, not packaged with the viewer. ~Disc
+                #self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
                 
                 #libfmodwrapper.dylib
-                self.path(self.args['configuration'] + "/libfmodwrapper.dylib", "libfmodwrapper.dylib")
+                # This should be downloaded and unpacked for the user, not packaged with the viewer. ~Disc
+#                self.path(self.args['configuration'] + "/libfmodwrapper.dylib", "libfmodwrapper.dylib")
                 
                 # our apps
 #                self.path("../mac_crash_logger/" + self.args['configuration'] + "/mac-crash-logger.app", "mac-crash-logger.app")
@@ -695,7 +697,7 @@ class Linux_i686Manifest(LinuxManifest):
 
         if self.prefix("../../libraries/i686-linux/lib_release_client", dst="lib"):
 #            self.path("libkdu_v42R.so", "libkdu.so")
-            self.path("libfmod-3.75.so")
+#            self.path("libfmod-3.75.so")
             self.path("libapr-1.so.0")
             self.path("libaprutil-1.so.0")
             self.path("libdb-4.2.so")

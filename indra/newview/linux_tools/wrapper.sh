@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Added utility script to grab Vivox and Kakadu components from within a Linden Lab client package ~N
+# This is an added utility script to grab voice and KDU components licensed for Emerald, as well as FMOD.
+# This is now automatically run on startup, due to how small the download and unpack time has become.
+# If you object to using voice, Kakadu image decoding, or FMOD audio, comment this script out. ~Disc
 ./fetch_bins.sh
 
 ## Here are some configuration options for Linux Client Testers.

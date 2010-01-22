@@ -44,13 +44,13 @@
 #define LOADLIB LoadLibrary
 #endif
 
-#if LL_WINDOWS
+//#if LL_WINDOWS
 #include "fmoddyn.h"
 #define FMOD_API(x) gFmod->x
 extern FMOD_INSTANCE* gFmod;
-#else
-#define FMOD_API(x) x
-#endif
+//#else
+//#define FMOD_API(x) x
+//#endif
 #include "fmod.h"
 
 //-----------------------------------------------------------------------
