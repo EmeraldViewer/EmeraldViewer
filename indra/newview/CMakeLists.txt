@@ -1272,9 +1272,8 @@ if (FMOD)
       INSTALL_NAME_DIR "@executable_path/../Resources"
       LINK_FLAGS "-unexported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/fmod_hidden_symbols.exp"
       )
-     # Avoid linking FMOD in the viewer
-#    set(FMODWRAPPER_LIBRARY fmodwrapper)
-#    target_link_libraries(fmodwrapper ${fmodwrapper_needed_LIBRARIES})
+    set(FMODWRAPPER_LIBRARY fmodwrapper)
+    target_link_libraries(fmodwrapper ${fmodwrapper_needed_LIBRARIES})
   endif (DARWIN)
 endif (FMOD)
 
@@ -1408,7 +1407,7 @@ if (WINDOWS)
 		${DBUSGLIB_LIBRARIES}
 		${OPENGL_LIBRARIES}
 		${JSONCPP_LIBRARIES}
-		${FMODWRAPPER_LIBRARY}
+#		${FMODWRAPPER_LIBRARY}
 		${OPENGL_LIBRARIES}
 		${MOZLIB_LIBRARIES}
 		${SDL_LIBRARY}
