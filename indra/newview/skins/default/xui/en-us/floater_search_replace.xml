@@ -2,7 +2,7 @@
 <floater bottom="-423" can_close="true" can_drag_on_left="false" can_minimize="true"
      can_resize="false" can_tear_off="true" enabled="true" height="120"
      left="223" min_height="100" min_width="100" mouse_opaque="true"
-     name="script search" title="Script Search" width="300">
+     name="script search" title="Search / Replace" width="300">
 	<check_box bottom="-77" control_name="LSLFindCaseInsensitivity" enabled="true" follows="left|top" font="SansSerifSmall"
 	     height="16" initial_value="false" label="Case Insensitive" left="55"
 	     mouse_opaque="true" name="case_text" radio_style="false" width="240" />
@@ -18,13 +18,13 @@
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-37" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="5"
-	     mouse_opaque="true" name="txt" v_pad="0" width="45">
+	     mouse_opaque="true" name="search_label" v_pad="0" width="45">
 		Search
 	</text>
 	<text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-58" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="16" left="5"
-	     mouse_opaque="true" name="txt2" v_pad="0" width="45">
+	     mouse_opaque="true" name="replace_label" v_pad="0" width="45">
 		Replace
 	</text>
 	<line_editor bevel_style="in" border_style="line" border_thickness="1" bottom="-37"

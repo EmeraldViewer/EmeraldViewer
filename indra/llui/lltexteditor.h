@@ -291,7 +291,7 @@ public:
 
 	static bool		isPartOfWord(llwchar c) { return ( (c == '_')  || (c == '\'') || LLStringOps::isAlnum((char)c)); }
 
-
+	BOOL isReadOnly() { return mReadOnly; }
 protected:
 	//
 	// Methods

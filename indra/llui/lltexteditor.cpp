@@ -3762,11 +3762,13 @@ void LLTextEditor::updateScrollFromCursor()
 {
 	mScrollbar->setDocSize( getLineCount() );
 
+/*
 	if (mReadOnly)
 	{
 		// no cursor in read only mode
 		return;
 	}
+*/
 
 	S32 line, offset;
 	getLineAndOffset( mCursorPos, &line, &offset ); 
