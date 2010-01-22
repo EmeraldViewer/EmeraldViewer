@@ -30,6 +30,11 @@
  * $/LicenseInfo$
  */
 
+#include "fmoddyn.h"
+#define FMOD_API(x) gFmod->x
+extern FMOD_INSTANCE gFmod;
+#include "fmod.h"
+
 extern "C"
 {
 	void FSOUND_Init(void);
