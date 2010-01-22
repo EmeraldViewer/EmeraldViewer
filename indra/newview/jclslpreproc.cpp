@@ -1052,21 +1052,21 @@ void JCLSLPreprocessor::start_process()
 
 #else
 
-std::string encode(std::string script)
+std::string JCLSLPreprocessor::encode(std::string script)
 {
-	this->display_error("(encode) Warning: Preprocessor not supported in this build.");
+	display_error("(encode) Warning: Preprocessor not supported in this build.");
 	return script;
 }
 
-std::string decode(std::string script)
+std::string JCLSLPreprocessor::decode(std::string script)
 {
-	this->display_error("(decode) Warning: Preprocessor not supported in this build.");
+	display_error("(decode) Warning: Preprocessor not supported in this build.");
 	return script;
 }
 
-std::string lslopt(std::string script)
+std::string JCLSLPreprocessor::lslopt(std::string script)
 {
-	this->display_error("(lslopt) Warning: Preprocessor not supported in this build.");
+	display_error("(lslopt) Warning: Preprocessor not supported in this build.");
 	return script;
 }
 
