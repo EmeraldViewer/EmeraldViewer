@@ -86,6 +86,11 @@ LLUUID JCLSLPreprocessor::findInventoryByName(std::string name)
 	return LLUUID::null;
 }
 
+
+void cmdline_printchat(std::string message);
+
+std::map<std::string,LLUUID> JCLSLPreprocessor::cached_assetids;
+
 #if !defined(LL_DARWIN) || defined(DARWINPREPROC)
 
 //apparently LL #defined this function which happens to precisely match
@@ -105,10 +110,6 @@ LLUUID JCLSLPreprocessor::findInventoryByName(std::string name)
 using namespace boost::spirit::classic;
 namespace po = boost::program_options;
 using namespace boost::regex_constants;
-
-void cmdline_printchat(std::string message);
-
-std::map<std::string,LLUUID> JCLSLPreprocessor::cached_assetids;
 
 
 #define FAILDEBUG llinfos << "line:" << __LINE__ << llendl;
@@ -1053,19 +1054,19 @@ void JCLSLPreprocessor::start_process()
 
 std::string encode(std::string script)
 {
-	display_error("(encode) Warning: Preprocessor not supported in this build.");
+	this->display_error("(encode) Warning: Preprocessor not supported in this build.");
 	return script;
 }
 
 std::string decode(std::string script)
 {
-	display_error("(decode) Warning: Preprocessor not supported in this build.");
+	this->display_error("(decode) Warning: Preprocessor not supported in this build.");
 	return script;
 }
 
 std::string lslopt(std::string script)
 {
-	display_error("(lslopt) Warning: Preprocessor not supported in this build.");
+	this->display_error("(lslopt) Warning: Preprocessor not supported in this build.");
 	return script;
 }
 
@@ -1078,7 +1079,7 @@ void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
 	LLTextEditor* outfield = mCore->mPostEditor;
 	if(outfield)
 	{
-		outfield->setText(LLStringExplicit(output));
+		outfield->setText(LLStringExplicit(mCore->mEditor->getText()));
 	}
 	mCore->doSaveComplete((void*)mCore,close);
 }
