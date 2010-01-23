@@ -101,14 +101,7 @@ void LLLogChat::saveHistory(std::string filename, std::string line)
 		return;
 	}
 	//dont allow bad files names
-	if(filename.find_first_of("<",1))
-	{
-		char * curl_str = curl_escape(filename.c_str(), filename.size());
-		std::string escaped_filename(curl_str);
-		curl_free(curl_str);
-		curl_str = NULL;
-		filename=escaped_filename;
-	}
+	filename = gDirUtilp->getScrubbedFileName(filename);
 
 	LLFILE* fp = LLFile::fopen(LLLogChat::makeLogFileName(filename), "a"); 		/*Flawfinder: ignore*/
 	if (!fp)
@@ -131,14 +124,7 @@ void LLLogChat::loadHistory(std::string filename , void (*callback)(ELogLineType
 		return ;
 	}
 	//dont allow bad files names
-	if(filename.find_first_of("<",1))
-	{
-		char * curl_str = curl_escape(filename.c_str(), filename.size());
-		std::string escaped_filename(curl_str);
-		curl_free(curl_str);
-		curl_str = NULL;
-		filename=escaped_filename;
-	}
+	filename = gDirUtilp->getScrubbedFileName(filename);
 
 	LLFILE* fptr = LLFile::fopen(makeLogFileName(filename), "r");		/*Flawfinder: ignore*/
 	if (!fptr)
