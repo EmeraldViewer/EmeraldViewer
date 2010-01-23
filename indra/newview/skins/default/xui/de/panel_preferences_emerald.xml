@@ -42,6 +42,7 @@
         'Debug grid' voice server
       </text>
       <line_editor name="debug_voice_field" tool_tip="Maingrid Voice Channel"/>
+      <check_box label="Deaktiviere SLim Freunde List (benötigt Neustart)" name="o.owat" tool_tip="Deaktivieren der SLim Freunde Liste kann bei der Voice Verbindung helfen wenn sie eine grosse Liste haben." />
     </panel>
     <panel label="Schutz" name="Shields">
     <button label="?" name="EmeraldHelp_Shields" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -158,10 +159,14 @@ Empfohlene Eisntellungen:
         <check_box label="Aktiviere STRG-Alt-S um überall zu sitzen (Boden)" name="allowsittoggle"/>
         <check_box label="Blockiere automatisches sitzen bei Linksklick" name="sit-click-toggle"/>
         <check_box label="Zeige Avatarname bei Blickziel Markierung" name="EmShowLookAtNames-toggle"/>
+				<check_box label="Eigene Blickziel Markierung ausblenden" name="EmShowLookAtNames-toggle"/>
         <check_box label="Escape setzt Kamera zurück auf Standard im Kameramodus (STRG-1)" name="EmResetCamOnEscape-toggle" tool_tip="Deaktivieren verhindert das sich die Kamera zurücksetzt wenn Escape gedrückt wurde ."/>
+				<check_box label="Klick auf Avatar setzt Kamera Position zurück" name="ResetCamOnAvatar-toggle" tool_tip="Deaktivieren verhindert das die Kamera zurück gesetzt wird beim klick auf den eigenen Avatar."/>
         <check_box label="Aktiviere Minimap Rotation" name="MinimapRotate"/>
         <check_box label="Suchleiste anzeigen" name="Search_bar-toggle"/>
         <check_box label="Objekte wenn möglich mit der passenden Land Gruppe rezzen" name="grouplandrez"/>
+				<check_box label="Deaktiviert den minimum Kamera Zoom Abstand." name="EmMinZoomDist-toggle"/>
+				<check_box label="Erlaubt Kamerebewegung ohne Beschränkung durch Prims.(benötigt Neustart)" name="EmIgnoreCamConstraints-toggle"/>
         <check_box label="Aktiviere Restrained Life [RLVa] Funktionen(benötigt Neustart)" name="rlv-toggle"/>
         <view_border name="EmDivisorBridge"/>
         <check_box label="Aktiviere LSL-Client Brücke" name="EmeraldBuildBridge"/>
@@ -234,6 +239,8 @@ Empfohlene Eisntellungen:
         AO An/Aus (usage: cmd on/off)
       </text>
       <line_editor tool_tip="" name="EmeraldCmdLineAO"/>
+			<text name="loltxt15">        Löscht den Chat Verlauf(usage: cmd)</text>
+			<line_editor tool_tip="Löscht den Chat Verlauf und verhindert den Lag Effekt durch Chat Spammer." name="EmeraldCmdLineClearChat"/>
     </panel>
     <panel label="Avatar" name="wat!">
     <button label="?" name="EmeraldHelp_Avatar" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -320,13 +327,13 @@ Empfohlene Eisntellungen:
           Hoch
         </combo_item>
       </combo_box>
-      <check_box label="Objekt in neu erstellten Prim einfügen" name="EmeraldBuildPrefs_EmbedItem"/>
+      <check_box label="Objekt in neu erstellten Prim einfügen" name="EmeraldBuildPrefsEmbedItem"/>
       <view_border name="im_give_drop_target_rect"/>
       <text name="Give inventory" tool_tip="Ziehen sie ein Inventarobjekt hier drauf">
         Inventarobjekt hier fallen lassen.
       </text>
-      <view_border name="im_give_disp_rect"/>
-      <text name="im_give_disp_rect_txt" tool_tip="">
+      <view_border name="build_item_add_disp_rect"/>
+      <text name="build_item_add_disp_rect_txt" tool_tip="">
         Aktuelles Objekt: ITEM
       </text>
       <view_border name="PivotBorder"/>
@@ -426,6 +433,10 @@ Simulator damit man per Script darauf zugreifen kann.
       <check_box label="Exportiere Objekt Eigenschaften" name="EmExpProp"/>
       <check_box label="Exportiere Objekt Inhalt" name="EmExpInv"/>
       <check_box label="Exportiere Objekt Texturen" name="EmExpTex"/>
+      <check_box label="Enable LSL Preprocessor Dateisystem Includes" name="fdgfd"/>
+      <text name="lolyou">Include Speicherort:</text>
+      <button label="Speichern" label_selected="Set" name="set_includeHDD"/>
+      <line_editor name="include_location"/>
     </panel>
     <panel label="Effekte" name="Effects">
       <button label="?" name="EmeraldHelp_Effects" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
@@ -445,6 +456,21 @@ Simulator damit man per Script darauf zugreifen kann.
       <button bottom_delta="0" follows="left|top" font="SansSerifSmall" height="20" label="Shadows OFF" name="Emerald_ShadowsOFF" tool_tip="Turn off the rendering of dynamic shadows."
               left="120" width="100" />
 -->
+    </panel>
+    <panel label="Rechtschreibprüfung" name="SpellCheck">
+      <button label="?" name="EmeraldHelp_SpellCheck" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+      <text name="EmSpell_txt1">Standard Wörterbuch</text>
+      <combo_box name="EmeraldSpellBase"/>
+      <text name="EmSpell_txt2">zusätzlich installierte Wörterbücher</text>
+      <combo_box name="EmSpell_Installed"/>
+			<button label="Löschen" name="EmSpell_Remove" tool_tip=""/>
+      <text name="EmSpell_txt3">verfügbare Wörterbücher</text>
+      <combo_box name="EmSpell_Avail"/>
+			<button label="Hinzufügen" name="EmSpell_Add"/>
+      <button label="Wörterbücher runterladen!" name="EmSpell_GetMore"/>
+			<check_box  label="falsch geschriebene Wörter in Rot" name="EmeraldSpellDisplay"/>
+      <button label="Bearbeite individuelles Wörterbücher" name="EmSpell_EditCustom"/>
+      <text name="EmSpell_txt4">Rechtsklick auf ein Wort zeigt die Auswahlliste an.</text>      
     </panel>
   </tab_container>
   </tab_container>

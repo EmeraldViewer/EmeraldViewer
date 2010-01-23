@@ -214,6 +214,7 @@
 		<menu_item_call label="Skripte in Auswahl zurücksetzen" name="Reset Scripts in Selection"/>
 		<menu_item_call label="Skripte in Auswahl so einstellen, dass sie ausgeführt werden" name="Set Scripts to Running in Selection"/>
 		<menu_item_call label="Skripte in Auswahl so einstellen, dass sie nicht ausgeführt werden" name="Set Scripts to Not Running in Selection"/>
+    <menu_item_call label="Skripte in Auswahl entfernen" name="Remove Scripts in Selection"/>
 	</menu>
 	<menu label="Hilfe" name="Help">
 		<menu_item_call label="Hilfe zu Second Life" name="Second Life Help"/>
