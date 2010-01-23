@@ -94,7 +94,7 @@
 #include "llfeaturemanager.h"
 #include "llfirstuse.h"
 #include "llfloateractivespeakers.h"
-#include "llfloaterbeacons.h"
+//#include "llfloaterbeacons.h"
 #include "llfloatercamera.h"
 #include "llfloaterchat.h"
 #include "llfloatergesture.h"
@@ -1886,11 +1886,6 @@ bool idle_startup()
 		if (gSavedSettings.getBOOL("ShowActiveSpeakers"))
 		{
 			LLFloaterActiveSpeakers::showInstance();
-		}
-
-		if (gSavedSettings.getBOOL("BeaconAlwaysOn"))
-		{
-			LLFloaterBeacons::showInstance();
 		}
 
 		if (gSavedSettings.getBOOL("ShowAvatarList"))
