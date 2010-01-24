@@ -407,7 +407,9 @@ BOOL LLImageJ2C::decodeChannels(LLImageRaw *raw_imagep, F32 decode_time, S32 fir
 			img_data.mHeight = getHeight();
 			img_data.mWidth = getWidth();
 			res = emImpl->decodeData(&img_data);
-			if(img_data.mData != getData())
+			if((img_data.mData != getData()) &&
+				(img_data.mWidth > 0) && (img_data.mHeight > 0)
+				&& (img_data.mComponents > 0))
 			{
 				raw_imagep->resize(img_data.mWidth, img_data.mHeight, img_data.mComponents);
 				memcpy(raw_imagep->getData(), img_data.mData, img_data.mLength);
