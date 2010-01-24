@@ -1964,24 +1964,12 @@ void LLFloaterIMPanel::onClickHistory( void* userdata )
 	
 	if (self->mOtherParticipantUUID.notNull())
 	{
-		char command[256];
+		char command[4096];
 		std::string fullname;
-		//gCacheName->getFullName(self->mOtherParticipantUUID, fullname);
-		//if(fullname == "(Loading...)")
-			fullname= self->getTitle();
-			//dont allow bad files names
-		if(fullname.find_first_of("<",1))
-		{
-			char * curl_str = curl_escape(fullname.c_str(), fullname.size());
-			std::string escaped_filename(curl_str);
-			curl_free(curl_str);
-			curl_str = NULL;
-			fullname=escaped_filename;
-		}
+		fullname= self->getTitle();
+		fullname = gDirUtilp->getScrubbedFileName(fullname);
 		sprintf(command, "\"%s\\%s.txt\"", gDirUtilp->getPerAccountChatLogsDir().c_str(),fullname.c_str());
 		gViewerWindow->getWindow()->ShellEx(command);
-
-		llinfos << command << llendl;
 		}
 	}
 
