@@ -3762,13 +3762,13 @@ void LLTextEditor::updateScrollFromCursor()
 {
 	mScrollbar->setDocSize( getLineCount() );
 
-/*
 	if (mReadOnly)
 	{
+		//Zwag: This needs to happen or communications windows will scroll when
+		// updated, regardless of previous position. (See EMLD-37)
 		// no cursor in read only mode
 		return;
 	}
-*/
 
 	S32 line, offset;
 	getLineAndOffset( mCursorPos, &line, &offset ); 
