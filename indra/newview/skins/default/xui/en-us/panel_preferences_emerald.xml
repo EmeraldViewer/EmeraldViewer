@@ -511,7 +511,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 label="Render Avatar Invisible" left_delta="0" mouse_opaque="true" name="RenderAvInvisible"
 					 radio_style="false" width="270" control_name="RenderAvatarInvisible"/>
      		    <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 label="Show appearance tag and animation when entering appearance mode" left_delta="0" mouse_opaque="true" name="EmeraldAppearanceAnimate"
+					 label="Show appearance tag and animation in appearance mode" left_delta="0" mouse_opaque="true" name="EmeraldAppearanceAnimate"
 					 radio_style="false" width="270" control_name="EmeraldAppearanceAnimate"/>
         		<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Unsit avatar when entering appearance mode" left_delta="0" mouse_opaque="true" name="EmeraldAppearanceForceStand"
