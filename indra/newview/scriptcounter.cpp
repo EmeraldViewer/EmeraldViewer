@@ -310,10 +310,8 @@ void ScriptCounter::completechk()
 					gMessageSystem->mPacketRing.setOutBandwidth(0.0);
 					gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
 				}
-				showResult();
 			}
-			else
-				showResult();
+			showResult();
 		}
 		else
 			countingDone=true;
