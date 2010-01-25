@@ -51,7 +51,12 @@ LLUUID ScriptCounter::reqObjectID;
 LLDynamicArray<LLUUID> ScriptCounter::delUUIDS;
 bool ScriptCounter::doDelete;
 std::set<std::string> ScriptCounter::objIDS;
+int ScriptCounter::objectCount;
+LLViewerObject* ScriptCounter::foo;
 void cmdline_printchat(std::string chat);
+std::stringstream ScriptCounter::sstr;
+int ScriptCounter::countingDone;
+
 ScriptCounter::ScriptCounter()
 {
 	llassert_always(sInstance == NULL);
@@ -74,6 +79,13 @@ LLVOAvatar* find_avatar_from_object( LLViewerObject* object );
 
 LLVOAvatar* find_avatar_from_object( const LLUUID& object_id );
 
+void ScriptCounter::showResult()
+{
+	sstr << scriptcount;
+	cmdline_printchat(sstr.str());
+	init();
+}
+
 void ScriptCounter::processObjectPropertiesFamily(LLMessageSystem* msg, void** user_data)
 {
 	LLUUID object_id;
@@ -83,22 +95,47 @@ void ScriptCounter::processObjectPropertiesFamily(LLMessageSystem* msg, void** u
 	if(reqObjectID.notNull())
 	if(object_id == reqObjectID)
 	{
-		if(invqueries != 0)
-		{
-			if(doDelete)
-				cmdline_printchat("Deleting scripts from object "+name+". Please wait.");
-			else
-				cmdline_printchat("Counting scripts on object "+name+". Please wait.");
-		}
+		if(doDelete)
+			sstr << "Deleted scripts from object "+name+": ";
+		else
+			sstr << "Counted scripts on object "+name+": ";
 		reqObjectID.setNull();
+		if(countingDone)
+			showResult();
+	}
+}
+
+void ScriptCounter::processObjectProperties(LLMessageSystem* msg, void** user_data)
+{
+	LLUUID object_id;
+	msg->getUUIDFast(_PREHASH_ObjectData, _PREHASH_ObjectID,object_id );
+	std::string name;
+	msg->getStringFast(_PREHASH_ObjectData, _PREHASH_Name, name);
+	if(reqObjectID.notNull())
+	if(object_id == reqObjectID)
+	{
+		if(doDelete)
+			sstr << "Deleted scripts from object "+name+": ";
+		else
+			sstr << "Counted scripts on object "+name+": ";
+		reqObjectID.setNull();
+		if(countingDone)
+			showResult();
 	}
 }
 
 void ScriptCounter::serializeSelection(bool delScript)
 {
 	LLDynamicArray<LLViewerObject*> catfayse;
-	LLViewerObject* foo=LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
-	int iObject=0;
+	foo=LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+	sstr.str("");
+	doDelete=false;
+	scriptcount=0;
+	objIDS.clear();
+	delUUIDS.clear();
+	objectCount=0;
+	countingDone=false;
+	reqObjectID.setNull();
 	if(foo)
 	{
 		if(foo->isAvatar())
@@ -117,7 +154,7 @@ void ScriptCounter::serializeSelection(bool delScript)
 					if(object)
 					{
 						catfayse.put(object);
-						iObject++;
+						objectCount++;
 					}
 				}
 			}
@@ -132,7 +169,7 @@ void ScriptCounter::serializeSelection(bool delScript)
 				if(object)
 				{
 					catfayse.put(object);
-					iObject++;
+					objectCount++;
 				}
 			}
 			doDelete=delScript;
@@ -143,52 +180,45 @@ void ScriptCounter::serializeSelection(bool delScript)
 			gMessageSystem->mPacketRing.setOutBandwidth(128000);
 			gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 		}
-		std::ostringstream stream;
-		stream << iObject;
-		std::string objectCount=stream.str();
-		if((iObject != 1) || foo->isAvatar())
+		cmdline_printchat("Counting scripts. Please wait.");
+		if((objectCount == 1) && !(foo->isAvatar()))
 		{
-			if(doDelete==true)
-				cmdline_printchat("Deleting scripts from "+objectCount+" objects. Please wait.");
+			LLViewerObject *reqObject=((LLViewerObject*)foo->getRoot());
+			if(reqObject->isAvatar())
+			{
+				for (LLObjectSelection::iterator iter = LLSelectMgr::getInstance()->getSelection()->begin();
+					 iter != LLSelectMgr::getInstance()->getSelection()->end(); iter++ )
+				{			
+					LLSelectNode *nodep = *iter;
+					LLViewerObject* objectp = nodep->getObject();
+					if (objectp->isRootEdit())
+					{
+						reqObjectID=objectp->getID();
+						LLMessageSystem* msg = gMessageSystem;
+						msg->newMessageFast(_PREHASH_ObjectSelect);
+						msg->nextBlockFast(_PREHASH_AgentData);
+						msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+						msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+						msg->nextBlockFast(_PREHASH_ObjectData);
+						msg->addU32Fast(_PREHASH_ObjectLocalID, objectp->getLocalID());
+						msg->sendReliable(gAgent.getRegionHost());
+						break;
+					}
+				}
+			}
 			else
 			{
-				if(foo->isAvatar())
-				{
-					int valid=1;
-					LLVOAvatar *av=find_avatar_from_object(foo);
-					LLNameValue *firstname;
-					LLNameValue *lastname;
-					if(!av)
-					  valid=0;
-					else
-					{
-					  firstname = av->getNVPair("FirstName");
-					  lastname = av->getNVPair("LastName");
-					  if(!firstname || !lastname)
-						valid=0;
-					  if(valid)
-					  cmdline_printchat("Counting scripts from "+objectCount+" attachments on "+firstname->getString()+" "+lastname->getString()+". Please wait.");
-					}
-					if(!valid)
-						cmdline_printchat("Counting scripts from "+objectCount+" attachments on avatar. Please wait.");
-				}
-				else
-					cmdline_printchat("Counting scripts from "+objectCount+" objects. Please wait.");
+				reqObjectID=reqObject->getID();
+				LLMessageSystem* msg = gMessageSystem;
+				msg->newMessageFast(_PREHASH_RequestObjectPropertiesFamily);
+				msg->nextBlockFast(_PREHASH_AgentData);
+				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+				msg->nextBlockFast(_PREHASH_ObjectData);
+				msg->addU32Fast(_PREHASH_RequestFlags, 0 );
+				msg->addUUIDFast(_PREHASH_ObjectID, reqObjectID);
+				gAgent.sendReliableMessage();
 			}
-		}
-		else
-		{
-			
-			reqObjectID=((LLViewerObject*)foo->getRoot())->getID();
-			LLMessageSystem* msg = gMessageSystem;
-			msg->newMessageFast(_PREHASH_RequestObjectPropertiesFamily);
-			msg->nextBlockFast(_PREHASH_AgentData);
-			msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-			msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-			msg->nextBlockFast(_PREHASH_ObjectData);
-			msg->addU32Fast(_PREHASH_RequestFlags, 0 );
-			msg->addUUIDFast(_PREHASH_ObjectID, reqObjectID);
-			gAgent.sendReliableMessage();
 		}
 		serialize(catfayse);
 	}
@@ -197,10 +227,6 @@ void ScriptCounter::serializeSelection(bool delScript)
 void ScriptCounter::serialize(LLDynamicArray<LLViewerObject*> objects)
 {
 	init();
-	scriptcount=0;
-	invqueries=0;
-	objIDS.clear();
-	delUUIDS.clear();
 	status = COUNTING;
 	for(LLDynamicArray<LLViewerObject*>::iterator itr = objects.begin(); itr != objects.end(); ++itr)
 	{
@@ -242,30 +268,55 @@ void ScriptCounter::completechk()
 {
 	if(invqueries == 0)
 	{
-		std::stringstream sstr;
-		if(doDelete==true)
-			sstr << "Scripts removed: ";
-		else
-			sstr << "Scripts counted. Result: ";
-		sstr << scriptcount;
-		reqObjectID.setNull();
-		cmdline_printchat(sstr.str());
-		scriptcount=0;
-		objIDS.clear();
-		delUUIDS.clear();
-		doDelete=false;
-		F32 throttle = gSavedSettings.getF32("OutBandwidth");
-		if(throttle != 0.f)
+		if(reqObjectID.isNull())
 		{
-			gMessageSystem->mPacketRing.setOutBandwidth(throttle);
-			gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+			if(sstr.str() == "")
+			{
+				if(foo->isAvatar())
+				{
+					int valid=1;
+					LLVOAvatar *av=find_avatar_from_object(foo);
+					LLNameValue *firstname;
+					LLNameValue *lastname;
+					if(!av)
+					  valid=0;
+					else
+					{
+					  firstname = av->getNVPair("FirstName");
+					  lastname = av->getNVPair("LastName");
+					  if(!firstname || !lastname)
+						valid=0;
+					  if(valid)
+						  sstr << "Counted scripts from " << objectCount << " attachments on " << firstname->getString() << " " << lastname->getString() << ": ";
+					}
+					if(!valid)
+						sstr << "Counted scripts from " << objectCount << " attachments on avatar: ";
+				}
+				else
+				{
+					if(doDelete)
+						sstr << "Deleted scripts in " << objectCount << " objects: ";
+					else
+						sstr << "Counted scripts in " << objectCount << " objects: ";
+				}
+				F32 throttle = gSavedSettings.getF32("OutBandwidth");
+				if(throttle != 0.f)
+				{
+					gMessageSystem->mPacketRing.setOutBandwidth(throttle);
+					gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
+				}
+				else
+				{
+					gMessageSystem->mPacketRing.setOutBandwidth(0.0);
+					gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
+				}
+				showResult();
+			}
+			else
+				showResult();
 		}
 		else
-		{
-			gMessageSystem->mPacketRing.setOutBandwidth(0.0);
-			gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
-		}
-		init();
+			countingDone=true;
 	}
 }
 

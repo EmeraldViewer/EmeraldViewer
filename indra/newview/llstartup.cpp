@@ -3233,6 +3233,7 @@ void pass_processObjectProperties(LLMessageSystem *msg, void**)
 	// send it to 'observers'
 	JCExportTracker::processObjectProperties(msg,0);
 	LLSelectMgr::processObjectProperties(msg,0);
+	ScriptCounter::processObjectProperties(msg,0);
 }
 
 void register_viewer_callbacks(LLMessageSystem* msg)

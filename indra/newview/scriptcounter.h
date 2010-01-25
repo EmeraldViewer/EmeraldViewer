@@ -46,6 +46,7 @@ private:
 	static void completechk();
 public:
 	static void processObjectPropertiesFamily(LLMessageSystem* msg, void** user_data);
+	static void processObjectProperties(LLMessageSystem* msg, void** user_data);
 	void inventoryChanged(LLViewerObject* obj,
 								 InventoryObjectList* inv,
 								 S32 serial_num,
@@ -56,6 +57,7 @@ public:
 	static void serialize(LLDynamicArray<LLViewerObject*> objects);
 	static void serializeSelection(bool delScript);
 	static void finalize(LLSD data);
+	static void ScriptCounter::showResult();
 
 private:
 	static void subserialize(LLViewerObject* linkset);
@@ -68,5 +70,9 @@ private:
 	static LLUUID reqObjectID;
 	static std::set<std::string> objIDS;
 	static LLDynamicArray<LLUUID> delUUIDS;
+	static int objectCount;
+	static LLViewerObject* foo;
 	static bool doDelete;
+	static std::stringstream sstr;
+	static int countingDone;
 };
