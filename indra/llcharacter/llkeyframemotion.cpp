@@ -1688,7 +1688,7 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 				constraintp->mTargetConstraintVolume = mCharacter->getCollisionVolumeID(str);
 				if(constraintp->mTargetConstraintVolume == -1)
 				{
-					llwarns << "can't find a valid target collision volume." << endl;
+					llwarns << "can't find a valid target collision volume." << llendl;
 					delete constraintp;
 					return FALSE;
 				}
