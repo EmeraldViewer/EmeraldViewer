@@ -5620,7 +5620,7 @@ LLVector3 LLVOAvatar::getVolumePos(S32 joint_index, LLVector3& volume_offset)
 //-----------------------------------------------------------------------------
 LLJoint* LLVOAvatar::findCollisionVolume(U32 volume_id)
 {
-	if (volume_id > mNumCollisionVolumes)
+	if (volume_id > (U32)mNumCollisionVolumes)
 	{
 		return NULL;
 	}
