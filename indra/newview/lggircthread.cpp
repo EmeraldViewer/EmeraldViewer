@@ -369,9 +369,8 @@ void lggIrcThread::whois(LLUUID who)
 }
 void lggIrcThread::whois(std::string user)
 {
-	if(user.find_first_of("<",1))user.erase(0,1);
-	if(user.find_last_of(">",1))user.erase(user.length()-1);
-
+	if(name.find_first_of("<",0,1)!=name.npos)name.erase(0,1);
+	if(name.find_last_of(">",name.npos,1)!=name.npos)name.erase(name.length()-1);
 	conn->raw((char *)std::string("WHOIS "+user+"\r\n").c_str());
 }
 int lggIrcThread::NoticeMessageResponce( char * params, irc_reply_data * hostd, void * conn)
@@ -1164,8 +1163,8 @@ void lggIrcThread::sendPrivateImToID(std::string msg, LLUUID id)
 			std::istringstream i(msg);
 			std::string command;
 			i >> command;
-			if(name.find_first_of("<",1))name.erase(0,1);
-			if(name.find_last_of(">",1))name.erase(name.length()-1);
+			if(name.find_first_of("<",0,1)!=name.npos)name.erase(0,1);
+			if(name.find_last_of(">",name.npos,1)!=name.npos)name.erase(name.length()-1);
 			
 			if(command == "/me")
 			{

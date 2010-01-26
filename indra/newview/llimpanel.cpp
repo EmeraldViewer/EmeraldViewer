@@ -1964,12 +1964,12 @@ void LLFloaterIMPanel::onClickHistory( void* userdata )
 	
 	if (self->mOtherParticipantUUID.notNull())
 	{
-		char command[4096];
-		std::string fullname;
-		fullname= self->getTitle();
-		fullname = gDirUtilp->getScrubbedFileName(fullname);
+		char command[256];
+		std::string fullname(gDirUtilp->getScrubbedFileName(self->getTitle()));
 		sprintf(command, "\"%s\\%s.txt\"", gDirUtilp->getPerAccountChatLogsDir().c_str(),fullname.c_str());
 		gViewerWindow->getWindow()->ShellEx(command);
+
+		llinfos << command << llendl;
 		}
 	}
 
