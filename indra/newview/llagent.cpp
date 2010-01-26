@@ -5058,7 +5058,10 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	else if (id == ANIM_AGENT_STANDUP)
 	{
 		// send stand up command
-		setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+		if(!gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation"))
+		{
+			setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+		}
 
 		// now trigger dusting self off animation
 		if (mAvatarObject.notNull() && !mAvatarObject->mBelowWater && rand() % 3 == 0)
@@ -5066,7 +5069,10 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_PRE_JUMP || id == ANIM_AGENT_LAND || id == ANIM_AGENT_MEDIUM_LAND)
 	{
-		setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+		if(!gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation"))
+		{
+			setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+		}
 	}
 }
 
