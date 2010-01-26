@@ -649,7 +649,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					<combo_item name="Medium" value="Medium">          Medium</combo_item>
 					<combo_item name="High" value="High">          High</combo_item>
 				</combo_box>
-				<check_box name="EmeraldBuildPrefsEmbedItem" bottom_delta="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom_delta="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Embed an item into the newly created object" left="20"
 					 mouse_opaque="true" control_name="EmeraldBuildPrefs_EmbedItem" radio_style="false" width="270"/>
 				<view_border blevel_style="in" bottom_delta="-20" follows="left|top" height="16" left_delta="0"
@@ -781,16 +781,13 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"
 					 name="EmeraldHelp_UtilityStream" tool_tip="Click here for help regarding the settings in this page."
 					 right="490" width="18"/>
-				<check_box bottom="-30" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Enable Greenlife Utility Stream" left="5" mouse_opaque="true"
-					 tool_tip="Enable Greenlife Utility Stream (GUS)" name="GUS Enable" radio_style="false"
-					 width="128" control_name="EmeraldGUSEnabled"/>
-				<panel name="gus_panel" left_delta="0" width="280" height="45" bottom="-90"
+				<panel name="gus_panel" left="5" width="280" height="55" bottom="-60"
 					 border="true" mouse_opaque="true" bevel_style="in" background_visible="true" background_opaque="true"
 					 follows="top|left" bg_opaque_color="0,0,0,0.1" bg_alpha_color="blue" can_resize="false">
-					<spinner bottom_delta="-20" decimal_digits="0" follows="left|top" height="16" increment="1"
-						 label="Channel" label_width="65" left_delta="5" max_val="99999" min_val="1"
-						 mouse_opaque="true" name="Channel" width="128" control_name="EmeraldGUSChannel"/>
+					<check_box bottom="-25" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 initial_value="false" label="Enable GUS" left="5" mouse_opaque="true"
+					 tool_tip="Enable Greenlife Utility Stream (GUS)" name="GUS Enable" radio_style="false"
+					 width="128" control_name="EmeraldGUSEnabled"/>
 					<check_box bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 						 initial_value="false" label="Enable FastEvents" left_delta="138" mouse_opaque="true"
 						 tool_tip="Enable Greenlife Utility Stream FastEvents (GUS-FE)" name="GUS-FE Enable"

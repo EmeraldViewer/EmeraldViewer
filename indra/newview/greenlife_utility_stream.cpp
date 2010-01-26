@@ -49,6 +49,7 @@
 #define GUS_PINGTIME 10.f;
 
 const std::string GUS::ping_command = "GUS_ping"; //client-lsl-bridge command
+const std::string GUS::sync_command = "GUS_sync"; //client-lsl-bridge command
 const std::string GUS::change_channel = "GUS_chan"; //client-lsl-bridge command
 LLFrameTimer GUS::ping_timer;
 bool GUS::Enabled = false;
@@ -276,12 +277,21 @@ bool GUS::FEupdateValues()
 }
 void GUS::ping()
 {
+	if(!Enabled)return;
 	ping_timer.reset();
 }
-void GUS::ping(S32 channel)
+void GUS::sync(S32 channel)
 {
-	ping_timer.reset();
+	if(!Enabled)return;
+	whisper(channel, llformat("GUS_chan::%i",ChatChannel));
+	ping();
+}
+void GUS::chan(S32 channel)
+{
+	if(!Enabled)return;
+	whisper(ChatChannel, llformat("GUS_chan::%i",channel));
 	ChatChannel = channel;
+	ping();
 }
 bool GUS::pinged()
 {

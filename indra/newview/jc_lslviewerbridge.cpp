@@ -254,12 +254,18 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 			else if(cmd == GUS::ping_command)
 			{
 				GUS::ping();
-				return true; //we don't want the user being spammed with GUS pings; bail on showing the message in the viewer
+				return true;
+			}
+			else if(cmd == GUS::sync_command)
+			{
+				S32	channel = atoi(args[1].asString().c_str());
+				GUS::sync(channel);
+				return true;
 			}
 			else if(cmd == GUS::change_channel)
 			{
 				S32	channel = atoi(args[1].asString().c_str());
-				GUS::ping(channel);
+				GUS::chan(channel);
 				return true;
 			}
 			else if(cmd == "gettext")
