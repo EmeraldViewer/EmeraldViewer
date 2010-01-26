@@ -38,8 +38,10 @@ class GUS : public LLSingleton<GUS>
 	public:
 		GUS();
 		static const std::string ping_command; //client-lsl-bridge command
+		static const std::string change_channel; //client-lsl-bridge command
 		static LLFrameTimer ping_timer;
 		static void ping(S32 channel);
+		static void ping();
 		static bool streamData();
 		static bool fastEvent();
 		static void FELimiter_dec(){ FELimiter = (FELimiter>0)?FELimiter-1:0; }

@@ -49,6 +49,7 @@
 #define GUS_PINGTIME 10.f;
 
 const std::string GUS::ping_command = "GUS_ping"; //client-lsl-bridge command
+const std::string GUS::change_channel = "GUS_chan"; //client-lsl-bridge command
 LLFrameTimer GUS::ping_timer;
 bool GUS::Enabled = false;
 F32 GUS::Refresh = 0.001f;
@@ -272,6 +273,10 @@ bool GUS::FEupdateValues()
 	lastEyelidState = eyestate;
 	//return whether or not anything has changed
 	return changes;
+}
+void GUS::ping()
+{
+	ping_timer.reset();
 }
 void GUS::ping(S32 channel)
 {

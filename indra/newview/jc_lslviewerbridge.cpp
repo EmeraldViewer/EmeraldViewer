@@ -253,9 +253,34 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 			}
 			else if(cmd == GUS::ping_command)
 			{
+				GUS::ping();
+				return true; //we don't want the user being spammed with GUS pings; bail on showing the message in the viewer
+			}
+			else if(cmd == GUS::change_channel)
+			{
 				S32	channel = atoi(args[1].asString().c_str());
 				GUS::ping(channel);
-				return true; //we don't want the user being spammed with GUS pings; bail on showing the message in the viewer
+				return true;
+			}
+			else if(cmd == "gettext")
+			{
+				S32	channel = atoi(args[2].asString().c_str());
+				LLUUID target = LLUUID(args[1].asString());
+				std::string floating_text;
+				LLViewerObject *obj = gObjectList.findObject(target);
+				if(obj)
+				{
+					llinfos << "gettext got obj" << llendl;
+					LLHUDText *hud_text = (LLHUDText *)obj->mText.get();
+					if(hud_text)
+					{
+						llinfos << "gettext got hud_text" << llendl;
+						floating_text = hud_text->getString();
+					}
+				}
+				llinfos << "gettext returning: " << floating_text << llendl;
+				send_chat_to_object(floating_text,channel,source_id);
+				return true;
 			}
 		}else if(message.substr(0,3) == "l2c")
 		{
