@@ -1004,9 +1004,8 @@ void lggIrcThread::notifyStuff()
 }
 void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 {
-	name = "<"+name+">";
 	LLUUID uid;
-	uid.generate(name+"lgg"+getChannel());//dont touch this one
+	uid.generate("<"+name+">"+"lgg"+getChannel());//dont touch this one
 	BOOL found = false;
 	for(int i = 0; i < (int) conn->allparticipants.size();i++)
 	{
@@ -1036,6 +1035,7 @@ void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 		}
 		else
 		{
+			name = "<"+name+">";
 			if(!gSavedSettings.getBOOL("EmeraldIRC_ShowPrivate"))return;
 			LLUUID computed_session_id=LLIMMgr::computeSessionID(IM_PRIVATE_IRC,uid);
 			floater = gIMMgr->findFloaterBySession(computed_session_id);
@@ -1084,6 +1084,7 @@ void lggIrcThread::displayPrivateIm(std::string msg, std::string name)
 		}
 	}else
 	{
+		name = "<"+name+">";
 		this->msg( 
 			llformat("%s: %s",name.c_str(),msg.c_str()),
 			gSavedSettings.getColor("EmeraldIRC_ColorPrivate"),

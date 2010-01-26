@@ -772,7 +772,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 				<check_box bottom_delta="-35" left="25" enabled="true" follows="right|top" font="SansSerifSmall"
 					 height="16" label="Auto Re-Join" mouse_opaque="true" control_name="EmeraldIRC_AutoReJoin" tool_tip="Automaticly accempt to reconnect to the channel you were just in if kicked. Some networks dont like this and may ban you for doing so, be carefull."
 					 name="EmeraldIRC_AutoReJoin"/>
-        <check_box bottom_delta="-35" left="25" enabled="true" follows="right|top" font="SansSerifSmall"
+        <check_box bottom_delta="-35" left="25" enabled="true" visible="false" follows="right|top" font="SansSerifSmall"
 					 height="16" label="Auto Connect at login" mouse_opaque="true" control_name="EmeraldIRC_AutoConnect" tool_tip="Automaticly connect to any IRC networks that you have set to auto connect to upon startup."
 					 name="EmeraldIRC_AutoConnect"/>
 			</panel>
