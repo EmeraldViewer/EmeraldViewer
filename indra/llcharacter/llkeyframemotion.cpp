@@ -658,7 +658,8 @@ BOOL LLKeyframeMotion::onActivate()
 	// If the keyframe anim has an associated emote, trigger it. 
 	if( mJointMotionList->mEmoteName.length() > 0 )
 	{
-		if(LLUUID(mJointMotionList->mEmoteName) != mID) //phox
+		if((mJointMotionList->mEmoteName.length() == 36) && (LUUID(mJointMotionList->mEmoteName) == mID))
+			return TRUE;
 		mCharacter->startMotion( gAnimLibrary.stringToAnimState(mJointMotionList->mEmoteName) );
 	}
 
@@ -1642,6 +1643,17 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 			str = (char*)bin_data;
 			constraintp->mSourceConstraintVolume = mCharacter->getCollisionVolumeID(str);
 
+			if(constraintp->mSourceConstraintVolume == -1)
+			{
+				/*It's like a jungle in this habitat
+				But all you savage cats
+				Knew that I was strapped wit gats
+				When you were cuddled wit cabbage patch*/
+				llwarns << "can't find a valid source collision volume." << llendl;
+				delete constraintp;
+				return FALSE;
+			}
+
 			if (!dp.unpackVector3(constraintp->mSourceConstraintOffset, "source_offset"))
 			{
 				llwarns << "can't read constraint source offset" << llendl;
@@ -1674,6 +1686,12 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 			{
 				constraintp->mConstraintTargetType = CONSTRAINT_TARGET_TYPE_BODY;
 				constraintp->mTargetConstraintVolume = mCharacter->getCollisionVolumeID(str);
+				if(constraintp->mTargetConstraintVolume == -1)
+				{
+					llwarns << "can't find a valid target collision volume." << endl;
+					delete constraintp;
+					return FALSE;
+				}
 			}
 
 			if (!dp.unpackVector3(constraintp->mTargetConstraintOffset, "target_offset"))
