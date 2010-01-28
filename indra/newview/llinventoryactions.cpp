@@ -556,6 +556,7 @@ class SetPartialSearch : public inventory_listener_t
 			else 
 			{
 				mPtr->getActivePanel()->setPartialSearch(false);
+				mPtr->getControl("Inventory.PartialSearchToggle")->setValue(FALSE);
 
 				gSavedPerAccountSettings.setBOOL("EmeraldInventoryPartialSearch",FALSE);
 			}
