@@ -218,8 +218,7 @@ LLLineEditor::LLLineEditor(const std::string& name, const LLRect& rect,
 	menu->append(new LLMenuItemCallGL("Copy", context_copy, NULL, this));
 	menu->append(new LLMenuItemCallGL("Paste", context_paste, NULL, this));
 	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
-	//Zwag: Kill this until somebody figures out why it breaks EVERYTHING.
-	//menu->append(new LLMenuItemCallGL("Translate",translateText, NULL, this));
+	menu->append(new LLMenuItemCallGL("Translate",translateText, NULL, this));
 	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
 	menu->appendSeparator();
 	//menu->setBackgroundColor(gColors.getColor("MenuPopupBgColor"));
