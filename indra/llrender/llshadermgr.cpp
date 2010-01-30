@@ -343,8 +343,7 @@ GLhandleARB LLShaderMgr::loadShaderFile(const std::string& filename, S32 & shade
 	{	//search from the current gpu class down to class 1 to find the most relevant shader
 		std::stringstream fname;
 		fname << getShaderDirPrefix();
-		if(getShaderDirPrefix() == "shaders/class")
-			fname << gpu_class << "/" << filename;
+		fname << gpu_class << "/" << filename;
 		
  		LL_DEBUGS("ShaderLoading") << "Looking in " << fname.str() << LL_ENDL;
 		file = LLFile::fopen(fname.str(), "r");		/* Flawfinder: ignore */

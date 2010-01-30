@@ -1317,11 +1317,7 @@ BOOL LLViewerShaderMgr::loadShadersWindLight()
 
 std::string LLViewerShaderMgr::getShaderDirPrefix(void)
 {
-	std::string prefix = gSavedSettings.getString("EmeraldShaderPath");
-	if(prefix != "")
-		return gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, prefix);
-	else
-		return gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "shaders/class");
+	return gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "shaders/class");
 }
 
 void LLViewerShaderMgr::updateShaderUniforms(LLGLSLShader * shader)

@@ -87,8 +87,6 @@ private:
 	//static void onCommitVoiceDebugServerName(LLUICtrl* caller, void* user_data);
 	//static void onCommitAvatarEffectsChange(LLUICtrl* caller, void* user_data);
 	//static void onCommitAutoResponse(LLUICtrl* caller, void* user_data);
-	static void applyCustomShaders(void* data);
-	static void changeShaderPrefix(LLUICtrl* ctrl, void * data);
 
 private:
 	std::string mSkin;
@@ -97,8 +95,7 @@ private:
 	static JCInvDropTarget* mBuildObjectDropTarget;
 	static void IMAutoResponseItemDrop(LLViewerInventoryItem* item);
 	static void BuildAutoResponseItemDrop(LLViewerInventoryItem* item);
-	static std::string chosenShaders;
-	
+
 protected:
 	void initHelpBtn(const std::string& name, const std::string& xml_alert);
 	static void onClickHelp(void* data);

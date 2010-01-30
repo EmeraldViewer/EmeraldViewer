@@ -31,7 +31,7 @@
  */
 
 #include "llviewerprecompiledheaders.h"
-#include "llshadermgr.h"
+
 #include "llpanelemerald.h"
 #include "lggbeammapfloater.h"
 // linden library includes
@@ -67,8 +67,6 @@
 #include "llsliderctrl.h"
 #include "mfdkeywordfloater.h"
 #include "lgghunspell_wrapper.h"
-#include "llviewershadermgr.h"
-#include "llfloaterpreference.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -158,7 +156,7 @@ BOOL JCInvDropTarget::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 ////////end drop utility///////////////
 
 LLPanelEmerald* LLPanelEmerald::sInstance;
-std::string LLPanelEmerald::chosenShaders;
+
 JCInvDropTarget * LLPanelEmerald::mObjectDropTarget;
 JCInvDropTarget * LLPanelEmerald::mBuildObjectDropTarget;
 
@@ -266,12 +264,6 @@ BOOL LLPanelEmerald::postBuild()
 	childSetValue("EmeraldDoubleClickTeleportMode", gSavedSettings.getBOOL("EmeraldDoubleClickTeleportMode"));
 	childSetValue("EmeraldUseOTR", LLSD((S32)gSavedSettings.getU32("EmeraldUseOTR"))); // [$PLOTR$]
 	getChild<LLButton>("otr_help_btn")->setClickedCallback(onClickOtrHelp, this);      // [/$PLOTR$]
-	
-	/*LLComboBox* emeraldShaderComboBox = getChild<LLComboBox>("EmeraldShaderCombo");
-	emeraldShaderComboBox->add("Class 1",std::string("None"));
-	emeraldShaderComboBox->add("Class 2",std::string("None"));
-	emeraldShaderComboBox->add("Class 3",std::string("None"));
-	emeraldShaderComboBox->setCommitCallback(changeShaderPrefix);*/
 
 	initHelpBtn("EmeraldHelp_TeleportLogin",	"EmeraldHelp_TeleportLogin");
 	initHelpBtn("EmeraldHelp_Voice",			"EmeraldHelp_Voice");
@@ -676,27 +668,6 @@ void LLPanelEmerald::onRefresh(void* data)
 	
 	
 }
-
-void LLPanelEmerald::changeShaderPrefix(LLUICtrl* ctrl, void * data) //phox shader mgr
-{
-	LLComboBox * combo_box = static_cast<LLComboBox*>(ctrl);
-	if(combo_box->getValue().asString() == "None")
-	{
-		chosenShaders = "";
-	}
-	else
-	{
-		chosenShaders = "shaders/" + combo_box->getValue().asString();
-	}
-	applyCustomShaders(data);
-}
-
-void LLPanelEmerald::applyCustomShaders(void* data) //phox shader mgr
-{
-	gSavedSettings.setString("EmeraldShaderPrefix",chosenShaders);
-	LLFloaterPreference::refreshEnabledGraphics();
-}
-
 void LLPanelEmerald::onClickVoiceRevertDebug(void* data)
 {
 	LLPanelEmerald* self = (LLPanelEmerald*)data;
