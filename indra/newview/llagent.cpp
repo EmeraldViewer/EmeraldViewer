@@ -3999,7 +3999,7 @@ void LLAgent::handleScrollWheel(S32 clicks)
 			mFollowCam.zoom( clicks ); 
 			if ( mFollowCam.isZoomedToMinimumDistance() )
 			{
-				changeCameraToMouselook(FALSE);
+			changeCameraToMouselook(FALSE);
 			}
 		}
 	}
@@ -4021,10 +4021,16 @@ void LLAgent::handleScrollWheel(S32 clicks)
 		}
 		else if (mFocusOnAvatar && mCameraMode == CAMERA_MODE_THIRD_PERSON)
 		{
-			F32 current_zoom_fraction = mTargetCameraDistance / (mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));
-			current_zoom_fraction *= 1.f - pow(ROOT_ROOT_TWO, clicks);
-			
-			cameraOrbitIn(current_zoom_fraction * mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));
+			if(gKeyboard->getKeyDown(KEY_CONTROL))
+			{
+				//cameraOrbitOver(clicks+mFollowCam.getPitch())
+				mThirdPersonHeadOffset.mV[2]+=clicks/10.0f;
+			}else
+			{
+				F32 current_zoom_fraction = mTargetCameraDistance / (mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));
+				current_zoom_fraction *= 1.f - pow(ROOT_ROOT_TWO, clicks);
+				cameraOrbitIn(current_zoom_fraction * mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));
+			}
 		}
 		else
 		{
