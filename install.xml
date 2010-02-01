@@ -1070,9 +1070,9 @@
 					<key>linux</key>
 					<map>
 						<key>md5sum</key>
-						<string>0f77651466d679a8d50e459d22f835e2</string>
+						<string>f0d9a8d1318b519cffe6c40c9cac4e21</string>
 						<key>url</key>
-						<uri>http://www.lawlinter.net/data/openal-linux-20100121-sdk.tar.bz2</uri>
+						<uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/openal-linux-20081010c-59a71b14-plughw.tar.bz2</uri>
 					</map>
 					<key>linux64</key>
 					<map>
