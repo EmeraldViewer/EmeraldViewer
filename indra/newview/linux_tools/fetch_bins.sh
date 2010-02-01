@@ -11,8 +11,8 @@ ARCHIVE="${URL##*/}"
 
 missing_bins() {
 	for file in $BINS; do
-		if [[ ! -f $file ]]; then
-			echo "INFO: Missing binary ./$file"
+		if [[ ! -f "$file" ]]; then
+			echo "Missing binary: ./$file."
 			return 0
 		fi
 	done
@@ -21,16 +21,16 @@ missing_bins() {
 }
 
 
-echo "INFO: Looking for missing binaries.."
+echo "Looking for missing binaries."
 if missing_bins; then
-	echo "INFO: Fetching Linden Lab client for missing files.."
+	echo "Fetching binary package."
 	if wget -nc --random-wait $URL; then
-		echo "INFO: Extracting binaries.."
+		echo "Extracting."
 #		if tar -xjv --strip-components=1 -f $ARCHIVE $FOLDER/${BINS// / $FOLDER/}; then
 		if tar -xjvf $ARCHIVE; then
-			echo "INFO: All binaries accounted for, launching.."
+			echo "Binaries successfully obtained."
 		fi
 	fi
 else
-	echo "INFO: All binaries found"
+	echo "All binaries found."
 fi

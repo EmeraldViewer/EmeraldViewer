@@ -1260,8 +1260,8 @@ endif (OPENAL)
 if (FMOD)
   set(LLSTARTUP_COMPILE_FLAGS "${LLSTARTUP_COMPILE_FLAGS} -DLL_FMOD")
 
-	# This is supposed to build a .dylib from the static FMOD library for Darwin
-	# We shouldn't have to link FMOD in the viewer, since we load it dynamically ~Disc
+	# This is supposed to build fmodwrapper.dylib from the static FMOD library for Darwin
+	# Right now we're making it a link target for the viewer..
   if (DARWIN)
     set(fmodwrapper_SOURCE_FILES fmodwrapper.cpp)
     add_library(fmodwrapper SHARED ${fmodwrapper_SOURCE_FILES})
@@ -1455,7 +1455,7 @@ else (WINDOWS)
 		${BOOST_THREAD_LIBRARY}
 		${DBUSGLIB_LIBRARIES}
 		${OPENGL_LIBRARIES}
-#		${FMODWRAPPER_LIBRARY}
+		${FMODWRAPPER_LIBRARY}
 		${OPENGL_LIBRARIES}
 		${MOZLIB_LIBRARIES}
 		${SDL_LIBRARY}
