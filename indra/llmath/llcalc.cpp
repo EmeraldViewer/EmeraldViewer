@@ -117,8 +117,6 @@ void LLCalc::updateVariables(LLSD& vars)
 
 bool LLCalc::evalString(const std::string& expression, F32& result)
 {
-	using namespace boost::spirit;
-	
 	std::string expr_upper = expression;
 	LLStringUtil::toUpper(expr_upper);
 	
