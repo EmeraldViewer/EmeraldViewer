@@ -1645,10 +1645,11 @@ BOOL LLKeyframeMotion::deserialize(LLDataPacker& dp)
 
 			if(constraintp->mSourceConstraintVolume == -1)
 			{
-				/*It's like a jungle in this habitat
-				But all you savage cats
-				Knew that I was strapped wit gats
-				When you were cuddled wit cabbage patch*/
+				/*So where's all the Madd Rappers at?
+				It's like a jungle in this habitat
+				But all you savage cats, know that I was strapped wit gats
+				when you were cuddlin a Cabbage Patch*/
+				//also http://www.youtube.com/watch?v=QvgqBDk2kbc
 				llwarns << "can't find a valid source collision volume." << llendl;
 				delete constraintp;
 				return FALSE;

@@ -133,7 +133,7 @@ std::string JCLSLPreprocessor::encode(std::string script)
 	
 	otext += "\n//nfo_preprocessor_version 0";
 	
-	otext += "\n//^ = determine what featureset is supported";
+	//otext += "\n//^ = determine what featureset is supported";
 	
 	otext += llformat("\n//program_version %s", LLAppViewer::instance()->getSecondLifeTitle().c_str());
 	

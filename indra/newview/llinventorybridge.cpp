@@ -3605,7 +3605,7 @@ void LLObjectBridge::buildContextMenu(LLMenuGL& menu, U32 flags)
 				items.push_back(std::string("Attach To"));
 				items.push_back(std::string("Attach To HUD"));
 				// commented out for DEV-32347
-				//items.push_back(std::string("Restore to Last Position"));
+				items.push_back(std::string("Restore to Last Position"));
 
 // [RLVa:KB] - Version: 1.23.4 | Checked: 2009-10-10 (RLVa-1.0.5a) | Modified: RLVa-1.0.5a
 				if ( (rlv_handler_t::isEnabled()) && (!RlvSettings::getEnableWear()) && (gRlvHandler.hasLockedAttachment(RLV_LOCK_ANY)) )

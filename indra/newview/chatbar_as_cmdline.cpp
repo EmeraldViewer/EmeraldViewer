@@ -193,6 +193,16 @@ private:
 	
 };
 
+void invrepair()
+{
+
+	LLViewerInventoryCategory::cat_array_t cats;
+	LLViewerInventoryItem::item_array_t items;
+	//ObjectContentNameMatches objectnamematches(ifolder);
+	gInventory.collectDescendents(gAgent.getInventoryRootID(),cats,items,FALSE);//,objectnamematches);
+}
+
+
 
 
 bool cmd_line_chat(std::string revised_text, EChatType type)
@@ -454,6 +464,9 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 						}
 					}else cmdline_printchat("no size");
 				}
+			}else if(command == "invrepair")
+			{
+				invrepair();
 			}
 		}
 	}
