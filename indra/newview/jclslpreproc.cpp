@@ -98,7 +98,6 @@ std::map<std::string,LLUUID> JCLSLPreprocessor::cached_assetids;
 #undef equivalent
 
 #include <boost/assert.hpp>
-#include <boost/program_options.hpp>
 #include <boost/wave.hpp>
 #include <boost/wave/cpplexer/cpp_lex_token.hpp>    // token class
 #include <boost/wave/cpplexer/cpp_lex_iterator.hpp> // lexer class
@@ -106,9 +105,6 @@ std::map<std::string,LLUUID> JCLSLPreprocessor::cached_assetids;
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 
-
-using namespace boost::spirit::classic;
-namespace po = boost::program_options;
 using namespace boost::regex_constants;
 
 
