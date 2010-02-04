@@ -56,6 +56,7 @@ LLPanelSkins::LLPanelSkins()
 
 LLPanelSkins::~LLPanelSkins()
 {
+	sInstance = NULL;
 }
 
 BOOL LLPanelSkins::postBuild()
@@ -74,35 +75,40 @@ void LLPanelSkins::refresh()
 	{
 		comboBox->removeall();
 		//comboBox->add("===OFF===");
-		std::string path_name(gDirUtilp->getSkinBaseDir());
+		std::string path_name(gDirUtilp->getSkinBaseDir()+gDirUtilp->getDirDelimiter());
 		bool found = true;			
 		while(found) 
 		{
 			std::string name;
 			found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
+			llinfos << "path name " << path_name << " and name " << name << " and found " << found << llendl;
 			if(found)
 			{
 				LLSD data;
-				datas.push_back(data);
 				llifstream importer(name);
 				LLSDSerialize::fromXMLDocument(data, importer);
-				comboBox->add(data["skin_name"].asString());
-				if(data["folder_name"].asString()==mSkin)
-				{
-					comboBox->setSimple(data["skin_name"].asString());
-					//LLButton* b;
-					//b.setImageOverlay()
-					childSetValue("emrd_skin_author",data["author_name"].asString());
-					childSetValue("emrd_skin_ad_authors",data["additional_author_names"].asString());
-					childSetValue("emrd_skin_info",data["skin_info"].asString());
-					//LLButton* b = getChild<LLButton>("emrd_skin_preview");
-					//b->setsetImageSelected()
-					//<button scale_image="true" image_selected="skin_thumbnail_default.png"
-					//image_unselected="skin_thumbnail_default.png" 
-					//	image_hover_selected="skin_thumbnail_default.png" 
-					//	image_hover_unselected="skin_thumbnail_default.png"/>
 
-					//set the rest here!
+				if(data.has("folder_name"))
+				{
+					datas.push_back(data);
+					comboBox->add(data["skin_name"].asString());
+					if(data["folder_name"].asString()==mSkin)
+					{
+						comboBox->setSimple(data["skin_name"].asString());
+						//LLButton* b;
+						//b.setImageOverlay()
+						childSetValue("emrd_skin_author",data["author_name"].asString());
+						childSetValue("emrd_skin_ad_authors",data["additional_author_names"].asString());
+						childSetValue("emrd_skin_info",data["skin_info"].asString());
+						//LLButton* b = getChild<LLButton>("emrd_skin_preview");
+						//b->setsetImageSelected()
+						//<button scale_image="true" image_selected="skin_thumbnail_default.png"
+						//image_unselected="skin_thumbnail_default.png" 
+						//	image_hover_selected="skin_thumbnail_default.png" 
+						//	image_hover_unselected="skin_thumbnail_default.png"/>
+
+						//set the rest here!
+					}
 				}
 			}
 		}
