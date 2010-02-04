@@ -218,8 +218,44 @@ LLLineEditor::LLLineEditor(const std::string& name, const LLRect& rect,
 	menu->append(new LLMenuItemCallGL("Copy", context_copy, NULL, this));
 	menu->append(new LLMenuItemCallGL("Paste", context_paste, NULL, this));
 	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
-	menu->append(new LLMenuItemCallGL("Translate",translateText, NULL, this));
 	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
+	menu->appendSeparator();
+	LLMenuGL* translatemenu = new LLMenuGL("Translate To");
+	translatemenu->setCanTearOff(FALSE);
+	SpellMenuBind* t=new SpellMenuBind;t->origin=this;t->word="en";
+	translatemenu->append(new LLMenuItemCallGL("English",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="da";
+	translatemenu->append(new LLMenuItemCallGL("Danish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="de";
+	translatemenu->append(new LLMenuItemCallGL("Deutsch(German)",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="es";
+	translatemenu->append(new LLMenuItemCallGL("Spanish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="fr";
+	translatemenu->append(new LLMenuItemCallGL("French",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="it";
+	translatemenu->append(new LLMenuItemCallGL("Italian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="hu";
+	translatemenu->append(new LLMenuItemCallGL("Hungarian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="nl";
+	translatemenu->append(new LLMenuItemCallGL("Dutch",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="pl";
+	translatemenu->append(new LLMenuItemCallGL("Polish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="pt";
+	translatemenu->append(new LLMenuItemCallGL("Portugese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ru";
+	translatemenu->append(new LLMenuItemCallGL("Russian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="tr";
+	translatemenu->append(new LLMenuItemCallGL("Turkish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="uk";
+	translatemenu->append(new LLMenuItemCallGL("Ukrainian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="zh";
+	translatemenu->append(new LLMenuItemCallGL("Chinese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ja";
+	translatemenu->append(new LLMenuItemCallGL("Japanese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ko";
+	translatemenu->append(new LLMenuItemCallGL("Korean",translateText, NULL, t));
+
+	menu->appendMenu(translatemenu);
 	menu->appendSeparator();
 	//menu->setBackgroundColor(gColors.getColor("MenuPopupBgColor"));
 	menu->setCanTearOff(FALSE);
@@ -493,8 +529,9 @@ void LLLineEditor::spell_correct(void* data)
 }
 void LLLineEditor::translateText(void * data)
 {
-	LLLineEditor* line = (LLLineEditor*)data;
-	const std::string &toLang = LLTranslate::getTranslateLanguage();
+	SpellMenuBind* t = (SpellMenuBind*)data;
+	LLLineEditor* line = t->origin;
+	const std::string &toLang = t->word;//LLTranslate::getTranslateLanguage();
 	LLHTTPClient::ResponderPtr result = LineChatTranslationReceiver::build(toLang,line);
 	S32 left_pos = llmin( line->mSelectionStart, line->mSelectionEnd );
 	S32 length = abs( line->mSelectionStart - line->mSelectionEnd );

@@ -63,6 +63,7 @@
 #include "llmenugl.h"
 #include <boost/regex.hpp>
 #include "../newview/lgghunspell_wrapper.h"
+#include "../newview/lltranslate.h"
 
 // 
 // Globals
@@ -99,6 +100,33 @@ void (* LLTextEditor::mURLcallback)(const std::string&)   = NULL;
 bool (* LLTextEditor::mSecondlifeURLcallback)(const std::string&)   = NULL;
 bool (* LLTextEditor::mSecondlifeURLcallbackRightClick)(const std::string&)   = NULL;
 
+///////////////////////////////////////////////////////////////////
+
+class TextChatTranslationReceiver : public LLTranslate::TranslationReceiver
+{
+public :
+	TextChatTranslationReceiver(const std::string &toLang, LLTextEditor* line): LLTranslate::TranslationReceiver("", toLang),
+		m_line(line)	
+	{
+	}
+
+	static boost::intrusive_ptr<TextChatTranslationReceiver> build(const std::string &toLang,LLTextEditor* line)
+	{
+		return boost::intrusive_ptr<TextChatTranslationReceiver>(new TextChatTranslationReceiver(toLang,line));
+	}
+
+protected:
+	void handleResponse(const std::string &translation, const std::string &detectedLanguage)
+	{
+		m_line->insertText(" (" + translation + ")",FALSE);
+	}
+	void handleFailure()
+	{
+		LLTranslate::TranslationReceiver::handleFailure();
+	}
+private:
+	LLTextEditor* m_line;
+};
 
 ///////////////////////////////////////////////////////////////////
 
@@ -361,6 +389,43 @@ LLTextEditor::LLTextEditor(
 	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
 	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
 	menu->appendSeparator();
+	LLMenuGL* translatemenu = new LLMenuGL("Translate To");
+	translatemenu->setCanTearOff(FALSE);
+	SpellMenuBind* t=new SpellMenuBind;t->origin=this;t->word="en";
+	translatemenu->append(new LLMenuItemCallGL("English",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="da";
+	translatemenu->append(new LLMenuItemCallGL("Danish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="de";
+	translatemenu->append(new LLMenuItemCallGL("Deutsch(German)",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="es";
+	translatemenu->append(new LLMenuItemCallGL("Spanish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="fr";
+	translatemenu->append(new LLMenuItemCallGL("French",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="it";
+	translatemenu->append(new LLMenuItemCallGL("Italian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="hu";
+	translatemenu->append(new LLMenuItemCallGL("Hungarian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="nl";
+	translatemenu->append(new LLMenuItemCallGL("Dutch",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="pl";
+	translatemenu->append(new LLMenuItemCallGL("Polish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="pt";
+	translatemenu->append(new LLMenuItemCallGL("Portugese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ru";
+	translatemenu->append(new LLMenuItemCallGL("Russian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="tr";
+	translatemenu->append(new LLMenuItemCallGL("Turkish",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="uk";
+	translatemenu->append(new LLMenuItemCallGL("Ukrainian",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="zh";
+	translatemenu->append(new LLMenuItemCallGL("Chinese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ja";
+	translatemenu->append(new LLMenuItemCallGL("Japanese",translateText, NULL, t));
+	t=new SpellMenuBind;t->origin=this;t->word="ko";
+	translatemenu->append(new LLMenuItemCallGL("Korean",translateText, NULL, t));
+
+	menu->appendMenu(translatemenu);
+	menu->appendSeparator();
 
 	//menu->setBackgroundColor(gColors.getColor("MenuPopupBgColor"));
 	menu->setCanTearOff(FALSE);
@@ -397,6 +462,17 @@ void LLTextEditor::context_copy(void* data)
 {
 	LLTextEditor* line = (LLTextEditor*)data;
 	if(line)line->copy();
+}
+void LLTextEditor::translateText(void * data)
+{
+	SpellMenuBind* t = (SpellMenuBind*)data;
+	LLTextEditor* line = t->origin;
+	const std::string &toLang = t->word;//LLTranslate::getTranslateLanguage();
+	LLHTTPClient::ResponderPtr result = TextChatTranslationReceiver::build(toLang,line);
+	
+	S32 left_pos = llmin( line->mSelectionStart, line->mSelectionEnd );
+	S32 length = abs( line->mSelectionStart - line->mSelectionEnd );
+	LLTranslate::translateMessage(result,"", toLang, line->getText().substr(left_pos, length));
 }
 void LLTextEditor::spell_correct(void* data)
 {
@@ -3856,13 +3932,13 @@ void LLTextEditor::autoIndent()
 }
 
 // Inserts new text at the cursor position
-void LLTextEditor::insertText(const std::string &new_text, BOOL group)
+void LLTextEditor::insertText(const std::string &new_text, BOOL group ,  BOOL deleteCurrentSelection)
 {
 	BOOL enabled = getEnabled();
 	setEnabled( TRUE );
 
 	// Delete any selected characters (the insertion replaces them)
-	if( hasSelection() )
+	if( hasSelection() && (deleteCurrentSelection))
 	{
 		deleteSelection(TRUE);
 	}

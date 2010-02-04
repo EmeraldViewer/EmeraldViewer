@@ -145,6 +145,7 @@ public:
 	static void context_paste(void* data);
 	static void context_delete(void* data);
 	static void context_selectall(void* data);
+	static void translateText(void * data);
 	static void spell_correct(void* data);
 	static void spell_add(void* data);
 	static void spell_show(void* data);
@@ -165,7 +166,7 @@ public:
 	BOOL			allowsEmbeddedItems() const { return mAllowEmbeddedItems; }
 
 	// inserts text at cursor
-	void			insertText(const std::string &text, BOOL group = FALSE);
+	void			insertText(const std::string &text, BOOL group = FALSE, BOOL deleteSelection = TRUE);
 	// appends text at end
 	void 			appendText(const std::string &wtext, bool allow_undo, bool prepend_newline,
 							   const LLStyleSP stylep = NULL);
