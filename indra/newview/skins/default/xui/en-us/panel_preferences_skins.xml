@@ -18,13 +18,13 @@
 		<view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="-0"
                mouse_opaque="false" name="emrd_box2" width="260"/>
           <text bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="16" left_delta="3"
-               name="emrd_skin_folder" width="512">additional skin authors</text>
+               name="emrd_skin_ad_authors" width="512">additional skin authors</text>
           <text bottom_delta="-22" follows="left|top" font="SansSerifSmall" height="16" left_delta="-3"
                name="EmSkin_txt4" width="512">Skin folder</text>
 		<view_border blevel_style="in" bottom_delta="-18" follows="left|top" height="16" left_delta="-0"
                mouse_opaque="false" name="emrd_box3" width="260"/>
           <text bottom_delta="-0" follows="left|top" font="SansSerifSmall" height="16" left_delta="3"
-               name="emrd_skin_ad_author" width="512">skin folder</text>
+               name="emrd_skin_folder" width="512">skin folder</text>
 		<texture_picker allow_no_texture="true" bottom_delta="-200" can_apply_immediately="true"
 		     default_image_name="None" follows="left|top" label="" width="400" height="175"
 		     left_delta="-70" mouse_opaque="true" name="emrd_skin_preview" tool_tip="Skin Preview" />
