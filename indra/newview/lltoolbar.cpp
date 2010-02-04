@@ -188,6 +188,7 @@ BOOL LLToolBar::postBuild()
 	layoutButtons();
 
 	sShowToolBar = gSavedSettings.getBOOL("ShowToolBar");
+	setVisible(sShowToolBar);
 
 	return TRUE;
 }
@@ -236,10 +237,10 @@ BOOL LLToolBar::handleDragAndDrop(S32 x, S32 y, MASK mask, BOOL drop,
 // static
 void LLToolBar::toggle(void*)
 {
-	BOOL show = gSavedSettings.getBOOL("ShowToolBar");                      
-	gSavedSettings.setBOOL("ShowToolBar", !show); 
+	BOOL show = !gToolBar->getVisible();                      
+	gSavedSettings.setBOOL("ShowToolBar", show); 
 	sShowToolBar = show;
-	gToolBar->setVisible(!show);
+	gToolBar->setVisible(show);
 }
 
 
