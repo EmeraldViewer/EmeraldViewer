@@ -1697,7 +1697,7 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 			
 		}
 		if((!glggHunSpell->highlightInRed)
-			||(mOverRideAndShowMisspellings))
+			||(mOverRideAndShowMisspellings)||(mShowLineNumbers))
 		{
 			SpellMenuBind *	tempStruct = new SpellMenuBind;
 			tempStruct->origin = this;
@@ -3553,7 +3553,10 @@ void LLTextEditor::draw()
 			drawPreeditMarker();
 			drawText();
 			drawCursor();
-			drawMisspelled();
+			if(!mShowLineNumbers || mOverRideAndShowMisspellings)
+			{
+				drawMisspelled();
+			}
 
 			unbindEmbeddedChars(mGLFont);
 

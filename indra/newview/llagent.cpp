@@ -229,6 +229,7 @@ LLAgent gAgent;
 //
 
 BOOL LLAgent::emeraldPhantom = 0;
+BOOL LLAgent::ignorePrejump = 0;
 
 BOOL LLAgent::sFirstPersonBtnState;
 BOOL LLAgent::sMouselookBtnState;
@@ -440,6 +441,11 @@ void LLAgent::updateEmeraldForceFly(const LLSD &data)
 {
 	EmeraldForceFly = data.asBoolean();
 }
+
+void LLAgent::updateIgnorePrejump(const LLSD &data)
+{
+	ignorePrejump = data.asBoolean();
+}
 // Requires gSavedSettings to be initialized.
 //-----------------------------------------------------------------------------
 // init()
@@ -471,6 +477,8 @@ void LLAgent::init()
 
 	mEffectColor = gSavedSettings.getColor4("EffectColor");
 
+	ignorePrejump = gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation");
+	gSavedSettings.getControl("EmeraldIgnoreFinishAnimation")->getSignal()->connect(&updateIgnorePrejump);
 	EmeraldForceFly = gSavedSettings.getBOOL("EmeraldAlwaysFly");
 	gSavedSettings.getControl("EmeraldAlwaysFly")->getSignal()->connect(&updateEmeraldForceFly);
 	
@@ -2137,7 +2145,10 @@ U32 LLAgent::getControlFlags()
 		}
 	}
 */
-	return mControlFlags;
+	if(LLAgent::ignorePrejump)
+		return mControlFlags | AGENT_CONTROL_FINISH_ANIM;
+	else
+		return mControlFlags;;
 }
 
 //-----------------------------------------------------------------------------

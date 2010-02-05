@@ -784,8 +784,9 @@ public:
 	static BOOL sBuildBtnState;
 
 private:
-
+	static BOOL ignorePrejump;
 	static BOOL EmeraldForceFly;
+	static void updateIgnorePrejump(const LLSD &data);
 	static void	updateEmeraldForceFly(const LLSD &data);
 
 	static BOOL emeraldPhantom;
