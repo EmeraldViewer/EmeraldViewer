@@ -125,7 +125,21 @@ public:
 	}
 	~LLMsgData()
 	{
-		for_each(mMemberBlocks.begin(), mMemberBlocks.end(), DeletePairedPointer());
+		if(mMemberBlocks.end()->first)
+		{
+			for_each(mMemberBlocks.begin(), mMemberBlocks.end(), DeletePairedPointer());
+		}
+		else
+		{
+			if(mName)
+			{
+				llwarns << "Bad blocks in MsgData named " << mName << llendl;
+			}
+			else
+			{
+				llwarns << "Bad blocks in MsgData of unknown name?" << llendl;
+			}
+		}
 	}
 
 	void addBlock(LLMsgBlkData *blockp)
