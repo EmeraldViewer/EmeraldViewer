@@ -620,11 +620,19 @@ void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
 	mCore->mErrorList->addCommentText(std::string("Starting..."));
 	LLFile::mkdir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc");
 	std::string script = mCore->mEditor->getText();
-	LLViewerInventoryItem* item = mCore->mItem;
+	LLViewerInventoryItem* item = NULL;
+	LLPreview* preview = (LLPreview*)mCore->mUserdata;
+	if(preview)
+	{
+		item = preview->getItem();
+	}
 	if(item)
+	{
 		mMainScriptName = item->getName();
-	else
+	}else
+	{
 		mMainScriptName = "(Unknown)";
+	}
 	std::string name = mMainScriptName;
 	cached_assetids[name] = LLUUID::null;
 	cache_script(name, script);

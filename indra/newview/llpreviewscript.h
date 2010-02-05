@@ -72,7 +72,7 @@ public:
 		void (*save_callback)(void* userdata, BOOL close_after_save),
 		void (*search_replace_callback)(void* userdata),
 		void* userdata,
-		S32 bottom_pad = 0, LLViewerInventoryItem* item = NULL);	// pad below bottom row of buttons
+		S32 bottom_pad = 0);	// pad below bottom row of buttons
 	~LLScriptEdCore();
 
 	static void		updateResizer(void* userdata);
@@ -164,7 +164,6 @@ private:
 	BOOL			mEnableSave;
 	BOOL			mHasScriptData;
 	JCLSLPreprocessor* mLSLProc;
-	LLViewerInventoryItem* mItem;
 };
 
 

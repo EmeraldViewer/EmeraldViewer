@@ -167,7 +167,7 @@ LLScriptEdCore::LLScriptEdCore(
 	void (*save_callback)(void*, BOOL),
 	void (*search_replace_callback) (void* userdata),
 	void* userdata,
-	S32 bottom_pad, LLViewerInventoryItem* item)
+	S32 bottom_pad)
 	:
 	LLPanel( std::string("name"), rect ),
 	mSampleText(sample),
@@ -183,7 +183,6 @@ LLScriptEdCore::LLScriptEdCore(
 	mLiveHelpHistorySize(0),
 	mEnableSave(FALSE),
 	mHasScriptData(FALSE),
-	mItem(item),
 	mErrorListResizer(NULL)
 {
 	setFollowsAll();
@@ -1190,7 +1189,7 @@ void* LLPreviewLSL::createScriptEdPanel(void* userdata)
 	
 	LLPreviewLSL *self = (LLPreviewLSL*)userdata;
 
-	LLViewerInventoryItem* item = self->getItem();	
+	//LLViewerInventoryItem* item = self->getItem();	
 
 	self->mScriptEd =  new LLScriptEdCore("script panel",
 								   LLRect(),
@@ -1201,7 +1200,7 @@ void* LLPreviewLSL::createScriptEdPanel(void* userdata)
 								   LLPreviewLSL::onSave,
 								   LLPreviewLSL::onSearchReplace,
 								   self,
-								   0, item);
+								   0);
 
 	return self->mScriptEd;
 }
@@ -1729,7 +1728,7 @@ void* LLLiveLSLEditor::createScriptEdPanel(void* userdata)
 	
 	LLLiveLSLEditor *self = (LLLiveLSLEditor*)userdata;
 
-	LLViewerInventoryItem* item = self->getItem();
+	//LLViewerInventoryItem* item = self->getItem();
 
 	self->mScriptEd =  new LLScriptEdCore("script ed panel",
 								   LLRect(),
@@ -1740,7 +1739,7 @@ void* LLLiveLSLEditor::createScriptEdPanel(void* userdata)
 								   &LLLiveLSLEditor::onSave,
 								   &LLLiveLSLEditor::onSearchReplace,
 								   self,
-								   0, item);
+								   0);
 
 	return self->mScriptEd;
 }
