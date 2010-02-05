@@ -69,7 +69,11 @@ BOOL LLPanelSkins::postBuild()
 
 void LLPanelSkins::refresh()
 {
-	if(mSkin==""){mSkin="default";gSavedSettings.setString("SkinCurrent",mSkin);}
+	if(gSavedSettings.getString("SkinCurrent")=="")
+	{
+		mSkin="default";
+		gSavedSettings.setString("SkinCurrent",mSkin);
+	}
 	LLComboBox* comboBox = getChild<LLComboBox>("emrd_skin_combo");
 
 	if(comboBox != NULL) 
@@ -136,6 +140,7 @@ void LLPanelSkins::apply()
 {
 	if (mSkin != gSavedSettings.getString("SkinCurrent"))
 	{
+		mSkin=gSavedSettings.getString("SkinCurrent");
 		  LLNotifications::instance().add("ChangeSkin");
 		  refresh();
 	}

@@ -388,7 +388,7 @@ LLTextEditor::LLTextEditor(
 	menu->append(new LLMenuItemCallGL("Paste", context_paste, NULL, this));
 	menu->append(new LLMenuItemCallGL("Delete", context_delete, NULL, this));
 	menu->append(new LLMenuItemCallGL("Select All", context_selectall, NULL, this));
-	menu->appendSeparator();
+	menu->appendSeparator("transep");
 	LLMenuGL* translatemenu = new LLMenuGL("Translate To");
 	translatemenu->setCanTearOff(FALSE);
 	SpellMenuBind* t=new SpellMenuBind;t->origin=this;t->word="en";
@@ -425,7 +425,7 @@ LLTextEditor::LLTextEditor(
 	translatemenu->append(new LLMenuItemCallGL("Korean",translateText, NULL, t));
 
 	menu->appendMenu(translatemenu);
-	menu->appendSeparator();
+	menu->appendSeparator("Spelsep");
 
 	//menu->setBackgroundColor(gColors.getColor("MenuPopupBgColor"));
 	menu->setCanTearOff(FALSE);
@@ -1646,6 +1646,9 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 		}
 		suggestionMenuItems.clear();
 
+		menu->setItemVisible("Translate To",!mReadOnly);
+		menu->setItemVisible("Transep",!mReadOnly);
+
 		const LLWString &text = mWText;
 
 		if(( isPartOfWord( text[wordEnd] ) )&&(!mReadOnly))
@@ -1664,10 +1667,11 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 			}		
 			std::string selectedWord(std::string(text.begin(), text.end()).substr(wordStart,wordEnd-wordStart));
 			if(!glggHunSpell->isSpelledRight(selectedWord))
-			{	
-
+			{
 				//misspelled word here, and you have just right clicked on it!
 				std::vector<std::string> suggs = glggHunSpell->getSuggestionList(selectedWord);
+
+				//menu->setItemVisible("Transep",(suggs.size()>0));
 				for(int i = 0;i<(int)suggs.size();i++)
 				{
 					SpellMenuBind * tempStruct = new SpellMenuBind;
