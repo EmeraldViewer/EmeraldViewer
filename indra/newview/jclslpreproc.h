@@ -32,7 +32,7 @@
 #include "llviewerprecompiledheaders.h"
 #include "llpreviewscript.h"
 
-//#define DARWINPREPROC
+#define DARWINPREPROC
 //force preproc on mac
 
 class JCLSLPreprocessor
