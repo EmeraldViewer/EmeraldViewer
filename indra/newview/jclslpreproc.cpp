@@ -247,6 +247,7 @@ void shredder(std::string& text)
 			token = text[++cursor];
 			while(cursor < int(text.length()))
 			{
+				if(token == '\\' && ltoken == '\\') token = ' ';
 				if(token == '"' && ltoken != '\\')
 					break;
 				ltoken = token;
