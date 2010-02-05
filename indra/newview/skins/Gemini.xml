@@ -1,0 +1,14 @@
+<llsd>
+    <map>
+    <key>skin_name</key>
+        <string>Gemini</string>
+    <key>author_name</key>
+        <string>Skills Hak</string>
+    <key>additional_author_names</key>
+        <string>Linden Lab</string>
+    <key>skin_info</key>
+        <string>Origonaly made for the gemini viewer matching some of the style of the insilico sim.</string>
+    <key>folder_name</key>
+        <string>gemini</string>
+    </map>
+</llsd>
