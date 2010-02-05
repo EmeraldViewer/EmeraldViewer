@@ -61,6 +61,7 @@ LLPanelSkins::~LLPanelSkins()
 
 BOOL LLPanelSkins::postBuild()
 {
+	mSkin = gSavedSettings.getString("SkinCurrent");
 	getChild<LLComboBox>("emrd_skin_combo")->setCommitCallback(onComboBoxCommit);
 	refresh();
 	return TRUE;
@@ -68,7 +69,6 @@ BOOL LLPanelSkins::postBuild()
 
 void LLPanelSkins::refresh()
 {
-	mSkin = gSavedSettings.getString("SkinCurrent");
 	if(mSkin==""){mSkin="default";gSavedSettings.setString("SkinCurrent",mSkin);}
 	LLComboBox* comboBox = getChild<LLComboBox>("emrd_skin_combo");
 
