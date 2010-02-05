@@ -273,6 +273,10 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 initial_value="false" label="Display radar info to chat" left="10" mouse_opaque="true"
 					 name="radar_chat_toggle" radio_style="false" width="270" control_name="EmeraldRadarChatAlerts"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 initial_value="true" label="Also display while radar is closed" left="20" mouse_opaque="true"
+					 name="keep_open" radio_style="false" width="270" control_name="EmeraldAvatarListKeepOpen"
+                          tool_tip="Hides floater instead of closing to still announce in chat"/>
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Display on avatars entering / leaving simulator" left_delta="25"
 					 mouse_opaque="true" name="radar_chat_sim_toggle" radio_style="false" width="270"
 					 control_name="EmeraldRadarAlertSim"/>
