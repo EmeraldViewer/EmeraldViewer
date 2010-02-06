@@ -1,4 +1,4 @@
-10894
+10895
 rez
 secondlife
 slex
@@ -10336,6 +10336,7 @@ llPreloadSound
 llPushObject
 llReleaseCamera
 llReleaseControls
+llRegionSay
 llRemoteDataReply
 llRemoteDataSetRegion
 llRemoteLoadScriptPin

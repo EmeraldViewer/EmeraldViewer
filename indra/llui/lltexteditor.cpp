@@ -1700,8 +1700,8 @@ BOOL LLTextEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 			}
 			
 		}
-		if((!glggHunSpell->highlightInRed)
-			||(mOverRideAndShowMisspellings)||(mShowLineNumbers))
+		if((!mReadOnly)&&((!glggHunSpell->highlightInRed)
+			||(mOverRideAndShowMisspellings)||(mShowLineNumbers)))
 		{
 			SpellMenuBind *	tempStruct = new SpellMenuBind;
 			tempStruct->origin = this;

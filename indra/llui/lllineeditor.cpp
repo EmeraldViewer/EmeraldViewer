@@ -792,8 +792,8 @@ BOOL LLLineEditor::handleRightMouseDown( S32 x, S32 y, MASK mask )
 			}
 
 		}
-		if((!glggHunSpell->highlightInRed)
-			||(mOverRideAndShowMisspellings))
+		if((!mReadOnly)&&((!glggHunSpell->highlightInRed)
+			||(mOverRideAndShowMisspellings)))
 		{
 			SpellMenuBind * tempStruct = new SpellMenuBind;
 			tempStruct->origin = this;
