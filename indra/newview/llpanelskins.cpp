@@ -62,6 +62,7 @@ LLPanelSkins::~LLPanelSkins()
 BOOL LLPanelSkins::postBuild()
 {
 	mSkin = gSavedSettings.getString("SkinCurrent");
+	oldSkin=mSkin;
 	getChild<LLComboBox>("emrd_skin_combo")->setCommitCallback(onComboBoxCommit);
 	refresh();
 	return TRUE;
@@ -69,7 +70,7 @@ BOOL LLPanelSkins::postBuild()
 
 void LLPanelSkins::refresh()
 {
-	if(gSavedSettings.getString("SkinCurrent")=="")
+	if(mSkin=="")
 	{
 		mSkin="default";
 		gSavedSettings.setString("SkinCurrent",mSkin);
@@ -101,7 +102,7 @@ void LLPanelSkins::refresh()
 					comboBox->add(data["skin_name"].asString());
 					llinfos << "data is length " << datas.size() << " foldername field is "
 						<< data["folder_name"].asString() << " and looking for " << gSavedSettings.getString("SkinCurrent") <<llendl;
-					if(data["folder_name"].asString()==gSavedSettings.getString("SkinCurrent"))
+					if(data["folder_name"].asString()==mSkin)
 					{
 						llinfos << "found!!!!!!1!1" << llendl;
 						currentSkinName = data["skin_name"].asString();
@@ -138,9 +139,9 @@ void LLPanelSkins::refresh()
 
 void LLPanelSkins::apply()
 {
-	if (mSkin != gSavedSettings.getString("SkinCurrent"))
+	if (oldSkin != mSkin)
 	{
-		mSkin=gSavedSettings.getString("SkinCurrent");
+		  oldSkin=mSkin;
 		  LLNotifications::instance().add("ChangeSkin");
 		  refresh();
 	}
@@ -149,7 +150,7 @@ void LLPanelSkins::apply()
 void LLPanelSkins::cancel()
 {
 	// reverts any changes to current skin
-	gSavedSettings.setString("SkinCurrent", mSkin);
+	gSavedSettings.setString("SkinCurrent", oldSkin);
 }
 
 //static
@@ -167,6 +168,7 @@ void LLPanelSkins::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 			{
 				std::string newFolder(tdata["folder_name"].asString());
 				gSavedSettings.setString("SkinCurrent",newFolder);
+				sInstance->mSkin=newFolder;
 
 				if(sInstance)sInstance->refresh();
 				return;
