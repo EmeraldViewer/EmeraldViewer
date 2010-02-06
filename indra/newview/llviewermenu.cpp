@@ -43,6 +43,7 @@
 #include "audioengine.h"
 #include "indra_constants.h"
 #include "llassetstorage.h"
+#include "llbvhloader.h"
 #include "llchat.h"
 #include "llfeaturemanager.h"
 #include "llfocusmgr.h"
@@ -310,6 +311,7 @@ void handle_leave_group(void *);
 // File Menu
 void handle_compress_image(void*);
 BOOL enable_save_as(void *);
+void handle_bvh_anim_convert(void*);
 
 // Edit menu
 void handle_dump_group_info(void *);
@@ -1438,6 +1440,7 @@ void init_debug_avatar_menu(LLMenuGL* menu)
 	LLMenuItemCallGL* mesh_item = new LLMenuItemCallGL("Meshes And Morphs...", handle_meshes_and_morphs);
 	mesh_item->setUserData((void*)mesh_item);  // So we can remove it later
 	menu->append(mesh_item);
+	menu->append(new LLMenuItemCallGL("Convert BVH to ANIMATN", handle_bvh_anim_convert));
 
 	menu->createJumpKeys();
 }
@@ -7719,6 +7722,70 @@ void handle_dump_avatar_local_textures(void*)
 	{
 		avatar->dumpLocalTextures();
 	}
+}
+
+void handle_bvh_anim_convert(void*)
+{
+	LLFilePicker& picker = LLFilePicker::instance();
+	if(!picker.getOpenFile())
+	{
+		return;
+	}
+
+	std::string filename = picker.getFirstFile();
+
+	LLBVHLoader* loaderp = NULL;
+	S32 file_size;
+	LLAPRFile infile ;
+	infile.open(filename, LL_APR_RB, NULL, &file_size);
+	
+	if (!infile.getFileHandle())
+	{
+		llwarns << "Can't open BVH file:" << filename << llendl;	
+	}
+	else
+	{
+		char*	file_buffer;
+
+		file_buffer = new char[file_size + 1];
+
+		if (file_size == infile.read(file_buffer, file_size))
+		{
+			file_buffer[file_size] = '\0';
+			llinfos << "Loading BVH file " << filename << llendl;
+			loaderp = new LLBVHLoader(file_buffer);
+		}
+
+		infile.close() ;
+		delete[] file_buffer;
+	}
+
+	if(loaderp && loaderp->isInitialized())
+	{
+		S32 buffer_size = loaderp->getOutputSize();
+		U8* buffer = new U8[buffer_size];
+		LLDataPackerBinaryBuffer dp(buffer, buffer_size);
+		loaderp->serialize(dp);
+		dp.reset();
+		if(!picker.getSaveFile())
+		{
+			delete[] buffer;
+			delete loaderp;
+			return;
+		}
+		std::string outfilename = picker.getFirstFile();
+		LLAPRFile outfile;
+		outfile.open(outfilename, LL_APR_WB);
+		if(outfile.getFileHandle())
+		{
+			outfile.write(buffer, buffer_size);
+			outfile.close();
+		}
+		delete[] buffer;
+	}
+
+	delete loaderp;
+
 }
 
 void handle_meshes_and_morphs(void* menu_item)
