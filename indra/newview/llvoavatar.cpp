@@ -9973,7 +9973,16 @@ void LLVOAvatar::idleUpdateRenderCost()
 			}
 		}
 	}
-
+	
+	std::set<LLUUID>::const_iterator tex_iter;
+	for(tex_iter = textures.begin();tex_iter != textures.end();++tex_iter)
+	{
+		LLViewerImage* img = gImageList.getImage(*tex_iter);
+		if(img)
+		{
+			shame += (img->getHeight() * img->getWidth()) >> 4;
+		}
+	}
 	shame += textures.size() * 5;
 
 	setDebugText(llformat("%d", shame));
@@ -10036,7 +10045,6 @@ U32 calc_shame(LLVOVolume* volume, std::set<LLUUID> &textures)
 	U32 flexi = 0;
 	U32 animtex = 0;
 	U32 particles = 0;
-	U32 scale = 0;
 	U32 bump = 0;
 	U32 planar = 0;
 
@@ -10048,9 +10056,6 @@ U32 calc_shame(LLVOVolume* volume, std::set<LLUUID> &textures)
 	{
 		particles = 1;
 	}
-
-	const LLVector3& sc = volume->getScale();
-	scale += (U32) sc.mV[0] + (U32) sc.mV[1] + (U32) sc.mV[2];
 
 	LLDrawable* drawablep = volume->mDrawable;
 
@@ -10066,8 +10071,9 @@ U32 calc_shame(LLVOVolume* volume, std::set<LLUUID> &textures)
 		LLFace* face = drawablep->getFace(i);
 		const LLTextureEntry* te = face->getTextureEntry();
 		LLViewerImage* img = face->getTexture();
-
+		
 		textures.insert(img->getID());
+		
 
 		if (face->getPoolType() == LLDrawPool::POOL_ALPHA)
 		{
@@ -10103,7 +10109,7 @@ U32 calc_shame(LLVOVolume* volume, std::set<LLUUID> &textures)
 		}
 	}
 
-	shame += invisi + shiny + glow + alpha*4 + flexi*8 + animtex*4 + particles*16+bump*4+scale+planar;
+	shame += invisi + shiny + glow + alpha*4 + flexi*8 + animtex*4 + particles*16 + bump*4 + planar;
 
 	LLViewerObject::const_child_list_t& child_list = volume->getChildren();
 	for (LLViewerObject::child_list_t::const_iterator iter = child_list.begin();
