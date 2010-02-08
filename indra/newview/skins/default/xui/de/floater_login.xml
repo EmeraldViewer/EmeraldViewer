@@ -2,7 +2,7 @@
 <floater name="floater_login" title="plasticwuzhere">
   <!-- Grid Selector -->
   <text name="grid_selector_label">
-    Wählen ein Grid:
+    Wähle ein Grid:
   </text>
   <scroll_list name="grid_selector">
     <column label="" name="grid"/>
@@ -51,7 +51,7 @@
     Login URI:
   </text>
   <line_editor name="loginuri"/>
-  <button label="Hol Grid Info" label_selected="Hol Grid Info" name="btn_gridinfo"/>
+  <button label="Lade Grid Info" label_selected="Hol Grid Info" name="btn_gridinfo"/>
   <text name="loginpage_text">
     Optionale Felder
   </text>

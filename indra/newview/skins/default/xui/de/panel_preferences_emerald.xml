@@ -6,7 +6,7 @@
     <button label="?" name="EmeraldHelp_TeleportLogin" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <check_box label="Doppelklick Teleport" name="double_click_tp_toggle"/>
       <check_box label="Doppelklick Autopilot" name="double_click_ap_toggle"/>
-      <check_box label="Sende TP Ziel Koordinaten per Channel" name="mldct_toggle"tool_tip="Flüstert TP Ziel auf einem privaten Channel(standardmässig deaktiviert)"/>
+      <check_box label="Sende TP Ziel Koordinaten per Channel" name="mldct_toggle" tool_tip="Flüstert TP Ziel auf einem privaten Channel(standardmässig deaktiviert)"/>
       <spinner label="Channel" name="mldct_channel" tool_tip="Channel zum flüstern des TP Ziel"/>
       <check_box label="Velocity Interpolate Double-click Teleports" name="login_screen_toggle1"/>
       <check_box label="Drehe Kamera hinter Avatar nach Doppelklick Teleport" name="move_camaftertp_toggle"/>
@@ -160,7 +160,7 @@ Empfohlene Eisntellungen:
         <check_box label="Aktiviere STRG-Alt-S um überall zu sitzen (Boden)" name="allowsittoggle"/>
         <check_box label="Blockiere automatisches sitzen bei Linksklick" name="sit-click-toggle"/>
         <check_box label="Zeige Avatarname bei Blickziel Markierung" name="EmShowLookAtNames-toggle"/>
-				<check_box label="Eigene Blickziel Markierung ausblenden" name="EmShowLookAtNames-toggle"/>
+				<check_box label="Eigene Blickziel Markierung ausblenden" name="EmDontShowMyLook-toggle"/>
         <check_box label="Escape setzt Kamera zurück auf Standard im Kameramodus (STRG-1)" name="EmResetCamOnEscape-toggle" tool_tip="Deaktivieren verhindert das sich die Kamera zurücksetzt wenn Escape gedrückt wurde ."/>
 				<check_box label="Klick auf Avatar setzt Kamera Position zurück" name="ResetCamOnAvatar-toggle" tool_tip="Deaktivieren verhindert das die Kamera zurück gesetzt wird beim klick auf den eigenen Avatar."/>
         <check_box label="Aktiviere Minimap Rotation" name="MinimapRotate"/>
@@ -250,8 +250,8 @@ Empfohlene Eisntellungen:
       <spinner label="Z" name="Z Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
       <spinner label="Agent updates pro Sekunde:" name="EmAgentUpdatesValue" tool_tip="Gibt an wieviel Updates pro Sekunde gesendet werden sollen. Standard 10/s" />
       <check_box label="Avatar unsichtbar rendern" name="RenderAvInvisible"/>
-      <check_box label="Zeige ""Aussehen"" Markierung und Animation während ""Aussehen bearbeiten""" name="EmeraldAppearanceAnimate"/>
-      <check_box label="Sitzen abbrechen bei ""Aussehen bearbeiten""" name="EmeraldAppearanceForceStand"/>
+      <check_box label="Zeige 'Aussehen' Markierung und Animation während 'Aussehen bearbeiten'" name="EmeraldAppearanceAnimate"/>
+      <check_box label="Sitzen abbrechen bei 'Aussehen bearbeiten'" name="EmeraldAppearanceForceStand"/>
     <text name="BeamPrefs">
 		Auswahlpartikeleffekt
     </text>
@@ -383,7 +383,7 @@ Empfohlene Eisntellungen:
     <panel label="Utility Stream" name="Utility Stream">
     <button label="?" name="EmeraldHelp_UtilityStream" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
     <panel name="gus_panel">
-			<check_box label="Aktiviere Greenlife Utility Stream" tool_tip="Aktiviere Greenlife Utility Stream (GUS)" name="GUS Enable"/>
+			<check_box label="Aktiviere GUS" tool_tip="Aktiviere Greenlife Utility Stream (GUS)" name="GUS Enable"/>
 			<spinner label="Channel" name="Channel" width="128"/>
 			<check_box label="Aktiviere FastEvents" tool_tip="Aktiviere Greenlife Utility Stream FastEvents (GUS-FE)" name="GUS-FE Enable"/>
 			<spinner label="GUS Rate" name="Refresh Rate"/>
@@ -436,7 +436,7 @@ Simulator damit man per Script darauf zugreifen kann.
       <check_box label="Exportiere Objekt Eigenschaften" name="EmExpProp"/>
       <check_box label="Exportiere Objekt Inhalt" name="EmExpInv"/>
       <check_box label="Exportiere Objekt Texturen" name="EmExpTex"/>
-      <check_box label="Enable LSL Preprocessor Dateisystem Includes" name="fdgfd"/>
+      <check_box label="Akiviere LSL Preprocessor Dateisystem Includes" name="fdgfd2"/>
       <text name="lolyou">Include Speicherort:</text>
       <button label="Speichern" label_selected="Set" name="set_includeHDD"/>
       <line_editor name="include_location"/>
@@ -473,7 +473,7 @@ Simulator damit man per Script darauf zugreifen kann.
       <button label="Wörterbücher runterladen!" name="EmSpell_GetMore"/>
 			<check_box  label="falsch geschriebene Wörter in Rot" name="EmeraldSpellDisplay"/>
       <button label="Bearbeite individuelles Wörterbücher" name="EmSpell_EditCustom"/>
-      <text name="EmSpell_txt4">Rechtsklick auf ein Wort zeigt die Auswahlliste an.</text>      
+      <text name="EmSpell_txt4">Rechtsklick zeigt die Auswahlliste an.</text>      
     </panel>
   </tab_container>
   </tab_container>

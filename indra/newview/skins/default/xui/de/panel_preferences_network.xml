@@ -22,7 +22,7 @@
 		Sound-Cache-Verzeichnis:
 	</text>
 	<line_editor name="sound_cache_location"/>
-	<button label="Set" label_selected="Festlegen" name="set_sound_cache"/>
+	<button label="Festlegen" label_selected="Festlegen" name="set_sound_cache"/>
 	<button label="Zurücksetzen" label_selected="Set" name="reset_sound_cache"/>
 	<check_box label="Benutzerdefinierter Port" name="connection_port_enabled"/>
 	<spinner label="Port-Nummer:" name="connection_port"/>

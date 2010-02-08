@@ -350,7 +350,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 width="270"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Don't show me my LookAt beacon" left_delta="0" mouse_opaque="true"
-					 name="EmShowLookAtNames-toggle" control_name="EmeraldDontShowMyLookAt" radio_style="false"
+					 name="EmDontShowMyLook-toggle" control_name="EmeraldDontShowMyLookAt" radio_style="false"
 					 width="270"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="ESC key to reset camera position" left_delta="0" mouse_opaque="true"
@@ -897,7 +897,7 @@ the simulator for scripts to access.</text>
 					 control_name="EmeraldExportTextures" width="126"/>
 
         <check_box bottom="-200" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-                   initial_value="true" label="Enable LSL Preprocessor Filesystem Includes" left="10" mouse_opaque="true" name="fdgfd"
+                   initial_value="true" label="Enable LSL Preprocessor Filesystem Includes" left="10" mouse_opaque="true" name="fdgfd2"
                    control_name="EmeraldEnableHDDInclude" radio_style="false" width="270"/>
         <text type="string" bottom_delta="-10" follows="left|top" font="SansSerifSmall" halign="left"
 					 height="10" left_delta="0" mouse_opaque="false" name="lolyou" v_pad="0"
