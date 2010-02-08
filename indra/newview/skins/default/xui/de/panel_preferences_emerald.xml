@@ -137,6 +137,7 @@ Empfohlene Eisntellungen:
     <panel label="Chat" name="Chat">
     <button label="?" name="EmeraldHelp_Chat" tool_tip="Click here for help regarding the settings in this page."/>
       <check_box label="Radar Infos im Chat anzeigen" name="radar_chat_toggle"/>
+      <check_box label="Anzeigen wenn Radar geschlossen" name="keep_open" tool_tip="Versteckt das Fenster anstatt es zu schliessen um weiterhin die Infos anzeigen zu können"/>
       <check_box label="Info wenn Avatar Region betritt/verlässt" name="radar_chat_sim_toggle"/>
       <check_box label="Info wenn Avatar Sichtweite betritt/verlässt" name="radar_chat_draw_toggle"/>
       <check_box label="Info wenn Avatar Chatreichweite betritt/verlässt" name="radar_chat_chatrange_toggle"/>
@@ -243,15 +244,17 @@ Empfohlene Eisntellungen:
 			<line_editor tool_tip="Löscht den Chat Verlauf und verhindert den Lag Effekt durch Chat Spammer." name="EmeraldCmdLineClearChat"/>
     </panel>
     <panel label="Avatar" name="wat!">
-    <button label="?" name="EmeraldHelp_Avatar" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+      <button label="?" name="EmeraldHelp_Avatar" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
       <spinner label="X" name="X Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
       <spinner label="Y" name="Y Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
       <spinner label="Z" name="Z Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
       <spinner label="Agent updates pro Sekunde:" name="EmAgentUpdatesValue" tool_tip="Gibt an wieviel Updates pro Sekunde gesendet werden sollen. Standard 10/s" />
       <check_box label="Avatar unsichtbar rendern" name="RenderAvInvisible"/>
-<text name="BeamPrefs">
+      <check_box label="Zeige ""Aussehen"" Markierung und Animation während ""Aussehen bearbeiten""" name="EmeraldAppearanceAnimate"/>
+      <check_box label="Sitzen abbrechen bei ""Aussehen bearbeiten""" name="EmeraldAppearanceForceStand"/>
+    <text name="BeamPrefs">
 		Auswahlpartikeleffekt
-	</text>
+    </text>
 <view_border name="EmDivisor"/>
 <button name="EmeraldBeamPrev_rainbow" label=""/>
 <button name="EmeraldBeamPrev_Emerald" label=""/>
@@ -379,8 +382,8 @@ Empfohlene Eisntellungen:
     </panel>
     <panel label="Utility Stream" name="Utility Stream">
     <button label="?" name="EmeraldHelp_UtilityStream" tool_tip="Für Hilfe zu dieser Seite hier klicken."/>
+    <panel name="gus_panel">
 			<check_box label="Aktiviere Greenlife Utility Stream" tool_tip="Aktiviere Greenlife Utility Stream (GUS)" name="GUS Enable"/>
-			<panel name="gus_panel">
 			<spinner label="Channel" name="Channel" width="128"/>
 			<check_box label="Aktiviere FastEvents" tool_tip="Aktiviere Greenlife Utility Stream FastEvents (GUS-FE)" name="GUS-FE Enable"/>
 			<spinner label="GUS Rate" name="Refresh Rate"/>
