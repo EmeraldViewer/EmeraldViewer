@@ -32,6 +32,8 @@
 
 #include "llviewerprecompiledheaders.h"
 
+#pragma optimize("tpg", on)
+
 #include "lldrawpool.h"
 #include "llrender.h"
 #include "llfasttimer.h"

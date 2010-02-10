@@ -33,6 +33,8 @@
 
 #include "llviewerprecompiledheaders.h"
 
+#pragma optimize("tpg", on)
+
 #include "llviewermessage.h"
 
 #include <deque>

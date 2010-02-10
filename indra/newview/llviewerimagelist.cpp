@@ -32,6 +32,8 @@
 
 #include "llviewerprecompiledheaders.h"
 
+#pragma optimize("tpg", on)
+
 #include "llviewerimagelist.h"
 
 #include "imageids.h"

@@ -34,6 +34,8 @@
 
 #include "llviewerprecompiledheaders.h"
 
+#pragma optimize("tpg", on)
+
 #include "llvovolume.h"
 
 #include "llviewercontrol.h"

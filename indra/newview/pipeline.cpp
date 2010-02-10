@@ -32,6 +32,8 @@
 
 #include "llviewerprecompiledheaders.h"
 
+#pragma optimize("tpg", on)
+
 #include "pipeline.h"
 
 // library includes

@@ -64,6 +64,8 @@
 
 #include "llviewerprecompiledheaders.h"
 
+#pragma optimize("tpg", on)
+
 #include "llvoavatar.h"
 
 #include "audioengine.h"

@@ -32,6 +32,8 @@
 
 #include "llviewerprecompiledheaders.h"
 
+#pragma optimize("tpg", on)
+
 #include "llviewerregion.h"
 
 #include "indra_constants.h"
