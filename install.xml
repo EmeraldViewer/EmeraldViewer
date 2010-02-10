@@ -468,9 +468,9 @@
 					<key>windows</key>
 					<map>
 						<key>md5sum</key>
-						<string>b1e0e16472c0e5d3b6291870e3f20b0c</string>
+						<string>3d5e29d444dde4815b36082eedfc775a</string>
 						<key>url</key>
-						<uri>http://lawlinter.net/data/glib-2.18.4-windows-03162009.tar.bz2</uri>
+						<uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/glib-2.0-windows-20080817.tar.bz2</uri>
 					</map>
 				</map>
 			</map>
