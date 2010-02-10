@@ -32,8 +32,6 @@
 
 #include "llviewerprecompiledheaders.h"
 
-#pragma optimize("tpg", on)
-
 #include "pipeline.h"
 #include "lldrawpoolbump.h"
 #include "llface.h"

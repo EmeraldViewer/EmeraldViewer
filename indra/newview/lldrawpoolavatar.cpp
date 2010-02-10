@@ -32,8 +32,6 @@
 
 #include "llviewerprecompiledheaders.h"
 
-#pragma optimize("tpg", on)
-
 #include "lldrawpoolavatar.h"
 #include "llrender.h"
 

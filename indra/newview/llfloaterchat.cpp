@@ -37,8 +37,6 @@
 
 #include "llviewerprecompiledheaders.h"
 
-#pragma optimize("tpg", on)
-
 #include "llfloaterchat.h"
 #include "llfloateractivespeakers.h"
 #include "llfloaterscriptdebug.h"
