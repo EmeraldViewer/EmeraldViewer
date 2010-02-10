@@ -79,6 +79,7 @@ void LLPanelSkins::refresh()
 
 	if(comboBox != NULL) 
 	{
+		std::string name;
 		gDirUtilp->getNextFileInDir(gDirUtilp->getChatLogsDir(),"*",name,false);//stupid hack to clear last file search
 		comboBox->removeall();
 		datas.clear();
@@ -88,7 +89,6 @@ void LLPanelSkins::refresh()
 		std::string currentSkinName("");
 		while(found) 
 		{
-			std::string name;
 			found = gDirUtilp->getNextFileInDir(path_name, "*.xml", name, false);
 			llinfos << "path name " << path_name << " and name " << name << " and found " << found << llendl;
 			if(found)
