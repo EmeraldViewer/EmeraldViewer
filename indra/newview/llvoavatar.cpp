@@ -9974,6 +9974,15 @@ void LLVOAvatar::idleUpdateRenderCost()
 		}
 	}
 	
+	std::set<LLUUID>::const_iterator tex_iter;
+	for(tex_iter = textures.begin();tex_iter != textures.end();++tex_iter)
+	{
+		LLViewerImage* img = gImageList.getImage(*tex_iter);
+		if(img)
+		{
+			shame += (img->getHeight() * img->getWidth()) >> 4;
+		}
+	}
 	shame += textures.size() * 5;
 
 	setDebugText(llformat("%d", shame));
