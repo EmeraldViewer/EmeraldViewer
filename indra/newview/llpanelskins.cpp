@@ -79,6 +79,7 @@ void LLPanelSkins::refresh()
 
 	if(comboBox != NULL) 
 	{
+		gDirUtilp->getNextFileInDir(gDirUtilp->getChatLogsDir(),"*",name,false);//stupid hack to clear last file search
 		comboBox->removeall();
 		datas.clear();
 		//comboBox->add("===OFF===");
