@@ -64,6 +64,7 @@
 #include <boost/regex.hpp>
 #include "../newview/lgghunspell_wrapper.h"
 #include "../newview/lltranslate.h"
+#include "../newview/llviewercontrol.h"
 
 // 
 // Globals
@@ -118,7 +119,7 @@ public :
 protected:
 	void handleResponse(const std::string &translation, const std::string &detectedLanguage)
 	{
-		m_line->insertText(" (" + translation + ")",FALSE);
+		m_line->insertText(" (" + translation + ")",gSavedSettings.getBOOL("EmeraldTranslateReplace"));
 	}
 	void handleFailure()
 	{

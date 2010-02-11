@@ -58,6 +58,7 @@
 #include "llclipboard.h"
 #include "../newview/lgghunspell_wrapper.h"
 #include "../newview/lltranslate.h"
+#include "../newview/llviewercontrol.h"
 
 
 //#include "llmenugl.h"
@@ -109,6 +110,8 @@ public :
 protected:
 	void handleResponse(const std::string &translation, const std::string &detectedLanguage)
 	{
+		if(gSavedSettings.getBOOL("EmeraldTranslateReplace"))
+			m_line->deleteSelection();
 		m_line->insert(" (" + translation + ")",m_line->getCursor());
 	}
 	void handleFailure()

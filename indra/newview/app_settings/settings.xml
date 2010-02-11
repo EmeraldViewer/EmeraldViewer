@@ -1,17 +1,28 @@
 <?xml version="1.0"?>
 <llsd>
-	<map>
-       <key>EmeraldIgnoreFinishAnimation</key>
-		<map>
-			<key>Comment</key>
-			<string>Disable the wait for pre-jump or landing.</string>
-			<key>Persist</key>
-			<integer>1</integer>
-			<key>Type</key>
-			<string>Boolean</string>
-			<key>Value</key>
-			<integer>0</integer>
-		</map>
+  <map>
+    <key>EmeraldIgnoreFinishAnimation</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable the wait for pre-jump or landing.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldTranslateReplace</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not right click translate replaces the selected text</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
 		<key>mm_customminimapcolor</key>
 		<map>
 			<key>Comment</key>
