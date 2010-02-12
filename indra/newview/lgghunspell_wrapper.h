@@ -19,7 +19,7 @@
 #define ASPELL_WRAPPER 1
 
 #if LL_WINDOWS
-//#include "hunspell/hunspelldll.h"
+#include "hunspell/hunspelldll.h"
 #else
 #include "hunspell.hxx"
 #endif
@@ -28,7 +28,7 @@ class lggHunSpell_Wrapper
 {
 
 public:
-//	static Hunspell * myHunspell;
+	static Hunspell * myHunspell;
 
 	BOOL highlightInRed;
 

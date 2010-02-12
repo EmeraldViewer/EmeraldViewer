@@ -38,7 +38,7 @@ include(UI)
 include(UnixInstall)
 include(LLKDU)
 include(Emerald)
-#include(HUNSPELL)
+include(HUNSPELL)
 include(ViewerMiscLibs)
 
 if (WINDOWS)
@@ -74,7 +74,7 @@ include_directories(
     ${LLXML_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
-#	${HUNSPELL_INCLUDE_DIR}
+	${HUNSPELL_INCLUDE_DIR}
     ${EMERALD_INCLUDE_DIRS}
     )
 
@@ -1419,7 +1419,7 @@ if (WINDOWS)
 		${WINDOWS_LIBRARIES}
 		${XMLRPCEPI_LIBRARIES}
 		${ELFIO_LIBRARIES}
- #       ${HUNSPELL_LIBRARY}
+        ${HUNSPELL_LIBRARY}
 		${EMERALD_LIBRARIES}
 		)
 else (WINDOWS)
@@ -1468,7 +1468,7 @@ else (WINDOWS)
         ${GCRYPT_LIBRARY}
 	    ${GPG-ERROR_LIBRARY}
 		${OTR_LIBRARY}
-#		${HUNSPELL_LIBRARY}
+		${HUNSPELL_LIBRARY}
 		${JSONCPP_LIBRARIES}
 		${EMERALD_LIBRARIES}
 		)
