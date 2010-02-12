@@ -26,7 +26,7 @@
 #include "lggdicdownload.h"
 
 lggHunSpell_Wrapper *glggHunSpell = 0;
-Hunspell* lggHunSpell_Wrapper::myHunspell = 0;
+//Hunspell* lggHunSpell_Wrapper::myHunspell = 0;
 // do not insert empty lines after this line until the size calculation
 #define COUNTRY_CODES_RAW_START_LINE (__LINE__ + 2)
 static char * countryCodesraw[] = {
@@ -484,7 +484,7 @@ void lggHunSpell_Wrapper::setNewDictionary(std::string newDict)
 	
 	//expecting a full name comming in
 	newDict = fullName2DictName(newDict);
-
+	/*
 	if(myHunspell)delete myHunspell;
 
 	std::string dicaffpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", std::string(newDict+".aff")).c_str());
@@ -499,13 +499,14 @@ void lggHunSpell_Wrapper::setNewDictionary(std::string newDict)
 	std::vector<std::string> toInstall = getInstalledDicts();
 	for(int i =0;i<(int)toInstall.size();i++)
 		addDictionary(toInstall[i]);
+		*/
 
 
 }
 void lggHunSpell_Wrapper::addWordToCustomDictionary(std::string wordToAdd)
 {
-	if(!myHunspell)return;
-	myHunspell->add(wordToAdd.c_str());
+	//if(!myHunspell)return;
+	//myHunspell->add(wordToAdd.c_str());
 	std::string filename(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", "emerald_custom.dic"));
 	std::vector<std::string> lines;
 	if(gDirUtilp->fileExists(filename))
@@ -531,14 +532,17 @@ void lggHunSpell_Wrapper::addWordToCustomDictionary(std::string wordToAdd)
 }
 BOOL lggHunSpell_Wrapper::isSpelledRight(std::string wordToCheck)
 {
+	return true;
+	/*
 	if(!myHunspell)return TRUE;
 	if(wordToCheck.length()<3)return TRUE;
 	return myHunspell->spell(wordToCheck.c_str());
+	*/
 }
 std::vector<std::string> lggHunSpell_Wrapper::getSuggestionList(std::string badWord)
 {
 	std::vector<std::string> toReturn;
-	if(!myHunspell)return toReturn;
+	/*if(!myHunspell)return toReturn;
 	char ** suggestionList;	
 	int numberOfSuggestions = myHunspell->suggest(&suggestionList, badWord.c_str());	
 	if(numberOfSuggestions <= 0)
@@ -548,11 +552,12 @@ std::vector<std::string> lggHunSpell_Wrapper::getSuggestionList(std::string badW
 		std::string tempSugg(suggestionList[i]);
 		toReturn.push_back(tempSugg);
 	}
-	myHunspell->free_list(&suggestionList,numberOfSuggestions);	
+	myHunspell->free_list(&suggestionList,numberOfSuggestions);	*/
 	return toReturn;
 }
 void lggHunSpell_Wrapper::debugTest(std::string testWord)
 {
+	/*
 	llinfos << "Testing to see if " << testWord.c_str() << " is spelled correct" << llendl;
 
 	if( isSpelledRight(testWord))
@@ -572,6 +577,7 @@ void lggHunSpell_Wrapper::debugTest(std::string testWord)
 		}
 
 	}
+	*/
 
 }
 void lggHunSpell_Wrapper::initSettings()
@@ -589,6 +595,7 @@ void lggHunSpell_Wrapper::processSettings()
 }
 void lggHunSpell_Wrapper::addDictionary(std::string additionalDictionary)
 {
+	/*
 	if(!myHunspell)return;
 	if(additionalDictionary=="")return;
 	//expecting a full name here
@@ -601,6 +608,7 @@ void lggHunSpell_Wrapper::addDictionary(std::string additionalDictionary)
 		llinfos << "Adding additional dictionary -> " << dicpath.c_str() << llendl;
 		myHunspell->add_dic(dicpath.c_str());
 	}
+	*/
 }
 std::string lggHunSpell_Wrapper::dictName2FullName(std::string dictName)
 {
