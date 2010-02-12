@@ -119,7 +119,8 @@ public :
 protected:
 	void handleResponse(const std::string &translation, const std::string &detectedLanguage)
 	{
-		m_line->insertText(" (" + translation + ")",gSavedSettings.getBOOL("EmeraldTranslateReplace"));
+		BOOL rep = gSavedSettings.getBOOL("EmeraldTranslateReplace");
+		m_line->insertText((rep?"":" (") + translation +(rep?"":")"),rep);
 	}
 	void handleFailure()
 	{

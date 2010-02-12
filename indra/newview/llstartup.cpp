@@ -248,7 +248,7 @@ static std::string sInitialOutfitGender;	// "male" or "female"
 static bool gUseCircuitCallbackCalled = false;
 
 EStartupState LLStartUp::gStartupState = STATE_FIRST;
-bool LLStartUp::s_re_login;
+bool LLStartUp::s_re_login = false;
 
 //
 // local function declaration
@@ -2044,6 +2044,7 @@ bool idle_startup()
 		msg->addU32Fast(_PREHASH_Code, msg->mOurCircuitCode);
 		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 		msg->addUUIDFast(_PREHASH_ID, gAgent.getID());
+		
 		msg->sendReliable(
 			first_sim,
 			MAX_TIMEOUT_COUNT,
@@ -2051,8 +2052,10 @@ bool idle_startup()
 			TIMEOUT_SECONDS,
 			use_circuit_callback,
 			NULL);
+		LL_INFOS("AppInit") << "viewer: 6" <<LL_ENDL; 
 
 		timeout.reset();
+		LL_INFOS("AppInit") << "viewer: 7" <<LL_ENDL; 
 
 		return FALSE;
 	}
