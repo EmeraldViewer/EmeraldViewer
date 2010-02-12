@@ -63,9 +63,9 @@
 					<key>linux</key>
 					<map>
 						<key>md5sum</key>
-						<string>ce71bd658c3fa9fd7f46b7c5adacef1c</string>
+						<string>fc3e99015a274d70a45536c3920cca05</string>
 						<key>url</key>
-						<uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/SDL-1.2.5-linux-20080818.tar.bz2</uri>
+						<uri>http://www.lawlinter.net/data/SDL-1.2.5-linux-20100212.tar.bz2</uri>
 					</map>
 					<key>windows</key>
 					<map>
