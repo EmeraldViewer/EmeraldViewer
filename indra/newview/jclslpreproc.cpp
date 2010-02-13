@@ -935,6 +935,8 @@ void JCLSLPreprocessor::start_process()
 		ctx.add_macro_definition(def,false);
 		def = llformat("__ASSETID__=%s",LLUUID::null.asString().c_str());
 		ctx.add_macro_definition(def,false);
+		def = llformat("__SHORTFILE__=\"%s\"",name.c_str());
+		ctx.add_macro_definition(def,false);
 
 		context_type::iterator_type first = ctx.begin();
 		context_type::iterator_type last = ctx.end();
