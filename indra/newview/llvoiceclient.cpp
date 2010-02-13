@@ -1215,7 +1215,7 @@ void LLVoiceClient::terminate()
 
 void LLVoiceClient::updateSettings()
 {
-	setVoiceEnabled(gSavedPerAccountSettings.getBOOL("EnableVoiceChat"));
+	setVoiceEnabled(gSavedSettings.getBOOL("EnableVoiceChat"));
 	setUsePTT(gSavedSettings.getBOOL("PTTCurrentlyEnabled"));
 	std::string keyString = gSavedSettings.getString("PushToTalkButton");
 	setPTTKey(keyString);
@@ -5812,7 +5812,7 @@ void LLVoiceClient::setVoiceEnabled(bool enabled)
 bool LLVoiceClient::voiceEnabled()
 {
 	static BOOL cmddisabled = gSavedSettings.getBOOL("CmdLineDisableVoice");
-	return gSavedPerAccountSettings.getBOOL("EnableVoiceChat") && !cmddisabled;
+	return gSavedSettings.getBOOL("EnableVoiceChat") && !cmddisabled;
 }
 
 void LLVoiceClient::setLipSyncEnabled(BOOL enabled)
@@ -7045,7 +7045,7 @@ class LLViewerRequiredVoiceVersion : public LLHTTPNode
 				{
 					//sAlertedUser = TRUE;
 					LLNotifications::instance().add("VoiceVersionMismatch");
-					gSavedPerAccountSettings.setBOOL("EnableVoiceChat", FALSE); // toggles listener
+					gSavedSettings.setBOOL("EnableVoiceChat", FALSE); // toggles listener
 				}
 			}
 		}
