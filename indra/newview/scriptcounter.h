@@ -73,6 +73,6 @@ private:
 	static int objectCount;
 	static LLViewerObject* foo;
 	static bool doDelete;
-	static std::stringstream sstr;
+	std::stringstream sstr;
 	static int countingDone;
 };
