@@ -263,6 +263,7 @@ static FMOD_INSTANCE *FMOD_CreateInstance(char *dllName)
 	load[strl] = 0;
 	mbstowcs(load,dllName,strl);
     instance->module = LoadLibrary(LPCWSTR(load));
+	delete[] load;
 #else
     instance->module = dlopen(dllName, RTLD_LAZY);
 #endif
