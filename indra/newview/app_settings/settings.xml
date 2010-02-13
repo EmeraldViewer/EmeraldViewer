@@ -903,7 +903,7 @@
 		<key>AvatarSex</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -941,7 +941,7 @@
 		<key>BackwardBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -1012,7 +1012,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>BrowserProxyEnabled</key>
 		<map>
@@ -1034,7 +1034,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>BrowserProxyPort</key>
 		<map>
@@ -1193,7 +1193,7 @@
 		<key>BuildBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -1485,7 +1485,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>CacheSize</key>
 		<map>
@@ -1744,7 +1744,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>CloseChatOnReturn</key>
 		<map>
@@ -1788,7 +1788,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>CmdLineHelperURI</key>
 		<map>
@@ -1799,7 +1799,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>CmdLineLoginURI</key>
 		<map>
@@ -1811,7 +1811,7 @@
 			<string>LLSD</string>
 			<key>Value</key>
 			<array>
-				<string/>
+				<string></string>
 			</array>
 		</map>
 		<key>ColorPaletteEntry01</key>
@@ -2444,7 +2444,7 @@
 		<key>CreateToolCopyCenters</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -2455,7 +2455,7 @@
 		<key>CreateToolCopyRotates</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -2466,7 +2466,7 @@
 		<key>CreateToolCopySelection</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -2516,7 +2516,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>DebugBeaconLineWidth</key>
 		<map>
@@ -5250,7 +5250,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>EmeraldEnableHDDInclude</key>
 		<map>
@@ -5272,7 +5272,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>EmeraldInvMirrorGestures</key>
 		<map>
@@ -5464,7 +5464,7 @@
 		<key>EnergyFromTop</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -5475,7 +5475,7 @@
 		<key>EnergyHeight</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -5486,7 +5486,7 @@
 		<key>EnergyWidth</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -5613,7 +5613,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>FirstPersonAvatarVisible</key>
 		<map>
@@ -5629,7 +5629,7 @@
 		<key>FirstPersonBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -6517,7 +6517,7 @@
 		<key>FlyBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -7125,7 +7125,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>FontSansSerifFallbackScale</key>
 		<map>
@@ -7229,7 +7229,7 @@
 		<key>ForwardBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -7245,7 +7245,7 @@
 		<key>FreezeTime</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -7481,7 +7481,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>HtmlHelpRect</key>
 		<map>
@@ -7787,7 +7787,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>JoystickRunThreshold</key>
 		<map>
@@ -7935,7 +7935,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>LastPrefTab</key>
 		<map>
@@ -7968,7 +7968,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>LastSnapshotToEmailHeight</key>
 		<map>
@@ -8199,7 +8199,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>LosslessJ2CUpload</key>
 		<map>
@@ -8309,7 +8309,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>MaxDragDistance</key>
 		<map>
@@ -8413,7 +8413,7 @@
 		<key>MenuBarHeight</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8424,7 +8424,7 @@
 		<key>MenuBarWidth</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8490,7 +8490,7 @@
 		<key>MouseSun</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8501,7 +8501,7 @@
 		<key>MouselookBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8512,7 +8512,7 @@
 		<key>MoveDownBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8528,7 +8528,7 @@
 		<key>MoveUpBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -8682,7 +8682,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>NextLoginLocation</key>
 		<map>
@@ -8693,7 +8693,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>NoAudio</key>
 		<map>
@@ -9027,7 +9027,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>PermissionsCautionEnabled</key>
 		<map>
@@ -10661,7 +10661,7 @@
 		<key>RunBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11002,7 +11002,7 @@
 		<key>ShowChatHistory</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11013,7 +11013,7 @@
 		<key>ShowCommunicate</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11068,7 +11068,7 @@
 		<key>ShowDirectory</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11123,7 +11123,7 @@
 		<key>ShowLeaders</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11390,7 +11390,7 @@
 		<key>ShowNearClip</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11445,7 +11445,7 @@
 		<key>ShowParcelOwners</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11456,7 +11456,7 @@
 		<key>ShowPermissions</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11533,7 +11533,7 @@
 		<key>ShowTools</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11599,7 +11599,7 @@
 		<key>SitBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11658,7 +11658,7 @@
 		<key>SkyOverrideSimSunPosition</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11695,7 +11695,7 @@
 		<key>SlideLeftBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -11711,7 +11711,7 @@
 		<key>SlideRightBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12061,7 +12061,7 @@
 		<key>ThirdPersonBtnState</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12083,7 +12083,7 @@
 		<key>ToolHelpRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12148,7 +12148,7 @@
 		<key>TurnLeftBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12164,7 +12164,7 @@
 		<key>TurnRightBtnRect</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12186,7 +12186,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>TypeAheadTimeout</key>
 		<map>
@@ -12224,7 +12224,7 @@
 		<key>UIImgBtnCloseActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12235,7 +12235,7 @@
 		<key>UIImgBtnCloseInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12246,7 +12246,7 @@
 		<key>UIImgBtnClosePressedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12257,7 +12257,7 @@
 		<key>UIImgBtnForwardInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12268,7 +12268,7 @@
 		<key>UIImgBtnForwardOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12279,7 +12279,7 @@
 		<key>UIImgBtnJumpLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12290,7 +12290,7 @@
 		<key>UIImgBtnJumpLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12301,7 +12301,7 @@
 		<key>UIImgBtnJumpRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12312,7 +12312,7 @@
 		<key>UIImgBtnJumpRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12323,7 +12323,7 @@
 		<key>UIImgBtnLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12334,7 +12334,7 @@
 		<key>UIImgBtnLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12345,7 +12345,7 @@
 		<key>UIImgBtnMinimizeActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12356,7 +12356,7 @@
 		<key>UIImgBtnMinimizeInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12367,7 +12367,7 @@
 		<key>UIImgBtnMinimizePressedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12378,7 +12378,7 @@
 		<key>UIImgBtnMoveDownInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12389,7 +12389,7 @@
 		<key>UIImgBtnMoveDownOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12400,7 +12400,7 @@
 		<key>UIImgBtnMoveUpInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12411,7 +12411,7 @@
 		<key>UIImgBtnMoveUpOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12422,7 +12422,7 @@
 		<key>UIImgBtnPanDownInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12433,7 +12433,7 @@
 		<key>UIImgBtnPanDownOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12444,7 +12444,7 @@
 		<key>UIImgBtnPanLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12455,7 +12455,7 @@
 		<key>UIImgBtnPanLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12466,7 +12466,7 @@
 		<key>UIImgBtnPanRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12477,7 +12477,7 @@
 		<key>UIImgBtnPanRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12488,7 +12488,7 @@
 		<key>UIImgBtnPanUpInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12499,7 +12499,7 @@
 		<key>UIImgBtnPanUpOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12510,7 +12510,7 @@
 		<key>UIImgBtnRestoreActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12521,7 +12521,7 @@
 		<key>UIImgBtnRestoreInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12532,7 +12532,7 @@
 		<key>UIImgBtnRestorePressedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12543,7 +12543,7 @@
 		<key>UIImgBtnRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12554,7 +12554,7 @@
 		<key>UIImgBtnRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12565,7 +12565,7 @@
 		<key>UIImgBtnScrollDownInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12576,7 +12576,7 @@
 		<key>UIImgBtnScrollDownOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12587,7 +12587,7 @@
 		<key>UIImgBtnScrollLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12598,7 +12598,7 @@
 		<key>UIImgBtnScrollLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12609,7 +12609,7 @@
 		<key>UIImgBtnScrollRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12620,7 +12620,7 @@
 		<key>UIImgBtnScrollRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12631,7 +12631,7 @@
 		<key>UIImgBtnScrollUpInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12642,7 +12642,7 @@
 		<key>UIImgBtnScrollUpOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12653,7 +12653,7 @@
 		<key>UIImgBtnSlideLeftInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12664,7 +12664,7 @@
 		<key>UIImgBtnSlideLeftOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12675,7 +12675,7 @@
 		<key>UIImgBtnSlideRightInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12686,7 +12686,7 @@
 		<key>UIImgBtnSlideRightOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12697,7 +12697,7 @@
 		<key>UIImgBtnSpinDownInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12708,7 +12708,7 @@
 		<key>UIImgBtnSpinDownOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12719,7 +12719,7 @@
 		<key>UIImgBtnSpinUpInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12730,7 +12730,7 @@
 		<key>UIImgBtnSpinUpOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12741,7 +12741,7 @@
 		<key>UIImgBtnTabBottomInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12752,7 +12752,7 @@
 		<key>UIImgBtnTabBottomOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12763,7 +12763,7 @@
 		<key>UIImgBtnTabBottomPartialInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12774,7 +12774,7 @@
 		<key>UIImgBtnTabBottomPartialOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12785,7 +12785,7 @@
 		<key>UIImgBtnTabTopInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12796,7 +12796,7 @@
 		<key>UIImgBtnTabTopOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12807,7 +12807,7 @@
 		<key>UIImgBtnTabTopPartialInUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12818,7 +12818,7 @@
 		<key>UIImgBtnTabTopPartialOutUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12829,7 +12829,7 @@
 		<key>UIImgBtnTearOffActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12840,7 +12840,7 @@
 		<key>UIImgBtnTearOffInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12851,7 +12851,7 @@
 		<key>UIImgBtnTearOffPressedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12862,7 +12862,7 @@
 		<key>UIImgCheckboxActiveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12873,7 +12873,7 @@
 		<key>UIImgCheckboxActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12884,7 +12884,7 @@
 		<key>UIImgCheckboxInactiveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12895,7 +12895,7 @@
 		<key>UIImgCheckboxInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12906,7 +12906,7 @@
 		<key>UIImgCreateSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12917,7 +12917,7 @@
 		<key>UIImgCreateUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12939,7 +12939,7 @@
 		<key>UIImgDefaultEyesUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12950,7 +12950,7 @@
 		<key>UIImgDefaultGlovesUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12961,7 +12961,7 @@
 		<key>UIImgDefaultHairUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12972,7 +12972,7 @@
 		<key>UIImgDefaultJacketUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12983,7 +12983,7 @@
 		<key>UIImgDefaultPantsUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -12994,7 +12994,7 @@
 		<key>UIImgDefaultShirtUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13005,7 +13005,7 @@
 		<key>UIImgDefaultShoesUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13016,7 +13016,7 @@
 		<key>UIImgDefaultSkirtUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13027,7 +13027,7 @@
 		<key>UIImgDefaultSocksUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13038,7 +13038,7 @@
 		<key>UIImgDefaultUnderwearUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13049,7 +13049,7 @@
 		<key>UIImgDirectionArrowUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13060,7 +13060,7 @@
 		<key>UIImgFaceSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13071,7 +13071,7 @@
 		<key>UIImgFaceUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13082,7 +13082,7 @@
 		<key>UIImgFocusSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13093,7 +13093,7 @@
 		<key>UIImgFocusUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13104,7 +13104,7 @@
 		<key>UIImgGrabSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13115,7 +13115,7 @@
 		<key>UIImgGrabUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13126,7 +13126,7 @@
 		<key>UIImgMoveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13137,7 +13137,7 @@
 		<key>UIImgMoveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13148,7 +13148,7 @@
 		<key>UIImgRadioActiveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13159,7 +13159,7 @@
 		<key>UIImgRadioActiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13170,7 +13170,7 @@
 		<key>UIImgRadioInactiveSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13181,7 +13181,7 @@
 		<key>UIImgRadioInactiveUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13192,7 +13192,7 @@
 		<key>UIImgResizeBottomRightUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13203,7 +13203,7 @@
 		<key>UIImgRotateSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13214,7 +13214,7 @@
 		<key>UIImgRotateUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13225,7 +13225,7 @@
 		<key>UIImgScaleSelectedUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13236,7 +13236,7 @@
 		<key>UIImgScaleUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13247,7 +13247,7 @@
 		<key>UIImgWhiteUUID</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13698,7 +13698,7 @@
 		<key>UseEnergy</key>
 		<map>
 			<key>Comment</key>
-			<string/>
+			<string></string>
 			<key>Persist</key>
 			<integer>0</integer>
 			<key>Type</key>
@@ -13792,7 +13792,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>UserLoginInfo</key>
 		<map>
@@ -13946,7 +13946,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>VivoxDebugVoiceAccountServerURI</key>
 		<map>
@@ -13957,7 +13957,7 @@
 			<key>Type</key>
 			<string>String</string>
 			<key>Value</key>
-			<string/>
+			<string></string>
 		</map>
 		<key>vivoxProductionServerName</key>
 		<map>
