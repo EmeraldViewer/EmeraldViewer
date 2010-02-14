@@ -250,9 +250,7 @@ void IRC::disconnect()
 		llinfos<<"Disconnected from server.\n"<<llendl;
 		connected=false;
 		quit("Leaving");
-		#ifdef LL_WINDOWS
 		shutdown(irc_socket, 2);
-		#endif
 		closesocket(irc_socket);
 	}
 }

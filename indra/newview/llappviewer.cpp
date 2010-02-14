@@ -94,6 +94,7 @@
 #include "llimageworker.h"
 
 // The files below handle dependencies from cleanup.
+#include "llcalc.h"
 #include "llkeyframemotion.h"
 #include "llworldmap.h"
 #include "llhudmanager.h"
@@ -1259,6 +1260,8 @@ bool LLAppViewer::cleanup()
 	// Note: this is where gLocalSpeakerMgr and gActiveSpeakerMgr used to be deleted.
 
 	LLWorldMap::getInstance()->reset(); // release any images
+
+	LLCalc::cleanUp();
 	
 	llinfos << "Global stuff deleted" << llendflush;
 

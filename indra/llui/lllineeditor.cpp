@@ -2508,8 +2508,9 @@ BOOL LLLineEditor::evaluateFloat()
 	else
 	{
 		// Replace the expression with the result
-		std::string result_str = llformat("%f",result);
-		setText(result_str);
+		std::ostringstream result_str;
+		result_str << result;
+   		setText(result_str.str());
 		selectAll();
 	}
 
