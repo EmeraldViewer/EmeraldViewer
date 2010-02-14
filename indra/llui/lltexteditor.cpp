@@ -3002,6 +3002,10 @@ void LLTextEditor::drawMisspelled()
 			S32 newSpellStart = getLineStart(mScrollbar->getDocPos());//start at the scroll start
 			S32 newSpellEnd = getLineStart(mScrollbar->getDocPos() + 1 + mScrollbar->getDocSize()-mScrollbar->getDocPosMax());//end at the end o.o
 		
+			if(mScrollbar->getDocPos() == mScrollbar->getDocPosMax())
+			{
+				newSpellEnd=(S32)mWText.length();
+			}
 			if((isSpellDirty())||(newSpellEnd!=spellEnd || newSpellStart!=spellStart))
 			{
 				spellEnd = newSpellEnd;
