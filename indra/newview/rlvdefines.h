@@ -46,6 +46,9 @@
 	#define RLV_EXTENSION_CMD_TOUCHXXX		// @touch:uuid=n|y, @touchworld[:<uuid>]=n|y, @touchattach[:<uuid>]=n|y, @touchud[:<uuid>]=n|y
 #endif // RLV_EXPERIMENTAL_CMDS
 
+// Workarounds
+#define RLV_WORKAROUND_REZMULTIPLEATTACH	// See http://jira.secondlife.com/browse/SVC-5383 ; disables "Shared Wear"
+
 // ============================================================================
 // Defines
 //
@@ -60,7 +63,7 @@ const S32 RLV_VERSION_BUILD = 0;
 const S32 RLVa_VERSION_MAJOR = 1;
 const S32 RLVa_VERSION_MINOR = 1;
 const S32 RLVa_VERSION_PATCH = 0;
-const S32 RLVa_VERSION_BUILD = 12;
+const S32 RLVa_VERSION_BUILD = 13;
 
 // The official viewer version we're patching against
 #define RLV_MAKE_TARGET(x, y, z)	((x << 16) | (y << 8) | z)

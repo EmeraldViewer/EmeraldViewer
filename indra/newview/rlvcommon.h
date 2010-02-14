@@ -80,6 +80,13 @@ protected:
 	static BOOL fShowNameTags;
 };
 
+#ifdef RLV_WORKAROUND_REZMULTIPLEATTACH
+inline BOOL RlvSettings::getEnableSharedWear()
+{
+	return FALSE;
+}
+#endif // RLV_WORKAROUND_REZMULTIPLEATTACH
+
 // ============================================================================
 // RlvStrings
 //

@@ -4497,8 +4497,12 @@ void wear_attachments_on_avatar(const LLInventoryModel::item_array_t& items, BOO
 		// RELEASE-RLVa: make sure the above assertions are still valid
 		msg->addU8Fast(_PREHASH_AttachmentPt, 
 			( (!rlv_handler_t::isEnabled()) || (!gRlvHandler.hasLockedAttachment(RLV_LOCK_ANY)) ||
+#ifndef RLV_WORKAROUND_REZMULTIPLEATTACH
 			  ( (!gRlvHandler.getCurrentCommand()) && (RlvSettings::getEnableWear()) ) ||
 			  ( (gRlvHandler.getCurrentCommand()) && (RlvSettings::getEnableSharedWear()) ) )
+#else
+			  (RlvSettings::getEnableWear()) )
+#endif // RLV_WORKAROUND_REZMULTIPLEATTACH
 				? 0
 				: gRlvHandler.getAttachPointIndex(gRlvHandler.getAttachPoint(item, true)) );
 // [/RLVa:KB]

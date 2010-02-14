@@ -755,7 +755,33 @@ void RlvForceWear::processAdd()
 	// Process attachments
 	if (m_addAttachments.size())
 	{
-		wear_attachments_on_avatar(m_addAttachments, FALSE);
+		// Workaround for RezMultipleAttachmentsFromInv bug (see http://jira.secondlife.com/browse/SVC-5383)
+		#ifndef RLV_WORKAROUND_REZMULTIPLEATTACH
+			wear_attachments_on_avatar(m_addAttachments, FALSE);
+		#else
+			for (S32 idxItem = 0, cntItem = m_addAttachments.count(); idxItem < cntItem; idxItem++)
+			{
+				LLViewerInventoryItem* pItem = m_addAttachments.get(idxItem);
+
+				S32 idxAttachPt = gRlvHandler.getAttachPointIndex(pItem, true);
+				if (0 != idxAttachPt)
+				{
+					#if RLV_TARGET < RLV_MAKE_TARGET(1, 23, 0)			// Version: 1.22.11
+						LLAttachmentRezAction* rez_action = new LLAttachmentRezAction();
+						rez_action->mItemID = pItem->getUUID();
+						rez_action->mAttachPt = idxAttachPt;
+
+						confirm_replace_attachment_rez(0/*YES*/, (void*)rez_action); // (Will call delete on rez_action)
+					#else												// Version: 1.23.4
+						LLSD payload;
+						payload["item_id"] = pItem->getUUID();
+						payload["attachment_point"] = idxAttachPt;
+
+						LLNotifications::instance().forceResponse(LLNotification::Params("ReplaceAttachment").payload(payload), 0/*YES*/);
+					#endif
+				}
+			}
+		#endif // RLV_WORKAROUND_REZMULTIPLEATTACH
 
 		m_addAttachments.clear();
 	}

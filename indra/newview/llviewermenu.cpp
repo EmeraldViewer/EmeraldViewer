@@ -1477,8 +1477,10 @@ void init_debug_rlva_menu(LLMenuGL* menu)
 
 	if (gSavedSettings.controlExists(RLV_SETTING_ENABLEWEAR))
 		menu->append(new LLMenuItemCheckGL("Enable Default Wear", menu_toggle_control, rlvEnableWearEnabler, menu_check_control, (void*)RLV_SETTING_ENABLEWEAR));
+#ifndef RLV_WORKAROUND_REZMULTIPLEATTACH
 	if (gSavedSettings.controlExists(RLV_SETTING_ENABLESHAREDWEAR))
 		menu->append(new LLMenuItemCheckGL("Enable Shared Wear", menu_toggle_control, rlvEnableSharedWearEnabler, menu_check_control, (void*)RLV_SETTING_ENABLESHAREDWEAR));
+#endif // RLV_WORKAROUND_REZMULTIPLEATTACH
 	menu->appendSeparator();
 
 	#ifdef RLV_EXTENSION_HIDELOCKED

@@ -101,6 +101,7 @@ BOOL RlvSettings::getEnableWear()
 		(!gRlvHandler.hasBehaviour(RLV_BHVR_ADDATTACH));	 // we have attach points we can attach to [see RlvHandler::onAddRemAttach()]
 }
 
+#ifndef RLV_WORKAROUND_REZMULTIPLEATTACH
 BOOL RlvSettings::getEnableSharedWear()
 {
 	// NOTE-RLVa: it's not proper but some code relies on the fact that getEnableSharedWear() returns FALSE if any attach point is locked
@@ -108,6 +109,7 @@ BOOL RlvSettings::getEnableSharedWear()
 		(rlvGetSettingBOOL(RLV_SETTING_ENABLESHAREDWEAR, FALSE)) && // "Enable Shared Wear" is toggled on and...
 		(!gRlvHandler.hasLockedAttachment(RLV_LOCK_ANY));			// no attachment point is non-attachable or non-detachable
 }
+#endif // RLV_WORKAROUND_REZMULTIPLEATTACH
 
 #ifdef RLV_EXTENSION_STARTLOCATION
 	// Checked: 2009-07-08 (RLVa-1.0.0e) | Modified: RLVa-0.2.1d
