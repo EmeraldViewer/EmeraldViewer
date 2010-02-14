@@ -258,12 +258,7 @@ static FMOD_INSTANCE *FMOD_CreateInstance(char *dllName)
     }
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(_WIN64)
-	U16 strl = strlen(dllName);
-	wchar_t* load = new wchar_t[strl];
-	load[strl - 1] = 0;
-	mbstowcs(load,dllName,strl);
-    instance->module = LoadLibrary(LPCWSTR(load));
-	delete[] load;
+    instance->module = LoadLibraryA(dllName);
 #else
     instance->module = dlopen(dllName, RTLD_LAZY);
 #endif
