@@ -642,18 +642,21 @@ void JCLSLPreprocessor::preprocess_script(BOOL close, BOOL defcache)
 	mCore->mErrorList->addCommentText(std::string("Starting..."));
 	LLFile::mkdir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,"")+gDirUtilp->getDirDelimiter()+"lslpreproc");
 	std::string script = mCore->mEditor->getText();
-	LLViewerInventoryItem* item = NULL;
-	LLPreview* preview = (LLPreview*)mCore->mUserdata;
-	if(preview)
+	if(mMainScriptName == "")//more sanity
 	{
-		item = preview->getItem();
-	}
-	if(item)
-	{
-		mMainScriptName = item->getName();
-	}else
-	{
-		mMainScriptName = "(Unknown)";
+		LLViewerInventoryItem* item = NULL;
+		LLPreview* preview = (LLPreview*)mCore->mUserdata;
+		if(preview)
+		{
+			item = preview->getItem();
+		}
+		if(item)
+		{
+			mMainScriptName = item->getName();
+		}else
+		{
+			mMainScriptName = "(Unknown)";
+		}
 	}
 	std::string name = mMainScriptName;
 	cached_assetids[name] = LLUUID::null;
@@ -959,6 +962,16 @@ void JCLSLPreprocessor::start_process()
 		ctx.add_macro_definition(def,false);
 		def = llformat("__SHORTFILE__=\"%s\"",name.c_str());
 		ctx.add_macro_definition(def,false);
+
+		ctx.add_macro_definition("list(input)=((list)input)",false);
+		ctx.add_macro_definition("float(input)=((float)input)",false);
+		ctx.add_macro_definition("integer(input)=((integer)input)",false);
+		ctx.add_macro_definition("key(input)=((key)input)",false);
+		ctx.add_macro_definition("list(input)=((list)input)",false);
+		ctx.add_macro_definition("rotation(input)=((rotation)input)",false);
+		ctx.add_macro_definition("quaternion(input)=((quaternion)input)",false);
+		ctx.add_macro_definition("string(input)=((string)input)",false);
+		ctx.add_macro_definition("vector(input)=((vector)input)",false);
 
 		context_type::iterator_type first = ctx.begin();
 		context_type::iterator_type last = ctx.end();
