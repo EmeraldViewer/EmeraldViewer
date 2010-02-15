@@ -25,7 +25,7 @@ connect()
 }
 send(string data)
 {
-    if(llStringLength(data) > (1023 - 5))llOwnerSay("ERR: string too long");
+  //if(llStringLength(data) > (1023 - 5))llOwnerSay("ERR: string too long");
     llOwnerSay("#@#@#"+data);
   //llOwnerSay("Sending"+data);
 }
