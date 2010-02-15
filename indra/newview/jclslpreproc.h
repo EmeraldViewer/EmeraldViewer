@@ -47,6 +47,7 @@ public:
 	std::string encode(std::string script);
 	std::string decode(std::string script);
 	std::string lslopt(std::string script);
+	std::string lslcomp(std::string script);
 	static LLUUID findInventoryByName(std::string name);
 	static void JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type,
 									void *userdata, S32 result, LLExtStat extstat);

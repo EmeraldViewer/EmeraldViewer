@@ -401,6 +401,28 @@ std::string JCLSLPreprocessor::lslopt(std::string script)
 	return script;
 }
 
+std::string JCLSLPreprocessor::lslcomp(std::string script)
+{
+	try
+	{
+		shredder(script);
+		script = boost::regex_replace(script, boost::regex("(\\s+)",boost::regex::perl), "\n");
+	}
+	catch (boost::regex_error& e)
+	{
+		std::string err = "not a valid regular expression: \"";
+		err += e.what();
+		err += "\"; compression skipped";
+		cmdline_printchat(err);
+	}
+	catch (...)
+	{
+		
+		cmdline_printchat("unexpected exception caught; compression skipped");
+	}
+	return script;
+}
+
 struct ProcCacheInfo
 {
 	LLViewerInventoryItem* item;
@@ -1044,6 +1066,22 @@ void JCLSLPreprocessor::start_process()
 				{	
 					errored = TRUE;
 					err = "unexpected exception in lsl optimizer";
+					mCore->mErrorList->addCommentText(err);
+				}
+			}
+		}
+		if(!errored)
+		{
+			if(gSavedSettings.getBOOL("EmeraldLSLTextCompress"))
+			{
+				mCore->mErrorList->addCommentText("Compressing lsltext by removing unnecessary space");
+				try
+				{
+					output = lslcomp(output);
+				}catch(...)
+				{	
+					errored = TRUE;
+					err = "unexpected exception in lsl compressor";
 					mCore->mErrorList->addCommentText(err);
 				}
 			}
