@@ -174,7 +174,7 @@
   <text type="string" length="1" bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 	     bottom="-432" drop_shadow_visible="true" enabled="true" follows="left|top"
 	     font="SansSerifSmall" h_pad="0" halign="left" height="10" left="149"
-	     mouse_opaque="false" name="text_translate_chat" v_pad="0" width="160">
+	     mouse_opaque="false" name="text_translate_language" v_pad="0" width="160">
     Translate into this language:
   </text>
   <combo_box allow_text_entry="true" bottom="-438" enabled="true"

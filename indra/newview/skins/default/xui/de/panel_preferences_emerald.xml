@@ -251,7 +251,7 @@ Empfohlene Eisntellungen:
       <spinner label="Z" name="Z Modifier" tool_tip="Manipuliert die Bounding Box bis zu einem gewissen Grad. Kann benutzt werden um Orbiter zu verwirren oder dieHöhe des Avatars zu manipulieren ohne den Shape zu ändern."/>
       <spinner label="Agent updates pro Sekunde:" name="EmAgentUpdatesValue" tool_tip="Gibt an wieviel Updates pro Sekunde gesendet werden sollen. Standard 10/s" />
       <check_box label="Avatar unsichtbar rendern" name="RenderAvInvisible"/>
-      <check_box label="Zeige 'Aussehen' Markierung und Animation während 'Aussehen bearbeiten'" name="EmeraldAppearanceAnimate"/>
+      <check_box label="'Aussehen' Titel und Animation bei 'Aussehen bearbeiten'" name="EmeraldAppearanceAnimate"/>
       <check_box label="Sitzen abbrechen bei 'Aussehen bearbeiten'" name="EmeraldAppearanceForceStand"/>
     <text name="BeamPrefs">
 		Auswahlpartikeleffekt
@@ -471,7 +471,7 @@ Simulator damit man per Script darauf zugreifen kann.
       <text name="EmSpell_txt3">verfügbare Wörterbücher</text>
       <combo_box name="EmSpell_Avail"/>
 			<button label="Hinzufügen" name="EmSpell_Add"/>
-      <button label="Wörterbücher runterladen!" name="EmSpell_GetMore"/>
+      <button label="Runterladen" name="EmSpell_GetMore"/>
 			<check_box  label="falsch geschriebene Wörter in Rot" name="EmeraldSpellDisplay"/>
       <button label="Bearbeite individuelles Wörterbücher" name="EmSpell_EditCustom"/>
       <text name="EmSpell_txt4">Rechtsklick zeigt die Auswahlliste an.</text>      

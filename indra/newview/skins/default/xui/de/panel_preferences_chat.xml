@@ -57,7 +57,14 @@
 		Skriptfehler:
 	</text>
 	<check_box label="Skriptfehler und Warnungen als normalen Chat anzeigen" name="script_errors_as_chat"/>
-	<color_swatch label="Fehler" name="script_error"/>
+	<color_swatch label="Fehler" name="script_error"/>	
+	<text type="string" length="1" name="text_translate_chat">
+		Chat übersetzen:
+	</text>
+  <check_box label="Maschinen Übersetzung(powered by Google)" name="translate_chat"/>
+  <text name="text_translate_language">
+    In diese Sprache:
+  </text>
 	<combo_box name="translate_language_combobox" width="166">
 		<combo_item name="System Default Language">
 			Betriebssystem-Einstellung
@@ -111,9 +118,4 @@
 			�??국�?� (Koreanisch) - Beta
 		</combo_item>
 	</combo_box>
-	<text type="string" length="1" name="text_chat_language">
-		Chat-Sprache:
-	</text>
-	<text type="string" length="1" name="translate_chat" label="�?bersetzen Chat">
-	</text>
 </panel>
