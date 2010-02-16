@@ -16,8 +16,7 @@
 
     <!-- Sent as "Busy" messages to the remote party -->
     <string name="blocked_recvim_remote">
-      The Resident you messaged is prevented from reading your instant messages at the moment, 
-      please try again later.
+      The Resident you messaged is prevented from reading your instant messages at the moment, please try again later.
     </string>
     <string name="blocked_tplure_remote">
       The Resident you invited is prevented from accepting teleport offers. Please try again later.
