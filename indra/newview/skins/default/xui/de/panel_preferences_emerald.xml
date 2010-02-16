@@ -151,6 +151,7 @@ Empfohlene Eisntellungen:
       <check_box label="Chat Verlauf Zeitstempel mit Sekunden" name="EmeraldAddSecondsInHistory-toggle"/>
       <check_box label="Wenn 'Gruppenmitteilungen erhalten' deaktiviert ist, Gruppen Chat auch deaktivieren" name="EmeraldMuteGroupWhenNoticesDisabled-toggle"/>
       <check_box label="Deaktiviere alle Gruppen Chats" name="EmeraldMuteAllGroups-toggle"/>
+      <check_box label="Rechtsklick Übersetzen ersetzt markierten Text" name="EmeraldTranslateReplace"/>
       <button name="keyword_allert" label="Bearbeite Stichwort Alarm" tool_tip="Bearbeite ausstehende Warnungen."/>
       </panel>
       <panel label="Verschiedenes" name="AvatarEffects">
