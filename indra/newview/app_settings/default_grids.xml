@@ -44,9 +44,7 @@
 <string>SecondLife</string>
 <key>loginuri</key>
 
-<string>
-https://login.aditi.lindenlab.com/cgi-bin/login.cgi
-</string>
+<string>https://login.aditi.lindenlab.com/cgi-bin/login.cgi</string>
 <key>loginpage</key>
 <string>http://modularsystems.sl/app/login/</string>
 <key>helperuri</key>
