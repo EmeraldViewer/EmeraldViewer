@@ -43,7 +43,6 @@
       <menu_item_check label="Aktiviere Preprocessing" name="preproc_on"/>
       <menu_item_check label="Aktiviere Optimizer" name="optim_on"/>
       <menu_item_check label="Aktiviere Lazy Lists" name="lazylist_on"/>
-      <menu_item_check label="Aktiviere Text Kompression" name="compress_on"/>
       <menu_item_check label="Aktiviere Switches" name="switch_on" visible="false"/>
       <menu_item_call label="Syntax Check" name="Syntax Check"/>
     </menu>
