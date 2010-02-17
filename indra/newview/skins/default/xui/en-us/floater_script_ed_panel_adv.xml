@@ -95,8 +95,6 @@
 			     mouse_opaque="true" name="optim_on" width="112" />
       <menu_item_check bottom="-30" enabled="true" height="20" label="Enable Lazy Lists" left="0"
 			     mouse_opaque="true" name="lazylist_on" width="112" />
-      <menu_item_check bottom="-30" enabled="true" height="20" label="Enable Text Compress" left="0"
-			     mouse_opaque="true" name="compress_on" width="112" />
       <menu_item_check bottom="-30" enabled="true" height="20" label="Enable Switches" left="0"
 			     mouse_opaque="true" name="switch_on" width="112" visible="false" />
       <menu_item_call bottom="-30" enabled="true" height="20" label="Syntax Check" left="0"
