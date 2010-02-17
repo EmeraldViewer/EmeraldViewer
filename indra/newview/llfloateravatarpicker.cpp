@@ -248,7 +248,7 @@ void LLFloaterAvatarPicker::onBtnSelect(void* userdata)
 			self->mCallback(avatar_names, avatar_ids, self->mCallbackUserdata);
 		}
 	}
-	self->getChild<LLInventoryPanel>("InventoryPanel")->setSelection(LLUUID::null, FALSE);
+	if(self->init_cards)self->getChild<LLInventoryPanel>("InventoryPanel")->setSelection(LLUUID::null, FALSE);
 	self->getChild<LLScrollListCtrl>("SearchResults")->deselectAllItems(TRUE);
 	self->getChild<LLScrollListCtrl>("NearMe")->deselectAllItems(TRUE);
 	if(self->mCloseOnSelect)
