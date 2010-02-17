@@ -471,11 +471,11 @@ void LLScriptEdCore::initMenu()
 		check = getChild<LLMenuItemCheckGL>("optim_on");
 		check->setControlName("EmeraldLSLOptimizer",NULL);
 		check->setMenuCallback(menu_toggle_gsaved,check);
-
+/*
 		check = getChild<LLMenuItemCheckGL>("compress_on");
 		check->setControlName("EmeraldLSLTextCompress",NULL);
 		check->setMenuCallback(menu_toggle_gsaved,check);
-
+*/
 		check = getChild<LLMenuItemCheckGL>("lazylist_on");
 		check->setControlName("EmeraldLSLLazyLists",NULL);
 		check->setMenuCallback(menu_toggle_gsaved,check);
