@@ -383,21 +383,9 @@ void LLViewerPartSourceScript::update(const F32 dt)
 				//llwarns << "Unknown source pattern " << (S32)mPartSysData.mPattern << llendl;
 			}
 
-			if(LLViewerPartSim::getInstance()->getUseNewFollowSource())
+			if ((part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK) && (mPartSysData.mBurstRadius != 0.0)) 
 			{
-				// This code causes the particle not to snap to the emitters source position until after its offset
-				// is updated in the follow source math on the first update.
-				if ((part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK) && (mPartSysData.mBurstRadius != 0.0)) 
-				{
-					part->mApplyFollowSource = false;
-				}
-			}
-			else
-			{
-				if(part->mFlags & LLPartData::LL_PART_FOLLOW_SRC_MASK)
-				{
-					mPartSysData.mBurstRadius = 0.0;
-				}
+                part->mApplyFollowSource = false;
 			}
             
             if (part->mFlags & LLPartData::LL_PART_TARGET_LINEAR_MASK)
