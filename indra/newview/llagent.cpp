@@ -4034,8 +4034,11 @@ void LLAgent::handleScrollWheel(S32 clicks)
 		{
 			if(gKeyboard->getKeyDown(KEY_CONTROL))
 			{
-				//cameraOrbitOver(clicks+mFollowCam.getPitch())
 				mThirdPersonHeadOffset.mV[2]+=clicks/10.0f;
+			}else if(gKeyboard->getKeyDown(KEY_ALT))
+			{
+				gSavedSettings.setVector3("FocusOffsetDefault",
+					gSavedSettings.getVector3("FocusOffsetDefault") + LLVector3(0.0f,0.0f,clicks/10.0f));
 			}else
 			{
 				F32 current_zoom_fraction = mTargetCameraDistance / (mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));

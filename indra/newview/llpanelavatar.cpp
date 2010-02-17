@@ -1506,7 +1506,7 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 	LLNameEditor* key_edit = getChild<LLNameEditor>("key_");
 	if(key_edit)
 	{
-		key_edit->setText(avatar_id.asString());
+		key_edit->setText(mAvatarID.asString());
 	}
 // 	if (avatar_changed)
 	{
