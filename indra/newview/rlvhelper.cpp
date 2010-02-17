@@ -526,7 +526,7 @@ bool RlvWearableItemCollector::operator()(LLInventoryCategory* pFolder, LLInvent
 // RlvForceWear
 //
 
-// Checked: 2009-12-18 (RLVa-1.1.0k) | Added: RLVa-1.1.0i
+// Checked: 2010-02-17 (RLVa-1.1.0o) | Modified: RLVa-1.1.0o
 void RlvForceWear::forceFolder(const LLViewerInventoryCategory* pFolder, eWearAction eAction, eWearFlags eFlags)
 {
 	// [See LLWearableBridge::wearOnAvatar(): don't wear anything until initial wearables are loaded, can destroy clothing items]
@@ -551,11 +551,12 @@ void RlvForceWear::forceFolder(const LLViewerInventoryCategory* pFolder, eWearAc
 	{
 		LLViewerInventoryItem* pItem = items.get(idxItem);
 
-		// If it's wearable it should be worn on detach and not worn on attach (mind the XNOR operation)
-		if ( (isWearableItem(pItem)) && !((ACTION_ATTACH == eAction) ^ (isWearingItem(pItem))) )
+		// If it's wearable it should be worn on detach
+		if ( (ACTION_DETACH == eAction) && (isWearableItem(pItem)) && (!isWearingItem(pItem)) )
 			continue;
 
-		// NOTE: if there are composite items then RlvWearableItemCollector made sure they can be worn (or taken off depending)
+		//  NOTES: * if there are composite items then RlvWearableItemCollector made sure they can be worn (or taken off depending)
+		//         * some scripts issue @remattach=force,attach:worn-items=force so we need to attach items even if they're currently worn
 		switch (pItem->getType())
 		{
 			case LLAssetType::AT_BODYPART:
@@ -591,8 +592,10 @@ void RlvForceWear::forceFolder(const LLViewerInventoryCategory* pFolder, eWearAc
 						{
 							#ifdef RLV_EXPERIMENTAL_COMPOSITEFOLDERS
 							// We still need to check whether we're about to replace a currently worn composite item
+							// (which we're not if we're just reattaching an attachment we're already wearing)
 							LLViewerInventoryCategory* pCompositeFolder = NULL;
 							if ( (pAttachPt->getObject()) && (RlvSettings::getEnableComposites()) && 
+								 (pAttachPt->getItemID() != pItem->getUUID()) &&
 								 (gRlvHandler.getCompositeInfo(pAttachPt->getItemID(), NULL, &pCompositeFolder)) )
 							{
 								// If we can't take off the composite folder this item would replace then don't allow it to get attached
@@ -886,18 +889,33 @@ void RlvForceWear::processRem()
 	}
 }
 
-// Checked: 2009-12-18 (RLVa-1.1.0k) | Added: RLVa-1.1.0i
+// Checked: 2010-02-17 (RLVa-1.1.0o) | Modified: RLVa-1.1.0o
 void RlvForceWear::onWearableArrived(LLWearable* pWearable, void* pParam)
 {
 	#ifdef RLV_EXPERIMENTAL_COMPOSITEFOLDERS
 	// If this wearable will end up replacing a currently worn one that belongs to a composite folder then we need to detach the composite
 	LLViewerInventoryCategory* pFolder = NULL;
-	if ( (RlvSettings::getEnableComposites()) && (pWearable) && (gAgent.getWearable(pWearable->getType())) && 
-		 (gRlvHandler.getCompositeInfo(gAgent.getWearableItem(pWearable->getType()), NULL, &pFolder)) )
+	if ( (RlvSettings::getEnableComposites()) && (pWearable) && (gAgent.getWearable(pWearable->getType())) )
 	{
-		RlvForceWear rlvWear;
-		rlvWear.forceFolder(pFolder, ACTION_DETACH, FLAG_DEFAULT);
-		rlvWear.done();
+		// If we're just rewearing the same item we're already wearing then we're not replacing a composite folder
+		LLWearableHoldingPattern* pWearData = (LLWearableHoldingPattern*)pParam; LLUUID idItem;
+		for (LLWearableHoldingPattern::found_list_t::const_iterator itWearable = pWearData->mFoundList.begin();
+				itWearable != pWearData->mFoundList.end(); ++itWearable)
+		{
+			LLFoundData* pFound = *itWearable;
+			if (pWearable->getID() == pFound->mAssetID)
+			{
+				idItem = pFound->mItemID;
+				break;
+			}
+		}
+		if ( (idItem.notNull()) && (idItem != gAgent.getWearableItem(pWearable->getType())) && 
+			 (gRlvHandler.getCompositeInfo(gAgent.getWearableItem(pWearable->getType()), NULL, &pFolder)) )
+		{
+			RlvForceWear rlvWear;
+			rlvWear.forceFolder(pFolder, ACTION_DETACH, FLAG_DEFAULT);
+			rlvWear.done();
+		}
 	}
 	#endif // RLV_EXPERIMENTAL_COMPOSITEFOLDERS
 
