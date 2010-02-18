@@ -492,11 +492,11 @@ class DarwinManifest(ViewerManifest):
 
                 # llkdu dynamic library
                 # This should be downloaded and unpacked for the user, not packaged with the viewer. ~Disc
-                #self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
+		self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
                 
                 #libfmodwrapper.dylib
                 # This should be downloaded and unpacked for the user, not packaged with the viewer. ~Disc
-#                self.path(self.args['configuration'] + "/libfmodwrapper.dylib", "libfmodwrapper.dylib")
+                self.path(self.args['configuration'] + "/libfmodwrapper.dylib", "libfmodwrapper.dylib")
                 
                 # our apps
 #                self.path("../mac_crash_logger/" + self.args['configuration'] + "/mac-crash-logger.app", "mac-crash-logger.app")
