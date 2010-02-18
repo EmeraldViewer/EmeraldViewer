@@ -492,7 +492,7 @@ class DarwinManifest(ViewerManifest):
 
                 # llkdu dynamic library
                 # This should be downloaded and unpacked for the user, not packaged with the viewer. ~Disc
-		self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
+#		self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
                 
                 #libfmodwrapper.dylib
                 # This should be downloaded and unpacked for the user, not packaged with the viewer. ~Disc
