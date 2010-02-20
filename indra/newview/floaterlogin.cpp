@@ -123,10 +123,11 @@ BOOL LoginFloater::postBuild()
 	childSetAction("btn_copy", onClickCopy, this);
 	childSetAction("btn_ok", onClickOk, this);
 	childSetAction("btn_apply", onClickApply, this);
-	// childSetAction("set_default", onClickDefault, this);
+	childSetAction("set_default", onClickDefault, this);
 	childSetAction("btn_cancel", onClickCancel, this);
+//KOW	childSetAction("set_default", onClickDefault, this);
 	childSetAction("btn_gridinfo", onClickGridInfo, this);
-	// childSetAction("btn_help_render_compat", onClickHelpRenderCompat, this);
+//KOW	childSetAction("btn_help_render_compat", onClickHelpRenderCompat, this);
 
 	childSetCommitCallback("grid_selector", onSelectGrid, this);
 //KOW	childSetCommitCallback("platform", onSelectPlatform, this);
@@ -176,11 +177,11 @@ void LoginFloater::refresh_grids()
 		//grids->setLabel(LLStringExplicit(""));  // LLComboBox::removeall() does not clear the label
 	}
 			
-	// sInstance->childSetTextArg("default_grid", "[DEFAULT]", (defaultGrid != "")? defaultGrid: " ");
+	sInstance->childSetTextArg("default_grid", "[DEFAULT]", (defaultGrid != "")? defaultGrid: " ");
 
 	sInstance->childSetEnabled("btn_delete", (selectIndex >= 0));
 	sInstance->childSetEnabled("btn_copy", (sInstance->mState == NORMAL) && (selectIndex >= 0));
-	// sInstance->childSetEnabled("set_default", (sInstance->mState == NORMAL) && (selectIndex > 0));
+	sInstance->childSetEnabled("set_default", (sInstance->mState == NORMAL) && (selectIndex > 0));
 	sInstance->childSetEnabled("gridnick", (sInstance->mState == ADD_NEW) || (sInstance->mState == ADD_COPY));
 
 	if (sInstance->mState == NORMAL) {
@@ -193,28 +194,27 @@ void LoginFloater::refresh_grids()
 			sInstance->childSetText("helperuri", gridInfo->getHelperUri());
 			sInstance->childSetText("website", gridInfo->getWebSite());
 			sInstance->childSetText("support", gridInfo->getSupportUrl());
-			sInstance->childSetText("register", gridInfo->getRegisterUrl());
-			sInstance->childSetText("password", gridInfo->getPasswordUrl());
-
-			// sInstance->childSetText("first_name", gridInfo->getFirstName());
-			// sInstance->childSetText("last_name", gridInfo->getLastName());
-			// if(gridInfo->getAvatarPassword().length() == 32)
-			// 	sInstance->childSetText("avatar_password", std::string(PASSWORD_FILLER));
-			// else if(gridInfo->getPasswordUrl().empty())
-			// 	sInstance->childSetText("avatar_password", std::string(""));
-
-			// if (gridInfo->getPlatform() == HippoGridInfo::PLATFORM_SECONDLIFE) {
-			// 	//childSetEnabled("search", false);
-			// 	//childSetText("search", LLStringExplicit(""));
-			// 	childSetEnabled("render_compat", false);
-			// 	childSetValue("render_compat", false);
-			// } else {
-			// 	//childSetEnabled("search", true);
-			// 	//childSetText("search", gridInfo->getSearchUrl());
-			// 	childSetEnabled("render_compat", true);
-			// 	childSetValue("render_compat", gridInfo->isRenderCompat());
-			// }
-
+            sInstance->childSetText("register", gridInfo->getRegisterUrl());
+            sInstance->childSetText("password", gridInfo->getPasswordUrl());
+			sInstance->childSetText("first_name", gridInfo->getFirstName());
+			sInstance->childSetText("last_name", gridInfo->getLastName());
+			if(gridInfo->getAvatarPassword().length() == 32)
+				sInstance->childSetText("avatar_password", std::string(PASSWORD_FILLER));
+			else if(gridInfo->getPasswordUrl().empty())
+				sInstance->childSetText("avatar_password", std::string(""));
+/*
+            if (gridInfo->getPlatform() == HippoGridInfo::PLATFORM_SECONDLIFE) {
+			    //childSetEnabled("search", false);
+                //childSetText("search", LLStringExplicit(""));
+			    childSetEnabled("render_compat", false);
+    		    childSetValue("render_compat", false);
+            } else {
+			    //childSetEnabled("search", true);
+                //childSetText("search", gridInfo->getSearchUrl());
+			    childSetEnabled("render_compat", true);
+    		    childSetValue("render_compat", gridInfo->isRenderCompat());
+            }
+		*/
 		}	else {
 			std::string empty = "";
 			sInstance->childSetText("gridnick", empty);
@@ -223,9 +223,9 @@ void LoginFloater::refresh_grids()
 			sInstance->childSetText("loginpage", empty);
 			sInstance->childSetText("helperuri", empty);
 			sInstance->childSetText("website", empty);
-			// sInstance->childSetText("first_name", empty);
-			// sInstance->childSetText("last_name", empty);
-			// sInstance->childSetText("avatar_password", empty);
+			sInstance->childSetText("first_name", empty);
+			sInstance->childSetText("last_name", empty);
+			sInstance->childSetText("avatar_password", empty);
 		}
 	} else if (sInstance->mState == ADD_NEW) {
 			llwarns << "ADD_NEW" << llendl;
@@ -240,9 +240,9 @@ void LoginFloater::refresh_grids()
 		sInstance->childSetText("support", empty);
 		sInstance->childSetText("register", empty);
 		sInstance->childSetText("password", empty);
-		// sInstance->childSetText("first_name", empty);
-		// sInstance->childSetText("last_name", empty);
-		// sInstance->childSetText("avatar_password", empty);
+		sInstance->childSetText("first_name", empty);
+		sInstance->childSetText("last_name", empty);
+		sInstance->childSetText("avatar_password", empty);
 		//childSetEnabled("search", true);
 		//childSetText("search", empty);
 	} else if (sInstance->mState == ADD_COPY) {
@@ -275,24 +275,23 @@ void LoginFloater::applyChanges()
 			gridInfo->setHelperUri(childGetValue("helperuri"));
 			gridInfo->setWebSite(childGetValue("website"));
 			gridInfo->setSupportUrl(childGetValue("support"));
-			gridInfo->setRegisterUrl(childGetValue("register"));
+            gridInfo->setRegisterUrl(childGetValue("register"));
 			gridInfo->setPasswordUrl(childGetValue("password"));
+			gridInfo->setFirstName(childGetValue("first_name"));
+			gridInfo->setLastName(childGetValue("last_name"));
 			//gridInfo->setSearchUrl(childGetValue("search"));
 			gridInfo->setRenderCompat(childGetValue("render_compat"));
 			
-			// gridInfo->setFirstName(childGetValue("first_name"));
-			// gridInfo->setLastName(childGetValue("last_name"));
-			// if(childGetValue("avatar_password").asString().empty())
-			// 	gridInfo->setAvatarPassword(std::string(""));
-			// else if(childGetValue("avatar_password").asString() != std::string(PASSWORD_FILLER))
-			// {
-			// 	// store account authentication data
-			// 	std::string auth_password = childGetValue("avatar_password");
-			// 	std::string hashed_password;
-			// 	hashPassword(auth_password, hashed_password);
-			// 	gridInfo->setAvatarPassword(hashed_password);
-			// }
-
+			if(childGetValue("avatar_password").asString().empty())
+				gridInfo->setAvatarPassword(std::string(""));
+			else if(childGetValue("avatar_password").asString() != std::string(PASSWORD_FILLER))
+			{
+				// store account authentication data
+				std::string auth_password = childGetValue("avatar_password");
+				std::string hashed_password;
+				hashPassword(auth_password, hashed_password);
+				gridInfo->setAvatarPassword(hashed_password);
+			}
 			//this bug was a feature -Patrick Sapinski (Friday, August 21, 2009)
 			//LLPanelLogin::setFields(gridInfo->getFirstName(), gridInfo->getLastName(),
 			//						gridInfo->getAvatarPassword(), true);
@@ -310,6 +309,8 @@ bool LoginFloater::createNewGrid()
 	// check nickname
 	std::string gridnick = childGetValue("gridnick");
 	if (gridnick == "<required>") gridnick = "";
+	HippoGridInfo::cleanUpGridNick(gridnick);
+	childSetValue("gridnick", (gridnick != "")? gridnick: "<required>");
 	if (gridnick == "") {
 		//KOW gViewerWindow->alertXml("GridsNoNick");
 		return false;
@@ -338,22 +339,22 @@ bool LoginFloater::createNewGrid()
 	grid->setHelperUri(childGetValue("helperuri"));
 	grid->setWebSite(childGetValue("website"));
 	grid->setSupportUrl(childGetValue("support"));
-	grid->setRegisterUrl(childGetValue("register"));
+    grid->setRegisterUrl(childGetValue("register"));
 	grid->setPasswordUrl(childGetValue("password"));
+	grid->setFirstName(childGetValue("first_name"));
+	grid->setLastName(childGetValue("last_name"));
 	//grid->setSearchUrl(childGetValue("search"));
 	grid->setRenderCompat(childGetValue("render_compat"));
 	gHippoGridManager->addGrid(grid);
 	
-	// grid->setFirstName(childGetValue("first_name"));
-	// grid->setLastName(childGetValue("last_name"));
-	// if(childGetValue("avatar_password").asString().empty())
-	// 	grid->setAvatarPassword(std::string(""));
-	// else
-	// {
-	// 	std::string hashed_password;
-	// 	hashPassword(childGetValue("avatar_password"), hashed_password);
-	// 	grid->setAvatarPassword(hashed_password);
-	// }
+	if(childGetValue("avatar_password").asString().empty())
+		grid->setAvatarPassword(std::string(""));
+	else
+	{
+		std::string hashed_password;
+		hashPassword(childGetValue("avatar_password"), hashed_password);
+		grid->setAvatarPassword(hashed_password);
+	}
 	
 	mCurGrid = gridnick;
 	return true;
@@ -391,8 +392,8 @@ void LoginFloater::retrieveGridInfo()
 		if (grid->getLoginPage() != "") childSetText("loginpage", grid->getLoginPage());
 		if (grid->getHelperUri() != "") childSetText("helperuri", grid->getHelperUri());
 		if (grid->getWebSite() != "") childSetText("website", grid->getWebSite());
-		if (grid->getSupportUrl() != "") childSetText("support", grid->getSupportUrl());
-		if (grid->getRegisterUrl() != "") childSetText("register", grid->getRegisterUrl());
+        if (grid->getSupportUrl() != "") childSetText("support", grid->getSupportUrl());
+        if (grid->getRegisterUrl() != "") childSetText("register", grid->getRegisterUrl());
 		if (grid->getPasswordUrl() != "") childSetText("password", grid->getPasswordUrl());
 		//if (grid->getSearchUrl() != "") childSetText("search", grid->getSearchUrl());
 	} else {

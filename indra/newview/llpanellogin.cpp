@@ -115,7 +115,6 @@ public:
 LLLoginRefreshHandler gLoginRefreshHandler;
 
 
-
 // helper class that trys to download a URL from a web site and calls a method 
 // on parent class indicating if the web server is working or not
 class LLIamHereLogin : public LLHTTPClient::Responder
@@ -562,9 +561,8 @@ void LLPanelLogin::show(const LLRect &rect,
 }
 
 // static
-void LLPanelLogin::setFields(const std::string& firstname,
-			     const std::string& lastname,
-			     const std::string& password)
+void LLPanelLogin::setFields(const std::string& firstname, const std::string& lastname, const std::string& password,
+							 BOOL remember)
 {
 	if (!sInstance)
 	{
@@ -598,6 +596,8 @@ void LLPanelLogin::setFields(const std::string& firstname,
 		pass.hex_digest(munged_password);
 		sInstance->mMungedPassword = munged_password;
 	}
+
+	sInstance->childSetValue("remember_check", remember);
 }
 
 
@@ -647,9 +647,8 @@ void LLPanelLogin::addServer(const std::string& server)
 }
 
 // static
-void LLPanelLogin::getFields(std::string *firstname,
-			     std::string *lastname,
-			     std::string *password)
+void LLPanelLogin::getFields(std::string &firstname, std::string &lastname, std::string &password,
+							BOOL &remember)
 {
 	if (!sInstance)
 	{
@@ -657,13 +656,14 @@ void LLPanelLogin::getFields(std::string *firstname,
 		return;
 	}
 
-	*firstname = sInstance->childGetText("first_name_edit");
-	LLStringUtil::trim(*firstname);
+	firstname = sInstance->childGetText("first_name_edit");
+	LLStringUtil::trim(firstname);
 
-	*lastname = sInstance->childGetText("last_name_edit");
-	LLStringUtil::trim(*lastname);
+	lastname = sInstance->childGetText("last_name_edit");
+	LLStringUtil::trim(lastname);
 
-	*password = sInstance->mMungedPassword;
+	password = sInstance->mMungedPassword;
+	remember = sInstance->childGetValue("remember_check");
 }
 
 // static
@@ -816,7 +816,11 @@ void LLPanelLogin::loadLoginPage()
 	}
 
 	// Language
-	std::string language = LLUI::getLanguage();
+	std::string language(gSavedSettings.getString("Language"));
+	if(language == "default")
+	{
+		language = gSavedSettings.getString("SystemLanguage");
+	}
 	oStr << first_query_delimiter<<"lang=" << language;
 	
 	// First Login?
@@ -977,8 +981,8 @@ void LLPanelLogin::onClickConnect(void *)
 		}
 		else
 		{
-			LLNotifications::instance().add("MustHaveAccountToLogIn", LLSD(), LLSD(),
-										LLPanelLogin::newAccountAlertCallback);
+			LLNotifications::instance().add("MustHaveAccountToLogIn", LLSD(), LLSD(),LLPanelLogin::newAccountAlertCallback);
+
 		}
 	}
 }
@@ -1074,13 +1078,16 @@ void LLPanelLogin::onSelectServer(LLUICtrl* ctrl, void*)
 	std::string mCurGrid = ctrl->getValue().asString();
 	//KOW
 	gHippoGridManager->setCurrentGrid(mCurGrid);
-	// HippoGridInfo *gridInfo = gHippoGridManager->getGrid(mCurGrid);
-	// if (gridInfo) {
-	// 	//childSetText("gridnick", gridInfo->getGridNick());
-	// 	//platform->setCurrentByIndex(gridInfo->getPlatform());
-	// 	//childSetText("gridname", gridInfo->getGridName());
-	// 	LLPanelLogin::setFields( gridInfo->getFirstName(), gridInfo->getLastName(), gridInfo->getAvatarPassword(), 1 );
-	// }
+	
+	HippoGridInfo *gridInfo = gHippoGridManager->getGrid(mCurGrid);
+		if (gridInfo) {
+			//childSetText("gridnick", gridInfo->getGridNick());
+			//platform->setCurrentByIndex(gridInfo->getPlatform());
+			//childSetText("gridname", gridInfo->getGridName());
+			LLPanelLogin::setFields( gridInfo->getFirstName(), gridInfo->getLastName(), gridInfo->getAvatarPassword(), 1 );
+		}
+	//gHippoGridManager->setCurrentGrid(mCurGrid);
+
 
 	
 	llwarns << "current grid = " << mCurGrid << llendl;
