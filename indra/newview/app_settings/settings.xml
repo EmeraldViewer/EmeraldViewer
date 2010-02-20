@@ -4,7 +4,7 @@
     <key>EmeraldUseProperArc</key>
     <map>
         <key>Comment</key>
-        <string>Set to false you might as well just roll some dice. Takes effect when an avatar enters the scene.</string>
+        <string>Set to false, roll 2d20 to determine lag. Takes effect when an avatar enters field of vision. No saving throw.</string>
         <key>Persist</key>
         <integer>0</integer>
         <key>Type</key>
