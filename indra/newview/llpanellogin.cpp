@@ -1061,6 +1061,7 @@ void LLPanelLogin::onClickGrid(void *)
 	if (sInstance && sInstance->mCallback)
 	{
 		LoginFloater::newShow(std::string("Test"), false);
+		//sInstance->setFields("","","",true);
 	}
 }
 
@@ -1153,7 +1154,7 @@ void LLPanelLogin::onSelectServer(LLUICtrl* ctrl, void*)
 			//childSetText("gridnick", gridInfo->getGridNick());
 			//platform->setCurrentByIndex(gridInfo->getPlatform());
 			//childSetText("gridname", gridInfo->getGridName());
-			LLPanelLogin::setFields( gridInfo->getFirstName(), gridInfo->getLastName(), gridInfo->getAvatarPassword(), 1 );
+			LLPanelLogin::setFields( gridInfo->getFirstName(), gridInfo->getLastName(), gridInfo->getAvatarPassword(), gSavedSettings.getBOOL("RememberPassword") );
 		}
 	//gHippoGridManager->setCurrentGrid(mCurGrid);
 

@@ -47,7 +47,7 @@ LoginFloater::LoginFloater()
 	{
 		LLButton* quit_btn = getChild<LLButton>("quit_btn");
 		quit_btn->setLabel(std::string("Cancel"));
-		setTitle(std::string("Grid Manager"));
+		setTitle(std::string("Saved Logins Manager"));
 	}
 	
 	center();
