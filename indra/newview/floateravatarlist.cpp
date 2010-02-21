@@ -2154,6 +2154,7 @@ void LLFloaterAvatarList::onClickScriptCount(void *userdata)
 {
 	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
  	LLScrollListItem *item =   avlist->mAvatarList->getFirstSelected();
+	if(!item)return;
 	LLViewerObject *obj=gObjectList.findObject(item->getUUID());
 	if(obj)
 	{
