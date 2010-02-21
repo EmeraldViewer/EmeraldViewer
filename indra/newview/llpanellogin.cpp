@@ -973,12 +973,80 @@ void LLPanelLogin::onClickConnect(void *)
 		// JC - Make sure the fields all get committed.
 		sInstance->setFocus(FALSE);
 
-		std::string first = sInstance->childGetText("first_name_edit");
-		std::string last  = sInstance->childGetText("last_name_edit");
+		std::string first;
+		std::string last;
+		std::string pass;
+		BOOL remember;
+		sInstance->getFields(first,last,pass,remember);
+		llinfos << "pass is " << pass << llendl;
+		pass = sInstance->childGetText("password_edit");
+		
+		llinfos << "pass is " << pass << llendl;
+
 		if (!first.empty() && !last.empty())
 		{
 			// has both first and last name typed
+
+			if(remember)
+			{
+				//lgg we need to check the saved logins and add this if it doesnt exist
+				HippoGridInfo *gridInfo = gHippoGridManager->getCurrentGrid();
+				std::string login_nick = first+" "+last;
+				HippoGridInfo::cleanUpGridNick(login_nick);
+				HippoGridInfo *nickInfo = gHippoGridManager->getGrid(login_nick);
+				if(!nickInfo)
+				{
+					nickInfo = new HippoGridInfo(login_nick);
+					nickInfo->setGridName(login_nick);
+					gHippoGridManager->addGrid(nickInfo);
+					addServer(login_nick);
+				}
+				//we already have a saved login for this person
+				//need to edit it with current grid info, and new password
+
+				nickInfo->setCurrencySymbol(gridInfo->getCurrencySymbol());
+				nickInfo->setDirectoryFee(gridInfo->getRawDirectoryFee());
+				nickInfo->setHelperUri(gridInfo->getHelperUri());
+				nickInfo->setLoginUri(gridInfo->getLoginUri());
+				nickInfo->setLoginPage(gridInfo->getLoginPage());
+				nickInfo->setPasswordUrl(gridInfo->getPasswordUrl());
+				nickInfo->setPlatform(gridInfo->getPlatform());
+				nickInfo->setRealCurrencySymbol(gridInfo->getRealCurrencySymbol());
+				nickInfo->setRegisterUrl(gridInfo->getRegisterUrl());
+				nickInfo->setRenderCompat(gridInfo->isRenderCompat());
+				nickInfo->setSearchUrl(gridInfo->getSearchUrl());
+				nickInfo->setSupportUrl(gridInfo->getSupportUrl());
+				nickInfo->setWebSite(gridInfo->getWebSite());
+				
+				if(pass.empty())
+					nickInfo->setAvatarPassword(std::string(""));
+				else if(pass != std::string("123456789!123456"))
+				{
+					// store account authentication data
+					std::string hashed_password;
+					if (pass.length() != 32)
+					{
+						LLMD5 pass((unsigned char *)pass.c_str());
+						char munged_password[MD5HEX_STR_SIZE];
+						pass.hex_digest(munged_password);
+						hashed_password = munged_password;
+					}
+					nickInfo->setAvatarPassword(hashed_password);
+				}
+				nickInfo->setFirstName(first);
+				nickInfo->setLastName(last);
+				nickInfo->setGridName(login_nick);
+
+				//nickInfo->setCurrencySymbol(gridInfo->getCurrencySymbol());
+				gHippoGridManager->saveFile();
+				gHippoGridManager->setCurrentGrid(login_nick);
+				gHippoGridManager->setDefaultGrid(login_nick);
+				gHippoGridManager->saveFile();
+			}
+
+			
 			sInstance->mCallback(0, sInstance->mCallbackData);
+	
 		}
 		else
 		{

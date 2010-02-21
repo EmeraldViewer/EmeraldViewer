@@ -554,8 +554,11 @@ void LLDir::setLindenUserDir(const std::string &grid, const std::string &first, 
 		LLStringUtil::toLower(lastlower);
 		mLindenUserDir = getOSUserAppDir();
 		mLindenUserDir += mDirDelimiter;
-		mLindenUserDir += gridlower;
-		mLindenUserDir += "-";
+		if(!gridlower.empty())
+		{
+			mLindenUserDir += gridlower;
+			mLindenUserDir += "-";
+		}
 		mLindenUserDir += firstlower;
 		mLindenUserDir += "_";
 		mLindenUserDir += lastlower;

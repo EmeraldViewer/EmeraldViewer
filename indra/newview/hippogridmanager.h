@@ -57,6 +57,7 @@ public:
     std::string getUploadFee() const;
     std::string getGroupCreationFee() const;
     std::string getDirectoryFee() const;
+	int getRawDirectoryFee() const;
 
     bool isOpenSimulator() const { return (mPlatform == PLATFORM_OPENSIM   ); }
     bool isSecondLife()    const { return (mPlatform == PLATFORM_SECONDLIFE); }

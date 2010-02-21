@@ -231,6 +231,10 @@ std::string HippoGridInfo::getDirectoryFee() const
     if (fee != "free") fee += "/week";
     return fee;
 }
+int HippoGridInfo::getRawDirectoryFee() const
+{
+    return mDirectoryFee;
+}
 
 void HippoGridInfo::formatFee(std::string &fee, int cost, bool showFree) const
 {

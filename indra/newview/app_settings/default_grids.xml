@@ -13,7 +13,7 @@
 
     <!-- Second Life -->
     <map>
-      <key>gridnick</key><string>secondlife</string>
+      <key>gridnick</key><string>Grid: SecondLife</string>
       <key>gridname</key><string>Second Life</string>
       <key>platform</key><string>SecondLife</string>
       <key>loginuri</key><string>https://login.agni.lindenlab.com/cgi-bin/login.cgi</string>
@@ -27,7 +27,7 @@
 
     <!-- Local Host -->
     <map>
-      <key>gridnick</key><string>localhost</string>
+      <key>gridnick</key><string>Grid: Localhost</string>
       <key>gridname</key><string>Local Host</string>
       <key>platform</key><string>OpenSim</string>
       <key>loginuri</key><string>http://127.0.0.1:8080/</string>
@@ -37,7 +37,7 @@
 
 <map>
 <key>gridnick</key>
-<string>SecondLifeBeta</string>
+<string>Grid: SecondLife Beta</string>
 <key>gridname</key>
 <string>Second Life Beta Grid</string>
 <key>platform</key>
