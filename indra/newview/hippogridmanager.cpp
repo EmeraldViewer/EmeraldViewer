@@ -284,6 +284,7 @@ void HippoGridInfo::cleanUpUri(std::string &uri)
 	std::string::size_type n = uri.rfind('/');
 	if ((n == std::string::npos) || (n < 10))
 		uri += '/';
+	LLStringUtil::stripNonprintable(uri);
 }
 
 
