@@ -161,7 +161,7 @@ void lggIrcGroupHandler::startUpAutoRunIRC()
 		{
 
 			toReturn = getIrcGroupInfo(name.erase(name.length()-4));
-			if(toReturn.autoLogin && gSavedSettings.getBOOL("EmeraldIRC_AutoConnect"))
+			if(toReturn.autoLogin)
 			{
 				startUpIRCListener(toReturn);
 			}
@@ -175,7 +175,7 @@ void lggIrcGroupHandler::startUpAutoRunIRC()
 		if(found)
 		{
 			toReturn = getIrcGroupInfo(name.erase(name.length()-4));
-			if(toReturn.autoLogin && gSavedSettings.getBOOL("EmeraldIRC_AutoConnect"))
+			if(toReturn.autoLogin)
 			{
 				startUpIRCListener(toReturn);
 			}
