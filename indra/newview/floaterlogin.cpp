@@ -416,6 +416,7 @@ void LoginFloater::apply()
 	//gHippoGridManager->setCurrentGrid(mCurGrid);
 	//gHippoGridManager->setDefaultGrid(mCurGrid);
 	//LLPanelLogin::refreshLoginPage();
+	mState=NORMAL;
 	gHippoGridManager->saveFile();
 	LLPanelLogin::addServer(LLViewerLogin::getInstance()->getGridLabel());
 }
