@@ -19,11 +19,11 @@
 	<!-- PASSWORD -->
 	<text name="password_text">Kennwort:</text>
 	<line_editor name="password_edit"/>
-	<check_box name="remember_check" label="Password speichern"/>
+	<check_box name="remember_check" label="Account Daten speichern"/>
 	<!-- GRIDS -->
-	<text name="grid_text">Grid:</text>
+	<text name="grid_text">Accounts:</text>
 	<combo_box name="server_combo"/>
-	<button name="grid_btn" label="Grid Manager"/>
+	<button name="grid_btn" label="Login Manager"/>
 	<!-- LOG IN -->
 	<button name="connect_btn" label="Anmelden"/>
 	<!-- ACCOUNT / FORGOT PASSWORD -->
