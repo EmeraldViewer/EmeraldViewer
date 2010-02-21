@@ -27,7 +27,7 @@
   <!-- LOG IN -->
   <button name="connect_btn" label="Log In" bottom="34" left_delta="190" height="24" width="120" follows="left|bottom" font="SansSerif" halign="center" mouse_opaque="true" scale_image="TRUE" />
   <!-- ACCOUNT / FORGOT PASSWORD -->
-  <text name="create_new_account_text" bottom="45" left="-210" height="16" width="200" follows="right|bottom" h_pad="0" halign="right" v_pad="0" bg_visible="false" drop_shadow_visible="true" border_visible="false" border_drop_shadow_visible="false" font="SansSerifSmall" font-style="UNDERLINE" mouse_opaque="true" hover="true" hover_color="50 115 185">Sign up for account</text>
+  <text name="create_new_account_text" bottom="45" left="-120" height="16" width="110" follows="right|bottom" h_pad="0" halign="right" v_pad="0" bg_visible="false" drop_shadow_visible="true" border_visible="false" border_drop_shadow_visible="false" font="SansSerifSmall" font-style="UNDERLINE" mouse_opaque="true" hover="true" hover_color="50 115 185">Sign up for account</text>
   <text name="forgot_password_text" bottom="25" left="-210" height="16" width="200" follows="right|bottom" h_pad="0" halign="right" v_pad="0" bg_visible="false" drop_shadow_visible="true" border_visible="false" border_drop_shadow_visible="false" font="SansSerifSmall" font-style="UNDERLINE" mouse_opaque="true" hover="true" hover_color="50 115 185">Forgot your name or password?</text>
   <!-- CHANNEL & VERSION -->
   <text name="channel_text" bottom="5" left="-310" height="16" width="300" follows="right|bottom" h_pad="0" halign="right" v_pad="0" bg_visible="false" drop_shadow_visible="true" border_visible="false" border_drop_shadow_visible="false" font="SansSerifSmall" mouse_opaque="true" hover="true" hover_color="50 115 185">[VERSION]</text>
