@@ -1026,9 +1026,9 @@ void LLPanelLogin::onClickConnect(void *)
 					std::string hashed_password;
 					if (pass.length() != 32)
 					{
-						LLMD5 pass((unsigned char *)pass.c_str());
+						LLMD5 passd5((unsigned char *)pass.c_str());
 						char munged_password[MD5HEX_STR_SIZE];
-						pass.hex_digest(munged_password);
+						passd5.hex_digest(munged_password);
 						hashed_password = munged_password;
 					}
 					nickInfo->setAvatarPassword(hashed_password);
