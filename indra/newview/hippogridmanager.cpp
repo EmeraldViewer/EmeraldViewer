@@ -445,35 +445,12 @@ void HippoGridManager::loadFromFile()
 	parseFile(gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "grid_info.xml"), false);
 	// merge default grid info, if newer. Force load, if list of grids is empty.
 	parseFile(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "default_grids.xml"), !mGridInfo.empty());
-	// merge grid info from web site, if newer. Force load, if list of grids is empty.
-	if (gSavedSettings.getBOOL("CheckForGridUpdates"))
-		parseUrl("http://meerkatviewer.org/scripts/grids.php", !mGridInfo.empty());
-
-	setDefaultGrid(gSavedSettings.getString("DefaultGrid"));
-	setCurrentGrid(gSavedSettings.getString("DefaultGrid"));
+	std::string last_grid = gSavedSettings.getString("LastSelectedGrid");
+	if (last_grid.empty()) last_grid = gSavedSettings.getString("DefaultGrid");
+	setDefaultGrid(last_grid);
+	setCurrentGrid(last_grid);
 }
 
-
-void HippoGridManager::parseUrl(const char *url, bool mergeIfNewer)
-{
-	llinfos << "Loading grid info from '" << url << "'." << llendl;
-
-	// query update server
-	std::string escaped_url = LLWeb::escapeURL(url);
-	LLSD response = LLHTTPClient::blockingGet(url);
-
-	// check response, return on error
-	S32 status = response["status"].asInteger();
-	if ((status != 200) || !response["body"].isArray()) {
-		llinfos << "GridInfo Update failed (" << status << "): "
-			<< (response["body"].isString()? response["body"].asString(): "<unknown error>")
-			<< llendl;
-		return;
-	}
-
-	LLSD gridInfo = response["body"];
-	parseData(gridInfo, mergeIfNewer); 
-}
 
 void HippoGridManager::parseFile(const std::string &fileName, bool mergeIfNewer)
 {
