@@ -8,12 +8,12 @@
     -->
 
     <map>
-      <key>default_grids_version</key><string>1</string>
+      <key>default_grids_version</key><string>0</string>
     </map>
 
     <!-- Second Life -->
     <map>
-      <key>gridnick</key><string>Grid: SecondLife</string>
+      <key>gridnick</key><string> Grid: SecondLife</string>
       <key>gridname</key><string>Second Life</string>
       <key>platform</key><string>SecondLife</string>
       <key>loginuri</key><string>https://login.agni.lindenlab.com/cgi-bin/login.cgi</string>
