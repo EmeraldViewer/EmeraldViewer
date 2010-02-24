@@ -168,6 +168,21 @@ void set_start_location(LLUICtrl* ctrl, void* data)
     LLURLSimString::setString(ctrl->getValue().asString());
 }
 
+std::string uriToGrid(std::string loginUri)
+{
+	LLStringUtil::toLower(loginUri);
+	std::string uris [] = {"http://grid.3rdrockgrid.com:8002","http://Gianttest.no-ip.biz:8002/","http://thegorgrid.com:8002","http://grid.cyberlandia.net:8002","http://reactiongrid.com:8008/","http://grid.newworldgrid.com:8002/","http://grid01.from-ne.com:8002/","http://wsterra.com:8002","http://login.legendcityonline.com", "http://osgrid.org:8002/","https://login.aditi.lindenlab.com/cgi-bin/login.cgi","https://login.agni.lindenlab.com/cgi-bin/login.cgi","https://login.aruna.lindenlab.com/cgi-bin/login.cgi","https://login.bharati.lindenlab.com/cgi-bin/login.cgi","https://login.chandra.lindenlab.com/cgi-bin/login.cgi","https://login.damballah.lindenlab.com/cgi-bin/login.cgi","https://login.danu.lindenlab.com/cgi-bin/login.cgi","https://login.durga.lindenlab.com/cgi-bin/login.cgi","https://login.ganga.lindenlab.com/cgi-bin/login.cgi","https://login.mitra.lindenlab.com/cgi-bin/login.cgi","https://login.mohini.lindenlab.com/cgi-bin/login.cgi","https://login.nandi.lindenlab.com/cgi-bin/login.cgi","https://login.parvati.lindenlab.com/cgi-bin/login.cgi","https://login.radha.lindenlab.com/cgi-bin/login.cgi","https://login.ravi.lindenlab.com/cgi-bin/login.cgi","https://login.siva.lindenlab.com/cgi-bin/login.cgi","https://login.shakti.lindenlab.com/cgi-bin/login.cgi","https://login.skanda.lindenlab.com/cgi-bin/login.cgi","https://login.soma.lindenlab.com/cgi-bin/login.cgi","https://login.uma.lindenlab.com/cgi-bin/login.cgi","https://login.vaak.lindenlab.com/cgi-bin/login.cgi","https://login.yami.lindenlab.com/cgi-bin/login.cgi","localhost","http://127.0.0.1","https://login.dmz.lindenlab.com/cgi-bin/login.cgi"};
+	std::string names [] = {"3rdR","Giant","Gor","Cyber","React","NewWG","AltL","WST","Legend","OsGrid", "SL","SL","Aruna","Bharati","Chandra","Damballah","Danu","Durga","Ganga","Mitra","Mohini","Nandi","Parvati","Radha","Ravi","Siva","Shakti","Skanda","Soma","Uma","Vaak","Yami","Local","localhost","Local","Other"};
+	for(int i = 0;i<20;i++)
+	{
+		std::string lookFor = uris[i];
+		LLStringUtil::toLower(lookFor);	
+		int found = loginUri.find(lookFor);
+		if(found!=std::string::npos)
+			return " "+names[i];
+	}
+	return "";
+}
 //---------------------------------------------------------------------------
 // Public methods
 //---------------------------------------------------------------------------
@@ -557,7 +572,8 @@ void LLPanelLogin::show(const LLRect &rect,
 
 	// Make sure that focus always goes here (and use the latest sInstance that was just created)
 	gFocusMgr.setDefaultKeyboardFocus(sInstance);
-	LLPanelLogin::addServer(LLViewerLogin::getInstance()->getGridLabel());
+	//LLPanelLogin::addServer(LLViewerLogin::getInstance()->getGridLabel());
+	LLPanelLogin::addServer(gHippoGridManager->getDefaultGridNick());
 }
 
 // static
@@ -570,8 +586,8 @@ void LLPanelLogin::setFields(const std::string& firstname, const std::string& la
 		return;
 	}
 
-	sInstance->childSetText("first_name_edit", firstname);
-	sInstance->childSetText("last_name_edit", lastname);
+	if(firstname!="")	sInstance->childSetText("first_name_edit", firstname);
+	if(lastname!="")	sInstance->childSetText("last_name_edit", lastname);
 	
 	// Max "actual" password length is 16 characters.
 	// Hex digests are always 32 characters.
@@ -589,12 +605,15 @@ void LLPanelLogin::setFields(const std::string& firstname, const std::string& la
 	else
 	{
 		// this is a normal text password
-		sInstance->childSetText("password_edit", password);
-		sInstance->mIncomingPassword = password;
-		LLMD5 pass((unsigned char *)password.c_str());
-		char munged_password[MD5HEX_STR_SIZE];
-		pass.hex_digest(munged_password);
-		sInstance->mMungedPassword = munged_password;
+		if(password!="")
+		{
+			sInstance->childSetText("password_edit", password);
+			sInstance->mIncomingPassword = password;
+			LLMD5 pass((unsigned char *)password.c_str());
+			char munged_password[MD5HEX_STR_SIZE];
+			pass.hex_digest(munged_password);
+			sInstance->mMungedPassword = munged_password;
+		}
 	}
 
 	sInstance->childSetValue("remember_check", remember);
@@ -978,11 +997,7 @@ void LLPanelLogin::onClickConnect(void *)
 		std::string pass;
 		BOOL remember;
 		sInstance->getFields(first,last,pass,remember);
-		llinfos << "pass is " << pass << llendl;
 		pass = sInstance->childGetText("password_edit");
-		
-		llinfos << "pass is " << pass << llendl;
-
 		if (!first.empty() && !last.empty())
 		{
 			// has both first and last name typed
@@ -991,7 +1006,8 @@ void LLPanelLogin::onClickConnect(void *)
 			{
 				//lgg we need to check the saved logins and add this if it doesnt exist
 				HippoGridInfo *gridInfo = gHippoGridManager->getCurrentGrid();
-				std::string login_nick = first+" "+last;
+				
+				std::string login_nick = first+" "+last+uriToGrid(gridInfo->getLoginUri());
 				HippoGridInfo::cleanUpGridNick(login_nick);
 				HippoGridInfo *nickInfo = gHippoGridManager->getGrid(login_nick);
 				if(!nickInfo)
@@ -1038,7 +1054,7 @@ void LLPanelLogin::onClickConnect(void *)
 				nickInfo->setGridName(login_nick);
 
 				//nickInfo->setCurrencySymbol(gridInfo->getCurrencySymbol());
-				gHippoGridManager->saveFile();
+				//gHippoGridManager->saveFile();
 				gHippoGridManager->setCurrentGrid(login_nick);
 				gHippoGridManager->setDefaultGrid(login_nick);
 				gHippoGridManager->saveFile();
