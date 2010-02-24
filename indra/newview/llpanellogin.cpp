@@ -1053,10 +1053,11 @@ void LLPanelLogin::onClickConnect(void *)
 				nickInfo->setLastName(last);
 				nickInfo->setGridName(login_nick);
 
+
 				//nickInfo->setCurrencySymbol(gridInfo->getCurrencySymbol());
 				//gHippoGridManager->saveFile();
-				gHippoGridManager->setCurrentGrid(login_nick);
-				gHippoGridManager->setDefaultGrid(login_nick);
+				gHippoGridManager->setCurrentGrid(nickInfo->getGridNick());
+				gHippoGridManager->setDefaultGrid(nickInfo->getGridNick());
 				gHippoGridManager->saveFile();
 			}
 
