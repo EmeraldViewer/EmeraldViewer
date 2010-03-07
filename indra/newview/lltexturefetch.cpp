@@ -951,7 +951,7 @@ bool LLTextureFetchWorker::doWork(S32 param)
 				// We're waiting for this write to complete before we can receive more data
 				// (we can't touch mFormattedImage until the write completes)
 				// Prioritize the write
-				mFetcher->mTextureCache->prioritizeWrite(mCacheWriteHandle);
+				// mFetcher->mTextureCache->prioritizeWrite(mCacheWriteHandle);
 			}
 			return false;
 		}
