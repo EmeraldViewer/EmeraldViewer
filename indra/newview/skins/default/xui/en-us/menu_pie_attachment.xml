@@ -22,8 +22,8 @@
 			<on_enable function="Object.EnableTouch" userdata="Touch" name="EnableTouch"/>
 		</menu_item_call>
 		<menu_item_call enabled="true" label="Derender" mouse_opaque="true" name="Derender">
-		    <on_click function="Object.DERENDER" />
- 		    <on_enable function="Object.EnableDerender" />
+			<on_click function="Object.DERENDER" />
+			<on_enable function="Object.EnableDerender" />
 		</menu_item_call>
 	</pie_menu>
 	<menu_item_call enabled="true" label="Stand Up" name="Stand Up">

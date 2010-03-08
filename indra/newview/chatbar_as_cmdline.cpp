@@ -76,7 +76,6 @@ void cmdline_tp2name(std::string target);
 LLUUID cmdline_partial_name2key(std::string name);
 
 
-
 LLViewerInventoryItem::item_array_t findInventoryInFolder(const std::string& ifolder)
 {
 	LLUUID folder = gInventory.findCategoryByName(ifolder);
@@ -127,7 +126,7 @@ private:
 class JCZtake : public LLEventTimer
 {
 public:
-	static BOOL ztakeon;
+	static int ztakeon;
 
 	JCZtake() : LLEventTimer(2.0f)
 	{
@@ -190,6 +189,8 @@ private:
 	
 };
 
+int JCZtake::ztakeon;
+
 void invrepair()
 {
 
@@ -198,10 +199,6 @@ void invrepair()
 	//ObjectContentNameMatches objectnamematches(ifolder);
 	gInventory.collectDescendents(gAgent.getInventoryRootID(),cats,items,FALSE);//,objectnamematches);
 }
-
-
-
-
 bool cmd_line_chat(std::string revised_text, EChatType type)
 {
 	if(gSavedSettings.getBOOL("EmeraldCmdLine"))
@@ -461,6 +458,16 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 							new JCZface(lolstack, sdest, 2.5f);
 						}
 					}else cmdline_printchat("no size");
+					return false;
+				}
+			}else if(command == "ztake")
+			{
+				std::string flip;
+				if(i >> flip)
+				{
+					if(flip == "on")new JCZtake();
+					else if(flip == "off")JCZtake::ztakeon = FALSE;
+					return false;
 				}
 			}else if(command == "invrepair")
 			{
@@ -560,7 +567,9 @@ void cmdline_rezplat(bool use_saved_value, F32 visual_radius) //cmdline_rezplat(
 
     LLVolumeParams    volume_params;
 
-    volume_params.setType( LL_PCODE_PROFILE_CIRCLE, LL_PCODE_PATH_CIRCLE_33 );
+    volume_params.setType( LL_PCODE_PROFILE_SQUARE, LL_PCODE_PATH_CIRCLE_33 );
+	volume_params.setTwistBegin(-360);
+	volume_params.setTwistEnd(360);
     volume_params.setRatio    ( 2, 2 );
     volume_params.setShear    ( 0, 0 );
     volume_params.setTaper(2.0f,2.0f);

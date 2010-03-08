@@ -107,6 +107,7 @@
 #include "llstatenums.h"
 #include "llstatusbar.h"
 #include "llimview.h"
+#include "lltexturestats.h"
 #include "lltool.h"
 #include "lltoolbar.h"
 #include "lltoolmgr.h"
@@ -165,6 +166,11 @@ extern LLMap< const LLUUID, LLFloaterAvatarInfo* > gAvatarInfoInstances; // Only
 #endif // USE_OTR    // [/$PLOTR$]
 
 //silly spam define D:
+bool generalSpamOn;
+//static LLFrameTimer d_spam;
+std::map< std::string , S32 > lastg_agents;
+LLDynamicArray< std::string > blacklisted_objects;
+
 bool dialogSpamOn;
 //static LLFrameTimer d_spam;
 std::map< std::string , S32 > lastd_names;
@@ -174,6 +180,9 @@ bool callingSpamOn;
 //static LLFrameTimer c_spam;
 std::map< LLUUID , S32 > lastc_agents;
 LLDynamicArray<LLUUID> blacklisted_agents;
+
+F32 spamTime;
+F32 spamCount;
 ////////////////////////////////////////////////////////////////////////////
 //
 // Constants
@@ -231,7 +240,7 @@ const BOOL SCRIPT_QUESTION_IS_CAUTION[SCRIPT_PERMISSION_EOF] =
 	FALSE,	// TrackYourCamera,
 	FALSE	// ControlYourCamera
 };
-
+void cmdline_printchat(std::string message);
 bool friendship_offer_callback(const LLSD& notification, const LLSD& response)
 {
 	S32 option = LLNotification::getSelectedOption(notification, response);
@@ -1613,7 +1622,6 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	BOOL is_muted = LLMuteList::getInstance()->isMuted(from_id, name, LLMute::flagTextChat);
 	BOOL is_linden = LLMuteList::getInstance()->isLinden(name);
 	BOOL is_owned_by_me = FALSE;
-
 	LLUUID computed_session_id = LLIMMgr::computeSessionID(dialog,from_id);
 	
 	chat.mMuted = is_muted && !is_linden;
@@ -1621,12 +1629,52 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	chat.mFromName = name;
 	chat.mSourceType = (from_id.isNull() || (name == std::string(SYSTEM_FROM))) ? CHAT_SOURCE_SYSTEM : CHAT_SOURCE_AGENT;
 
-	LLViewerObject *source = gObjectList.findObject(session_id); //Session ID is probably the wrong thing.
+	LLViewerObject *source = gObjectList.findObject(from_id); //Session ID is probably the wrong thing.
 	if (source)
 	{
 		is_owned_by_me = source->permYouOwner();
 	}
-
+	if(generalSpamOn && !is_owned_by_me)
+	{
+		if(!g_spam.getStarted())
+		{
+			g_spam.start();
+		}
+		if(blacklisted_objects.find(from_id.asString()) != -1)
+		{
+			return;
+		}
+		std::map< std::string , S32 >::iterator itr = lastg_agents.find(from_id.asString());
+		if(itr != lastg_agents.end())
+		{
+			if(g_spam.getElapsedTimeF32() <= spamTime)
+			{
+				if((*itr).second > spamCount)
+				{
+					blacklisted_objects.put(from_id.asString());
+					LL_INFOS("process_script_dialog") << "blocked and muted " << from_id.asString() << LL_ENDL;
+					LLSD args;
+					args["KEY"] = from_id;
+					LLNotifications::getInstance()->add("BlockedGeneral",args);
+					return;
+				}
+				else
+				{
+					(*itr).second++;
+				}
+			}
+			else
+			{
+				lastg_agents.erase(lastg_agents.begin(),lastg_agents.end());
+				g_spam.reset();
+			}
+		}
+		else
+		{
+			//llinfos << "Added " << fullname << " to list" << llendl;
+			lastg_agents[from_id.asString()] = 0;
+		}
+	}
 	std::string decrypted_msg;
 	bool encrypted = gIMMgr->decryptMessage(session_id, from_id, message, decrypted_msg);
 #if USE_OTR // [$PLOTR$]
@@ -1646,10 +1694,10 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 		char my_uuid[UUID_STR_SIZE];
 		char their_uuid[UUID_STR_SIZE];
 
-        if (gOTR &&
-            ((IM_NOTHING_SPECIAL == dialog) ||
-             ((IM_TYPING_STOP == dialog) &&
-              (! ((message == "typing") || (message == "cryo::ping"))))))
+		if (gOTR &&
+			((IM_NOTHING_SPECIAL == dialog) ||
+            ((IM_TYPING_STOP == dialog) &&
+             (! ((message == "typing") || (message == "cryo::ping"))))))
 		{
 			// only try OTR for 1 on 1 IM's or special tagged typing_stop packets
 			gAgent.getID().toString(&(my_uuid[0]));
@@ -2893,9 +2941,9 @@ void process_offer_callingcard(LLMessageSystem* msg, void**)
 			std::map< LLUUID , S32 >::iterator itr = lastc_agents.find(source_id);
 			if(itr != lastc_agents.end())
 			{
-				if(c_spam.getElapsedTimeF32() < gSavedSettings.getF32("EmeraldSpamTime"))
+				if(c_spam.getElapsedTimeF32() < spamTime)
 				{
-					if((*itr).second > gSavedSettings.getF32("EmeraldSpamCount"))
+					if((*itr).second > spamCount)
 					{
 						blacklisted_agents.put(source_id);
 						LL_INFOS("process_offer_callingcard") << "blocked callingcards from " << source_name << LL_ENDL;
@@ -3879,7 +3927,10 @@ void process_agent_movement_complete(LLMessageSystem* msg, void**)
 	}
 	*/
 
-	send_agent_update(TRUE, TRUE);
+	if(!gAgent.getPhantom())
+	{
+		send_agent_update(TRUE, TRUE);
+	}
 
 	if (gAgent.getRegion()->getBlockFly())
 	{
@@ -4455,6 +4506,7 @@ void process_preload_sound(LLMessageSystem *msg, void **user_data)
 		// Add audioData starts a transfer internally.
 		sourcep->addAudioData(datap, FALSE);
 	}
+	
 }
 
 void process_attached_sound(LLMessageSystem *msg, void **user_data)
@@ -6086,7 +6138,10 @@ void process_teleport_local(LLMessageSystem *msg,void**)
 	// send camera update to new region
 	gAgent.updateCamera();
 
-	send_agent_update(TRUE, TRUE);
+	if(!gAgent.getPhantom())
+	{
+		send_agent_update(TRUE, TRUE);
+	}
 }
 
 void send_simple_im(const LLUUID& to_id,
@@ -6457,9 +6512,9 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 			std::map< std::string , S32 >::iterator itr = lastd_names.find(fullname);
 			if(itr != lastd_names.end())
 			{
-				if(d_spam.getElapsedTimeF32() <= gSavedSettings.getF32("EmeraldSpamTime"))
+				if(d_spam.getElapsedTimeF32() <= spamTime)
 				{
-					if((*itr).second > gSavedSettings.getF32("EmeraldSpamCount"))
+					if((*itr).second > spamCount)
 					{
 						/*LLSD lol = LLHTTPClient::blockingGet("http://www.lawlinter.net/secondlifeutility/name2key.php?name="+LLWeb::escapeURL(fullname)+"&llsd=true");
 						LLUUID key = lol["body"];*/

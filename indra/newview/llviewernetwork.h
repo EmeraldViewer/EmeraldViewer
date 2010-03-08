@@ -77,7 +77,7 @@ public:
 	const std::string &getGridLabel() const; 
 	const std::string &getLoginPage() const;
 	const std::string &getHelperURI() const;
-
+  
 	bool isOpenSimulator();
 	bool isSecondLife();
 

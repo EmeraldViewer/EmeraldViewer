@@ -136,15 +136,6 @@ void LLFloaterObjectIMInfo::regionhandle(const U64& region_handle)
 		childSetVisible("Unknown_Slurl",false);
 		childSetVisible("Slurl",true);
 		childSetText("Slurl",mSlurl);
-	} else {
-		U32 global_x;
-		U32 global_y;
-		from_region_handle(region_handle, &global_x, &global_y);
-		U16 grid_x = (U16)(global_x / REGION_WIDTH_UNITS);
-		U16 grid_y = (U16)(global_y / REGION_WIDTH_UNITS);
-		lookingforRegion = TRUE;
-		llinfos << "region name for (" << grid_x << ", " << grid_y << ") not cached, requesting" << llendl;
-		LLWorldMap::getInstance()->sendMapBlockRequest(grid_x, grid_y, grid_x, grid_y, true);
 	}
 }
 

@@ -48,6 +48,26 @@ class LLTextureCache : public LLWorkerThread
 	friend class LLTextureCacheRemoteWorker;
 	friend class LLTextureCacheLocalFileWorker;
 
+private:
+	// Entries
+	struct EntriesInfo
+	{
+		EntriesInfo() : mVersion(0.f), mEntries(0) {}
+		F32 mVersion;
+		U32 mEntries;
+	};
+	struct Entry
+	{
+		Entry() {mImageSize = -1; mDataSize = -1; mTime = 0;}
+		Entry(const LLUUID& id, S32 imagesize, S32 datasize, U32 time) :
+			mID(id), mImageSize(imagesize), mDataSize(datasize), mTime(time) {}
+		LLUUID mID; // 16 bytes
+		S32 mImageSize; // total size of image if known
+		S32 mDataSize; // This is all we really care about.
+		U32 mTime; // seconds since 1/1/1970
+	};
+
+	
 public:
 
 	class Responder : public LLResponder
@@ -72,7 +92,6 @@ public:
 	{
 		void setData(U8* data, S32 datasize, S32 imagesize, S32 imageformat, BOOL imagelocal)
 		{
-			// not used
 		}
 	};
 	
@@ -84,16 +103,19 @@ public:
 	void purgeCache(ELLPath location);
 	S64 initCache(ELLPath location, S64 maxsize, BOOL read_only);
 
+	// Read from cache.
+	// Local file read.
 	handle_t readFromCache(const std::string& local_filename, const LLUUID& id, U32 priority, S32 offset, S32 size,
 						   ReadResponder* responder);
-
+	// Remote file read.
 	handle_t readFromCache(const LLUUID& id, U32 priority, S32 offset, S32 size,
 						   ReadResponder* responder);
 	bool readComplete(handle_t handle, bool abort);
+
+	// Write to cache.
 	handle_t writeToCache(const LLUUID& id, U32 priority, U8* data, S32 datasize, S32 imagesize,
 						  WriteResponder* responder);
 	bool writeComplete(handle_t handle, bool abort = false);
-	void prioritizeWrite(handle_t handle);
 
 	void removeFromCache(const LLUUID& id);
 
@@ -106,25 +128,35 @@ public:
 	// debug
 	S32 getNumReads() { return mReaders.size(); }
 	S32 getNumWrites() { return mWriters.size(); }
+	S64 getUsage() { return mTexturesSizeTotal; }
+	S64 getMaxUsage() { return sCacheMaxTexturesSize; }
+	U32 getEntries() { return mHeaderEntriesInfo.mEntries; }
+	U32 getMaxEntries() { return sCacheMaxEntries; };
 
 protected:
 	// Accessed by LLTextureCacheWorker
-	bool appendToTextureEntryList(const LLUUID& id, S32 size);
 	std::string getLocalFileName(const LLUUID& id);
 	std::string getTextureFileName(const LLUUID& id);
 	void addCompleted(Responder* responder, bool success);
-	
-protected:
-	//void setFileAPRPool(apr_pool_t* pool) { mFileAPRPool = pool ; }
 
 private:
 	void setDirNames(ELLPath location);
 	void readHeaderCache();
 	void purgeAllTextures(bool purge_directories);
 	void purgeTextures(bool validate);
-	void purgeTextureFilesTimeSliced(BOOL force_all = FALSE);	// VWR-3878 - NB
-	S32 getHeaderCacheEntry(const LLUUID& id, bool touch, S32* imagesize = NULL);
+	//------------//
+	LLAPRFile* openHeaderEntriesFile(bool readonly, S32 offset);
+	void closeHeaderEntriesFile();
+	S32 readEntry(const LLUUID& id, Entry& entry);
+	void writeEntry(S32 idx, Entry& entry);
+	//------------//
+	U32 readEntries();
+	void writeEntries();
+	//------------//
+	S32 getHeaderCacheEntry(const LLUUID& id, S32& imagesize);
+	S32 setHeaderCacheEntry(const LLUUID& id, S32 imagesize, S32 datasize);
 	bool removeHeaderCacheEntry(const LLUUID& id);
+	//------------//
 	void lockHeaders() { mHeaderMutex.lock(); }
 	void unlockHeaders() { mHeaderMutex.unlock(); }
 	
@@ -132,60 +164,43 @@ private:
 	// Internal
 	LLMutex mWorkersMutex;
 	LLMutex mHeaderMutex;
-	LLMutex mListMutex;
+	LLMutex mListMutex; //mCompletedList + 
+	LLAPRFile* mHeaderAPRFile;
+	LLTimer mWriteHeaderTimer;
 	
 	typedef std::map<handle_t, LLTextureCacheWorker*> handle_map_t;
 	handle_map_t mReaders;
 	handle_map_t mWriters;
 
-	typedef std::vector<handle_t> handle_list_t;
-	handle_list_t mPrioritizeWriteList;
-
 	typedef std::vector<std::pair<LLPointer<Responder>, bool> > responder_list_t;
 	responder_list_t mCompletedList;
-
-	typedef std::list<std::string> filename_list_t;
-	filename_list_t	mFilesToDelete;
-	LLTimer mTimeLastFileDelete;
 	
 	BOOL mReadOnly;
 	
-	// Entries
-	struct EntriesInfo
-	{
-		F32 mVersion;
-		U32 mEntries;
-	};
-	struct Entry
-	{
-		Entry() {}
-		Entry(const LLUUID& id, S32 size, U32 time) : mID(id), mSize(size), mTime(time) {}
-		LLUUID mID; // 128 bits
-		S32 mSize; // total size of image if known (NOT size cached)
-		U32 mTime; // seconds since 1/1/1970
-	};
-
 	// HEADERS (Include first mip)
 	std::string mHeaderEntriesFileName;
-	std::string mHeaderDataFileName;
 	EntriesInfo mHeaderEntriesInfo;
-	typedef std::map<S32,LLUUID> index_map_t;
-	index_map_t mLRU; // index, id; stored as a map for fast removal
+	std::set<S32> mFreeList; // deleted entries
+	std::set<LLUUID> mLRU;
 	typedef std::map<LLUUID,S32> id_map_t;
 	id_map_t mHeaderIDMap;
+	typedef std::vector<Entry> entry_vec_t;
+	entry_vec_t mHeaderEntries;
+	std::set<S32> mToWriteHeaders;
 
 	// BODIES (TEXTURES minus headers)
 	std::string mTexturesDirName;
-	std::string mTexturesDirEntriesFileName;
 	typedef std::map<LLUUID,S32> size_map_t;
 	size_map_t mTexturesSizeMap;
 	S64 mTexturesSizeTotal;
 	LLAtomic32<BOOL> mDoPurge;
-	
+
 	// Statics
 	static F32 sHeaderCacheVersion;
 	static U32 sCacheMaxEntries;
 	static S64 sCacheMaxTexturesSize;
 };
+
+extern const S32 TEXTURE_CACHE_ENTRY_SIZE;
 
 #endif // LL_LLTEXTURECACHE_H

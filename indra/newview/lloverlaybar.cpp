@@ -143,9 +143,8 @@ BOOL LLOverlayBar::postBuild()
 	childSetAction("Mouselook",onClickMouselook,this);
 	childSetAction("Stand Up",onClickStandUp,this);
 	childSetAction("Cancel TP",onClickCancelTP,this);
- 	childSetAction("Flycam",onClickFlycam,this);
+	childSetAction("Flycam",onClickFlycam,this);
 	childSetVisible("chat_bar", gSavedSettings.getBOOL("ChatVisible"));
-
 	mCancelBtn = getChild<LLButton>("Cancel TP");
 	setFocusRoot(TRUE);
 	mBuilt = true;

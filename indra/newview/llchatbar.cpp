@@ -220,7 +220,7 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 				{
 					if (msg[mInputEditor->getCursor() - 1] != '\n')
 					{
-						//For some reason you have to use a newline character, the ¶ wont show up in chat.
+						//For some reason you have to use a newline character, the  wont show up in chat.
 						msg = msg.insert(mInputEditor->getCursor(), "\n");
 						mInputEditor->setText(msg);
 						mInputEditor->setCursor(mInputEditor->getCursor() + 1);

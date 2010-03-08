@@ -57,6 +57,7 @@
 #include "llares.h" 
 #include "llcurl.h"
 #include "llfloatersnapshot.h"
+#include "lltexturestats.h"
 #include "llviewerwindow.h"
 #include "llviewerdisplay.h"
 #include "llviewermedia.h"
@@ -252,8 +253,7 @@ LLUUID gInventoryLibraryRoot;
 
 BOOL				gDisconnected = FALSE;
 
-// Map scale in pixels per region
-F32 				gMapScale = 128.f;
+// Minimap scale in pixels per region
 
 // used to restore texture state after a mode switch
 LLFrameTimer	gRestoreGLTimer;
@@ -422,6 +422,7 @@ static void settings_to_globals()
 	LLFolderView::sAutoOpenTime			= llmax(0.25f, gSavedSettings.getF32("FolderAutoOpenDelay"));
 	LLToolBar::sInventoryAutoOpenTime	= gSavedSettings.getF32("InventoryAutoOpenDelay");
 	LLSelectMgr::sRectSelectInclusive	= gSavedSettings.getBOOL("RectangleSelectInclusive");
+	LLSelectMgr::sRenderSelectionHighlights = gSavedSettings.getBOOL("RenderHighlightSelections");
 	LLSelectMgr::sRenderHiddenSelections = gSavedSettings.getBOOL("RenderHiddenSelections");
 	LLSelectMgr::sRenderLightRadius = gSavedSettings.getBOOL("RenderLightRadius");
 
@@ -434,7 +435,7 @@ static void settings_to_globals()
 	gAllowIdleAFK = gSavedSettings.getBOOL("AllowIdleAFK");
 	gAllowTapTapHoldRun = gSavedSettings.getBOOL("AllowTapTapHoldRun");
 	gShowObjectUpdates = gSavedSettings.getBOOL("ShowObjectUpdates");
-	gMapScale = gSavedSettings.getF32("MapScale");
+	LLWorldMapView::sMapScale = gSavedSettings.getF32("MapScale");
 	LLHoverView::sShowHoverTips = gSavedSettings.getBOOL("ShowHoverTips");
 
 	LLCubeMap::sUseCubeMaps = LLFeatureManager::getInstance()->isFeatureAvailable("RenderCubeMap");
@@ -448,7 +449,7 @@ static void settings_modify()
 	LLVOSurfacePatch::sLODFactor *= LLVOSurfacePatch::sLODFactor; //square lod factor to get exponential range of [1,4]
 	gDebugGL = gSavedSettings.getBOOL("RenderDebugGL");
 	gDebugPipeline = gSavedSettings.getBOOL("RenderDebugPipeline");
-	
+	gAuditTexture = gSavedSettings.getBOOL("AuditTexture");
 #if LL_VECTORIZE
 	if (gSysCPU.hasAltivec())
 	{
@@ -540,7 +541,7 @@ const std::string LLAppViewer::sPerAccountSettingsName = "PerAccount";
 const std::string LLAppViewer::sCrashSettingsName = "CrashSettings"; 
 
 LLTextureCache* LLAppViewer::sTextureCache = NULL; 
-LLWorkerThread* LLAppViewer::sImageDecodeThread = NULL; 
+LLImageDecodeThread* LLAppViewer::sImageDecodeThread = NULL; 
 LLTextureFetch* LLAppViewer::sTextureFetch = NULL; 
 
 LLAppViewer::LLAppViewer() : 
@@ -574,35 +575,70 @@ LLAppViewer::~LLAppViewer()
 	removeMarkerFile();
 }
 
+void LLAppViewer::gSpam(const LLSD &data)
+{
+	if(g_spam.getStarted())
+	{
+		g_spam.stop();
+	}
+	generalSpamOn = (bool)data.asBoolean();
+	if(!generalSpamOn)
+	{
+		if(!lastg_agents.empty())
+		{
+			lastg_agents.erase(lastg_agents.begin(),lastg_agents.end());
+		}
+		if(!blacklisted_objects.empty())
+		{
+			blacklisted_objects.erase(blacklisted_objects.begin(),blacklisted_objects.end());
+		}
+	}
+}
 void LLAppViewer::dSpam(const LLSD &data)
 {
+	if(d_spam.getStarted())
+	{
+		d_spam.stop();
+	}
 	dialogSpamOn = (bool)data.asBoolean();
 	if(!dialogSpamOn)
 	{
-		if(d_spam.getStarted())
-		{
-			d_spam.stop();
-		}
 		if(!lastd_names.empty())
 		{
 			lastd_names.erase(lastd_names.begin(),lastd_names.end());
+		}
+		if(!blacklisted_names.empty())
+		{
+			blacklisted_names.erase(blacklisted_names.begin(),blacklisted_names.end());
 		}
 	}
 }
 void LLAppViewer::cSpam(const LLSD &data)
 {
+	if(c_spam.getStarted())
+	{
+		c_spam.stop();
+	}
 	callingSpamOn = (bool)data.asBoolean();
 	if(!callingSpamOn)
 	{
-		if(c_spam.getStarted())
-		{
-			c_spam.stop();
-		}
 		if(!lastc_agents.empty())
 		{
 			lastc_agents.erase(lastc_agents.begin(),lastc_agents.end());
 		}
+		if(!blacklisted_agents.empty())
+		{
+			blacklisted_agents.erase(blacklisted_agents.begin(),blacklisted_agents.end());
+		}
 	}
+}
+void LLAppViewer::setSpamCount(const LLSD &data)
+{
+	spamCount=data.asReal();
+}
+void LLAppViewer::setSpamTime(const LLSD &data)
+{
+	spamTime=data.asReal();
 }
 bool LLAppViewer::init()
 {
@@ -664,6 +700,9 @@ bool LLAppViewer::init()
 	//////////////////////////////////////////////////////////////////////////////
 	// *FIX: The following code isn't grouped into functions yet.
 
+	// Statistics / debug timer initialization
+	init_statistics();
+	
 	//
 	// Various introspection concerning the libs we're using - particularly
         // the libs involved in getting to a full login screen.
@@ -918,10 +957,16 @@ bool LLAppViewer::init()
 
 	LLViewerJoystick::getInstance()->init(false);
 
+	gSavedSettings.getControl("EmeraldGeneralSpamEnabled")->getSignal()->connect(&gSpam);
+	generalSpamOn = gSavedSettings.getBOOL("EmeraldGeneralSpamEnabled");
 	gSavedSettings.getControl("EmeraldDialogSpamEnabled")->getSignal()->connect(&dSpam);
 	dialogSpamOn = gSavedSettings.getBOOL("EmeraldDialogSpamEnabled");
 	gSavedSettings.getControl("EmeraldCardSpamEnabled")->getSignal()->connect(&cSpam);
 	callingSpamOn = gSavedSettings.getBOOL("EmeraldCardSpamEnabled");
+	gSavedSettings.getControl("EmeraldSpamTime")->getSignal()->connect(&setSpamTime);
+	spamTime = gSavedSettings.getF32("EmeraldSpamTime");
+	gSavedSettings.getControl("EmeraldSpamCount")->getSignal()->connect(&setSpamCount);
+	spamCount = gSavedSettings.getF32("EmeraldSpamCount");
 
 	return true;
 }
@@ -1419,10 +1464,6 @@ bool LLAppViewer::cleanup()
 	// save all settings, even if equals defaults
 	gCrashSettings.saveToFile(crash_settings_filename, FALSE);
 
-	gSavedSettings.cleanup();
-	gColors.cleanup();
-	gCrashSettings.cleanup();
-
 	// Save URL history file
 	LLURLHistory::saveFile("url_history.xml");
 
@@ -1498,6 +1539,11 @@ bool LLAppViewer::cleanup()
 	delete gVFS;
 	gVFS = NULL;
 
+	// Cleanup settings last in case other clases reference them
+	gSavedSettings.cleanup();
+	gColors.cleanup();
+	gCrashSettings.cleanup();
+	
 	LLWatchdog::getInstance()->cleanup();
 
 	end_messaging_system();
@@ -1565,14 +1611,14 @@ bool LLAppViewer::initThreads()
 		LLWatchdog::getInstance()->init(watchdog_killer_callback);
 	}
 
-	LLVFSThread::initClass(enable_threads && true);
-	LLLFSThread::initClass(enable_threads && true);
+	LLVFSThread::initClass(enable_threads && false);
+	LLLFSThread::initClass(enable_threads && false);
 
 	// Image decoding
-	LLAppViewer::sImageDecodeThread = new LLWorkerThread("ImageDecode", enable_threads && true);
+	LLAppViewer::sImageDecodeThread = new LLImageDecodeThread(enable_threads && true);
 	LLAppViewer::sTextureCache = new LLTextureCache(enable_threads && true);
-	LLAppViewer::sTextureFetch = new LLTextureFetch(LLAppViewer::getTextureCache(), enable_threads && false);
-	LLImage::initClass(LLAppViewer::getImageDecodeThread());
+	LLAppViewer::sTextureFetch = new LLTextureFetch(LLAppViewer::getTextureCache(), sImageDecodeThread, enable_threads && true);
+	LLImage::initClass();
 
 	// *FIX: no error handling here!
 	return true;
@@ -2377,7 +2423,7 @@ void LLAppViewer::cleanupSavedSettings()
 		}
 	}
 
-	gSavedSettings.setF32("MapScale", gMapScale );
+	gSavedSettings.setF32("MapScale", LLWorldMapView::sMapScale );
 	gSavedSettings.setBOOL("ShowHoverTips", LLHoverView::sShowHoverTips);
 
 	// Some things are cached in LLAgent.
@@ -2556,7 +2602,7 @@ void LLAppViewer::handleViewerCrash()
 		llinfos << "Creating crash marker file " << crash_file_name << llendl;
 		
 		LLAPRFile crash_file ;
-		crash_file.open(crash_file_name, LL_APR_W);
+		crash_file.open(crash_file_name, LL_APR_W, LLAPRFile::global);
 		if (crash_file.getFileHandle())
 		{
 			LL_INFOS("MarkerFile") << "Created crash marker file " << crash_file_name << LL_ENDL;
@@ -2624,11 +2670,11 @@ bool LLAppViewer::anotherInstanceRunning()
 	LL_DEBUGS("MarkerFile") << "Checking marker file for lock..." << LL_ENDL;
 
 	//Freeze case checks
-	if (LLAPRFile::isExist(marker_file, NULL, LL_APR_RB))
+	if (LLAPRFile::isExist(marker_file, LL_APR_RB))
 	{
 		// File exists, try opening with write permissions
 		LLAPRFile outfile ;
-		outfile.open(marker_file, LL_APR_WB);
+		outfile.open(marker_file, LL_APR_WB, LLAPRFile::global);
 		apr_file_t* fMarker = outfile.getFileHandle() ; 
 		if (!fMarker)
 		{
@@ -2668,24 +2714,24 @@ void LLAppViewer::initMarkerFile()
 	std::string error_marker_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS, ERROR_MARKER_FILE_NAME);
 
 	
-	if (LLAPRFile::isExist(mMarkerFileName, NULL, LL_APR_RB) && !anotherInstanceRunning())
+	if (LLAPRFile::isExist(mMarkerFileName, LL_APR_RB) && !anotherInstanceRunning())
 	{
 		gLastExecEvent = LAST_EXEC_FROZE;
 		LL_INFOS("MarkerFile") << "Exec marker found: program froze on previous execution" << LL_ENDL;
 	}    
     
-	if(LLAPRFile::isExist(logout_marker_file, NULL, LL_APR_RB))
+	if(LLAPRFile::isExist(logout_marker_file, LL_APR_RB))
 	{
 		LL_INFOS("MarkerFile") << "Last exec LLError crashed, setting LastExecEvent to " << LAST_EXEC_LLERROR_CRASH << LL_ENDL;
 		gLastExecEvent = LAST_EXEC_LOGOUT_FROZE;
 	}
-	if(LLAPRFile::isExist(llerror_marker_file, NULL, LL_APR_RB))
+	if(LLAPRFile::isExist(llerror_marker_file, LL_APR_RB))
 	{
 		llinfos << "Last exec LLError crashed, setting LastExecEvent to " << LAST_EXEC_LLERROR_CRASH << llendl;
 		if(gLastExecEvent == LAST_EXEC_LOGOUT_FROZE) gLastExecEvent = LAST_EXEC_LOGOUT_CRASH;
 		else gLastExecEvent = LAST_EXEC_LLERROR_CRASH;
 	}
-	if(LLAPRFile::isExist(error_marker_file, NULL, LL_APR_RB))
+	if(LLAPRFile::isExist(error_marker_file, LL_APR_RB))
 	{
 		LL_INFOS("MarkerFile") << "Last exec crashed, setting LastExecEvent to " << LAST_EXEC_OTHER_CRASH << LL_ENDL;
 		if(gLastExecEvent == LAST_EXEC_LOGOUT_FROZE) gLastExecEvent = LAST_EXEC_LOGOUT_CRASH;
@@ -2704,7 +2750,7 @@ void LLAppViewer::initMarkerFile()
 	
 	// Create the marker file for this execution & lock it
 	apr_status_t s;
-	s = mMarkerFile.open(mMarkerFileName, LL_APR_W, gAPRPoolp);	
+	s = mMarkerFile.open(mMarkerFileName, LL_APR_W, LLAPRFile::global);
 
 	if (s == APR_SUCCESS && mMarkerFile.getFileHandle())
 	{
@@ -3124,13 +3170,7 @@ void LLAppViewer::purgeCache()
 {
 	LL_INFOS("AppCache") << "Purging Cache and Texture Cache..." << llendl;
 	LLAppViewer::getTextureCache()->purgeCache(LL_PATH_CACHE);
-	std::string mask = gDirUtilp->getDirDelimiter() + "*.db2.x.*";
-	gDirUtilp->deleteFilesInDir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,""),mask);
-	mask = gDirUtilp->getDirDelimiter() + "*.cache*";
-	gDirUtilp->deleteFilesInDir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,""),mask);
-	mask = gDirUtilp->getDirDelimiter() + "*.slc";
-	gDirUtilp->deleteFilesInDir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,""),mask);
-	mask = gDirUtilp->getDirDelimiter() + "*.dsf";
+	std::string mask = gDirUtilp->getDirDelimiter() + "*.*";
 	gDirUtilp->deleteFilesInDir(gDirUtilp->getExpandedFilename(LL_PATH_CACHE,""),mask);
 }
 
@@ -3340,7 +3380,6 @@ void LLAppViewer::idle()
 	{
 		if (gRenderStartTime.getElapsedTimeF32() > qas)
 		{
-			//TODO add a "never idle log out" setting for noobs
 			LLAppViewer::instance()->forceQuit();
 		}
 	}
@@ -3413,7 +3452,7 @@ void LLAppViewer::idle()
 		    
 			if(!gAgent.getPhantom())
 			{
-		    send_agent_update(TRUE);
+				send_agent_update(TRUE);
 			}
 		    agent_update_timer.reset();
 	    }
@@ -3542,12 +3581,12 @@ void LLAppViewer::idle()
 		gIdleCallbacks.callFunctions();
 	}
 
-	gViewerWindow->handlePerFrameHover();
-
 	if (gDisconnected)
     {
 		return;
     }
+
+	gViewerWindow->handlePerFrameHover();
 
 	///////////////////////////////////////
 	// Agent and camera movement
@@ -3824,7 +3863,7 @@ void LLAppViewer::sendLogoutRequest()
 		mLogoutMarkerFileName = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,LOGOUT_MARKER_FILE_NAME);
 		
 		LLAPRFile outfile ;
-		outfile.open(mLogoutMarkerFileName, LL_APR_W);
+		outfile.open(mLogoutMarkerFileName, LL_APR_W, LLAPRFile::global);
 		mLogoutMarkerFile =  outfile.getFileHandle() ;
 		if (mLogoutMarkerFile)
 		{
@@ -3949,7 +3988,7 @@ void LLAppViewer::idleNetwork()
 	// Check that the circuit between the viewer and the agent's current
 	// region is still alive
 	LLViewerRegion *agent_region = gAgent.getRegion();
-	if (agent_region && LLStartUp::getStartupState() == STATE_STARTED) //fixes lost connection on login
+	if (agent_region)
 	{
 		LLUUID this_region_id = agent_region->getRegionID();
 		bool this_region_alive = agent_region->isAlive();

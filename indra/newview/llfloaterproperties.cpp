@@ -58,10 +58,8 @@
 #include "llviewercontrol.h"
 
 #include "lluictrlfactory.h"
-
-// [RLVa:KB]
-#include "rlvhandler.h"
-// [/RLVa:KB]
+#include "llchat.h"
+#include "llfloaterchat.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Class LLPropertiesObserver
@@ -96,7 +94,13 @@ void LLPropertiesObserver::changed(U32 mask)
 	}
 }
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
 
 ///----------------------------------------------------------------------------
 /// Class LLFloaterProperties
@@ -161,7 +165,6 @@ LLFloaterProperties::LLFloaterProperties(const std::string& name, const LLRect& 
 	mDirty(TRUE)
 {
 	LLUICtrlFactory::getInstance()->buildFloater(this,"floater_inventory_item_properties.xml");
-
 	if (!sPropertiesObserver)
 	{
 		sPropertiesObserver = new LLPropertiesObserver;

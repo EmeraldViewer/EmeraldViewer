@@ -44,11 +44,11 @@
  *      copyright notice, this list of conditions and the following
  *      disclaimer in the documentation and/or other materials provided
  *      with the distribution.
- *   3. Neither the name Modular Systems nor the names of its contributors
+ *   3. Neither the name Modular Systems Ltd nor the names of its contributors
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS “AS IS”
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS AS IS
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -65,6 +65,9 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llvoavatar.h"
+
+#include <stdio.h>
+#include <ctype.h>
 
 #include "audioengine.h"
 #include "noise.h"
@@ -116,7 +119,15 @@
 #include "lggbeammaps.h"
 #include "floateravatarlist.h"
 
-#include "boost/lexical_cast.hpp"
+#ifdef _MSC_VER
+#pragma warning( disable : 4702 ) //warning C4702: unreachable code silly boost o.o
+#endif
+
+#include <boost/lexical_cast.hpp>
+
+#ifdef _MSC_VER
+#pragma warning( pop ) 
+#endif
 
 // [RLVa:KB]
 #include "rlvhandler.h"
@@ -1353,6 +1364,49 @@ void LLVOAvatar::resetImpostors()
 // static
 void LLVOAvatar::deleteCachedImages(bool clearAll)
 {
+if(gAuditTexture)
+	{
+		S32 total_tex_size = sScratchTexBytes ;
+		S32 tex_size = SCRATCH_TEX_WIDTH * SCRATCH_TEX_HEIGHT ;
+
+		if( LLVOAvatar::sScratchTexNames.checkData( GL_LUMINANCE ) )
+		{
+			LLImageGL::decTextureCounterStatic(tex_size, 1, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
+			total_tex_size -= tex_size ;
+		}
+		if( LLVOAvatar::sScratchTexNames.checkData( GL_ALPHA ) )
+		{
+			LLImageGL::decTextureCounterStatic(tex_size, 1, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
+			total_tex_size -= tex_size ;
+		}
+		if( LLVOAvatar::sScratchTexNames.checkData( GL_COLOR_INDEX ) )
+		{
+			LLImageGL::decTextureCounterStatic(tex_size, 1, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
+			total_tex_size -= tex_size ;
+		}
+		if( LLVOAvatar::sScratchTexNames.checkData( GL_LUMINANCE_ALPHA ) )
+		{
+			LLImageGL::decTextureCounterStatic(tex_size, 2, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
+			total_tex_size -= 2 * tex_size ;
+		}
+		if( LLVOAvatar::sScratchTexNames.checkData( GL_RGB ) )
+		{
+			LLImageGL::decTextureCounterStatic(tex_size, 3, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
+			total_tex_size -= 3 * tex_size ;
+		}
+		if( LLVOAvatar::sScratchTexNames.checkData( GL_RGBA ) )
+		{
+			LLImageGL::decTextureCounterStatic(tex_size, 4, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
+			total_tex_size -= 4 * tex_size ;
+		}
+		//others
+		while(total_tex_size > 0)
+		{
+			LLImageGL::decTextureCounterStatic(tex_size, 4, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
+			total_tex_size -= 4 * tex_size ;
+		}
+	}
+
 	if (LLTexLayerSet::sHasCaches)
 	{
 		lldebugs << "Deleting layer set caches" << llendl;
@@ -2651,13 +2705,10 @@ BOOL LLVOAvatar::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 	}
 
 	//Zwag: Make sure all composites and bakes are active.
-	if(mIsSelf)
+	for(U8 i=0;i<getNumTEs();++i)
 	{
-		for(U8 i=0;i<getNumTEs();++i)
-		{
-			LLViewerImage* te = getTEImage(i);
-			te->forceActive();
-		}
+		LLViewerImage* te = getTEImage(i);
+		te->forceActive();
 	}
 
 	idleUpdateVoiceVisualizer( voice_enabled );
@@ -3199,43 +3250,43 @@ CryoResolverTimeout::~CryoResolverTimeout()
 
 BOOL CryoResolverTimeout::tick()
 {
-	if(avatarp)
-	{
-		if(!avatarp || avatarp->isDead())return TRUE;
-		if(counter > 2)
-		{
-			if(avatarp && avatarp->mIsCryolife == FALSE)
-			{
-				avatarp->mIsCryolife = FALSE;
-				avatarp->mCheckingCryolife = 2;
-			}
-
-			//LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
-			//avatarp->idleUpdateNameTag(root_pos_last);
-
-			return TRUE;
-		}else
-		{
-			if(!avatarp->isDead() && avatarp->mCheckingCryolife == 1)
-			{
-
-				send_improved_im(avatarp->getID(),
-								"oh hi",
-								"cryo::ping",
-								IM_ONLINE,
-								IM_TYPING_STOP,
-								avatarp->getID(),
-								NO_TIMESTAMP,
-								(U8*)EMPTY_BINARY_BUCKET,
-								EMPTY_BINARY_BUCKET_SIZE);
-
-
-			}
-			counter += 1;
-			return FALSE;
-		}
-	}
-	return TRUE;
+ 	if(avatarp)
+ 	{
+ 		if(!avatarp || avatarp->isDead())return TRUE;
+ 		if(counter > 2)
+ 		{
+ 			if(avatarp && avatarp->mIsCryolife == FALSE)
+ 			{
+ 				avatarp->mIsCryolife = FALSE;
+ 				avatarp->mCheckingCryolife = 2;
+ 			}
+  
+ 			//LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
+ 			//avatarp->idleUpdateNameTag(root_pos_last);
+  
+ 			return TRUE;
+ 		}else
+ 		{
+ 			if(!avatarp->isDead() && avatarp->mCheckingCryolife == 1)
+ 			{
+ 	            
+ 				send_improved_im(avatarp->getID(),
+ 								"oh hi",
+ 								"cryo::ping",
+ 								IM_ONLINE,
+ 								IM_TYPING_STOP,
+ 								avatarp->getID(),
+ 								NO_TIMESTAMP,
+ 								(U8*)EMPTY_BINARY_BUCKET,
+ 								EMPTY_BINARY_BUCKET_SIZE);
+ 
+ 	            
+ 			}
+ 			counter += 1;
+ 			return FALSE;
+ 		}
+ 	}
+ 	return TRUE;
 }
 bool LLVOAvatar::updateClientTags()
 {
@@ -3499,10 +3550,10 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				LLVector3 pixel_up_vec;
 				LLViewerCamera::getInstance()->getPixelVectors(root_pos_last, pixel_up_vec, pixel_right_vec);
 				LLVector3 camera_to_av = root_pos_last - LLViewerCamera::getInstance()->getOrigin();
-				camera_to_av.normVec();
+				camera_to_av.normalize();
 				LLVector3 local_camera_at = camera_to_av * ~root_rot;
 				LLVector3 local_camera_up = camera_to_av % LLViewerCamera::getInstance()->getLeftAxis();
-				local_camera_up.normVec();
+				local_camera_up.normalize();
 				local_camera_up = local_camera_up * ~root_rot;
 
 				local_camera_up.scaleVec(mBodySize * 0.5f);
@@ -4905,7 +4956,7 @@ U32 LLVOAvatar::renderFootShadows()
 	LLGLDepthTest test(GL_TRUE, GL_FALSE);
 	//render foot shadows
 	LLGLEnable blend(GL_BLEND);
-	gGL.getTexUnit(0)->bind(mShadowImagep.get());
+	gGL.getTexUnit(0)->bind(mShadowImagep.get(), TRUE);
 	glColor4fv(mShadow0Facep->getRenderColor().mV);
 	mShadow0Facep->renderIndexed(foot_mask);
 	glColor4fv(mShadow1Facep->getRenderColor().mV);
@@ -4953,7 +5004,7 @@ U32 LLVOAvatar::renderImpostor(LLColor4U color)
 //------------------------------------------------------------------------
 // LLVOAvatar::updateTextures()
 //------------------------------------------------------------------------
-void LLVOAvatar::updateTextures(LLAgent &agent)
+void LLVOAvatar::updateTextures()
 {
 	BOOL render_avatar = TRUE;
 
@@ -5020,18 +5071,18 @@ void LLVOAvatar::updateTextures(LLAgent &agent)
 		if (imagep)
 		{
 			// Debugging code - maybe non-self avatars are downloading textures?
-			//llinfos << "avatar self " << mIsSelf << " tex " << i
+			//llinfos << "avatar self " << mIsSelf << " tex " << index 
 			//	<< " decode " << imagep->getDecodePriority()
-			//	<< " boost " << boost_avatar
+			//	<< " boost " << imagep->getBoostLevel() 
 			//	<< " size " << imagep->getWidth() << "x" << imagep->getHeight()
 			//	<< " discard " << imagep->getDiscardLevel()
 			//	<< " desired " << imagep->getDesiredDiscardLevel()
 			//	<< llendl;
-
+			
 			const LLTextureEntry *te = getTE(index);
 			F32 texel_area_ratio = fabs(te->mScaleS * te->mScaleT);
-			S32 boost_level = mIsSelf ? LLViewerImage::BOOST_AVATAR_BAKED_SELF : LLViewerImage::BOOST_AVATAR_BAKED;
-
+			S32 boost_level = mIsSelf ? LLViewerImageBoostLevel::BOOST_AVATAR_BAKED_SELF : LLViewerImageBoostLevel::BOOST_AVATAR_BAKED;
+			
 			// Spam if this is a baked texture, not set to default image, without valid host info
 			if (isIndexBakedTexture((ETextureIndex)index)
 				&& imagep->getID() != IMG_DEFAULT_AVATAR
@@ -5053,6 +5104,12 @@ void LLVOAvatar::updateTextures(LLAgent &agent)
 				if (texture_dict->mIsLocalTexture)
 				{
 					addLocalTextureStats((ETextureIndex)index, imagep, texel_area_ratio, render_avatar, layer_baked[baked_index]);
+					// SNOW-8 : temporary snowglobe1.0 fix for baked textures
+					if (render_avatar && !gGLManager.mIsDisabled )
+					{
+						// bind the texture so that its boost level won't be slammed
+						gGL.getTexUnit(0)->bind(imagep);
+					}
 				}
 				else if (texture_dict->mIsBakedTexture)
 				{
@@ -5090,12 +5147,12 @@ void LLVOAvatar::addLocalTextureStats( ETextureIndex idx, LLViewerImage* imagep,
 			if( mIsSelf )
 			{
 				desired_pixels = llmin(mPixelArea, (F32)TEX_IMAGE_AREA_SELF );
-				imagep->setBoostLevel(LLViewerImage::BOOST_AVATAR_SELF);
+				imagep->setBoostLevel(LLViewerImageBoostLevel::BOOST_AVATAR_SELF);
 			}
 			else
 			{
 				desired_pixels = llmin(mPixelArea, (F32)TEX_IMAGE_AREA_OTHER );
-				imagep->setBoostLevel(LLViewerImage::BOOST_AVATAR);
+				imagep->setBoostLevel(LLViewerImageBoostLevel::BOOST_AVATAR);
 			}
 			imagep->addTextureStats( desired_pixels / texel_area_ratio );
 			if (imagep->getDiscardLevel() < 0)
@@ -7428,12 +7485,12 @@ BOOL LLVOAvatar::bindScratchTexture( LLGLenum format )
 			if( *last_bind_time != LLImageGL::sLastFrameTime )
 			{
 				*last_bind_time = LLImageGL::sLastFrameTime;
-				LLImageGL::updateBoundTexMem(texture_bytes);
+				LLImageGL::updateBoundTexMemStatic(texture_bytes, SCRATCH_TEX_WIDTH * SCRATCH_TEX_HEIGHT, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
 			}
 		}
 		else
 		{
-			LLImageGL::updateBoundTexMem(texture_bytes);
+			LLImageGL::updateBoundTexMemStatic(texture_bytes, SCRATCH_TEX_WIDTH * SCRATCH_TEX_HEIGHT, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
 			LLVOAvatar::sScratchTexLastBindTime.addData( format, new F32(LLImageGL::sLastFrameTime) );
 		}
 
@@ -7497,6 +7554,12 @@ LLGLuint LLVOAvatar::getScratchTexName( LLGLenum format, U32* texture_bytes )
 
 		LLVOAvatar::sScratchTexBytes += *texture_bytes;
 		LLImageGL::sGlobalTextureMemoryInBytes += *texture_bytes;
+
+		if(gAuditTexture)
+		{
+			LLImageGL::incTextureCounterStatic(SCRATCH_TEX_WIDTH * SCRATCH_TEX_HEIGHT, components, LLViewerImageBoostLevel::AVATAR_SCRATCH_TEX) ;
+		}
+
 		return name;
 	}
 }
@@ -7812,7 +7875,8 @@ void LLVOAvatar::clearChat()
 
 S32 LLVOAvatar::getLocalDiscardLevel( ETextureIndex index )
 {
-	if (!isIndexLocalTexture(index)) return FALSE;
+	// If the texture is not local, we don't care and treat it as fully loaded
+	if (!isIndexLocalTexture(index)) return 0;
 
 	LocalTextureData &local_tex_data = mLocalTextureData[index];
 	if (index >= 0
@@ -8882,7 +8946,7 @@ void LLVOAvatar::dumpArchetypeXML( void* )
 {
 	LLVOAvatar* avatar = gAgent.getAvatarObject();
 	LLAPRFile outfile ;
-	outfile.open(gDirUtilp->getExpandedFilename(LL_PATH_CHARACTER,"new archetype.xml"), LL_APR_WB );
+	outfile.open(gDirUtilp->getExpandedFilename(LL_PATH_CHARACTER,"new archetype.xml"), LL_APR_WB, LLAPRFile::global);
 	apr_file_t* file = outfile.getFileHandle() ;
 	if( !file )
 	{

@@ -2381,7 +2381,6 @@ void renderTexturePriority(LLDrawable* drawable)
 		//if (imagep)
 		{
 	
-			//F32 vsize = LLVOVolume::getTextureVirtualSize(facep);
 			//F32 vsize = imagep->mMaxVirtualSize;
 			F32 vsize = facep->getPixelArea();
 

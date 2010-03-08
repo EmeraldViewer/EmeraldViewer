@@ -4969,7 +4969,7 @@ void LLVoiceClient::sessionState::removeAllParticipants()
 	
 	if(!mParticipantsByUUID.empty())
 	{
-		LL_ERRS("Voice") << "Internal error: empty URI map, non-empty UUID map" << LL_ENDL
+		LL_ERRS("Voice") << "Internal error: empty URI map, non-empty UUID map" << LL_ENDL;
 	}
 }
 
@@ -6473,7 +6473,7 @@ void LLVoiceClient::deleteSession(sessionState *session)
 		{
 			if(iter->second != session)
 			{
-				LL_ERRS("Voice") << "Internal error: session mismatch" << LL_ENDL
+				LL_ERRS("Voice") << "Internal error: session mismatch" << LL_ENDL;
 			}
 			mSessionsByHandle.erase(iter);
 		}
@@ -6513,7 +6513,7 @@ void LLVoiceClient::deleteAllSessions()
 	
 	if(!mSessionsByHandle.empty())
 	{
-		LL_ERRS("Voice") << "Internal error: empty session map, non-empty handle map" << LL_ENDL
+		LL_ERRS("Voice") << "Internal error: empty session map, non-empty handle map" << LL_ENDL;
 	}
 }
 

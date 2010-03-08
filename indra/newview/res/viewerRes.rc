@@ -92,7 +92,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDI_LL_ICON,IDC_STATIC,7,7,20,20
-    LTEXT           "Loading Emerald Viewer",666,36,13,91,8
+    LTEXT           "Loading Emerald Snowglobe...",666,36,13,91,8
 END
 
 
@@ -156,8 +156,8 @@ TOOLMEDIAOPEN           CURSOR                  "toolmediaopen.cur"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,23,5,1631
- PRODUCTVERSION 1,23,5,1631
+ FILEVERSION 1,23,5,1623
+ PRODUCTVERSION 1,23,5,1623
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -174,12 +174,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Modular Systems"
             VALUE "FileDescription", "Emerald Viewer"
-            VALUE "FileVersion", "1.23.5.1631"
-            VALUE "InternalName", "Emerald Viewer"
-            VALUE "LegalCopyright", "Copyright © 2001-2009, Linden Research, Inc."
+            VALUE "FileVersion", "1.23.5.1628"
+            VALUE "InternalName", "Emerald Snowglobe Viewer"
+            VALUE "LegalCopyright", "Copyright © 2001-2009, Linden Research, Inc. + Copyright © 2008-2009, Modular Systems"
             VALUE "OriginalFilename", "Emerald.exe"
             VALUE "ProductName", "Emerald Viewer"
-            VALUE "ProductVersion", "1.23.5.1631"
+            VALUE "ProductVersion", "1.23.5.1628"
         END
     END
     BLOCK "VarFileInfo"

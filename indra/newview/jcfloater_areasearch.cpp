@@ -39,10 +39,10 @@
 #include "llscrolllistctrl.h"
 
 #include "llviewerobjectlist.h"
+#include "llviewercontrol.h"
 
 #include "jcfloater_areasearch.h"
 
-#include "llviewercontrol.h"
 #include "llviewerobjectlist.h"
 
 #include "llcategory.h"

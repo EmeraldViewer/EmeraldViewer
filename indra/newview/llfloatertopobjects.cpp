@@ -205,6 +205,8 @@ void LLFloaterTopObjects::handleReply(LLMessageSystem *msg, void** data)
 		element["columns"][1]["column"] = "name";
 		element["columns"][1]["value"] = name_buf;
 		element["columns"][1]["font"] = "SANSSERIF";
+		if(!(owner_buf.compare(name_buf)))
+			element["columns"][1]["font-style"] = "BOLD";
 		element["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 		element["columns"][2]["column"] = "owner";
 		element["columns"][2]["value"] = owner_buf;

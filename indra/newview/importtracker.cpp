@@ -27,6 +27,9 @@
 
 #include "jclslpreproc.h"
 
+#include "llparcel.h" // moymod
+#include "llviewerparcelmgr.h" // moymod
+
 ImportTracker gImportTracker;
 
 extern LLAgent gAgent;
@@ -402,7 +405,7 @@ public:
 	{
 		S32 file_size;
 		LLAPRFile infile ;
-		infile.open(data->filename, LL_APR_RB, NULL, &file_size);
+		infile.open(data->filename, LL_APR_RB, LLAPRFile::global, &file_size);
 		if (infile.getFileHandle())
 		{
 			cmdline_printchat("got file handle @ postinv");
@@ -566,7 +569,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 						std::string url = gAgent.getRegion()->getCapability("NewFileAgentInventory");
 						S32 file_size;
 						LLAPRFile infile ;
-						infile.open(data->filename, LL_APR_RB, NULL, &file_size);
+						infile.open(data->filename, LL_APR_RB, LLAPRFile::global, &file_size);
 						if (infile.getFileHandle())
 						{
 							cmdline_printchat("got file handle");
@@ -600,7 +603,7 @@ void ImportTracker::send_inventory(LLSD& prim)
 					{
 						S32 file_size;
 						LLAPRFile infile ;
-						infile.open(data->filename, LL_APR_RB, NULL, &file_size);
+						infile.open(data->filename, LL_APR_RB, LLAPRFile::global, &file_size);
 						if (infile.getFileHandle())
 						{
 							cmdline_printchat("got file handle @ cloth");
@@ -1063,37 +1066,46 @@ void ImportTracker::wear(LLSD &prim)
 
 void ImportTracker::plywood_above_head()
 {
-		LLMessageSystem* msg = gMessageSystem;
-		msg->newMessageFast(_PREHASH_ObjectAdd);
-		msg->nextBlockFast(_PREHASH_AgentData);
-		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-		msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
-		msg->nextBlockFast(_PREHASH_ObjectData);
-		msg->addU8Fast(_PREHASH_Material, 3);
-		msg->addU32Fast(_PREHASH_AddFlags, FLAGS_CREATE_SELECTED);
-		LLVolumeParams	volume_params;
-		volume_params.setType(0x01, 0x10);
-		volume_params.setBeginAndEndS(0.f, 1.f);
-		volume_params.setBeginAndEndT(0.f, 1.f);
-		volume_params.setRatio(1, 1);
-		volume_params.setShear(0, 0);
-		LLVolumeMessage::packVolumeParams(&volume_params, msg);
-		msg->addU8Fast(_PREHASH_PCode, 9);
-		msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.52345f, 0.52346f, 0.52347f));
-		LLQuaternion rot;
-		msg->addQuatFast(_PREHASH_Rotation, rot);
-		LLViewerRegion *region = gAgent.getRegion();
-		
-		if (!localids.size())
-			root = (initialPos + linksetoffset);
-		
-		msg->addVector3Fast(_PREHASH_RayStart, root);
-		msg->addVector3Fast(_PREHASH_RayEnd, root);
-		msg->addU8Fast(_PREHASH_BypassRaycast, (U8)TRUE );
-		msg->addU8Fast(_PREHASH_RayEndIsIntersection, (U8)FALSE );
-		msg->addU8Fast(_PREHASH_State, (U8)0);
-		msg->addUUIDFast(_PREHASH_RayTargetID, LLUUID::null);
-		msg->sendReliable(region->getHost());
+	LLMessageSystem* msg = gMessageSystem;
+	msg->newMessageFast(_PREHASH_ObjectAdd);
+	msg->nextBlockFast(_PREHASH_AgentData);
+	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+	if(gSavedSettings.getBOOL("mm_alwaysRezWithLandGroup"))
+	{
+		LLParcel *parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
+		if(gAgent.isInGroup(parcel->getGroupID()))
+			msg->addUUIDFast(_PREHASH_GroupID, parcel->getGroupID());
+		else if(gAgent.isInGroup(parcel->getOwnerID()))
+			msg->addUUIDFast(_PREHASH_GroupID, parcel->getOwnerID());
+		else msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+	}
+	else msg->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+	msg->nextBlockFast(_PREHASH_ObjectData);
+	msg->addU8Fast(_PREHASH_Material, 3);
+	msg->addU32Fast(_PREHASH_AddFlags, 0);
+	LLVolumeParams	volume_params;
+	volume_params.setType(0x01, 0x10);
+	volume_params.setBeginAndEndS(0.f, 1.f);
+	volume_params.setBeginAndEndT(0.f, 1.f);
+	volume_params.setRatio(1, 1);
+	volume_params.setShear(0, 0);
+	LLVolumeMessage::packVolumeParams(&volume_params, msg);
+	msg->addU8Fast(_PREHASH_PCode, 9);
+	msg->addVector3Fast(_PREHASH_Scale, LLVector3(0.52345f, 0.52346f, 0.52347f));
+	LLQuaternion rot;
+	msg->addQuatFast(_PREHASH_Rotation, rot);
+	LLViewerRegion *region = gAgent.getRegion();
+	
+	if (!localids.size())
+		root = (initialPos + linksetoffset);
+	
+	msg->addVector3Fast(_PREHASH_RayStart, root);
+	msg->addVector3Fast(_PREHASH_RayEnd, root);
+	msg->addU8Fast(_PREHASH_BypassRaycast, (U8)TRUE );
+	msg->addU8Fast(_PREHASH_RayEndIsIntersection, (U8)FALSE );
+	msg->addU8Fast(_PREHASH_State, (U8)0);
+	msg->addUUIDFast(_PREHASH_RayTargetID, LLUUID::null);
+	msg->sendReliable(region->getHost());
 }
 

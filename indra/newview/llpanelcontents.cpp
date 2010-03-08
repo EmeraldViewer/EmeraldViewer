@@ -136,7 +136,7 @@ void LLPanelContents::getState(LLViewerObject *objectp )
 			// Only check the first (non-)root object because nothing else would result in enabling the button (see below)
 			LLViewerObject* pObj = LLSelectMgr::getInstance()->getSelection()->getFirstRootObject(TRUE);
 
-			editable = (pObj) && (pAvatar) && ((!pAvatar->mIsSitting) || (pAvatar->getRoot() != pObj->getRootEdit()));
+			editable = (pObj) && (pAvatar) && ((!pAvatar->mIsSitting) || (pAvatar->getParent() != pObj->getRootEdit()));
 		}
 	}
 // [/RLVa:KB]

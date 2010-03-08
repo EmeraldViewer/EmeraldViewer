@@ -179,7 +179,7 @@ static std::string createListenPls( const std::string &url )
 	std::string filename = d->getCacheDir() + d->getDirDelimiter() + "listen.pls";
 	LLAPRFile file;
 
-	if(file.open(filename, APR_WRITE | APR_CREATE | APR_TRUNCATE) == APR_SUCCESS) {
+	if(file.open(filename, APR_WRITE | APR_CREATE | APR_TRUNCATE, LLAPRFile::global) == APR_SUCCESS) {
 		std::string playlist = llformat("[playlist]\nNumberOfEntries=1\nFile1=%s\n", url.c_str());
 		file.write(playlist.c_str(), playlist.length());
 		return filename;
@@ -798,6 +798,7 @@ void LLAudioEngine::setMuted(bool muted)
 	}
 	enableWind(!mMuted);
 }
+
 
 void LLAudioEngine::setWindMuted(bool windMuted) // disable wind /ez
 {
@@ -1505,18 +1506,18 @@ bool LLAudioSource::play(const LLUUID &audio_uuid)
 		}
 		return false;
 	}
-
+	
 	// Reset our age timeout if someone attempts to play the source.
 	mAgeTimer.reset();
 
 	LLAudioData *adp = gAudiop->getAudioData(audio_uuid);
 	addAudioData(adp);
-
+ 
 	if (isMuted())
 	{
 		return false;
 	}
-
+	
 	bool has_buffer = gAudiop->updateBufferForData(adp, audio_uuid);
 	if (!has_buffer)
 	{
@@ -1553,6 +1554,7 @@ bool LLAudioSource::isDone() const
 		// Looped sources never die on their own.
 		return false;
 	}
+
 
 	if (hasPendingPreloads())
 	{

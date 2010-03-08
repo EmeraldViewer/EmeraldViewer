@@ -129,6 +129,7 @@ void ScriptCounter::serializeSelection(bool delScript)
 	LLDynamicArray<LLViewerObject*> catfayse;
 	foo=LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
 	sstr.str("");
+	invqueries=0;
 	doDelete=false;
 	scriptcount=0;
 	objIDS.clear();

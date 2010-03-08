@@ -52,12 +52,11 @@
 #include "lldrawpoolbump.h"
 #include "llface.h"
 #include "llspatialpartition.h"
-
-// TEMP HACK ventrella
 #include "llhudmanager.h"
 #include "llflexibleobject.h"
 
 #include "llsky.h"
+#include "lltexturefetch.h"
 #include "llviewercamera.h"
 #include "llviewerimagelist.h"
 #include "llviewerregion.h"
@@ -415,28 +414,30 @@ BOOL LLVOVolume::idleUpdate(LLAgent &agent, LLWorld &world, const F64 &time)
 	return TRUE;
 }
 
-void LLVOVolume::updateTextures(LLAgent &agent)
+void LLVOVolume::updateTextures()
 {
 	const F32 TEXTURE_AREA_REFRESH_TIME = 5.f; // seconds
-	if (mDrawable.notNull() && mTextureUpdateTimer.getElapsedTimeF32() > TEXTURE_AREA_REFRESH_TIME)
-	{
-		if (mDrawable->isVisible())
+	if (mTextureUpdateTimer.getElapsedTimeF32() > TEXTURE_AREA_REFRESH_TIME)
 		{
-			updateTextures();
-		}
+		updateTextureVirtualSize();		
 	}
 }
 
-void LLVOVolume::updateTextures()
+void LLVOVolume::updateTextureVirtualSize()
 {
 	// Update the pixel area of all faces
+
+	if(mDrawable.isNull() || !mDrawable->isVisible())
+	{
+		return ;
+	}
 
 	if (!gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_SIMPLE))
 	{
 		return;
 	}
 	
-	if (LLViewerImage::sDontLoadVolumeTextures || mDrawable.isNull()) // || !mDrawable->isVisible())
+	if (LLViewerImage::sDontLoadVolumeTextures || LLAppViewer::getTextureFetch()->mDebugPause)
 	{
 		return;
 	}
@@ -460,22 +461,21 @@ void LLVOVolume::updateTextures()
 		}
 		
 		F32 vsize;
+		F32 old_size = face->getVirtualSize();
 		
 		if (isHUDAttachment())
 		{
 			F32 area = (F32) LLViewerCamera::getInstance()->getScreenPixelArea();
 			vsize = area;
-			imagep->setBoostLevel(LLViewerImage::BOOST_HUD);
+			imagep->setBoostLevel(LLViewerImageBoostLevel::BOOST_HUD);
  			face->setPixelArea(area); // treat as full screen
 		}
 		else
 		{
-			vsize = getTextureVirtualSize(face);
+			vsize = face->getTextureVirtualSize();
 		}
 
 		mPixelArea = llmax(mPixelArea, face->getPixelArea());
-
-		F32 old_size = face->getVirtualSize();
 
 		if (face->mTextureMatrix != NULL)
 		{
@@ -487,19 +487,18 @@ void LLVOVolume::updateTextures()
 		}
 		
 		face->setVirtualSize(vsize);
-		imagep->addTextureStats(vsize);
 		if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_TEXTURE_AREA))
 		{
 			if (vsize < min_vsize) min_vsize = vsize;
 			if (vsize > max_vsize) max_vsize = vsize;
 		}
-		else if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_TEXTURE_PRIORITY))
-		{
-			F32 pri = imagep->getDecodePriority();
-			pri = llmax(pri, 0.0f);
-			if (pri < min_vsize) min_vsize = pri;
-			if (pri > max_vsize) max_vsize = pri;
-		}
+// 		else if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_TEXTURE_PRIORITY))
+// 		{
+// 			F32 pri = imagep->getDecodePriority();
+// 			pri = llmax(pri, 0.0f);
+// 			if (pri < min_vsize) min_vsize = pri;
+// 			if (pri > max_vsize) max_vsize = pri;
+// 		}
 		else if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_FACE_AREA))
 		{
 			F32 pri = mPixelArea;
@@ -515,16 +514,27 @@ void LLVOVolume::updateTextures()
 		mSculptTexture = gImageList.getImage(id);
 		if (mSculptTexture.notNull())
 		{
+			mSculptTexture->setBoostLevel(llmax((S32)mSculptTexture->getBoostLevel(),
+												(S32)LLViewerImageBoostLevel::BOOST_SCULPTED));
+			mSculptTexture->setForSculpt() ;
+
+			if(!mSculptTexture->isCachedRawImageReady())
+			{
 			S32 lod = llmin(mLOD, 3);
 			F32 lodf = ((F32)(lod + 1.0f)/4.f); 
-			F32 tex_size = lodf * (1024.0f * 1024.0f);
-			mSculptTexture->addTextureStats(2.f * tex_size);
-			mSculptTexture->setBoostLevel(llmax((S32)mSculptTexture->getBoostLevel(),
-												(S32)LLViewerImage::BOOST_SCULPTED));
-			mSculptTexture->forceActive();
+				F32 tex_size = lodf * (1024.0f * 1024.0f);
+				mSculptTexture->addTextureStats(2.f * tex_size, FALSE);
+				mSculptTexture->forceActive();
+				//if the sculpty very close to the view point, load first
+				{				
+					LLVector3 lookAt = getPositionAgent() - LLViewerCamera::getInstance()->getOrigin();
+					F32 dist = lookAt.normVec() ;
+					F32 cos_angle_to_view_dir = lookAt * LLViewerCamera::getInstance()->getXAxis() ;				
+					mSculptTexture->setAdditionalDecodePriority(0.8f * LLFace::calcImportanceToCamera(cos_angle_to_view_dir, dist)) ;
+				}
 		}
 
-		S32 texture_discard = mSculptTexture->getDiscardLevel(); //try to match the texture
+			S32 texture_discard = mSculptTexture->getCachedRawImageLevel(); //try to match the texture
 		S32 current_discard = mSculptLevel;
 
 		if (texture_discard >= 0 && //texture has some data available
@@ -542,16 +552,17 @@ void LLVOVolume::updateTextures()
 									  mSculptTexture->getHeight(), mSculptTexture->getWidth()));
 			}
 	}
+	}
 
 
 	if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_TEXTURE_AREA))
 	{
 		setDebugText(llformat("%.0f:%.0f", fsqrtf(min_vsize),fsqrtf(max_vsize)));
 	}
-	else if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_TEXTURE_PRIORITY))
-	{
-		setDebugText(llformat("%.0f:%.0f", fsqrtf(min_vsize),fsqrtf(max_vsize)));
-	}
+// 	else if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_TEXTURE_PRIORITY))
+// 	{
+// 		setDebugText(llformat("%.0f:%.0f", fsqrtf(min_vsize),fsqrtf(max_vsize)));
+// 	}
 	else if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_FACE_AREA))
 	{
 		setDebugText(llformat("%.0f:%.0f", fsqrtf(min_vsize),fsqrtf(max_vsize)));
@@ -561,36 +572,6 @@ void LLVOVolume::updateTextures()
 	{ //flexi phasing issues make this happen
 		mPixelArea = old_area;
 	}
-}
-
-F32 LLVOVolume::getTextureVirtualSize(LLFace* face)
-{
-	//get area of circle around face
-	LLVector3 center = face->getPositionAgent();
-	LLVector3 size = (face->mExtents[1] - face->mExtents[0]) * 0.5f;
-	
-	F32 face_area = LLPipeline::calcPixelArea(center, size, *LLViewerCamera::getInstance());
-
-	face->setPixelArea(face_area);
-
-	if (face_area <= 0)
-	{
-		return 0.f;
-	}
-
-	//get area of circle in texture space
-	LLVector2 tdim = face->mTexExtents[1] - face->mTexExtents[0];
-	F32 texel_area = (tdim * 0.5f).lengthSquared()*3.14159f;
-	if (texel_area <= 0)
-	{
-		// Probably animated, use default
-		texel_area = 1.f;
-	}
-
-	//apply texel area to face area to get accurate ratio
-	face_area /= llclamp(texel_area, 1.f/64.f, 16.f);
-
-	return face_area;
 }
 
 BOOL LLVOVolume::isActive() const
@@ -730,30 +711,20 @@ BOOL LLVOVolume::setVolume(const LLVolumeParams &volume_params, const S32 detail
 // sculpt replaces generate() for sculpted surfaces
 void LLVOVolume::sculpt()
 {
+	if (mSculptTexture.notNull())
+	{				
 	U16 sculpt_height = 0;
 	U16 sculpt_width = 0;
 	S8 sculpt_components = 0;
 	const U8* sculpt_data = NULL;
 
-	if (mSculptTexture.notNull())
-	{
-		S32 discard_level;
-		S32 desired_discard = 0; // lower discard levels have MUCH less resolution 
-
-		discard_level = desired_discard;
+		S32 discard_level = mSculptTexture->getCachedRawImageLevel() ;
+		LLImageRaw* raw_image = mSculptTexture->getCachedRawImage() ;
 		
 		S32 max_discard = mSculptTexture->getMaxDiscardLevel();
 		if (discard_level > max_discard)
 			discard_level = max_discard;    // clamp to the best we can do
 
-		S32 best_discard = mSculptTexture->getDiscardLevel();
-		if (discard_level < best_discard)
-			discard_level = best_discard;   // clamp to what we have
-
-		if (best_discard == -1)
-			discard_level = -1;  // and if we have nothing, set to nothing
-
-		
 		S32 current_discard = getVolume()->getSculptLevel();
 		if(current_discard < -2)
 		{
@@ -775,18 +746,7 @@ void LLVOVolume::sculpt()
 		if (current_discard == discard_level)  // no work to do here
 			return;
 		
-		LLPointer<LLImageRaw> raw_image = new LLImageRaw();
-		BOOL is_valid = mSculptTexture->readBackRaw(discard_level, raw_image, FALSE);
-
-		sculpt_height = raw_image->getHeight();
-		sculpt_width = raw_image->getWidth();
-		sculpt_components = raw_image->getComponents();		
-
-		if(is_valid)
-		{
-			is_valid = mSculptTexture->isValidForSculpt(discard_level, sculpt_width, sculpt_height, sculpt_components) ;
-		}
-		if(!is_valid)
+		if(!raw_image)
 		{
 			sculpt_width = 0;
 			sculpt_height = 0;
@@ -794,9 +754,9 @@ void LLVOVolume::sculpt()
 		}
 		else
 		{
-			if (raw_image->getDataSize() < sculpt_height * sculpt_width * sculpt_components)
-				llerrs << "Sculpt: image data size = " << raw_image->getDataSize()
-					   << " < " << sculpt_height << " x " << sculpt_width << " x " <<sculpt_components << llendl;
+			sculpt_height = raw_image->getHeight();
+			sculpt_width = raw_image->getWidth();
+			sculpt_components = raw_image->getComponents();		
 					   
 			sculpt_data = raw_image->getData();
 		}
@@ -828,7 +788,7 @@ BOOL LLVOVolume::calcLOD()
 	}
 
 	//update face texture sizes on lod calculation
-	updateTextures();
+	updateTextureVirtualSize();
 
 	S32 cur_detail = 0;
 	
@@ -2305,7 +2265,7 @@ void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 
 		LLVOVolume* vobj = drawablep->getVOVolume();
 		llassert_always(vobj);
-		vobj->updateTextures();
+		vobj->updateTextureVirtualSize();
 		vobj->preRebuild();
 
 		//for each face

@@ -53,8 +53,9 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   set(LINUX ON BOOl FORCE)
-	set(COMPILE_OTR 0)
+  set(COMPILE_OTR 0)
   set(USE_OTR 0)
+
   # If someone has specified a word size, use that to determine the
   # architecture.  Otherwise, let the architecture specify the word size.
   if (WORD_SIZE EQUAL 32)
@@ -62,8 +63,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   elseif (WORD_SIZE EQUAL 64)
     set(ARCH x86_64)
   else (WORD_SIZE EQUAL 32)
-    execute_process(COMMAND uname -m COMMAND sed s/i.86/i686/
-                    OUTPUT_VARIABLE ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND uname -m COMMAND sed s/i.86/i686/
+                  OUTPUT_VARIABLE ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
     if (ARCH STREQUAL x86_64)
       set(WORD_SIZE 64)
     else (ARCH STREQUAL x86_64)
@@ -104,6 +105,16 @@ set(GRID agni CACHE STRING "Target Grid")
 set(VIEWER ON CACHE BOOL "Build Second Life viewer.")
 set(VIEWER_CHANNEL "Emerald" CACHE STRING "Viewer Channel Name")
 set(VIEWER_LOGIN_CHANNEL ${VIEWER_CHANNEL} CACHE STRING "Fake login channel for A/B Testing")
+set(VIEWER_BRANDING_ID "snowglobe" CACHE STRING "Viewer branding id (currently secondlife|snowglobe)")
+
+# *TODO: break out proper Branding-secondlife.cmake, Branding-snowglobe.cmake, etc
+if (${VIEWER_BRANDING_ID} MATCHES "secondlife")
+  set(VIEWER_BRANDING_NAME "Second Life")
+  set(VIEWER_BRANDING_NAME_CAMELCASE "SecondLife")
+elseif (${VIEWER_BRANDING_ID} MATCHES "snowglobe")
+  set(VIEWER_BRANDING_NAME "Snowglobe")
+  set(VIEWER_BRANDING_NAME_CAMELCASE "Snowglobe")
+endif (${VIEWER_BRANDING_ID} MATCHES "secondlife")
 
 set(STANDALONE OFF CACHE BOOL "Do not use Linden-supplied prebuilt libraries.")
 

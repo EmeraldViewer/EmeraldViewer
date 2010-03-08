@@ -103,6 +103,7 @@
 #include "llstatusbar.h"
 #include "llstartup.h"
 #include "llimview.h"
+#include "lltexturestats.h"
 #include "lltool.h"
 #include "lltoolcomp.h"
 #include "lltoolfocus.h"
@@ -476,12 +477,11 @@ void LLAgent::init()
 //	LLDebugVarMessageBox::show("Camera Lag", &CAMERA_FOCUS_HALF_LIFE, 0.5f, 0.01f);
 
 	mEffectColor = gSavedSettings.getColor4("EffectColor");
-
+	
 	ignorePrejump = gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation");
 	gSavedSettings.getControl("EmeraldIgnoreFinishAnimation")->getSignal()->connect(&updateIgnorePrejump);
 	EmeraldForceFly = gSavedSettings.getBOOL("EmeraldAlwaysFly");
 	gSavedSettings.getControl("EmeraldAlwaysFly")->getSignal()->connect(&updateEmeraldForceFly);
-	
 	mInitialized = TRUE;
 }
 
@@ -827,8 +827,7 @@ BOOL LLAgent::getPhantom()
 
 //-----------------------------------------------------------------------------
 // setFlying()
-//-
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void LLAgent::setFlying(BOOL fly)
 {
 	if (mAvatarObject.notNull())
@@ -1561,10 +1560,6 @@ LLVector3 LLAgent::calcFocusOffset(LLViewerObject *object, LLVector3 original_fo
 //-----------------------------------------------------------------------------
 BOOL LLAgent::calcCameraMinDistance(F32 &obj_min_distance)
 {
-	/* Emerald:
-	We don't care about minimum distances in Emerald. No we don't.
-	~Zwag
-	*/
 	BOOL soft_limit = FALSE; // is the bounding box to be treated literally (volumes) or as an approximation (avatars)
 
 	if (!mFocusObject || mFocusObject->isDead())
@@ -1737,7 +1732,6 @@ BOOL LLAgent::calcCameraMinDistance(F32 &obj_min_distance)
 	obj_min_distance += LLViewerCamera::getInstance()->getNear() + (soft_limit ? 0.1f : 0.2f);
 	
 	return TRUE;
-	
 }
 
 F32 LLAgent::getCameraZoomFraction()
@@ -1766,10 +1760,10 @@ F32 LLAgent::getCameraZoomFraction()
 	else
 	{
 		F32 min_zoom;
-		//const F32 DIST_FUDGE = 16.f; // meters
-		F32 max_zoom = 65535.f*4.f;//llmin(mDrawDistance - DIST_FUDGE, 
-						//		LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE,
-						//		MAX_CAMERA_DISTANCE_FROM_AGENT);
+		const F32 DIST_FUDGE = 16.f; // meters
+		F32 max_zoom = llmin(mDrawDistance - DIST_FUDGE, 
+								LLWorld::getInstance()->getRegionWidthInMeters() - DIST_FUDGE,
+								MAX_CAMERA_DISTANCE_FROM_AGENT);
 
 		F32 distance = (F32)mCameraFocusOffsetTarget.magVec();
 		if (mFocusObject.notNull())
@@ -1789,13 +1783,6 @@ F32 LLAgent::getCameraZoomFraction()
 		}
 
 		return clamp_rescale(distance, min_zoom, max_zoom, 1.f, 0.f);
-		
-		/*
-		Emerald:
-		We still don't care about minimums and maximums. No we don't.
-		~Zwag
-		*/
-		return mCameraZoomFraction;
 	}
 }
 
@@ -1821,7 +1808,6 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 	}
 	else
 	{
-		
 		F32 min_zoom = LAND_MIN_ZOOM;
 		//const F32 DIST_FUDGE = 16.f; // meters
 		//F32 max_zoom = llmin(mDrawDistance - DIST_FUDGE, 
@@ -1842,6 +1828,7 @@ void LLAgent::setCameraZoomFraction(F32 fraction)
 				}
 			}
 		}
+		
 		else
 		{
 			min_zoom = 0.f;
@@ -1929,10 +1916,9 @@ void LLAgent::cameraZoomIn(const F32 fraction)
 
 	LLVector3d	camera_offset(mCameraFocusOffsetTarget);
 	LLVector3d	camera_offset_unit(mCameraFocusOffsetTarget);
-	F32 min_zoom = 0.f;//LAND_MIN_ZOOM;
+	F32 min_zoom = LAND_MIN_ZOOM;
 	F32 current_distance = (F32)camera_offset_unit.normalize();
 	F32 new_distance = current_distance * fraction;
-
 	
 	//Emerald:
 	//So many darned limits!
@@ -2009,7 +1995,6 @@ void LLAgent::cameraOrbitIn(const F32 meters)
 		LLVector3d	camera_offset_unit(mCameraFocusOffsetTarget);
 		F32 current_distance = (F32)camera_offset_unit.normalize();
 		F32 new_distance = current_distance - meters;
-		/*
 		F32 min_zoom = LAND_MIN_ZOOM;
 		
 		// Don't move through focus point
@@ -2045,7 +2030,7 @@ void LLAgent::cameraOrbitIn(const F32 meters)
 		{
 			new_distance = llclamp( new_distance, APPEARANCE_MIN_ZOOM, APPEARANCE_MAX_ZOOM );
 		}
-		*/
+
 		// Compute new camera offset
 		mCameraFocusOffsetTarget = new_distance * camera_offset_unit;
 		cameraZoomIn(1.f);
@@ -4034,14 +4019,14 @@ void LLAgent::handleScrollWheel(S32 clicks)
 		{
 			if(gKeyboard->getKeyDown(KEY_CONTROL))
 			{
-				//mCameraOffsetDefault.mV[2]+=clicks/10.0f;;
-				mThirdPersonHeadOffset.mV[2]+=clicks/10.0f; 
-				
-			}else if(gKeyboard->getKeyDown(KEY_SHIFT))
+				mThirdPersonHeadOffset.mV[2]+=clicks/10.0f;
+			}
+			else if(gKeyboard->getKeyDown(KEY_SHIFT))
 			{
-				 gSavedSettings.setVector3("FocusOffsetDefault",
-					gSavedSettings.getVector3("FocusOffsetDefault") + LLVector3(0.0f,0.0f,clicks/10.0f));
-			}else
+				gSavedSettings.setVector3("FocusOffsetDefault",
+				gSavedSettings.getVector3("FocusOffsetDefault") + LLVector3(0.0f,0.0f,clicks/10.0f));
+			}
+			else
 			{
 				F32 current_zoom_fraction = mTargetCameraDistance / (mCameraOffsetDefault.magVec() * gSavedSettings.getF32("CameraOffsetScale"));
 				current_zoom_fraction *= 1.f - pow(ROOT_ROOT_TWO, clicks);
@@ -5085,7 +5070,10 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	else if (id == ANIM_AGENT_STANDUP)
 	{
 		// send stand up command
-		setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+		if(!gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation"))
+		{
+			setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+		}
 
 		// now trigger dusting self off animation
 		if (mAvatarObject.notNull() && !mAvatarObject->mBelowWater && rand() % 3 == 0)
@@ -5093,7 +5081,10 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_PRE_JUMP || id == ANIM_AGENT_LAND || id == ANIM_AGENT_MEDIUM_LAND)
 	{
-		setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+		if(!gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation"))
+		{
+			setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+		}
 	}
 }
 
@@ -6336,9 +6327,7 @@ void LLAgent::teleportRequest(
 			look_at=avatarp->getRotation().packToVector3();
 		}
 		else
-		{
 			look_at = LLViewerCamera::getInstance()->getAtAxis();
-		}
 		msg->addVector3("LookAt", look_at);
 		sendReliableMessage();
 	}
@@ -6436,6 +6425,7 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 // [/RLVa:KB]
 
 	LLViewerRegion* regionp = getRegion();
+	//U64 handle = to_region_handle(pos_global);
 	LLSimInfo* info = LLWorldMap::getInstance()->simInfoFromPosGlobal(pos_global);
 	bool isLocal = regionp->getHandle() == to_region_handle_global((F32)pos_global.mdV[VX], (F32)pos_global.mdV[VY]);
 	bool ml = gSavedSettings.getBOOL("EmeraldMoveLockDCT");
@@ -6462,20 +6452,20 @@ void LLAgent::teleportViaLocation(const LLVector3d& pos_global, bool go_to)
 			LLVector3 pos(fmod((F32)pos_global.mdV[VX], width),
 						  fmod((F32)pos_global.mdV[VY], width),
 						  (F32)pos_global.mdV[VZ]);
-			pos += offset;
+			pos +=offset;
 			teleportRequest(handle, pos);
 		}
 		else if(info)
 		{
 			U32 x_pos;
 			U32 y_pos;
-			from_region_handle(info->mHandle, &x_pos, &y_pos);
+			from_region_handle(info->getHandle(), &x_pos, &y_pos);
 			LLVector3 pos_local(
 				(F32)(pos_global.mdV[VX] - x_pos),
 				(F32)(pos_global.mdV[VY] - y_pos),
 				(F32)(pos_global.mdV[VZ]));
 			pos_local += offset;
-			teleportRequest(info->mHandle, pos_local);
+			teleportRequest(info->getHandle(), pos_local);
 		}
 		else if(teleportCore(isLocal))
 		{

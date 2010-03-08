@@ -161,6 +161,20 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 				chat.mFromName = name;
 				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
 				chat.mText = name+" has "+(entering ? "entered" : "left")+" the sim.";// ("+key.asString()+")";
+				if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
+				if(!entering)
+				{
+					gMessageSystem->newMessage("ScriptDialogReply");
+					 gMessageSystem->nextBlock("AgentData");
+					 gMessageSystem->addUUID("AgentID", gAgent.getID());
+					 gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
+					 gMessageSystem->nextBlock("Data");
+					 gMessageSystem->addUUID("ObjectID", gAgent.getID());
+					 gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
+					 gMessageSystem->addS32("ButtonIndex", 1);
+					gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, 0) + key.asString());
+					gAgent.sendReliableMessage();
+				}
 			}
 			if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
 			if(!entering)
@@ -2150,7 +2164,6 @@ void LLFloaterAvatarList::onClickBan(void *userdata)
 }
 
 //static
-
 void LLFloaterAvatarList::onClickScriptCount(void *userdata)
 {
 	LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
@@ -2164,6 +2177,7 @@ void LLFloaterAvatarList::onClickScriptCount(void *userdata)
 		LLSelectMgr::getInstance()->deselectAll();
 	}
 }
+
 //static
 void LLFloaterAvatarList::onClickMute(void *userdata)
 {

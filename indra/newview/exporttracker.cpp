@@ -93,6 +93,8 @@ void JCExportTracker::init()
 	destination = "";
 	asset_dir = "";
 	requested_textures.clear();
+	invqueries=0;
+	propertyqueries=0;
 	export_properties = gSavedSettings.getBOOL("EmeraldExportProperties");
 	export_inventory = gSavedSettings.getBOOL("EmeraldExportInventory");
 	export_textures = gSavedSettings.getBOOL("EmeraldExportTextures");
@@ -128,7 +130,7 @@ LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 	//	return llsd;
 
 	//object = root_object = node->getObject();
-	
+
 	if (!object)
 		return llsd;
 	if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer() && !gAgent.getGodLevel()))
@@ -253,7 +255,7 @@ LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 				{
 					requested_textures.insert(asset_id);
 					LLViewerImage* img = gImageList.getImage(asset_id, MIPMAP_TRUE, FALSE);
-					img->setBoostLevel(LLViewerImage::BOOST_MAX_LEVEL);
+					img->setBoostLevel(LLViewerImageBoostLevel::BOOST_MAX_LEVEL);
 					img->setLoadedCallback( JCExportTracker::onFileLoadedForSave, 
 									0, TRUE, FALSE, info );
 					llinfos << "Requesting texture " << asset_id.asString() << llendl;
@@ -352,11 +354,11 @@ bool JCExportTracker::serializeSelection()
 	F32 throttle = gSavedSettings.getF32("OutBandwidth");
 	// Gross magical value that is 128kbit/s
 	// Sim appears to drop requests if they come in faster than this. *sigh*
-	if(throttle < 128000.)
+	if((throttle == 0.f) || (throttle > 128000.f))
 	{
-		gMessageSystem->mPacketRing.setOutBandwidth(128000.0);
+		gMessageSystem->mPacketRing.setOutBandwidth(128000);
+		gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 	}
-	gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
 	return serialize(catfayse);
 }
 
@@ -435,7 +437,6 @@ bool JCExportTracker::serialize(LLDynamicArray<LLViewerObject*> objects)
 	{
 		data = total;
 	}
-
 	return success;
 
 }
@@ -468,7 +469,7 @@ void JCExportTracker::completechk()
 		//cmdline_printchat("Full property export completed.");
 		cmdline_printchat("(Content downloads may require more time, but the tracker is free for another export.)");
 		F32 throttle = gSavedSettings.getF32("OutBandwidth");
-		if(throttle != 0.)
+		if(throttle != 0.f)
 		{
 			gMessageSystem->mPacketRing.setOutBandwidth(throttle);
 			gMessageSystem->mPacketRing.setUseOutThrottle(TRUE);
@@ -478,8 +479,8 @@ void JCExportTracker::completechk()
 			gMessageSystem->mPacketRing.setOutBandwidth(0.0);
 			gMessageSystem->mPacketRing.setUseOutThrottle(FALSE);
 		}
-			finalize(data);
-		}
+		finalize(data);
+	}
 }
 
 //LLSD* chkdata(LLUUID id, LLSD* data)
@@ -645,7 +646,7 @@ BOOL couldDL(LLAssetType::EType type)
 		return FALSE;
 		break;
 	}
-	return FALSE;
+	//return FALSE;
 }
 
 void JCExportTracker::inventoryChanged(LLViewerObject* obj,
@@ -702,6 +703,7 @@ void JCExportTracker::inventoryChanged(LLViewerObject* obj,
 										{
 											LLPermissions perm(((LLInventoryItem*)((LLInventoryObject*)(*it)))->getPermissions());
 											if(couldDL(asset->getType())
+											&& (perm.getCreator() == gAgent.getID())
 											&& perm.allowCopyBy(gAgent.getID())
 											&& perm.allowModifyBy(gAgent.getID())
 											&& perm.allowTransferTo(LLUUID::null))// && is_asset_id_knowable(asset->getType()))
@@ -764,7 +766,7 @@ void JCAssetExportCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType ty
 			}//else //cmdline_printchat("Failed to decode notecard");
 		}
 		LLAPRFile infile;
-		infile.open(info->path.c_str(), LL_APR_WB);
+		infile.open(info->path.c_str(), LL_APR_WB, LLAPRFile::global);
 		apr_file_t *fp = infile.getFileHandle();
 		if(fp)infile.write(buffer, size);
 		infile.close();

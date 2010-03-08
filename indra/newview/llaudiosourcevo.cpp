@@ -87,7 +87,7 @@ void LLAudioSourceVO::updateMute()
 	{
 		pos_global = mObjectp->getPositionGlobal();
 	}
-
+	
 	if (!LLViewerParcelMgr::getInstance()->canHearSound(pos_global))
 	{
 		mute = true;
@@ -101,7 +101,7 @@ void LLAudioSourceVO::updateMute()
 		}
 		else if (LLMuteList::getInstance()->isMuted(mOwnerID, LLMute::flagObjectSounds))
 		{
-			mute = true;
+			mute = TRUE;
 		}
 		else if (mObjectp->isAttachment())
 		{
@@ -113,7 +113,7 @@ void LLAudioSourceVO::updateMute()
 			if (parent 
 				&& LLMuteList::getInstance()->isMuted(parent->getID()))
 			{
-				mute = true;
+				mute = TRUE;
 			}
 		}
 	}
@@ -140,6 +140,7 @@ void LLAudioSourceVO::updateMute()
 		}
 	}
 }
+
 
 void LLAudioSourceVO::update()
 {

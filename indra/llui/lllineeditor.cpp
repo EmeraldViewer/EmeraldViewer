@@ -334,10 +334,10 @@ void LLLineEditor::updateHistory()
 	if( mHaveHistory && getLength() )
 	{
 		if( !mLineHistory.empty() )
-		{
+	{
 			// When not empty, last line of history should always be blank.
 			if( mLineHistory.back().empty() )
-			{
+		{
 				// discard the empty line
 			mLineHistory.pop_back();
 		}

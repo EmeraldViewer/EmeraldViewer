@@ -63,8 +63,15 @@
 #include "llpaneldirbrowser.h"
 
 #include <boost/tokenizer.hpp>
+#ifdef _MSC_VER
+#pragma warning( disable : 4702 ) //warning C4702: unreachable code silly boost o.o
+#endif
+
 #include <boost/lexical_cast.hpp>
 
+#ifdef _MSC_VER
+#pragma warning( pop ) 
+#endif
 //---------------------------------------------------------------------------
 // LLPanelDirFindAll - Google search appliance based search
 //---------------------------------------------------------------------------

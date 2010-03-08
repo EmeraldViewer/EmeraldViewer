@@ -625,7 +625,6 @@ void LLAudioDecodeMgr::Impl::processQueue(const F32 num_secs)
                     d_path = gDirUtilp->getExpandedFilename(MM_SNDLOC,uuid_str) + ".dsf";
                 else
                     d_path = gDirUtilp->getExpandedFilename(LL_PATH_CACHE,uuid_str) + ".dsf";
-				
 
 				mCurrentDecodep = new LLVorbisDecodeState(uuid, d_path);
 				if (!mCurrentDecodep->initDecode())

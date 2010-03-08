@@ -421,8 +421,8 @@ class DarwinManifest(ViewerManifest):
             # copy additional libs in <bundle>/Contents/MacOS/
             self.path("../../libraries/universal-darwin/lib_release/libndofdev.dylib", dst="MacOS/libndofdev.dylib")
             # OpenAL libraries
-            self.path("../../libraries/universal-darwin/lib_release/libopenal.dylib", "MacOS/libopenal.dylib");
-            self.path("../../libraries/universal-darwin/lib_release/libalut.dylib", "MacOS/libalut.dylib");
+#            self.path("../../libraries/universal-darwin/lib_release/libopenal.dylib", "MacOS/libopenal.dylib");
+#            self.path("../../libraries/universal-darwin/lib_release/libalut.dylib", "MacOS/libalut.dylib");
 	    
 	    # Lua lib
 	    #self.path("../../libraries/universal-darwin/lib_release/liblua5.1.dylib", "MacOS/liblua5.1.dylib");
@@ -493,6 +493,15 @@ class DarwinManifest(ViewerManifest):
                 # llkdu dynamic library
                 # This should be downloaded and unpacked for the user, not packaged with the viewer. ~Disc
 #		self.path("../../libraries/universal-darwin/lib_release/libllkdu.dylib", "libllkdu.dylib")
+                try:
+                    self.path(self.find_existing_file('../llkdu/%s/libllkdu.dylib' % self.args['configuration'],
+                        '../../build-darwin-universal-Release/llkdu/Release/libllkdu.dylib',
+                        "../../libraries/universal-darwin/lib_release/libllkdu.dylib"),
+                        dst='libllkdu.dylib')
+                    pass
+                except:
+                    print "Skipping libllkdu.dylib"
+                    pass
                 
                 #libfmodwrapper.dylib
                 # This should be downloaded and unpacked for the user, not packaged with the viewer. ~Disc

@@ -89,7 +89,7 @@ private:
 	F32				mPixelsPerMeter;		// world meters to map pixels
 	F32				mObjectMapTPM;			// texels per meter on map
 	F32				mObjectMapPixels;		// Width of object map in pixels
-	S32				mDotRadius;				// Size of avatar markers
+	F32				mDotRadius;				// Size of avatar markers
 	F32				mTargetPanX;
 	F32				mTargetPanY;
 	F32				mCurPanX;
@@ -101,7 +101,6 @@ private:
 
 private:
 	LLUUID			mClosestAgentToCursor;
-	LLVector3d		mClosestAgentPosition;
 	LLUUID			mClosestAgentAtLastRightClick;
 
 	static BOOL		sRotateMap;

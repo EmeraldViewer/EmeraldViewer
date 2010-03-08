@@ -815,7 +815,10 @@ void LLPanelDisplay::applyResolution()
 
 	gViewerWindow->requestResolutionUpdate(!mCtrlWindowed->get());
 
-	send_agent_update(TRUE);
+	if(!gAgent.getPhantom())
+	{
+		send_agent_update(TRUE);
+	}
 
 	// Update enable/disable
 	refresh();

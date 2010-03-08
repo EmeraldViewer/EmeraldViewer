@@ -491,7 +491,7 @@ class SetSearchType : public inventory_listener_t
 			
 			mPtr->getControl("Inventory.SearchByName")->setValue(TRUE);
 			mPtr->getControl("Inventory.SearchByCreator")->setValue(FALSE);	
-			mPtr->getControl("Inventory.SearchByDesc")->setValue(FALSE);
+			mPtr->getControl("Inventory.SearchByDesc")->setValue(FALSE);		
 			mPtr->getControl("Inventory.SearchByAll")->setValue(FALSE);
 		}
 		else if(search_type == "creator")

@@ -88,7 +88,6 @@ typedef enum e_camera_position
 	CAMERA_POSITION_OBJECT /** Camera positioned at observed object's position */
 } ECameraPosition;
 
-
 typedef enum e_anim_request
 {
 	ANIM_REQUEST_START,
@@ -777,6 +776,7 @@ public:
 
 	LLFrameTimer mDoubleTapRunTimer;
 	EDoubleTapRunMode mDoubleTapRunMode;
+
 
 	static BOOL sFirstPersonBtnState;
 	static BOOL sMouselookBtnState;

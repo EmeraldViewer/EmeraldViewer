@@ -61,6 +61,9 @@
 
 // Single Precision Floating Point Routines
 #if _MSC_VER < 1400
+#ifndef fsqrtf
+#define fsqrtf(x)		((F32)sqrt((F64)(x)))
+#endif
 #ifndef sqrtf
 #define sqrtf(x)		((F32)sqrt((F64)(x)))
 #endif

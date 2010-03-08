@@ -188,7 +188,7 @@ protected:
 	void saveIfNeeded();
 	void uploadAssetViaCaps(const std::string& url,
 							const std::string& filename, 
-							const LLUUID& item_id, BOOL mono = TRUE);
+							const LLUUID& item_id, BOOL domono);
 	void uploadAssetLegacy(const std::string& filename,
 							const LLUUID& item_id,
 							const LLTransactionID& tid);

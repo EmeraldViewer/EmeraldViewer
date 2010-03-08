@@ -77,15 +77,14 @@
 // [/RLVa:KB]
 
 const F32 MAP_SCALE_MIN = 32;
-const F32 MAP_SCALE_MID = 172;
+const F32 MAP_SCALE_MID = 1024;
 const F32 MAP_SCALE_MAX = 4096;
 const F32 MAP_SCALE_INCREMENT = 16;
-const F32 MAP_MIN_PICK_DIST = 8;
+const F32 MAP_SCALE_ZOOM_FACTOR = 1.04f;			// Zoom in factor per click of the scroll wheel (4%)
 const F32 MAP_MINOR_DIR_THRESHOLD = 0.08f;
-
-const S32 TRACKING_RADIUS = 3;
-const S32 MIN_DOT_RADIUS = 4;
-const F32 DOT_SCALE = 0.75;
+const F32 MIN_DOT_RADIUS = 3.5f;
+const F32 DOT_SCALE = 0.75f;
+const F32 MIN_PICK_SCALE = 2.f;
 
 LLNetMap::LLNetMap(const std::string& name) :
 	LLPanel(name),
@@ -100,12 +99,7 @@ LLNetMap::LLNetMap(const std::string& name) :
 {
 	mScale = gSavedSettings.getF32("MiniMapScale");
 	mPixelsPerMeter = mScale / LLWorld::getInstance()->getRegionWidthInMeters();
-
-	mDotRadius = llround(DOT_SCALE * mPixelsPerMeter);
-	if (mDotRadius < MIN_DOT_RADIUS)
-	{
-		mDotRadius = MIN_DOT_RADIUS;
-	}
+	mDotRadius = llmax(DOT_SCALE * mPixelsPerMeter, MIN_DOT_RADIUS);
 
 	mObjectImageCenterGlobal = gAgent.getCameraPositionGlobal();
 	
@@ -161,12 +155,7 @@ void LLNetMap::setScale( F32 scale )
 	}
 
 	mPixelsPerMeter = mScale / LLWorld::getInstance()->getRegionWidthInMeters();
-
-	mDotRadius = llround(DOT_SCALE * mPixelsPerMeter);
-	if (mDotRadius < MIN_DOT_RADIUS)
-	{
-		mDotRadius = MIN_DOT_RADIUS;
-	}
+	mDotRadius = llmax(DOT_SCALE * mPixelsPerMeter, MIN_DOT_RADIUS);
 
 	mUpdateNow = TRUE;
 }
@@ -364,6 +353,7 @@ void LLNetMap::draw()
 		LLUI::getCursorPositionLocal(this, &local_mouse_x, &local_mouse_y);
 		mClosestAgentToCursor.setNull();
 		F32 closest_dist = F32_MAX;
+		F32 min_pick_dist = mDotRadius * MIN_PICK_SCALE; 
 
 		// Draw avatars
 //		LLColor4 mapcolor = gAvatarMapColor;
@@ -407,11 +397,10 @@ void LLNetMap::draw()
 //				pos_map.mV[VX], pos_map.mV[VY], avatar_color, pos_map.mV[VZ],mDotRadius);
 
 			F32	dist_to_cursor = dist_vec(LLVector2(pos_map.mV[VX], pos_map.mV[VY]), LLVector2(local_mouse_x,local_mouse_y));
-			if(dist_to_cursor < MAP_MIN_PICK_DIST && dist_to_cursor < closest_dist)
+			if(dist_to_cursor < min_pick_dist && dist_to_cursor < closest_dist)
 			{
 				closest_dist = dist_to_cursor;
 				mClosestAgentToCursor = avatar_ids[i];
-				mClosestAgentPosition = positions[i];
 			}
 		}
 
@@ -438,10 +427,10 @@ void LLNetMap::draw()
 		pos_global = gAgent.getPositionGlobal();
 		pos_map = globalPosToView(pos_global, rotate_map);
 		LLUIImagePtr you = LLWorldMapView::sAvatarYouLargeImage;
-		S32 dot_width = mDotRadius * 2;
+		S32 dot_width = llround(mDotRadius * 2.f);
 		you->draw(
-			llround(pos_map.mV[VX]) - mDotRadius,
-			llround(pos_map.mV[VY]) - mDotRadius,
+			llround(pos_map.mV[VX] - mDotRadius),
+			llround(pos_map.mV[VY] - mDotRadius),
 			dot_width,
 			dot_width);
 
@@ -505,6 +494,7 @@ void LLNetMap::draw()
 void LLNetMap::reshape(S32 width, S32 height, BOOL called_from_parent)
 {
 	LLPanel::reshape(width, height, called_from_parent);
+	createObjectImage();
 	updateMinorDirections();
 }
 
@@ -582,8 +572,12 @@ LLVector3d LLNetMap::viewPosToGlobal( S32 x, S32 y, BOOL rotated )
 
 BOOL LLNetMap::handleScrollWheel(S32 x, S32 y, S32 clicks)
 {
-	// note that clicks are reversed from what you'd think
-	setScale(llclamp(mScale - clicks*MAP_SCALE_INCREMENT, MAP_SCALE_MIN, MAP_SCALE_MAX));
+	// note that clicks are reversed from what you'd think: i.e. > 0  means zoom out, < 0 means zoom in
+	F32 scale = mScale;
+	
+	scale *= pow(MAP_SCALE_ZOOM_FACTOR, -clicks);
+	setScale(llclamp(scale, MAP_SCALE_MIN, MAP_SCALE_MAX));
+
 	return TRUE;
 }
 
@@ -607,7 +601,7 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 // [/RLVa:KB]
 
 			LLVector3d mypos = gAgent.getPositionGlobal();
-			LLVector3d position = mClosestAgentPosition;
+			LLVector3d position;
 
 			if ( LLFloaterAvatarList::getInstance() )
 			{
@@ -616,16 +610,16 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 				{
 					//position = LLFloaterAvatarList::AvatarPosition(mClosestAgentToCursor);
 					position = ent->getPosition();
+					LLVector3d delta = position - mypos;
+					F32 distance = (F32)delta.magVec();
+					msg.append( llformat("\n(Distance: %.02fm)\n\n",distance) );
 				}
 			}
 
-			LLVector3d delta = position - mypos;
-			F32 distance = (F32)delta.magVec();
+
 
 
 			//llinfos << distance << " - " << position << llendl;
-
-			msg.append( llformat("\n(Distance: %.02fm)\n\n",distance) );
 		}
 // [RLVa:KB] - Version: 1.23.4 | Alternate: Emerald-370 | Checked: 2009-07-04 (RLVa-1.0.0a) | Modified: RLVa-0.2.0b
 		msg.append( (!gRlvHandler.hasBehaviour(RLV_BHVR_SHOWLOC)) ? region->getName() : RlvStrings::getString(RLV_STRING_HIDDEN) );
@@ -698,11 +692,7 @@ void LLNetMap::renderScaledPointGlobal( const LLVector3d& pos, const LLColor4U &
 	LLVector3 local_pos;
 	local_pos.setVec( pos - mObjectImageCenterGlobal );
 
-	// DEV-17370 - megaprims of size > 4096 cause lag.  (go figger.)
-	const F32 MAX_RADIUS = 256.0f;
-	F32 radius_clamped = llmin(radius_meters, MAX_RADIUS);
-	
-	S32 diameter_pixels = llround(2 * radius_clamped * mObjectMapTPM);
+	S32 diameter_pixels = llround(2 * radius_meters * mObjectMapTPM);
 	renderPoint( local_pos, color, diameter_pixels );
 }
 
@@ -801,7 +791,7 @@ void LLNetMap::createObjectImage()
 	S32 square_size = llround( sqrt(width*width + height*height) );
 
 	// Find the least power of two >= the minimum size.
-	const S32 MIN_SIZE = 32;
+	const S32 MIN_SIZE = 64;
 	const S32 MAX_SIZE = 256;
 	S32 img_size = MIN_SIZE;
 	while( (img_size*2 < square_size ) && (img_size < MAX_SIZE) )
@@ -817,8 +807,8 @@ void LLNetMap::createObjectImage()
 		U8* data = mObjectRawImagep->getData();
 		memset( data, 0, img_size * img_size * 4 );
 		mObjectImagep = new LLImageGL( mObjectRawImagep, FALSE);
-		setScale(mScale);
 	}
+		setScale(mScale);
 	mUpdateNow = TRUE;
 }
 

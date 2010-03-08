@@ -762,6 +762,22 @@ void init_client_menu(LLMenuGL* menu)
 										debugview,
 									   	'4', MASK_CONTROL|MASK_SHIFT ) );
 
+		if(gAuditTexture)
+		{
+			sub->append(new LLMenuItemCheckGL("Texture Size Console", 
+										&toggle_visibility,
+										NULL,
+										&get_visibility,
+										(void*)gTextureSizeView,
+									   	'5', MASK_CONTROL|MASK_SHIFT ) );
+			sub->append(new LLMenuItemCheckGL("Texture Category Console", 
+										&toggle_visibility,
+										NULL,
+										&get_visibility,
+										(void*)gTextureCategoryView,
+									   	'6', MASK_CONTROL|MASK_SHIFT ) );
+		}
+
 		sub->append(new LLMenuItemCheckGL("Fast Timers", 
 										&toggle_visibility,
 										NULL,
@@ -1074,7 +1090,6 @@ extern BOOL gDebugClicks;
 extern BOOL gDebugWindowProc;
 extern BOOL gDebugTextEditorTips;
 extern BOOL gDebugSelectMgr;
-#define catfayse new
 
 void init_debug_ui_menu(LLMenuGL* menu)
 {
@@ -1345,7 +1360,7 @@ void init_debug_rendering_menu(LLMenuGL* menu)
 	item = new LLMenuItemCheckGL("Disable Textures", menu_toggle_variable, NULL, menu_check_variable, (void*)&LLViewerImage::sDontLoadVolumeTextures);
 	menu->append(item);
 	
-#ifndef LL_RELEASE_FOR_DOWNLOAD
+#if 1 //ndef LL_RELEASE_FOR_DOWNLOAD
 	item = new LLMenuItemCheckGL("HTTP Get Textures", menu_toggle_control, NULL, menu_check_control, (void*)"ImagePipelineUseHTTP");
 	menu->append(item);
 #endif
@@ -1360,6 +1375,9 @@ void init_debug_rendering_menu(LLMenuGL* menu)
 	menu->append(item);
 
 	item = new LLMenuItemCheckGL("Attached Particles", menu_toggle_attached_particles, NULL, menu_check_control, (void*)"RenderAttachedParticles");
+	menu->append(item);
+
+	item = new LLMenuItemCheckGL("Audit Texture", menu_toggle_control, NULL, menu_check_control, (void*)"AuditTexture");
 	menu->append(item);
 
 #ifndef LL_RELEASE_FOR_DOWNLOAD
@@ -1406,13 +1424,12 @@ void init_debug_avatar_menu(LLMenuGL* menu)
 
 	menu->appendMenu(sub_menu);
 
-	menu->append(new LLMenuItemCheckGL("Enable Lip Sync (Beta)", menu_toggle_control, NULL, menu_check_control, (void*)"LipSyncEnabled"));
 	menu->append(new LLMenuItemToggleGL("Tap-Tap-Hold To Run", &gAllowTapTapHoldRun));
 	menu->append(new LLMenuItemCallGL("Force Params to Default", &LLAgent::clearVisualParams, NULL));
 	menu->append(new LLMenuItemCallGL("Reload Vertex Shader", &reload_vertex_shader, NULL));
 	menu->append(new LLMenuItemToggleGL("Animation Info", &LLVOAvatar::sShowAnimationDebug));
 	menu->append(new LLMenuItemCallGL("Slow Motion Animations", &slow_mo_animations, NULL));
-	menu->append(new LLMenuItemCheckGL( "Show Look At",	&menu_toggle_control, NULL, &menu_check_control, (void*)"PersistShowLookAt"));
+	menu->append(new LLMenuItemToggleGL("Show Look At", &LLHUDEffectLookAt::sDebugLookAt));
 	menu->append(new LLMenuItemToggleGL("Show Point At", &LLHUDEffectPointAt::sDebugPointAt));
 	menu->append(new LLMenuItemToggleGL("Debug Joint Updates", &LLVOAvatar::sJointDebug));
 	menu->append(new LLMenuItemToggleGL("Disable LOD", &LLViewerJoint::sDisableLOD));
@@ -2365,21 +2382,71 @@ class LLObjectMute : public view_listener_t
 	}
 };
 
+class LLObjectVisibleScriptCount : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		bool new_value = (object != NULL);
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		
+		return true;
+	}
+};
+
+class LLObjectEnableScriptDelete : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		bool new_value = (object != NULL);
+		if(new_value)
+		for (LLObjectSelection::root_iterator iter = LLSelectMgr::getInstance()->getSelection()->root_begin();
+			iter != LLSelectMgr::getInstance()->getSelection()->root_end(); iter++)
+		{
+			LLSelectNode* selectNode = *iter;
+			LLViewerObject* object = selectNode->getObject();
+			if(object)
+				if(!object->permModify())
+				{
+					new_value=false;
+					break;
+				}
+		}
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		
+		return true;
+	}
+};
+
 class LLObjectVisibleExport : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
 		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
 		bool new_value = (object != NULL);
-		
-		if (new_value)
+		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
+			 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
 		{
-			new_value = !object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer();
-			// Disable for avatars, we can only export prims
-			//LLVOAvatar* avatar = find_avatar_from_object(object); 
-			//new_value = (avatar == NULL);
+			LLSelectNode* selectNode = *iter;
+			LLViewerObject* object = selectNode->getObject();
+			if (object)
+				if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+				{
+					new_value=0;
+					break;
+				}
 		}
-		
+		for (LLObjectSelection::valid_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_begin();
+			 iter != LLSelectMgr::getInstance()->getSelection()->valid_end(); iter++)
+		{
+			LLSelectNode* selectNode = *iter;
+			if(!(selectNode->mPermissions->getCreator() == gAgent.getID()))
+			{
+				new_value=0;
+				break;
+			}
+		}
 		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
 		
 		return true;
@@ -2434,43 +2501,6 @@ class LLScriptDelete : public view_listener_t
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
 		ScriptCounter::serializeSelection(true);
-		return true;
-	}
-};
-
-class LLObjectVisibleScriptCount : public view_listener_t
-{
-	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-	{
-		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
-		bool new_value = (object != NULL);
-		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
-		
-		return true;
-	}
-};
-
-class LLObjectEnableScriptDelete : public view_listener_t
-{
-	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
-	{
-		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
-		bool new_value = (object != NULL);
-		if(new_value)
-		for (LLObjectSelection::root_iterator iter = LLSelectMgr::getInstance()->getSelection()->root_begin();
-			iter != LLSelectMgr::getInstance()->getSelection()->root_end(); iter++)
-		{
-			LLSelectNode* selectNode = *iter;
-			LLViewerObject* object = selectNode->getObject();
-			if(object)
-				if(!object->permModify())
-				{
-					new_value=false;
-					break;
-				}
-		}
-		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
-		
 		return true;
 	}
 };
@@ -3202,9 +3232,8 @@ void set_god_level(U8 god_level)
 	// Some classifieds change visibility on god mode
 	LLFloaterDirectory::requestClassifieds();
 
-	// God mode changes sim visibility
-	LLWorldMap::getInstance()->reset();
-	LLWorldMap::getInstance()->setCurrentLayer(0);
+	// God mode changes region visibility
+	LLWorldMap::getInstance()->reloadItems(true);
 
 	// inventory in items may change in god mode
 	gObjectList.dirtyAllObjectInventory();
@@ -4708,7 +4737,8 @@ class LLToolsEnableSelectNextPart : public view_listener_t
 };
 
 // Cycle selection through linked children in selected object.
-// FIXME: Order of children list is not always the same as sim's idea of link order. This may confuse users.
+// FIXME: Order of children list is not always the same as sim's idea of link order. This may confuse
+// resis. Need link position added to sim messages to address this.
 class LLToolsSelectNextPart : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -4736,6 +4766,7 @@ class LLToolsSelectNextPart : public view_listener_t
 							to_select = *iter;
 							if (fwd)
 							{
+								// stop searching if going forward; repeat to get last hit if backward
 								break;
 							}
 						}
@@ -4749,7 +4780,7 @@ class LLToolsSelectNextPart : public view_listener_t
 									++iter;	// skip sitting avatars and selected if include
 								}
 							}
-							else
+							else // backward
 							{
 								iter = (iter == children.begin() ? children.end() : iter);
 								--iter;
@@ -4773,7 +4804,7 @@ class LLToolsSelectNextPart : public view_listener_t
 					}
 					if (fwd || prev)
 					{
-					LLSelectMgr::getInstance()->deselectAll();
+						LLSelectMgr::getInstance()->deselectAll();
 					}
 					LLSelectMgr::getInstance()->selectObjectOnly(to_select);
 					return true;
@@ -7000,39 +7031,39 @@ class LLToolsSelectedScriptAction : public view_listener_t
 
 void handle_selected_texture_info(void*)
 {
-    for (LLObjectSelection::valid_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_begin();
-         iter != LLSelectMgr::getInstance()->getSelection()->valid_end(); iter++)
-    {
-        LLSelectNode* node = *iter;
-        
-        std::string msg;
-        msg.assign("Texture info for: ");
-        msg.append(node->mName);
-        LLChat chat(msg);
-        LLFloaterChat::addChat(chat);
+	for (LLObjectSelection::valid_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_begin();
+		 iter != LLSelectMgr::getInstance()->getSelection()->valid_end(); iter++)
+	{
+		LLSelectNode* node = *iter;
+		
+		std::string msg;
+		msg.assign("Texture info for: ");
+		msg.append(node->mName);
+		LLChat chat(msg);
+		LLFloaterChat::addChat(chat);
 
-        U8 te_count = node->getObject()->getNumTEs();
-        // map from texture ID to list of faces using it
-        typedef std::map< LLUUID, std::vector<U8> > map_t;
-        map_t faces_per_texture;
-        for (U8 i = 0; i < te_count; i++)
-        {
-            if (!node->isTESelected(i)) continue;
+		U8 te_count = node->getObject()->getNumTEs();
+		// map from texture ID to list of faces using it
+		typedef std::map< LLUUID, std::vector<U8> > map_t;
+		map_t faces_per_texture;
+		for (U8 i = 0; i < te_count; i++)
+		{
+			if (!node->isTESelected(i)) continue;
 
-            LLViewerImage* img = node->getObject()->getTEImage(i);
-            LLUUID image_id = img->getID();
-            faces_per_texture[image_id].push_back(i);
-        }
-        // Per-texture, dump which faces are using it.
-        map_t::iterator it;
-        for (it = faces_per_texture.begin(); it != faces_per_texture.end(); ++it)
-        {
-            LLUUID image_id = it->first;
-            U8 te = it->second[0];
-            LLViewerImage* img = node->getObject()->getTEImage(te);
-            S32 height = img->getHeight();
-            S32 width = img->getWidth();
-            S32 components = img->getComponents();
+			LLViewerImage* img = node->getObject()->getTEImage(i);
+			LLUUID image_id = img->getID();
+			faces_per_texture[image_id].push_back(i);
+		}
+		// Per-texture, dump which faces are using it.
+		map_t::iterator it;
+		for (it = faces_per_texture.begin(); it != faces_per_texture.end(); ++it)
+		{
+			LLUUID image_id = it->first;
+			U8 te = it->second[0];
+			LLViewerImage* img = node->getObject()->getTEImage(te);
+			S32 height = img->getHeight();
+			S32 width = img->getWidth();
+			S32 components = img->getComponents();
             std::string ts="";
             //MOYMOD - :o
             if(gSavedSettings.getBOOL("Emeraldmm_showtexinfo")){
@@ -7056,14 +7087,14 @@ void handle_selected_texture_info(void*)
                                 width,
                                 height,
                                 (components == 4 ? "alpha" : "opaque")));
-            for (U8 i = 0; i < it->second.size(); ++i)
-            {
-                msg.append( llformat("%d ", (S32)(it->second[i])));
-            }
-            LLChat chat(msg);
-            LLFloaterChat::addChat(chat);
-        }
-    }
+			for (U8 i = 0; i < it->second.size(); ++i)
+			{
+				msg.append( llformat("%d ", (S32)(it->second[i])));
+			}
+			LLChat chat(msg);
+			LLFloaterChat::addChat(chat);
+		}
+	}
 }
 
 void handle_dump_image_list(void*)
@@ -7637,14 +7668,13 @@ class LLToolsSelectBySurrounding : public view_listener_t
 	}
 };
 
-//How could you forget this, ragefayse - rkeast
 class LLToolsShowSelectionHighlights : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
-		//LLSelectMgr::enableSilhouette = !LLSelectMgr::enableSilhouette;
-
-		gSavedSettings.setBOOL("EmeraldRenderHighlightSelections",!gSavedSettings.getBOOL("EmeraldRenderHighlightSelections"));
+		LLSelectMgr::sRenderSelectionHighlights = !LLSelectMgr::sRenderSelectionHighlights;
+		
+		gSavedSettings.setBOOL("RenderHighlightSelections", LLSelectMgr::sRenderSelectionHighlights);
 		return true;
 	}
 };
@@ -7739,7 +7769,7 @@ void handle_bvh_anim_convert(void*)
 	LLBVHLoader* loaderp = NULL;
 	S32 file_size;
 	LLAPRFile infile ;
-	infile.open(filename, LL_APR_RB, NULL, &file_size);
+	infile.open(filename, LL_APR_RB, LLAPRFile::global, &file_size);
 	
 	if (!infile.getFileHandle())
 	{
@@ -7777,7 +7807,7 @@ void handle_bvh_anim_convert(void*)
 		}
 		std::string outfilename = picker.getFirstFile();
 		LLAPRFile outfile;
-		outfile.open(outfilename, LL_APR_WB);
+		outfile.open(outfilename, LL_APR_WB,LLAPRFile::global);
 		if(outfile.getFileHandle())
 		{
 			outfile.write(buffer, buffer_size);
@@ -8394,9 +8424,8 @@ void handle_load_from_xml(void*)
 	if (picker.getOpenFile(LLFilePicker::FFLOAD_XML))
 	{
 		std::string filename = picker.getFirstFile();
-		std::string x = filename.substr(filename.find_last_of("\\")+1);
 		LLFloater* floater = new LLFloater("sample_floater");
-		LLUICtrlFactory::getInstance()->buildFloater(floater, x);
+		LLUICtrlFactory::getInstance()->buildFloater(floater, filename);
 	}
 }
 
@@ -9364,7 +9393,6 @@ void initialize_menus()
 	addMenu(new LLToolsSelectOnlyMyObjects(), "Tools.SelectOnlyMyObjects");
 	addMenu(new LLToolsSelectOnlyMovableObjects(), "Tools.SelectOnlyMovableObjects");
 	addMenu(new LLToolsSelectBySurrounding(), "Tools.SelectBySurrounding");
-	//This needs to be hurrrrrr - rkeast
 	addMenu(new LLToolsShowSelectionHighlights(), "Tools.ShowSelectionHighlights");
 	addMenu(new LLToolsShowHiddenSelection(), "Tools.ShowHiddenSelection");
 	addMenu(new LLToolsShowSelectionLightRadius(), "Tools.ShowSelectionLightRadius");
@@ -9496,7 +9524,7 @@ void initialize_menus()
 	addMenu(new LLSomethingSelectedNoHUD(), "SomethingSelectedNoHUD");
 	addMenu(new LLEditableSelected(), "EditableSelected");
 	addMenu(new LLEditableSelectedMono(), "EditableSelectedMono");
-
+ 
 // [RLVa:KB] - Checked: 2010-01-17 (RLVa-1.1.0) | Added: RLVa-1.1.0
 	if (rlv_handler_t::isEnabled())
 	{

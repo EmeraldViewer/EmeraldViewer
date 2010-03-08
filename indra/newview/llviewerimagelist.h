@@ -98,6 +98,14 @@ public:
 									 LLHost request_from_host = LLHost()
 									 );
 	
+	LLViewerImage * getImageFromUrl(const std::string& url,
+									 BOOL usemipmap = TRUE,
+									 BOOL level_immediate = FALSE,		// Get the requested level immediately upon creation.
+									 LLGLint internal_format = 0,
+									 LLGLenum primary_format = 0,
+									 const LLUUID& force_id = LLUUID::null
+									 );
+
 	LLViewerImage * getImageFromFile(const std::string& filename,
 									 BOOL usemipmap = TRUE,
 									 BOOL level_immediate = FALSE,		// Get the requested level immediately upon creation.

@@ -40,6 +40,7 @@ include(LLKDU)
 include(Emerald)
 include(HUNSPELL)
 include(ViewerMiscLibs)
+include(ViewerArtwork.cmake)
 
 if (WINDOWS)
     include(CopyWinLibs)
@@ -303,7 +304,6 @@ set(viewer_SOURCE_FILES
     llmaniprotate.cpp
     llmanipscale.cpp
     llmaniptranslate.cpp
-    llmapresponders.cpp
     llmediaremotectrl.cpp
     llmemoryview.cpp
     llmenucommands.cpp
@@ -398,6 +398,10 @@ set(viewer_SOURCE_FILES
     lltexturecache.cpp
     lltexturectrl.cpp
     lltexturefetch.cpp
+    lltextureinfo.cpp
+    lltextureinfodetails.cpp
+    lltexturestats.cpp
+    lltexturestatsuploader.cpp
     lltextureview.cpp
     lltoolbar.cpp
     lltoolbrush.cpp
@@ -506,6 +510,8 @@ set(viewer_SOURCE_FILES
     llwlparamset.cpp
     llworld.cpp
     llworldmap.cpp
+    llworldmapmessage.cpp
+    llworldmipmap.cpp
     llworldmapview.cpp
     llxmlrpctransaction.cpp
     noise.cpp
@@ -516,7 +522,7 @@ set(viewer_SOURCE_FILES
     rlvmultistringsearch.cpp
     rlvextensions.cpp
     rlvfloaterbehaviour.cpp
-	scriptcounter.cpp
+    scriptcounter.cpp
     otr_wrapper.cpp
     otr_floater_smp_dialog.cpp
     otr_floater_smp_progress.cpp
@@ -524,6 +530,7 @@ set(viewer_SOURCE_FILES
     wlfPanel_AdvSettings.cpp
     )
 
+# This gets renamed in the packaging step
 set(VIEWER_BINARY_NAME "secondlife-bin" CACHE STRING
     "The name of the viewer executable to create.")
 
@@ -755,7 +762,6 @@ set(viewer_HEADER_FILES
     llmaniprotate.h
     llmanipscale.h
     llmaniptranslate.h
-    llmapresponders.h
     llmediaremotectrl.h
     llmemoryview.h
     llmenucommands.h
@@ -853,6 +859,10 @@ set(viewer_HEADER_FILES
     lltexturecache.h
     lltexturectrl.h
     lltexturefetch.h
+    lltextureinfo.h
+    lltextureinfodetails.h
+    lltexturestats.h
+    lltexturestatsuploader.h
     lltextureview.h
     lltool.h
     lltoolbar.h
@@ -963,6 +973,8 @@ set(viewer_HEADER_FILES
     llwlparamset.h
     llworld.h
     llworldmap.h
+    llworldmapmessage.h
+    llworldmipmap.h
     llworldmapview.h
     llxmlrpctransaction.h
     macmain.h
@@ -978,7 +990,7 @@ set(viewer_HEADER_FILES
     rlvmultistringsearch.h
     rlvextensions.h
     rlvfloaterbehaviour.h
-	scriptcounter.h
+    scriptcounter.h
     otr_wrapper.h
     otr_floater_smp_dialog.h
     otr_floater_smp_progress.h
@@ -1004,10 +1016,10 @@ if (DARWIN)
 
   # Add resource files to the project.
   set(viewer_RESOURCE_FILES
-    secondlife.icns
+    ${VIEWER_BRANDING_ID}.icns
     macview.r
     gpu_table.txt
-    Info-SecondLife.plist
+    Info-${VIEWER_BRANDING_NAME_CAMELCASE}.plist
     SecondLife.nib/
     # CMake doesn't seem to support Xcode language variants well just yet
     English.lproj/InfoPlist.strings
@@ -1030,7 +1042,7 @@ if (LINUX)
     LIST(APPEND viewer_SOURCE_FILES llappviewerlinux.cpp)
     LIST(APPEND viewer_SOURCE_FILES llappviewerlinux_api_dbus.cpp)
     include_directories (${DBUSGLIB_INCLUDE_DIRS})
-    LIST(APPEND CMAKE_EXE_LINKER_FLAGS -Wl,--as-needed)
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
 
     set(viewer_LIBRARIES
         Xinerama
@@ -1070,67 +1082,73 @@ if (WINDOWS)
     # viewerRes.rc is the only buildable file, but
     # the rest are all dependencies of it.
     set(viewer_RESOURCE_FILES
-        res/arrow.cur
-        res/arrowcop.cur
-        res/arrowcopmulti.cur
-        res/arrowdrag.cur
-        res/circleandline.cur
-        res/icon1.ico
-        res/llarrow.cur
-        res/llarrowdrag.cur
-        res/llarrowdragmulti.cur
-        res/llarrowlocked.cur
-        res/llgrablocked.cur
-        res/llno.cur
-        res/llnolocked.cur
-        res/lltoolcamera.cur
-        res/lltoolcreate.cur
-        res/lltoolfocus.cur
-        res/lltoolgrab.cur
-        res/lltoolland.cur
-        res/lltoolpan.cur
-        res/lltoolpipette.cur
-        res/lltoolrotate.cur
-        res/lltoolscale.cur
-        res/lltooltranslate.cur
-        res/lltoolzoomin.cur
-        res/lltoolzoomout.cur
-        res/emerald_icon.png
-        res/emerald_icon.ico
-        res/emeraldicon1.ico
-        res/emeraldicon2.ico
-        res/emeraldicon3.ico
-        res/emeraldicon4.ico
-        res/emeraldicon5.ico
-        res/emeraldicon6.ico
-        res/emeraldicon7.ico
-        res/emeraldicon8.ico
-        res/emeraldicon9.ico
-        res/emeraldicon10.ico
-        res/emeraldicon11.ico
-        res/emeraldicon12.ico
-        res/emeraldicon13.ico
-        res/emeraldicon14.ico
-        res/emeraldicon15.ico
-        res/emeraldicon16.ico
-        res/emeraldicon17.ico
-        res/emeraldicon18.ico
-        res/emeraldicon19.ico
-        res/resource.h
-        res/toolbuy.cur
-        res/toolopen.cur
-        res/toolpay.cur
-        res/toolpickobject.cur
-        res/toolpickobject2.cur
-        res/toolpickobject3.cur
-        res/toolpipette.cur
-        res/toolsit.cur
+        ${ARTWORK_DIR}/res/arrow.cur
+        ${ARTWORK_DIR}/res/arrowcop.cur
+        ${ARTWORK_DIR}/res/arrowcopmulti.cur
+        ${ARTWORK_DIR}/res/arrowdrag.cur
+        ${ARTWORK_DIR}/res/circleandline.cur
+        ${ARTWORK_DIR}/res/icon1.ico
+        ${ARTWORK_DIR}/res/llarrow.cur
+        ${ARTWORK_DIR}/res/llarrowdrag.cur
+        ${ARTWORK_DIR}/res/llarrowdragmulti.cur
+        ${ARTWORK_DIR}/res/llarrowlocked.cur
+        ${ARTWORK_DIR}/res/llgrablocked.cur
+        ${ARTWORK_DIR}/res/llno.cur
+        ${ARTWORK_DIR}/res/llnolocked.cur
+        ${ARTWORK_DIR}/res/lltoolcamera.cur
+        ${ARTWORK_DIR}/res/lltoolcreate.cur
+        ${ARTWORK_DIR}/res/lltoolfocus.cur
+        ${ARTWORK_DIR}/res/lltoolgrab.cur
+        ${ARTWORK_DIR}/res/lltoolland.cur
+        ${ARTWORK_DIR}/res/lltoolpan.cur
+        ${ARTWORK_DIR}/res/lltoolpipette.cur
+        ${ARTWORK_DIR}/res/lltoolrotate.cur
+        ${ARTWORK_DIR}/res/lltoolscale.cur
+        ${ARTWORK_DIR}/res/lltooltranslate.cur
+        ${ARTWORK_DIR}/res/lltoolzoomin.cur
+        ${ARTWORK_DIR}/res/lltoolzoomout.cur
+        ${ARTWORK_DIR}/res/emerald_icon.png
+        ${ARTWORK_DIR}/res/emerald_icon.ico
+        ${ARTWORK_DIR}/res/emeraldicon1.ico
+        ${ARTWORK_DIR}/res/emeraldicon2.ico
+        ${ARTWORK_DIR}/res/emeraldicon3.ico
+        ${ARTWORK_DIR}/res/emeraldicon4.ico
+        ${ARTWORK_DIR}/res/emeraldicon5.ico
+        ${ARTWORK_DIR}/res/emeraldicon6.ico
+        ${ARTWORK_DIR}/res/emeraldicon7.ico
+        ${ARTWORK_DIR}/res/emeraldicon8.ico
+        ${ARTWORK_DIR}/res/emeraldicon9.ico
+        ${ARTWORK_DIR}/res/emeraldicon10.ico
+        ${ARTWORK_DIR}/res/emeraldicon11.ico
+        ${ARTWORK_DIR}/res/emeraldicon12.ico
+        ${ARTWORK_DIR}/res/emeraldicon13.ico
+        ${ARTWORK_DIR}/res/emeraldicon14.ico
+        ${ARTWORK_DIR}/res/emeraldicon15.ico
+        ${ARTWORK_DIR}/res/emeraldicon16.ico
+        ${ARTWORK_DIR}/res/emeraldicon17.ico
+        ${ARTWORK_DIR}/res/emeraldicon18.ico
+        ${ARTWORK_DIR}/res/emeraldicon19.ico
+        ${ARTWORK_DIR}/res/resource.h
+        ${ARTWORK_DIR}/res/toolbuy.cur
+        ${ARTWORK_DIR}/res/toolopen.cur
+        ${ARTWORK_DIR}/res/toolpay.cur
+        ${ARTWORK_DIR}/res/toolpickobject.cur
+        ${ARTWORK_DIR}/res/toolpickobject2.cur
+        ${ARTWORK_DIR}/res/toolpickobject3.cur
+        ${ARTWORK_DIR}/res/toolpipette.cur
+        ${ARTWORK_DIR}/res/toolsit.cur
         )
 
     set_source_files_properties(${viewer_RESOURCE_FILES}
                                 PROPERTIES HEADER_FILE_ONLY TRUE)
 
+    if(NOT ARTWORK_IN_SOURCE)
+      # The resource compiler needs to find resources here.
+      include_directories(${ARTWORK_DIR}/res)
+    endif(NOT ARTWORK_IN_SOURCE)
+
     set(viewer_RESOURCE_FILES 
+        res/resource.h
         res/viewerRes.rc 
         ${viewer_RESOURCE_FILES}
         )
@@ -1178,18 +1196,197 @@ if (WINDOWS)
 endif (WINDOWS)
 
 # Add the xui files. This is handy for searching for xui elements
-# from within the IDE.
-
-file(GLOB viewer_XUI_FILE_GLOB_LIST
-     ${CMAKE_CURRENT_SOURCE_DIR}/skins/default/xui/en-us/*.xml)
-
+# from within the IDE
 set(viewer_XUI_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/skins/default/colors.xml
-    ${CMAKE_CURRENT_SOURCE_DIR}/skins/default/colors_base.xml
+    skins/default/colors.xml
+    skins/default/colors_base.xml
+    skins/default/xui/en-us/alerts.xml
+    skins/default/xui/en-us/floater_about_land.xml
+    skins/default/xui/en-us/floater_about.xml
+    skins/default/xui/en-us/floater_active_speakers.xml
+    skins/default/xui/en-us/floater_animation_preview.xml
+    skins/default/xui/en-us/floater_auction.xml
+    skins/default/xui/en-us/floater_audio_volume.xml
+    skins/default/xui/en-us/floater_avatar_picker.xml
+    skins/default/xui/en-us/floater_avatar_textures.xml
+    skins/default/xui/en-us/floater_beacons.xml
+    skins/default/xui/en-us/floater_build_options.xml
+    skins/default/xui/en-us/floater_bulk_perms.xml
+    skins/default/xui/en-us/floater_bumps.xml
+    skins/default/xui/en-us/floater_buy_contents.xml
+    skins/default/xui/en-us/floater_buy_currency.xml
+    skins/default/xui/en-us/floater_buy_land.xml
+    skins/default/xui/en-us/floater_buy_object.xml
+    skins/default/xui/en-us/floater_camera.xml
+    skins/default/xui/en-us/floater_chat_history.xml
+    skins/default/xui/en-us/floater_chatterbox.xml
+    skins/default/xui/en-us/floater_choose_group.xml
+    skins/default/xui/en-us/floater_color_picker.xml
+    skins/default/xui/en-us/floater_critical.xml
+    skins/default/xui/en-us/floater_customize.xml
+    skins/default/xui/en-us/floater_day_cycle_options.xml
+    skins/default/xui/en-us/floater_device_settings.xml
+    skins/default/xui/en-us/floater_directory.xml
+    skins/default/xui/en-us/floater_env_settings.xml
+    skins/default/xui/en-us/floater_font_test.xml
+    skins/default/xui/en-us/floater_gesture.xml
+    skins/default/xui/en-us/floater_god_tools.xml
+    skins/default/xui/en-us/floater_group_info.xml
+    skins/default/xui/en-us/floater_hardware_settings.xml
+    skins/default/xui/en-us/floater_html.xml
+    skins/default/xui/en-us/floater_html_simple.xml
+    skins/default/xui/en-us/floater_hud.xml
+    skins/default/xui/en-us/floater_image_preview.xml
+    skins/default/xui/en-us/floater_im.xml
+    skins/default/xui/en-us/floater_inspect.xml
+    skins/default/xui/en-us/floater_instant_message_ad_hoc.xml
+    skins/default/xui/en-us/floater_instant_message_group.xml
+    skins/default/xui/en-us/floater_instant_message.xml
+    skins/default/xui/en-us/floater_inventory_item_properties.xml
+    skins/default/xui/en-us/floater_inventory_view_finder.xml
+    skins/default/xui/en-us/floater_inventory.xml
+    skins/default/xui/en-us/floater_joystick.xml
+    skins/default/xui/en-us/floater_lagmeter.xml
+    skins/default/xui/en-us/floater_land_holdings.xml
+    skins/default/xui/en-us/floater_landmark_ctrl.xml
+    skins/default/xui/en-us/floater_live_lsleditor.xml
+    skins/default/xui/en-us/floater_lsl_guide.xml
+    skins/default/xui/en-us/floater_media_browser.xml
+    skins/default/xui/en-us/floater_mini_map.xml
+    skins/default/xui/en-us/floater_moveview.xml
+    skins/default/xui/en-us/floater_mute_object.xml
+    skins/default/xui/en-us/floater_mute.xml
+    skins/default/xui/en-us/floater_my_friends.xml
+    skins/default/xui/en-us/floater_name_description.xml
+    skins/default/xui/en-us/floater_new_im.xml
+    skins/default/xui/en-us/floater_new_outfit_dialog.xml
+    skins/default/xui/en-us/floater_notifications_console.xml
+    skins/default/xui/en-us/floater_notification.xml
+    skins/default/xui/en-us/floater_object_im_info.xml
+    skins/default/xui/en-us/floater_openobject.xml
+    skins/default/xui/en-us/floater_pay_object.xml
+    skins/default/xui/en-us/floater_pay.xml
+    skins/default/xui/en-us/floater_postcard.xml
+    skins/default/xui/en-us/floater_post_process.xml
+    skins/default/xui/en-us/floater_perm_prefs.xml
+    skins/default/xui/en-us/floater_preferences.xml
+    skins/default/xui/en-us/floater_preview_animation.xml
+    skins/default/xui/en-us/floater_preview_classified.xml
+    skins/default/xui/en-us/floater_preview_event.xml
+    skins/default/xui/en-us/floater_preview_existing_landmark.xml
+    skins/default/xui/en-us/floater_preview_gesture.xml
+    skins/default/xui/en-us/floater_preview_notecard_keep_discard.xml
+    skins/default/xui/en-us/floater_preview_notecard.xml
+    skins/default/xui/en-us/floater_preview_sound.xml
+    skins/default/xui/en-us/floater_preview_texture.xml
+    skins/default/xui/en-us/floater_preview_url.xml
+    skins/default/xui/en-us/floater_price_for_listing.xml
+    skins/default/xui/en-us/floater_profile.xml
+    skins/default/xui/en-us/floater_region_info.xml
+    skins/default/xui/en-us/floater_report_abuse.xml
+    skins/default/xui/en-us/floater_report_bug.xml
+    skins/default/xui/en-us/floater_script_debug.xml
+    skins/default/xui/en-us/floater_script_ed_panel.xml
+    skins/default/xui/en-us/floater_script_preview.xml
+    skins/default/xui/en-us/floater_script_queue.xml
+    skins/default/xui/en-us/floater_script_search.xml
+    skins/default/xui/en-us/floater_select_key.xml
+    skins/default/xui/en-us/floater_sell_land.xml
+    skins/default/xui/en-us/floater_settings_debug.xml
+    skins/default/xui/en-us/floater_sim_release_message.xml
+    skins/default/xui/en-us/floater_snapshot.xml
+    skins/default/xui/en-us/floater_sound_preview.xml
+    skins/default/xui/en-us/floater_statistics.xml
+    skins/default/xui/en-us/floater_telehub.xml
+    skins/default/xui/en-us/floater_test.xml
+    skins/default/xui/en-us/floater_texture_ctrl.xml
+    skins/default/xui/en-us/floater_tools.xml
+    skins/default/xui/en-us/floater_top_objects.xml
+    skins/default/xui/en-us/floater_tos.xml
+    skins/default/xui/en-us/floater_url_entry.xml
+    skins/default/xui/en-us/floater_voice_wizard.xml
+    skins/default/xui/en-us/floater_water.xml
+    skins/default/xui/en-us/floater_wearable_save_as.xml
+    skins/default/xui/en-us/floater_windlight_options.xml
+    skins/default/xui/en-us/floater_world_map.xml
+    skins/default/xui/en-us/fonts.xml
+    skins/default/xui/en-us/menu_inventory.xml
+    skins/default/xui/en-us/menu_login.xml
+    skins/default/xui/en-us/menu_pie_attachment.xml
+    skins/default/xui/en-us/menu_pie_avatar.xml
+    skins/default/xui/en-us/menu_pie_land.xml
+    skins/default/xui/en-us/menu_mini_map.xml
+    skins/default/xui/en-us/menu_pie_object.xml
+    skins/default/xui/en-us/menu_pie_self.xml
+    skins/default/xui/en-us/menu_slurl.xml
+    skins/default/xui/en-us/menu_viewer.xml
+    skins/default/xui/en-us/mime_types.xml
+    skins/default/xui/en-us/notifications.xml
+    skins/default/xui/en-us/notify.xml
+    skins/default/xui/en-us/panel_audio_device.xml
+    skins/default/xui/en-us/panel_audio.xml
+    skins/default/xui/en-us/panel_avatar_classified.xml
+    skins/default/xui/en-us/panel_avatar_pick.xml
+    skins/default/xui/en-us/panel_avatar.xml
+    skins/default/xui/en-us/panel_bars.xml
+    skins/default/xui/en-us/panel_bg_tab.xml
+    skins/default/xui/en-us/panel_bg_toolbar.xml
+    skins/default/xui/en-us/panel_chat_bar.xml
+    skins/default/xui/en-us/panel_classified.xml
+    skins/default/xui/en-us/panel_event.xml
+    skins/default/xui/en-us/panel_friends.xml
+    skins/default/xui/en-us/panel_group_finder.xml
+    skins/default/xui/en-us/panel_group_general.xml
+    skins/default/xui/en-us/panel_group_invite.xml
+    skins/default/xui/en-us/panel_group_land_money.xml
+    skins/default/xui/en-us/panel_group_notices.xml
+    skins/default/xui/en-us/panel_group_roles.xml
+    skins/default/xui/en-us/panel_groups.xml
+    skins/default/xui/en-us/panel_group_voting.xml
+    skins/default/xui/en-us/panel_group.xml
+    skins/default/xui/en-us/panel_login.xml
+    skins/default/xui/en-us/panel_master_volume.xml
+    skins/default/xui/en-us/panel_media_controls.xml
+    skins/default/xui/en-us/panel_media_remote_expanded.xml
+    skins/default/xui/en-us/panel_media_remote.xml
+    skins/default/xui/en-us/panel_mini_map.xml
+    skins/default/xui/en-us/panel_notifications_channel.xml
+    skins/default/xui/en-us/panel_overlaybar.xml
+    skins/default/xui/en-us/panel_place_small.xml
+    skins/default/xui/en-us/panel_place.xml
+    skins/default/xui/en-us/panel_preferences_audio.xml
+    skins/default/xui/en-us/panel_preferences_chat.xml
+    skins/default/xui/en-us/panel_preferences_general.xml
+    skins/default/xui/en-us/panel_preferences_graphics1.xml
+    skins/default/xui/en-us/panel_preferences_im.xml
+    skins/default/xui/en-us/panel_preferences_input.xml
+    skins/default/xui/en-us/panel_preferences_network.xml
+    skins/default/xui/en-us/panel_preferences_popups.xml
+    skins/default/xui/en-us/panel_preferences_skins.xml
+    skins/default/xui/en-us/panel_preferences_voice.xml
+    skins/default/xui/en-us/panel_preferences_web.xml
+    skins/default/xui/en-us/panel_progress.xml
+    skins/default/xui/en-us/panel_region_covenant.xml
+    skins/default/xui/en-us/panel_region_debug.xml
+    skins/default/xui/en-us/panel_region_estate.xml
+    skins/default/xui/en-us/panel_region_general.xml
+    skins/default/xui/en-us/panel_region_terrain.xml
+    skins/default/xui/en-us/panel_region_texture.xml
+    skins/default/xui/en-us/panel_scrolling_param.xml
+    skins/default/xui/en-us/panel_speaker_controls.xml
+    skins/default/xui/en-us/panel_status_bar.xml
+    skins/default/xui/en-us/panel_toolbar.xml
+    skins/default/xui/en-us/panel_top_pick.xml
+    skins/default/xui/en-us/panel_voice_controls.xml
+    skins/default/xui/en-us/panel_voice_enable.xml
+    skins/default/xui/en-us/panel_voice_options.xml
+    skins/default/xui/en-us/panel_voice_remote_expanded.xml
+    skins/default/xui/en-us/panel_voice_remote.xml
+    skins/default/xui/en-us/role_actions.xml
+    skins/default/xui/en-us/strings.xml
+    skins/default/xui/en-us/teleport_strings.xml
+    skins/default/xui/en-us/xui_version.xml
     )
-
-list(APPEND viewer_XUI_FILES ${viewer_XUI_FILE_GLOB_LIST})
-list(SORT viewer_XUI_FILES)
 
 source_group("XUI Files" FILES ${viewer_XUI_FILES})
 
@@ -1227,20 +1424,22 @@ set_source_files_properties(${viewer_APPSETTINGS_FILES}
 
 list(APPEND viewer_SOURCE_FILES ${viewer_APPSETTINGS_FILES})
 
-set(viewer_CHARACTER_FILES
-    character/attentions.xml
-    character/attentionsN.xml
-    character/avatar_lad.xml
-    character/avatar_skeleton.xml
-    character/genepool.xml
+if(ARTWORK_EXISTS)
+  set(viewer_CHARACTER_FILES
+    ${ARTWORK_DIR}/character/attentions.xml
+    ${ARTWORK_DIR}/character/attentionsN.xml
+    ${ARTWORK_DIR}/character/avatar_lad.xml
+    ${ARTWORK_DIR}/character/avatar_skeleton.xml
+    ${ARTWORK_DIR}/character/genepool.xml
     )
 
-source_group("Character File" FILES ${viewer_CHARACTER_FILES})
+  source_group("Character File" FILES ${viewer_CHARACTER_FILES})
 
-set_source_files_properties(${viewer_CHARACTER_FILES}
+  set_source_files_properties(${viewer_CHARACTER_FILES}
                             PROPERTIES HEADER_FILE_ONLY TRUE)
 
-list(APPEND viewer_SOURCE_FILES ${viewer_CHARACTER_FILES})
+  list(APPEND viewer_SOURCE_FILES ${viewer_CHARACTER_FILES})
+endif(ARTWORK_EXISTS)
 
 if (WINDOWS)
   file(GLOB viewer_INSTALLER_FILES installers/windows/*.nsi)
@@ -1297,7 +1496,13 @@ if (LLKDU_LIBRARY)
   add_dependencies(${VIEWER_BINARY_NAME} ${LLKDU_LIBRARY})
 endif (LLKDU_LIBRARY)
 
-set(PACKAGE OFF CACHE BOOL
+# We package by default on Linux so we can run from newview/packaged.
+if (LINUX)
+  set(PACKAGE_DEFAULT ON)
+else (LINUX)
+  set(PACKAGE_DEFAULT OFF)
+endif (LINUX)
+set(PACKAGE ${PACKAGE_DEFAULT} CACHE BOOL
     "Add a package target that builds an installer package.")
 
 if (WINDOWS)
@@ -1366,6 +1571,7 @@ if (WINDOWS)
           --version=${VERSION_VIEWER}
           --channel=${VIEWER_CHANNEL}
           --login_channel=${VIEWER_LOGIN_CHANNEL}
+          --branding_id=${VIEWER_BRANDING_ID}
           --grid=${GRID}
           --source=${CMAKE_CURRENT_SOURCE_DIR}
               --artwork=${ARTWORK_DIR}
@@ -1499,6 +1705,7 @@ if (LINUX)
         --version=${VERSION_VIEWER}
         --channel=${VIEWER_CHANNEL}
         --login_channel=${VIEWER_LOGIN_CHANNEL}
+        --branding_id=${VIEWER_BRANDING_ID}
         --installer_name=${product}
         --arch=${ARCH}
         --source=${CMAKE_CURRENT_SOURCE_DIR}
@@ -1509,10 +1716,10 @@ if (LINUX)
       DEPENDS secondlife-stripped ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
       )
 
-  if (NOT INSTALL)
+  if (PACKAGE)
     add_custom_target(package ALL DEPENDS ${product}.tar.bz2)
     add_dependencies(package linux-crash-logger-strip-target)
-  endif (NOT INSTALL)
+  endif (PACKAGE)
 endif (LINUX)
 
 if (DARWIN)
@@ -1541,6 +1748,7 @@ if (DARWIN)
       --configuration=${CMAKE_CFG_INTDIR}
       --source=${CMAKE_CURRENT_SOURCE_DIR}
       --artwork=${ARTWORK_DIR}
+      --branding_id=${VIEWER_BRANDING_ID}
       --build=${CMAKE_CURRENT_BINARY_DIR}
       --dest=${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${product}.app
     DEPENDS ${VIEWER_BINARY_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/viewer_manifest.py
@@ -1560,6 +1768,7 @@ if (DARWIN)
           --version=${VERSION_VIEWER}
           --channel=${VIEWER_CHANNEL}
           --login_channel=${VIEWER_LOGIN_CHANNEL}
+          --branding_id=${VIEWER_BRANDING_ID}
           --source=${CMAKE_CURRENT_SOURCE_DIR}
           --artwork=${ARTWORK_DIR}
           --build=${CMAKE_CURRENT_BINARY_DIR}
@@ -1580,6 +1789,7 @@ if (DARWIN)
           --channel=${VIEWER_CHANNEL}
           --version=${VERSION_VIEWER}
           --login_channel=${VIEWER_LOGIN_CHANNEL}
+          --branding_id=${VIEWER_BRANDING_ID}
           --source=${CMAKE_CURRENT_SOURCE_DIR}
           --artwork=${ARTWORK_DIR}
           --build=${CMAKE_CURRENT_BINARY_DIR}
@@ -1596,4 +1806,10 @@ if (INSTALL)
   include(${CMAKE_CURRENT_SOURCE_DIR}/ViewerInstall.cmake)
 endif (INSTALL)
 
+# Add tests
 ADD_VIEWER_BUILD_TEST(llagentaccess viewer)
+ADD_VIEWER_BUILD_TEST(llworldmap viewer)
+ADD_VIEWER_BUILD_TEST(llworldmipmap viewer)
+ADD_VIEWER_BUILD_TEST(lltextureinfo viewer)
+ADD_VIEWER_BUILD_TEST(lltextureinfodetails viewer)
+ADD_VIEWER_BUILD_TEST(lltexturestatsuploader viewer)

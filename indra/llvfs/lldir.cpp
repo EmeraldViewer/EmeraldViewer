@@ -247,7 +247,7 @@ std::string LLDir::buildSLOSCacheDir() const
 	}
 	else
 	{
-		res = getOSCacheDir() + mDirDelimiter + "Emerald";
+		res = getOSCacheDir() + mDirDelimiter + "EmeraldSnowglobe";
 	}
 	return res;
 }
@@ -335,15 +335,15 @@ std::string LLDir::getExpandedFilename(ELLPath location, const std::string& subd
 	case LL_PATH_HELP:
 		prefix = "help";
 		break;
-		
-	case LL_PATH_CACHE:
-	    prefix = getCacheDir();
-		break;
 	
 	case MM_SNDLOC:
         prefix = mm_sndcacheloc;
         break;
 		
+	case LL_PATH_CACHE:
+	    prefix = getCacheDir();
+		break;
+
 	case LL_PATH_USER_SETTINGS:
 		prefix = getOSUserAppDir();
 		prefix += mDirDelimiter;
@@ -631,6 +631,7 @@ void LLDir::setSkinFolder(const std::string &skin_folder)
 	mDefaultSkinDir += mDirDelimiter;	
 	mDefaultSkinDir += "default";
 }
+
 int LLDir::mm_usesnd()
 {
     return mm_usesndcache;
@@ -640,9 +641,10 @@ void LLDir::mm_setsnddir(const std::string &path)
     mm_usesndcache = 1;
     
 	if(path.empty())	mm_usesndcache = 0;
-
+  
     mm_sndcacheloc = path;
 }
+
 bool LLDir::setCacheDir(const std::string &path)
 {
 	if (path.empty() )

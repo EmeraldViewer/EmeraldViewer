@@ -239,19 +239,16 @@ void LLViewerObjectList::processUpdateCore(LLViewerObject* objectp,
 	// so that the drawable parent is set properly
 	findOrphans(objectp, msg->getSenderIP(), msg->getSenderPort());
 	
-	if(just_created && objectp)
+	LLVector3 pScale=objectp->getScale();
+	if(objectp->permYouOwner())
 	{
-		if((gImportTracker.getState() == ImportTracker::WAND) || (
-			gImportTracker.getState() == ImportTracker::BUILDING))
+		if(objectp->permModify() && objectp->permCopy() && objectp->permTransfer())
 		{
-			if(objectp->mCreateSelected && 
-				objectp->getScale().mV[VX] == 0.52345f && 
-				objectp->getScale().mV[VY] == 0.52346f && 
-				objectp->getScale().mV[VZ] == 0.52347f &&
-				objectp->permYouOwner() && 
-				objectp->permModify() && objectp->permCopy() && objectp->permTransfer())
+			if (gImportTracker.getState() != ImportTracker::IDLE && objectp)
 			{
-					gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
+				if((gImportTracker.getState() == ImportTracker::WAND && just_created && objectp->mCreateSelected) || (pScale.mV[VX] == 0.52345f && pScale.mV[VY] == 0.52346f && pScale.mV[VZ] == 0.52347f
+					&& gImportTracker.getState() == ImportTracker::BUILDING))
+				gImportTracker.get_update(objectp->mLocalID, just_created, objectp->mCreateSelected);
 			}
 		}
 	}
@@ -625,7 +622,7 @@ void LLViewerObjectList::updateApparentAngles(LLAgent &agent)
 
 			//  Update distance & gpw 
 			objectp->setPixelAreaAndAngle(agent); // Also sets the approx. pixel area
-			objectp->updateTextures(agent);	// Update the image levels of textures for this object.
+			objectp->updateTextures();	// Update the image levels of textures for this object.
 		}
 	}
 
@@ -896,10 +893,6 @@ void LLViewerObjectList::killObjects(LLViewerRegion *regionp)
 		if (objectp->mRegionp == regionp)
 		{
 			killObject(objectp);
-
-			// invalidate region pointer. region will become invalid, but 
-			// refcounted objects may survive the cleanDeadObjects() call below
-			objectp->mRegionp = NULL;	 
 		}
 	}
 
@@ -1053,7 +1046,7 @@ void LLViewerObjectList::renderObjectsForMap(LLNetMap &netmap)
 	LLColor4 group_own_below_water_color = 
 						gColors.getColor( "NetMapGroupOwnBelowWater" );
 
-	F32 max_radius = gSavedSettings.getF32("EmeraldMiniMapPrimMaxRadius");
+	F32 max_radius = gSavedSettings.getF32("MiniMapPrimMaxRadius");
 
 	for (S32 i = 0; i < mMapObjects.count(); i++)
 	{
@@ -1069,7 +1062,9 @@ void LLViewerObjectList::renderObjectsForMap(LLNetMap &netmap)
 
 		F32 approx_radius = (scale.mV[VX] + scale.mV[VY]) * 0.5f * 0.5f * 1.3f;  // 1.3 is a fudge
 
-		// DEV-17370 - megaprims of size > 4096 cause lag.  (go figger.)
+		// Limit the size of megaprims so they don't blot out everything on the minimap.
+		// Attempting to draw very large megaprims also causes client lag.
+		// See DEV-17370 and SNOW-79 for details.
 		approx_radius = llmin(approx_radius, max_radius);
 
 		LLColor4U color = above_water_color;

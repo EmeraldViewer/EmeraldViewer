@@ -72,6 +72,7 @@
 #include <boost/tokenizer.hpp>
 
 #include "importtracker.h"
+extern ImportTracker gImportTracker;
 
 typedef LLMemberListener<LLView> view_listener_t;
 
@@ -357,8 +358,6 @@ void upload_error(const std::string& error_message, const std::string& label, co
 	}
 	LLFilePicker::instance().reset();						
 }
-
-extern ImportTracker gImportTracker;
 
 class ImportLinkset : public view_listener_t
 {
@@ -846,7 +845,7 @@ void upload_new_resource(const std::string& src_filename, std::string name,
 		// copy this file into the vfs for upload
 		S32 file_size;
 		LLAPRFile infile ;
-		infile.open(filename, LL_APR_RB, NULL, &file_size);
+		infile.open(filename, LL_APR_RB, LLAPRFile::local, &file_size);
 		if (infile.getFileHandle())
 		{
 			LLVFile file(gVFS, uuid, asset_type, LLVFile::WRITE);

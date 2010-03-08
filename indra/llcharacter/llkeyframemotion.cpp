@@ -660,7 +660,7 @@ BOOL LLKeyframeMotion::onActivate()
 	{
 		if((mJointMotionList->mEmoteName.length() == 36) && (LLUUID(mJointMotionList->mEmoteName) == mID))
 			return TRUE;
-		mCharacter->startMotion( gAnimLibrary.stringToAnimState(mJointMotionList->mEmoteName) );
+			mCharacter->startMotion( gAnimLibrary.stringToAnimState(mJointMotionList->mEmoteName) );
 	}
 
 	mLastLoopedTime = 0.f;

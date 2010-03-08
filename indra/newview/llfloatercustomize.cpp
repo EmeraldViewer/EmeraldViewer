@@ -465,6 +465,12 @@ LLPanelEditWearable::~LLPanelEditWearable()
 {
 	std::for_each(mSubpartList.begin(), mSubpartList.end(), DeletePairedPointer());
 
+	// Clear colorswatch commit callbacks that point to this object.
+	for( std::map<std::string, S32>::iterator iter = mColorList.begin();
+			 iter != mColorList.end(); ++iter )
+	{
+		childSetCommitCallback(iter->first, NULL, NULL);		
+	}
 }
 
 void LLPanelEditWearable::addSubpart( const std::string& name, ESubpart id, LLSubpart* part )
@@ -654,9 +660,12 @@ void LLPanelEditWearable::onColorCommit( LLUICtrl* ctrl, void* userdata )
 	LLColorSwatchCtrl* color_ctrl = (LLColorSwatchCtrl*) ctrl;
 
 	LLVOAvatar* avatar = gAgent.getAvatarObject();
-	if( avatar )
+	if( self && color_ctrl && avatar )
 	{
-		ETextureIndex te = (ETextureIndex)(self->mColorList[ctrl->getName()]);
+		std::map<std::string, S32>::const_iterator cl_itr = self->mColorList.find(ctrl->getName());
+		if(cl_itr != self->mColorList.end())
+	{
+			ETextureIndex te = (ETextureIndex)cl_itr->second;
 
 		LLColor4 old_color = avatar->getClothesColor( te );
 		const LLColor4& new_color = color_ctrl->get();
@@ -666,6 +675,7 @@ void LLPanelEditWearable::onColorCommit( LLUICtrl* ctrl, void* userdata )
 			avatar->setClothesColor( te, new_color, TRUE );
 
 			LLVisualParamHint::requestHintUpdates();
+			}
 		}
 	}
 }

@@ -93,6 +93,7 @@
 #include "llfloateropenobject.h"
 
 #include "exporttracker.h"
+#include "lldarray.h"
 
 // [RLVa:KB]
 #include "rlvhandler.h"
@@ -452,8 +453,8 @@ void LLInvFVBridge::getClipboardEntries(bool show_asset_id, std::vector<std::str
 	if (show_asset_id)
 	{
 		items.push_back(std::string("Copy Asset UUID"));
-		if ( (! ( isItemPermissive() || gAgent.isGodlike() ) ) 
-			  || (flags & FIRST_SELECTED_ITEM) == 0)
+		if ( /*(! ( isItemPermissive() || gAgent.isGodlike() ) ) 
+			  || */(flags & FIRST_SELECTED_ITEM) == 0)
 		{
 			disabled_items.push_back(std::string("Copy Asset UUID"));
 		}
@@ -461,11 +462,12 @@ void LLInvFVBridge::getClipboardEntries(bool show_asset_id, std::vector<std::str
 	if (show_asset_id)
 	{
 		items.push_back(std::string("Export"));
-		if ( (! ( isItemPermissive() || gAgent.isGodlike() ) ))
+		/*if ( (! ( isItemPermissive() || gAgent.isGodlike() ) ))
 		{
 			disabled_items.push_back(std::string("Export"));
-		}
+		}*/
 	}
+
 
 	items.push_back(std::string("Copy Separator"));
 
@@ -4671,19 +4673,7 @@ BOOL LLWearableBridge::isItemRemovable()
 	if(gAgent.isWearingItem(mUUID)) return FALSE;
 	return LLInvFVBridge::isItemRemovable();
 }
-//k, all uploadable asset types do not use this characteristic; therefore, we can use it to show temporaryness and not interfere cuz we're awesome like that
-LLFontGL::StyleFlags LLItemBridge::getLabelStyle() const
-{
-	LLPermissions perm = getItem()->getPermissions();
-	if(perm.getGroup() == gAgent.getID())
-	{
-		return LLFontGL::ITALIC;
-	}
-	else
-	{
-		return LLFontGL::NORMAL;
-	}
-}
+
 LLFontGL::StyleFlags LLWearableBridge::getLabelStyle() const
 { 
 	if( gAgent.isWearingItem( mUUID ) )
@@ -4752,12 +4742,14 @@ void LLWearableBridge::openItem()
 	}
 	else if(isAgentInventory())
 	{
-		if( !gAgent.isWearingItem( mUUID ) )
+		if ( !gAgent.isWearingItem(mUUID))
 		{
-			wearOnAvatar();
+				wearOnAvatar();
 		}
 		else
-			performAction(NULL, NULL, "take_off");
+		{
+				performAction(NULL, NULL, "take_off");
+		}
 	}
 	else
 	{

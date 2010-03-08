@@ -190,7 +190,7 @@ public:
 	S32 getNumFaces() const { return mNumFaces; }
 
 	// Graphical stuff for objects - maybe broken out into render class later?
-	virtual void updateTextures(LLAgent &agent);
+	virtual void updateTextures();
 	virtual void boostTexturePriority(BOOL boost_children = TRUE);	// When you just want to boost priority of this object
 	
 	virtual LLDrawable* createDrawable(LLPipeline *pipeline);
@@ -603,7 +603,6 @@ protected:
 	TPACKETID		mLatestRecvPacketID;			// Latest time stamp on message from simulator
 	// extra data sent from the sim...currently only used for tree species info
 	U8* mData;
-
 public:
 	LLPointer<LLViewerPartSourceScript>		mPartSourcep;	// Particle source associated with this object.
 protected:

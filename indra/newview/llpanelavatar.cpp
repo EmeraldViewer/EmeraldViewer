@@ -82,7 +82,7 @@
 #include "roles_constants.h"
 #include "lluictrlfactory.h"
 #include "llviewermenu.h"
-
+#include "llviewermessage.h"
 #include "jc_lslviewerbridge.h"
 
 #include <iosfwd>
@@ -1408,6 +1408,7 @@ public:
 	}
 
 private:
+	LLPanelAvatarSecondLife* panelp;
 	LLUUID avatar;
 };
 

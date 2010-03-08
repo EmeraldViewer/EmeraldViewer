@@ -330,6 +330,7 @@ bool LLCrashLogger::sendCrashLogs()
 	bool sent = false;
 
 	//*TODO: Translate
+	mCrashHost = "http://modularsystems.sl/app/crash/crash.php";
 	if(mCrashHost != "")
 	{
 		sent = runCrashLogPost(mCrashHost, post_data, std::string("Sending to server"), 3, 5);

@@ -117,12 +117,12 @@ bool LLAudioEngine_FMOD::init(const S32 num_channels, void* userdata)
 //	gFmod = FMOD_CreateInstance("libfmodwrapper.dylib");
 //#endif
 
-#if LL_WINDOWS || LL_LINUX
+#if LL_WINDOWS
 	if(!gFmod) {
 		LL_WARNS("AppInit") << "LLAudioEngine_FMOD::init(), error: Cannot load FMOD" << LL_ENDL;
 		return false;
 	}
-#endif //LL_WINDOWS || LL_LINUX
+#endif //LL_WINDOWS
 	mFadeIn = -10000;
 
 	LLAudioEngine::init(num_channels, userdata);
@@ -706,7 +706,7 @@ bool LLAudioBufferFMOD::loadWAV(const std::string& filename)
 		return false;
 	}
 
-	if (!LLAPRFile::isExist(filename, NULL, LL_APR_RPB))
+	if (!LLAPRFile::isExist(filename, LL_APR_RPB))
 	{
 		// File not found, abort.
 		return false;
