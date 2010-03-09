@@ -97,6 +97,10 @@ std::map<std::string,LLUUID> JCLSLPreprocessor::cached_assetids;
 //a boost::wave function name, destroying the internet, silly grey furries
 #undef equivalent
 
+#if LL_MSVC
+#pragma warning (disable:4702)
+#endif
+
 #include <boost/assert.hpp>
 #include <boost/wave.hpp>
 #include <boost/wave/cpplexer/cpp_lex_token.hpp>    // token class
@@ -104,6 +108,10 @@ std::map<std::string,LLUUID> JCLSLPreprocessor::cached_assetids;
 #include <boost/wave/preprocessing_hooks.hpp>
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
+
+#if LL_MSVC
+#pragma warning ( pop )
+#endif
 
 using namespace boost::regex_constants;
 
