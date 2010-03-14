@@ -201,6 +201,25 @@
 					</map>
 				</map>
 			</map>
+			<key>libhunspell</key>
+			<map>
+				<key>copyright</key>
+				<string>various</string>
+				<key>description</key>
+				<string>A open source spell check library</string>
+				<key>license</key>
+				<string>hunspell</string>
+				<key>packages</key>
+				<map>
+					<key>windows</key>
+					<map>
+						<key>md5sum</key>
+						<string>1eb49bf9bcce30f5fe0dddaed2a3c628</string>
+						<key>url</key>
+						<uri>http://modularsystems.sl/box/windows_hunspell.tar.bz2</uri>
+					</map>
+				</map>
+			</map>
 			<key>curl</key>
 			<map>
 				<key>copyright</key>
