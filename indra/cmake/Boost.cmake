@@ -36,7 +36,7 @@ else (STANDALONE)
       set(BOOST_SIGNALS_LIBRARY 
           optimized libboost_signals-vc90-mt-${BOOST_VERSION}
           debug libboost_signals-vc90-mt-gd-${BOOST_VERSION})
-    endif (MSVC71)
+    endif (MSVC80)
   elseif (DARWIN)
     set(BOOST_PROGRAM_OPTIONS_LIBRARY boost_program_options-mt)
     set(BOOST_REGEX_LIBRARY boost_regex-mt)
