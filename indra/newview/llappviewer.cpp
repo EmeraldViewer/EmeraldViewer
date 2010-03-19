@@ -287,7 +287,7 @@ static BOOL gDoDisconnect = FALSE;
 static std::string gLaunchFileOnQuit;
 
 // Used on Win32 for other apps to identify our window (eg, win_setup)
-const char* const VIEWER_WINDOW_CLASSNAME = "Second Life";
+const char* const VIEWER_WINDOW_CLASSNAME = "Emerald Viewer";
 
 //----------------------------------------------------------------------------
 // File scope definitons
@@ -1926,7 +1926,7 @@ bool LLAppViewer::initConfiguration()
     mYieldTime = gSavedSettings.getS32("YieldTime");
              
 	// XUI:translate
-	gSecondLife = "Snowglobe";
+	gSecondLife = "Emerald Viewer";
 
 	// Read skin/branding settings if specified.
 	//if (! gDirUtilp->getSkinDir().empty() )

@@ -536,7 +536,7 @@ void LLNotifyBox::format(std::string& msg, const LLStringUtil::format_map_t& arg
 	// XUI:translate!
 	LLStringUtil::format_map_t targs = args;
 	targs["[SECOND_LIFE]"] = "Second Life";
-	targs["[VIEWER_NAME]"] = "Snowglobe";
+	targs["[VIEWER_NAME]"] = "Emerald Viewer";
 	LLStringUtil::format(msg, targs);
 }
 

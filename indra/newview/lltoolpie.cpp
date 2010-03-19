@@ -69,6 +69,8 @@
 #include "llui.h"
 #include "llweb.h"
 
+#include "llviewerregion.h"
+
 extern void handle_buy(void*);
 
 extern BOOL gDebugClicks;
@@ -683,7 +685,7 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 		}
 	} else
 	/* code added to support double click teleports */
-	if (gSavedSettings.getBOOL("DoubleClickTeleport"))
+	if (gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"))
 	{
 		LLViewerObject* objp = mPick.getObject();
 		LLViewerObject* parentp = objp ? objp->getRootEdit() : NULL;
@@ -695,8 +697,18 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 		if (pos_non_zero && (is_land || (is_in_world && !has_touch_handler && !has_click_action)))
 		{
 			LLVector3d pos = mPick.mPosGlobal;
-			pos.mdV[VZ] += gAgent.getAvatarObject()->getPelvisToFoot();
-			gAgent.teleportViaLocationLookAt(pos);
+
+			handle_go_to();
+			//LLViewerRegion* regionp = gAgent.getRegion();
+			//bool isLocal = regionp->getHandle() == to_region_handle_global((F32)pos.mdV[VX], (F32)pos.mdV[VY]);
+			bool calc = gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc");
+			bool vel = gSavedSettings.getBOOL("EmeraldVelocityDoubleClickTeleport");
+
+			
+			LLVector3 offset = LLVector3(0.f,0.f,gSavedSettings.getF32("EmeraldDoubleClickZOffset"));
+			if(vel)offset += gAgent.getVelocity() * 0.25;
+			if(calc)offset += LLVector3(0.f,0.f,gAgent.getAvatarObject()->getPelvisToFoot());//LLVector3(0.f,0.f,gAgent.getAvatarObject()->getScale().mV[2] / 2);
+			gAgent.teleportViaLocation(pos);
 			return TRUE;
 		}
 	}

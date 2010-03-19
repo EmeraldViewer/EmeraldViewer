@@ -7578,6 +7578,30 @@ class LLWorldDayCycle : public view_listener_t
 	}
 };
 
+class LLEmeraldToggleDoubleClickTeleport: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+			gSavedSettings.setBOOL("EmeraldDoubleClickTeleport",!gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"));
+			BOOL tp = gSavedSettings.getBOOL("EmeraldDoubleClickTeleport");
+			LLChat chat;
+			chat.mSourceType = CHAT_SOURCE_SYSTEM;
+			chat.mText = llformat("%s%s","Doubleclick Teleporting ",(tp ? "On" : "Off"));
+			LLFloaterChat::addChat(chat);
+		return true;
+	}
+
+};
+
+class LLEmeraldCheckDoubleClickTeleport: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(gSavedSettings.getBOOL("EmeraldDoubleClickTeleport"));
+		return true;
+	}
+};
+
 
 
 static void addMenu(view_listener_t *menu, const std::string& name)
@@ -7674,6 +7698,22 @@ void initialize_menus()
 	addMenu(new LLViewCheckHighlightTransparent(), "View.CheckHighlightTransparent");
 	addMenu(new LLViewCheckRenderType(), "View.CheckRenderType");
 	addMenu(new LLViewCheckHUDAttachments(), "View.CheckHUDAttachments");
+
+	//Emerald menu
+	//addMenu(new LLEmeraldTogglePhantom(), "Emerald.TogglePhantom");
+	//addMenu(new LLEmeraldCheckPhantom(), "Emerald.CheckPhantom");
+	//addMenu(new LLEmeraldToggleSit(), "Emerald.ToggleSit");
+	//addMenu(new LLEmeraldCheckSit(), "Emerald.CheckSit");
+	addMenu(new LLEmeraldToggleDoubleClickTeleport(), "Emerald.ToggleDoubleClickTeleport");
+	addMenu(new LLEmeraldCheckDoubleClickTeleport(), "Emerald.CheckDoubleClickTeleport");
+	//addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
+	//addMenu(new LLEmeraldCheckRadar(), "Emerald.CheckAvatarList");
+	//addMenu(new LLEmeraldDisable(), "Emerald.Disable");
+	//addMenu(new LLToggleDebugMenus(), "ToggleDebugMenus");
+	//addMenu(new EmeraldMarkAllDead(), "Emerald.ClearEffects");
+	//addMenu(new LLPhoxToggleAssetBrowser(),"Phox.ToggleAssetBrowser");
+	//addMenu(new LLPhoxCheckAssetBrowser(),"Phox.CheckAssetBrowser");
+	//addMenu(new LLAO(), "AO");
 
 	// World menu
 	addMenu(new LLWorldChat(), "World.Chat");

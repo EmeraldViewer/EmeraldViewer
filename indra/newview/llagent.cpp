@@ -6044,8 +6044,14 @@ void LLAgent::teleportRequest(
 		msg->nextBlockFast(_PREHASH_Info);
 		msg->addU64("RegionHandle", region_handle);
 		msg->addVector3("Position", pos_local);
-		LLVector3 look_at(0,1,0);
-		if (look_at_from_camera)
+		//Chalice - 2 dTP modes: 0 - standard, 1 - TP AV with cam Z axis rotation.
+		LLVector3 look_at;
+		if (gSavedSettings.getBOOL("EmeraldDoubleClickTeleportMode") == 0)
+		{
+			LLVOAvatar* avatarp = gAgent.getAvatarObject();
+			look_at=avatarp->getRotation().packToVector3();
+		}
+		else
 		{
 			look_at = LLViewerCamera::getInstance()->getAtAxis();
 		}

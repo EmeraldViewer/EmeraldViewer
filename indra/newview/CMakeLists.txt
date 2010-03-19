@@ -296,6 +296,7 @@ set(viewer_SOURCE_FILES
     llpanelpick.cpp
     llpanelplace.cpp
     llpanelskins.cpp
+    llpanelemerald.cpp
     llpanelvolume.cpp
     llpanelweb.cpp
     llparcelselection.cpp
@@ -713,6 +714,7 @@ set(viewer_HEADER_FILES
     llpanelpick.h
     llpanelplace.h
     llpanelskins.h
+    llpanelemerald.h
     llpanelvolume.h
     llpanelweb.h
     llparcelselection.h
@@ -990,8 +992,8 @@ if (WINDOWS)
         ${ARTWORK_DIR}/res/lltooltranslate.cur
         ${ARTWORK_DIR}/res/lltoolzoomin.cur
         ${ARTWORK_DIR}/res/lltoolzoomout.cur
-        ${ARTWORK_DIR}/res/snowglobe_icon.BMP
-        ${ARTWORK_DIR}/res/snowglobe_icon.ico
+        ${ARTWORK_DIR}/res/emerald_icon.BMP
+        ${ARTWORK_DIR}/res/emerald_icon.ico
         ${ARTWORK_DIR}/res/resource.h
         ${ARTWORK_DIR}/res/toolbuy.cur
         ${ARTWORK_DIR}/res/toolopen.cur

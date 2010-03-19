@@ -102,11 +102,11 @@ set(VIEWER_BRANDING_ID "snowglobe" CACHE STRING "Viewer branding id (currently s
 
 # *TODO: break out proper Branding-secondlife.cmake, Branding-snowglobe.cmake, etc
 if (${VIEWER_BRANDING_ID} MATCHES "secondlife")
-  set(VIEWER_BRANDING_NAME "Second Life")
-  set(VIEWER_BRANDING_NAME_CAMELCASE "SecondLife")
+  set(VIEWER_BRANDING_NAME "Emerald Viewer")
+  set(VIEWER_BRANDING_NAME_CAMELCASE "Emerald Viewer")
 elseif (${VIEWER_BRANDING_ID} MATCHES "snowglobe")
-  set(VIEWER_BRANDING_NAME "Snowglobe")
-  set(VIEWER_BRANDING_NAME_CAMELCASE "Snowglobe")
+  set(VIEWER_BRANDING_NAME "Emerald Viewer")
+  set(VIEWER_BRANDING_NAME_CAMELCASE "Emerald Viewer")
 endif (${VIEWER_BRANDING_ID} MATCHES "secondlife")
 
 set(STANDALONE OFF CACHE BOOL "Do not use Linden-supplied prebuilt libraries.")
