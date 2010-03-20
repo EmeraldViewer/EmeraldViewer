@@ -65,7 +65,7 @@
 #include "llweb.h" // [$PLOTR$/]
 //#include "lggbeamcolormapfloater.h"
 #include "llsliderctrl.h"
-//#include "mfdkeywordfloater.h"
+#include "mfdkeywordfloater.h"
 //#include "lgghunspell_wrapper.h"
 
 ////////begin drop utility/////////////
@@ -536,7 +536,7 @@ void LLPanelEmerald::onCustomBeam(void* data)
 }
 void LLPanelEmerald::onKeywordAllertButton(void * data)
 {
-	//MfdKeywordFloaterStart::show(true,data);
+	MfdKeywordFloaterStart::show(true,data);
 }
 void LLPanelEmerald::onCustomBeamColor(void* data)
 {

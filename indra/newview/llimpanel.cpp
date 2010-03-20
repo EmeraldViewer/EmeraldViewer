@@ -73,7 +73,16 @@
 #include "llhttpclient.h"
 #include "llmutelist.h"
 #include "llstylemap.h"
+#include "mfdkeywordfloater.h" //Emerald KeywordAlert
 
+#if USE_OTR       // [$PLOTR$]
+//#include "context.h"
+//#include "llcombobox.h"
+//#include "otr_wrapper.h"
+//#include "otr_floater_smp_dialog.h"
+//#include "otr_floater_smp_progress.h"
+#include "mfdkeywordfloater.h" //Emerald KeywordAlert
+#endif // USE_OTR // [/$PLOTR$]
 //
 // Constants
 //
@@ -1522,8 +1531,19 @@ BOOL LLFloaterIMPanel::inviteToSession(const LLDynamicArray<LLUUID>& ids)
 	return TRUE;
 }
 
-void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, const LLColor4& color, bool log_to_file, const LLUUID& source, const std::string& name)
+void LLFloaterIMPanel::addHistoryLine(const std::string &utf8msg, LLColor4 incolor, bool log_to_file, const LLUUID& source, const std::string& name)
 {
+	//Emerald KeywordAlert
+	if(gAgent.getID() != source)
+	{
+		if(MfdKeywordFloaterStart::hasKeyword(utf8msg,2))
+		{
+			if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
+				incolor= gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+		}
+	}
+	
+	const LLColor4& color = incolor;
 	// start tab flashing when receiving im for background session from user
 	if (source != LLUUID::null)
 	{

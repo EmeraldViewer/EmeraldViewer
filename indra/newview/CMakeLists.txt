@@ -111,6 +111,7 @@ set(viewer_SOURCE_FILES
     lldrawpoolwater.cpp
     lldrawpoolwlsky.cpp
     lldriverparam.cpp
+    mfdkeywordfloater.cpp
     lldynamictexture.cpp
     llemote.cpp
     lleventinfo.cpp
@@ -562,6 +563,7 @@ set(viewer_HEADER_FILES
     llfloaterclassified.h
     llfloatercolorpicker.h
     llfloatercustomize.h
+    mfdkeywordfloater.h
     llfloaterdaycycle.h
     llfloaterdirectory.h
     llfloatereditui.h

@@ -75,6 +75,7 @@
 #include "llfloaterhtml.h"
 #include "llweb.h"
 #include "llstylemap.h"
+#include "mfdkeywordfloater.h"
 
 // linden library includes
 #include "llaudioengine.h"
@@ -538,7 +539,15 @@ LLColor4 get_text_color(const LLChat& chat)
 			}
 		}
 	}
-
+	//Emerald KeywordAlert
+	if(gAgent.getID() != chat.mFromID)
+	{
+		if(MfdKeywordFloaterStart::hasKeyword(chat.mText,1))
+		{
+			if(gSavedPerAccountSettings.getBOOL("EmeraldKeywordChangeColor"))
+				text_color = gSavedPerAccountSettings.getColor4("EmeraldKeywordColor");
+		}
+	}
 	return text_color;
 }
 
