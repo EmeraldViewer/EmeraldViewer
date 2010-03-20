@@ -4804,8 +4804,11 @@ BOOL LLVOAvatar::processSingleAnimationStateChange( const LLUUID& anim_id, BOOL 
 					//}
 					//else
 					{
-						LLUUID sound_id = LLUUID(gSavedSettings.getString("UISndTyping"));
-						gAudiop->triggerSound(sound_id, getID(), 1.0f, LLAudioEngine::AUDIO_TYPE_SFX, char_pos_global);
+						if(gSavedSettings.getBOOL("PlayTypingSound"))
+						{
+							LLUUID sound_id = LLUUID(gSavedSettings.getString("UISndTyping"));
+							gAudiop->triggerSound(sound_id, getID(), 1.0f, LLAudioEngine::AUDIO_TYPE_SFX, char_pos_global);
+						}
 					}
 				}
 			}
