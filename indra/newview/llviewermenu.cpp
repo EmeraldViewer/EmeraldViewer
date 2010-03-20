@@ -217,6 +217,8 @@
 
 #include "lltexlayer.h"
 
+#include "llfloaterlocalassetbrowse.h" // tag: vaa emerald local_asset_browser
+
 using namespace LLVOAvatarDefines;
 void init_client_menu(LLMenuGL* menu);
 void init_server_menu(LLMenuGL* menu);
@@ -3278,7 +3280,6 @@ class LLEditEnableDuplicate : public view_listener_t
 		return true;
 	}
 };
-
 
 void disabled_duplicate(void*)
 {
@@ -7578,6 +7579,8 @@ class LLWorldDayCycle : public view_listener_t
 	}
 };
 
+/* emerald callbacks begin here */
+
 class LLEmeraldToggleDoubleClickTeleport: public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -7602,7 +7605,18 @@ class LLEmeraldCheckDoubleClickTeleport: public view_listener_t
 	}
 };
 
+// tag: vaa emerald local_asset_browser [start]
+class LLEmeraldLocalAssetBrowser : public view_listener_t
+{
+    bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+    {
+		LLFloaterLocalAssetBrowser::show(NULL);
+        return true;
+    }
+};
+// tag: vaa emerald local_asset_browser [end]
 
+/* emerald callbacks end here */
 
 static void addMenu(view_listener_t *menu, const std::string& name)
 {
@@ -7714,6 +7728,7 @@ void initialize_menus()
 	//addMenu(new LLPhoxToggleAssetBrowser(),"Phox.ToggleAssetBrowser");
 	//addMenu(new LLPhoxCheckAssetBrowser(),"Phox.CheckAssetBrowser");
 	//addMenu(new LLAO(), "AO");
+	addMenu(new LLEmeraldLocalAssetBrowser(), "Emerald.LocalAssetBrowser"); // tag: vaa emerald local_asset_browser
 
 	// World menu
 	addMenu(new LLWorldChat(), "World.Chat");

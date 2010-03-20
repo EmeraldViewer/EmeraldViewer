@@ -68,6 +68,11 @@
 #include "lluictrlfactory.h"
 #include "lltrans.h"
 
+// tag: vaa emerald local_asset_browser [begin]
+#include "llfloaterlocalassetbrowse.h"
+#include "llscrolllistctrl.h"
+#define	LOCALLIST_COL_ID 1
+// tag: vaa emerald local_asset_browser [end]
 
 static const S32 CLOSE_BTN_WIDTH = 100;
 const S32 PIPETTE_BTN_WIDTH = 32;
@@ -162,6 +167,11 @@ public:
 	static void		onSearchEdit(const std::string& search_string, void* user_data );
 	static void		onTextureSelect( const LLTextureEntry& te, void *data );
 
+	// tag: vaa emerald local_asset_browser [begin]
+	static void     onBtnLocal( void* userdata );
+	static void     onLocalScrollCommit ( LLUICtrl* ctrl, void *userdata );
+	// tag: vaa emerald local_asset_browser [end]
+
 protected:
 	LLPointer<LLViewerImage> mTexturep;
 	LLTextureCtrl*		mOwner;
@@ -190,6 +200,7 @@ protected:
 	BOOL				mNoCopyTextureSelected;
 	F32					mContextConeOpacity;
 	LLSaveFolderState	mSavedFolderState;
+	LLScrollListCtrl*   mLocalScrollCtrl; // tag: vaa emerald local_asset_browser
 };
 
 LLFloaterTexturePicker::LLFloaterTexturePicker(	
@@ -232,6 +243,14 @@ LLFloaterTexturePicker::LLFloaterTexturePicker(
 	childSetAction("None", LLFloaterTexturePicker::onBtnNone,this);
 	childSetAction("Blank", LLFloaterTexturePicker::onBtnWhite,this);
 
+	// tag: vaa emerald local_asset_browser [begin]
+	childSetAction("Local", LLFloaterTexturePicker::onBtnLocal, this);  
+
+	mLocalScrollCtrl = getChild<LLScrollListCtrl>("local_name_list");
+	mLocalScrollCtrl->setCallbackUserData(this);                            
+	mLocalScrollCtrl->setCommitCallback(onLocalScrollCommit);
+	LLLocalAssetBrowser::UpdateTextureCtrlList( mLocalScrollCtrl );
+	// tag: vaa emerald local_asset_browser [end]	
 		
 	childSetCommitCallback("show_folders_check", onShowFolders, this);
 	childSetVisible("show_folders_check", FALSE);
@@ -746,6 +765,33 @@ void LLFloaterTexturePicker::onBtnSelect(void* userdata)
 	self->close();
 }
 
+// tag: vaa emerald local_asset_browser [begin]
+
+// static, switches between showing inventory instance for global bitmaps
+// to showing the scroll list for local ones and back.
+void LLFloaterTexturePicker::onBtnLocal(void *userdata)
+{
+	LLFloaterTexturePicker* self = (LLFloaterTexturePicker*) userdata;
+	bool visible_toggle = self->mLocalScrollCtrl->getVisible();
+
+	self->mSearchEdit->setVisible(visible_toggle);
+	self->mInventoryPanel->setVisible(visible_toggle);
+		
+	self->mLocalScrollCtrl->setVisible(!visible_toggle);
+}
+
+// static, reacts to user clicking a valid field in the local scroll list.
+void LLFloaterTexturePicker::onLocalScrollCommit(LLUICtrl *ctrl, void *userdata)
+{
+	LLFloaterTexturePicker* self = (LLFloaterTexturePicker*) userdata;
+	LLUUID id = (LLUUID)self->mLocalScrollCtrl->getSelectedItemLabel( LOCALLIST_COL_ID ); 
+
+	self->mOwner->setImageAssetID( id );
+	self->mOwner->onFloaterCommit(LLTextureCtrl::TEXTURE_CHANGE, id); // calls an overridden function.
+}
+
+// tag: vaa emerald local_asset_browser [end]
+
 // static
 void LLFloaterTexturePicker::onBtnPipette( void* userdata )
 {
@@ -1247,6 +1293,40 @@ void LLTextureCtrl::onFloaterCommit(ETexturePickOp op)
 		}
 	}
 }
+
+// tag: vaa emerald local_asset_browser [begin]
+
+/*
+   overriding onFloaterCommit to forcefeed it a uuid.
+   also, i still don't get the difference beween mImageItemID and mImageAssetID,
+   they seem to affect the same thing? using mImageAssetID.
+*/
+void LLTextureCtrl::onFloaterCommit(ETexturePickOp op, LLUUID id)
+{
+	LLFloaterTexturePicker* floaterp = (LLFloaterTexturePicker*)mFloaterHandle.get();
+
+	if( floaterp && getEnabled())
+	{
+		mImageItemID = id;
+		mImageAssetID = id; //floaterp->getAssetID(); // using same as on above func. 
+												// seems to work anyway.
+
+		if (op == TEXTURE_SELECT && mOnSelectCallback)
+		{
+			mOnSelectCallback(this, mCallbackUserData);
+		}
+		else if (op == TEXTURE_CANCEL && mOnCancelCallback)
+		{
+			mOnCancelCallback(this, mCallbackUserData);
+		}
+		else
+		{
+			onCommit();
+		}
+	}
+}
+
+// tag: vaa emerald local_asset_browser [end]
 
 void LLTextureCtrl::setImageAssetID( const LLUUID& asset_id )
 {

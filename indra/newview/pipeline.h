@@ -288,6 +288,7 @@ public:
 	static BOOL getRenderHighlights(void* data);
 
 	static void updateRenderDeferred();
+	static LLCullResult* getsCull(void); // tag: vaa emerald local_asset_browser
 
 private:
 	void unloadShaders();
