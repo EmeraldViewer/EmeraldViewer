@@ -225,6 +225,14 @@ BOOL LLVorbisDecodeState::initDecode()
 	size_guess *= 2;
 	size_guess += 2048;
 	
+	if(size_guess >= 157286400)
+	{
+		llwarns << "Bad sound caught by zmagic" << llendl;
+		delete mInFilep;
+		mInFilep = NULL;
+		return FALSE;
+	}
+	
 	bool abort_decode = false;
 	
 	if( vi->channels < 1 || vi->channels > LLVORBIS_CLIP_MAX_CHANNELS )
@@ -233,27 +241,15 @@ BOOL LLVorbisDecodeState::initDecode()
 		llwarns << "Bad channel count: " << vi->channels << llendl;
 	}
 	
-	if( (size_t)sample_count > LLVORBIS_CLIP_REJECT_SAMPLES )
-	{
-		abort_decode = true;
-		llwarns << "Illegal sample count: " << sample_count << llendl;
-	}
-	
-	if( size_guess > LLVORBIS_CLIP_REJECT_SIZE )
-	{
-		abort_decode = true;
-		llwarns << "Illegal sample size: " << size_guess << llendl;
-	}
-	
 	if( abort_decode )
 	{
-		llwarns << "Canceling initDecode. Bad asset: " << mUUID << llendl;
+		llwarns << "Canceling initDecode." << llendl;
 		llwarns << "Bad asset encoded by: " << ov_comment(&mVF,-1)->vendor << llendl;
 		delete mInFilep;
 		mInFilep = NULL;
 		return FALSE;
 	}
-	
+
 	mWAVBuffer.reserve(size_guess);
 	mWAVBuffer.resize(WAV_HEADER_SIZE);
 
