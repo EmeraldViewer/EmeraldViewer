@@ -82,6 +82,7 @@
 #include "llgesturemgr.h" //needed to trigger the voice gesticulations
 #include "llvoiceclient.h"
 #include "llvoicevisualizer.h" // Ventrella
+#include "llsdserialize.h" // client resolver
 
 #if LL_MSVC
 // disable boost::lexical_cast warning
@@ -668,6 +669,7 @@ S32 LLVOAvatar::sScratchTexBytes = 0;
 F32 LLVOAvatar::sRenderDistance = 256.f;
 S32	LLVOAvatar::sNumVisibleAvatars = 0;
 S32	LLVOAvatar::sNumLODChangesThisFrame = 0;
+LLSD LLVOAvatar::sClientResolutionList;
 
 const LLUUID LLVOAvatar::sStepSoundOnLand = LLUUID("e8af4a28-aa83-4310-a7c4-c047e15ea0df");
 const LLUUID LLVOAvatar::sStepSounds[LL_MCODE_END] =
@@ -2975,6 +2977,59 @@ void LLVOAvatar::idleUpdateWindEffect()
 		{
 			mRipplePhase = fmodf(mRipplePhase, F_TWO_PI);
 		}
+	}
+}
+void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
+{
+	LLColor4 colourBackup = avatar_name_color;
+	LLUUID idx = avatar->getTE(0)->getID();
+	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()) /*&& avatar->isReallyFullyLoaded()*/)
+	{
+		LLSD cllsd = LLVOAvatar::sClientResolutionList[idx.asString()];
+		client = cllsd["name"].asString();
+		LLColor4 colour;
+		colour.setValue(cllsd["color"]);
+		if(cllsd["multiple"].asReal() != 0)
+		{
+			avatar_name_color += colour;
+			avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
+		}
+		else
+			avatar_name_color = colour;
+	}else
+	{
+		//legacy code
+		if(idx == LLUUID("ccda2b3b-e72c-a112-e126-fee238b67218"))
+		{
+			avatar_name_color += LLColor4::green;//emerald
+			avatar_name_color += LLColor4::green;
+			avatar_name_color = avatar_name_color * (F32)0.333333333333;
+			client = "Emerald";
+		}
+	}
+	if(client == "")
+	{
+		LLPointer<LLViewerImage> image_point = gImageList.getImage(idx, MIPMAP_YES, IMMEDIATE_NO);
+		if(image_point.notNull() && image_point->isMissingAsset())
+		{
+			avatar_name_color += LLColor4::grey;//anomalous
+			avatar_name_color = avatar_name_color * 0.5;
+			client = "Invalid";
+		}
+	}
+	if(avatar->getTE(5)->getID() != avatar->getTE(6)->getID() && client != "")
+	{
+		client = "Failure";
+		avatar_name_color = LLColor4::grey;
+	}
+	if(client == "" && LLVOAvatar::sClientResolutionList.has("default"))
+	{
+		LLSD cllsd = LLVOAvatar::sClientResolutionList["default"];
+		client = cllsd["name"].asString();
+		LLColor4 colour;
+		colour.setValue(cllsd["color"]);
+		avatar_name_color += colour;
+		avatar_name_color *= 1.0/(cllsd["multiple"].asReal()+1.0f);
 	}
 }
 

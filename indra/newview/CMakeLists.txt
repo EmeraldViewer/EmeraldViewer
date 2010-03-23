@@ -64,6 +64,11 @@ include_directories(
     )
 
 set(viewer_SOURCE_FILES
+	chatbar_as_cmdline.cpp
+	floateravatarlist.cpp
+	jc_lslviewerbridge.cpp
+	mfdkeywordfloater.cpp
+	scriptcounter.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -111,7 +116,6 @@ set(viewer_SOURCE_FILES
     lldrawpoolwater.cpp
     lldrawpoolwlsky.cpp
     lldriverparam.cpp
-    mfdkeywordfloater.cpp
     lldynamictexture.cpp
     llemote.cpp
     lleventinfo.cpp
@@ -481,7 +485,11 @@ endif (LINUX)
 set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
-
+	chatbar_as_cmdline.h
+	floateravatarlist.h
+	jc_lslviewerbridge.h
+	mfdkeywordfloater.h
+	scriptcounter.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -563,7 +571,6 @@ set(viewer_HEADER_FILES
     llfloaterclassified.h
     llfloatercolorpicker.h
     llfloatercustomize.h
-    mfdkeywordfloater.h
     llfloaterdaycycle.h
     llfloaterdirectory.h
     llfloatereditui.h
