@@ -6,7 +6,7 @@ tag: vaa emerald local_asset_browser
 other changed files:
 	llviewermenu.cpp, menu_viewer.xml
 	lltexturectrl.h, lltexturectrl.cpp, floater_texture_ctrl.xml
-	pipelin.cpp, pipeline.h
+	pipeline.cpp, pipeline.h
 	llvovolume.h
 
 */
@@ -22,7 +22,7 @@ other changed files:
 #include <boost/filesystem.hpp>
 
 /* own class header */
-#include "llfloaterlocalassetbrowse.h"
+#include "floaterlocalassetbrowse.h"
 
 /* image compression headers. */
 #include "llimagebmp.h"
@@ -58,14 +58,14 @@ other changed files:
 /*     Instantiating manager class       */
 /*    and formally declaring it's list   */
 /*=======================================*/ 
-LLLocalAssetBrowser* gLocalBrowser;
-LLLocalAssetBrowserTimer* gLocalBrowserTimer;
-std::vector<LLLocalBitmap> LLLocalAssetBrowser::loaded_bitmaps;
-bool    LLLocalAssetBrowser::mLayerUpdated;
-bool    LLLocalAssetBrowser::mSculptUpdated;
+LocalAssetBrowser* gLocalBrowser;
+LocalAssetBrowserTimer* gLocalBrowserTimer;
+std::vector<LocalBitmap> LocalAssetBrowser::loaded_bitmaps;
+bool    LocalAssetBrowser::mLayerUpdated;
+bool    LocalAssetBrowser::mSculptUpdated;
 
 /*=======================================*/
-/*  LLLocalBitmapUnit: unit class        */
+/*  LocalBitmap: unit class              */
 /*=======================================*/ 
 /*
 	Product of a complete rewrite of this
@@ -75,7 +75,7 @@ bool    LLLocalAssetBrowser::mSculptUpdated;
 	itself as much as possible.
 */
 
-LLLocalBitmap::LLLocalBitmap(std::string fullpath)
+LocalBitmap::LocalBitmap(std::string fullpath)
 {
 	this->valid = false;
 	if ( gDirUtilp->fileExists(fullpath) )
@@ -124,13 +124,13 @@ LLLocalBitmap::LLLocalBitmap(std::string fullpath)
 	}
 }
 
-LLLocalBitmap::~LLLocalBitmap()
+LocalBitmap::~LocalBitmap()
 {
 
 }
 
 /* [maintenence functions] */
-void LLLocalBitmap::updateSelf()
+void LocalBitmap::updateSelf()
 {
 	if ( this->linkstatus == LINK_ON )
 	{
@@ -178,7 +178,7 @@ void LLLocalBitmap::updateSelf()
 
 }
 
-bool LLLocalBitmap::decodeSelf()
+bool LocalBitmap::decodeSelf()
 {
 	switch (this->extension)
 	{
@@ -231,7 +231,7 @@ bool LLLocalBitmap::decodeSelf()
 	return false;
 }
 
-void LLLocalBitmap::setUpdateBool()
+void LocalBitmap::setUpdateBool()
 {
 	if ( this->linkstatus != LINK_BROKEN )
 	{
@@ -252,33 +252,33 @@ void LLLocalBitmap::setUpdateBool()
 	}
 }
 
-void LLLocalBitmap::setType( S32 type )
+void LocalBitmap::setType( S32 type )
 {
 	this->bitmap_type = type;
 }
 
 /* [information query functions] */
-std::string LLLocalBitmap::getShortName()
+std::string LocalBitmap::getShortName()
 {
 	return this->shortname;
 }
 
-std::string LLLocalBitmap::getFileName()
+std::string LocalBitmap::getFileName()
 {
 	return this->filename;
 }
 
-LLUUID LLLocalBitmap::getID()
+LLUUID LocalBitmap::getID()
 {
 	return this->id;
 }
 
-LLSD LLLocalBitmap::getLastModified()
+LLSD LocalBitmap::getLastModified()
 {
 	return this->last_modified;
 }
 
-std::string LLLocalBitmap::getLinkStatus()
+std::string LocalBitmap::getLinkStatus()
 {
 	switch(this->linkstatus)
 	{
@@ -299,27 +299,27 @@ std::string LLLocalBitmap::getLinkStatus()
 	}
 }
 
-bool LLLocalBitmap::getUpdateBool()
+bool LocalBitmap::getUpdateBool()
 {
 	return this->keep_updating;
 }
 
-bool LLLocalBitmap::getIfValidBool()
+bool LocalBitmap::getIfValidBool()
 {
 	return this->valid;
 }
 
-LLLocalBitmap* LLLocalBitmap::getThis()
+LocalBitmap* LocalBitmap::getThis()
 {
 	return this;
 }
 
-S32 LLLocalBitmap::getType()
+S32 LocalBitmap::getType()
 {
 	return this->bitmap_type;
 }
 
-void LLLocalBitmap::getDebugInfo()
+void LocalBitmap::getDebugInfo()
 {
 	/* debug function: dumps everything human readable into llinfos */
 	llinfos << "===[local bitmap debug]==="               << llendl;
@@ -337,7 +337,7 @@ void LLLocalBitmap::getDebugInfo()
 }
 
 /*=======================================*/
-/*  LLLocalAssetBrowser: internal class  */
+/*  LocalAssetBrowser: internal class  */
 /*=======================================*/ 
 /*
 	Responsible for internal workings.
@@ -345,21 +345,21 @@ void LLLocalBitmap::getDebugInfo()
 	Sits in memory until the viewer is closed.
 */
 
-LLLocalAssetBrowser::LLLocalAssetBrowser()
+LocalAssetBrowser::LocalAssetBrowser()
 {
 	this->mLayerUpdated = false;
 	this->mSculptUpdated = false;
 }
 
-LLLocalAssetBrowser::~LLLocalAssetBrowser()
+LocalAssetBrowser::~LocalAssetBrowser()
 {
 
 }
 
-bool LLLocalAssetBrowser::AddBitmap(std::string filename)
+bool LocalAssetBrowser::AddBitmap(std::string filename)
 {
 
-	LLLocalBitmap* unit = new LLLocalBitmap( filename );
+	LocalBitmap* unit = new LocalBitmap( filename );
 
 	if	( unit->getIfValidBool() )
 	{
@@ -371,7 +371,7 @@ bool LLLocalAssetBrowser::AddBitmap(std::string filename)
 	return false;
 }
 
-bool LLLocalAssetBrowser::DelBitmap(LLUUID id)
+bool LocalAssetBrowser::DelBitmap(LLUUID id)
 {
 	local_list_iter iter = loaded_bitmaps.begin();
 	for (; iter != loaded_bitmaps.end(); iter++)
@@ -388,9 +388,9 @@ bool LLLocalAssetBrowser::DelBitmap(LLUUID id)
 	return false;
 }
 
-void LLLocalAssetBrowser::onUpdateBool(LLUUID id)
+void LocalAssetBrowser::onUpdateBool(LLUUID id)
 {
-	LLLocalBitmap* unit = GetBitmapUnit( id );
+	LocalBitmap* unit = GetBitmapUnit( id );
 	if ( unit ) 
 	{ 
 		unit->setUpdateBool(); 
@@ -398,14 +398,14 @@ void LLLocalAssetBrowser::onUpdateBool(LLUUID id)
 	}
 }
 
-void LLLocalAssetBrowser::onSetType(LLUUID id, S32 type)
+void LocalAssetBrowser::onSetType(LLUUID id, S32 type)
 {
-	LLLocalBitmap* unit = GetBitmapUnit( id );
+	LocalBitmap* unit = GetBitmapUnit( id );
 	if ( unit ) 
 	{ unit->setType(type); }
 }
 
-LLLocalBitmap* LLLocalAssetBrowser::GetBitmapUnit(LLUUID id)
+LocalBitmap* LocalAssetBrowser::GetBitmapUnit(LLUUID id)
 {
 	local_list_iter iter = loaded_bitmaps.begin();
 	for (; iter != loaded_bitmaps.end(); iter++)
@@ -419,7 +419,7 @@ LLLocalBitmap* LLLocalAssetBrowser::GetBitmapUnit(LLUUID id)
 	return NULL;
 }
 
-bool LLLocalAssetBrowser::IsDoingUpdates()
+bool LocalAssetBrowser::IsDoingUpdates()
 {
 	local_list_iter iter = loaded_bitmaps.begin();
 	for (; iter != loaded_bitmaps.end(); iter++)
@@ -435,7 +435,7 @@ bool LLLocalAssetBrowser::IsDoingUpdates()
 /* Reaction to a change in bitmaplist, this function finds a texture picker floater's appropriate scrolllist
    and passes this scrolllist's pointer to UpdateTextureCtrlList for processing.
    it also processes timer start/stops as needed */
-void LLLocalAssetBrowser::onChangeHappened()
+void LocalAssetBrowser::onChangeHappened()
 {
 
 	/* texturepicker related */
@@ -461,12 +461,12 @@ void LLLocalAssetBrowser::onChangeHappened()
 
 }
 
-void LLLocalAssetBrowser::PingTimer()
+void LocalAssetBrowser::PingTimer()
 {
 	if ( !loaded_bitmaps.empty() && IsDoingUpdates() )
 	{
 		if (!gLocalBrowserTimer) 
-		{ gLocalBrowserTimer = new LLLocalAssetBrowserTimer(); }
+		{ gLocalBrowserTimer = new LocalAssetBrowserTimer(); }
 		
 		if ( !gLocalBrowserTimer->isRunning() )
 		{ gLocalBrowserTimer->start(); }
@@ -483,7 +483,7 @@ void LLLocalAssetBrowser::PingTimer()
 }
 
 /* This function refills the texture picker floater's scrolllist with the updated contents of bitmaplist */
-void LLLocalAssetBrowser::UpdateTextureCtrlList(LLScrollListCtrl* ctrl)
+void LocalAssetBrowser::UpdateTextureCtrlList(LLScrollListCtrl* ctrl)
 {
 	if ( ctrl ) // checking again in case called externally for some silly reason.
 	{
@@ -508,7 +508,7 @@ void LLLocalAssetBrowser::UpdateTextureCtrlList(LLScrollListCtrl* ctrl)
 	}
 }
 
-void LLLocalAssetBrowser::PerformTimedActions(void)
+void LocalAssetBrowser::PerformTimedActions(void)
 {
 	// perform checking if updates are needed && update if so.
 	local_list_iter iter;
@@ -518,7 +518,7 @@ void LLLocalAssetBrowser::PerformTimedActions(void)
 	// one or more sculpts have been updated, refreshing them.
 	if ( mSculptUpdated )
 	{
-		LLLocalAssetBrowser::local_list_iter iter;
+		LocalAssetBrowser::local_list_iter iter;
 		for(iter = loaded_bitmaps.begin(); iter != loaded_bitmaps.end(); iter++)
 		{
 			if ( iter->sculpt_dirty )
@@ -540,7 +540,7 @@ void LLLocalAssetBrowser::PerformTimedActions(void)
 	}
 }
 
-void LLLocalAssetBrowser::PerformSculptUpdates(LLLocalBitmap* unit)
+void LocalAssetBrowser::PerformSculptUpdates(LocalBitmap* unit)
 {
 	// i hate the pipeline. someone please shoot it :o
 
@@ -586,7 +586,7 @@ void LLLocalAssetBrowser::PerformSculptUpdates(LLLocalBitmap* unit)
 }
 
 /*==================================================*/
-/*  LLFloaterLocalAssetBrowser : floater class      */
+/*  FloaterLocalAssetBrowser : floater class      */
 /*==================================================*/ 
 /*
 	Responsible for talking to the user.
@@ -596,7 +596,7 @@ void LLLocalAssetBrowser::PerformSculptUpdates(LLLocalBitmap* unit)
 */
 
 // Floater Globals
-LLFloaterLocalAssetBrowser* LLFloaterLocalAssetBrowser::sInstance = NULL;
+FloaterLocalAssetBrowser* FloaterLocalAssetBrowser::sInstance = NULL;
 
 // widgets:
 	LLButton* mAddBtn;
@@ -624,7 +624,7 @@ LLFloaterLocalAssetBrowser* LLFloaterLocalAssetBrowser::sInstance = NULL;
 	LLTextBox* mCaptionNameTxt;
 	LLTextBox* mCaptionTimeTxt;
 
-LLFloaterLocalAssetBrowser::LLFloaterLocalAssetBrowser()
+FloaterLocalAssetBrowser::FloaterLocalAssetBrowser()
 :   LLFloater(std::string("local_bitmap_browser_floater"))
 {
 	// xui creation:
@@ -680,20 +680,20 @@ LLFloaterLocalAssetBrowser::LLFloaterLocalAssetBrowser()
 	mUpdateChkBox->setCommitCallback(onClickUpdateChkbox);
 }
 
-void LLFloaterLocalAssetBrowser::show(void*)
+void FloaterLocalAssetBrowser::show(void*)
 {
     if (!sInstance)
-	sInstance = new LLFloaterLocalAssetBrowser();
+	sInstance = new FloaterLocalAssetBrowser();
     sInstance->open();
 	sInstance->UpdateBitmapScrollList();
 }
 
-LLFloaterLocalAssetBrowser::~LLFloaterLocalAssetBrowser()
+FloaterLocalAssetBrowser::~FloaterLocalAssetBrowser()
 {
     sInstance=NULL;
 }
 
-void LLFloaterLocalAssetBrowser::onClickAdd(void* userdata)
+void FloaterLocalAssetBrowser::onClickAdd(void* userdata)
 {
 	LLFilePicker& picker = LLFilePicker::instance();
 	if ( !picker.getOpenFile(LLFilePicker::FFLOAD_IMAGE) ) 
@@ -711,7 +711,7 @@ void LLFloaterLocalAssetBrowser::onClickAdd(void* userdata)
 	}
 }
 
-void LLFloaterLocalAssetBrowser::onClickDel(void* userdata)
+void FloaterLocalAssetBrowser::onClickDel(void* userdata)
 {
 	std::string temp_id = sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID);
 
@@ -727,17 +727,17 @@ void LLFloaterLocalAssetBrowser::onClickDel(void* userdata)
 
 /* what stopped me from using a single button and simply changing it's label
    is the fact that i'd need to hardcode the button labels here, and that is griff. */
-void LLFloaterLocalAssetBrowser::onClickMore(void* userdata)
+void FloaterLocalAssetBrowser::onClickMore(void* userdata)
 {
 	FloaterResize(true);
 }
 
-void LLFloaterLocalAssetBrowser::onClickLess(void* userdata)
+void FloaterLocalAssetBrowser::onClickLess(void* userdata)
 {
 	FloaterResize(false);
 }
 
-void LLFloaterLocalAssetBrowser::onClickUpload(void* userdata)
+void FloaterLocalAssetBrowser::onClickUpload(void* userdata)
 {
 	std::string filename = gLocalBrowser->GetBitmapUnit( 
 		(LLUUID)sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID) )->getFileName();
@@ -749,7 +749,7 @@ void LLFloaterLocalAssetBrowser::onClickUpload(void* userdata)
 	}
 }
 
-void LLFloaterLocalAssetBrowser::onChooseBitmapList(LLUICtrl* ctrl, void *userdata)
+void FloaterLocalAssetBrowser::onChooseBitmapList(LLUICtrl* ctrl, void *userdata)
 {
 	bool button_status = sInstance->mBitmapList->isEmpty();
 	sInstance->mDelBtn->setEnabled(!button_status);
@@ -758,7 +758,7 @@ void LLFloaterLocalAssetBrowser::onChooseBitmapList(LLUICtrl* ctrl, void *userda
 	sInstance->UpdateRightSide();
 }
 
-void LLFloaterLocalAssetBrowser::onClickUpdateChkbox(LLUICtrl *ctrl, void *userdata)
+void FloaterLocalAssetBrowser::onClickUpdateChkbox(LLUICtrl *ctrl, void *userdata)
 {
 	std::string temp_str = sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID);
 	if ( !temp_str.empty() )
@@ -768,7 +768,7 @@ void LLFloaterLocalAssetBrowser::onClickUpdateChkbox(LLUICtrl *ctrl, void *userd
 	}
 }
 
-void LLFloaterLocalAssetBrowser::onCommitTypeCombo(LLUICtrl* ctrl, void *userdata)
+void FloaterLocalAssetBrowser::onCommitTypeCombo(LLUICtrl* ctrl, void *userdata)
 {
 	std::string temp_str = sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID);
 
@@ -780,7 +780,7 @@ void LLFloaterLocalAssetBrowser::onCommitTypeCombo(LLUICtrl* ctrl, void *userdat
 	}
 }
 
-void LLFloaterLocalAssetBrowser::FloaterResize(bool expand)
+void FloaterLocalAssetBrowser::FloaterResize(bool expand)
 {
 	sInstance->mMoreBtn->setVisible(!expand);
 	sInstance->mLessBtn->setVisible(expand);
@@ -813,14 +813,14 @@ void LLFloaterLocalAssetBrowser::FloaterResize(bool expand)
 
 }
 
-void LLFloaterLocalAssetBrowser::UpdateBitmapScrollList()
+void FloaterLocalAssetBrowser::UpdateBitmapScrollList()
 {
 	sInstance->mBitmapList->clearRows();
 
 	if (!gLocalBrowser->loaded_bitmaps.empty())
 	{
 		
-		LLLocalAssetBrowser::local_list_iter iter;
+		LocalAssetBrowser::local_list_iter iter;
 		for(iter = gLocalBrowser->loaded_bitmaps.begin(); iter != gLocalBrowser->loaded_bitmaps.end(); iter++)
 		{
 			LLSD element;
@@ -839,7 +839,7 @@ void LLFloaterLocalAssetBrowser::UpdateBitmapScrollList()
 	sInstance->UpdateRightSide();
 }
 
-void LLFloaterLocalAssetBrowser::UpdateRightSide()
+void FloaterLocalAssetBrowser::UpdateRightSide()
 {
 	/*
 	Since i'm not keeping a bool on if the floater is expanded or not, i'll
@@ -852,7 +852,7 @@ void LLFloaterLocalAssetBrowser::UpdateRightSide()
 
 	if ( !sInstance->mBitmapList->getAllSelected().empty() )
 	{ 
-		LLLocalBitmap* unit = gLocalBrowser->GetBitmapUnit( LLUUID(sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID)) );
+		LocalBitmap* unit = gLocalBrowser->GetBitmapUnit( LLUUID(sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID)) );
 		
 		if ( unit )
 		{
@@ -890,43 +890,43 @@ void LLFloaterLocalAssetBrowser::UpdateRightSide()
 
 
 /*==================================================*/
-/*     LLLocalAssetBrowserTimer : timer class       */
+/*     LocalAssetBrowserTimer: timer class          */
 /*==================================================*/ 
 /*
 	A small, simple timer class inheriting from
 	LLEventTimer, responsible for pinging the
-	LLLocalAssetBrowser class to perform it's
+	LocalAssetBrowser class to perform it's
 	updates / checks / etc.
 
 */
 
-LLLocalAssetBrowserTimer::LLLocalAssetBrowserTimer() : LLEventTimer( (F32)TIMER_HEARTBEAT )
+LocalAssetBrowserTimer::LocalAssetBrowserTimer() : LLEventTimer( (F32)TIMER_HEARTBEAT )
 {
 
 }
 
-LLLocalAssetBrowserTimer::~LLLocalAssetBrowserTimer()
+LocalAssetBrowserTimer::~LocalAssetBrowserTimer()
 {
 
 }
 
-BOOL LLLocalAssetBrowserTimer::tick()
+BOOL LocalAssetBrowserTimer::tick()
 {
 	gLocalBrowser->PerformTimedActions();
 	return FALSE;
 }
 
-void LLLocalAssetBrowserTimer::start()
+void LocalAssetBrowserTimer::start()
 {
 	mEventTimer.start();
 }
 
-void LLLocalAssetBrowserTimer::stop()
+void LocalAssetBrowserTimer::stop()
 {
 	mEventTimer.stop();
 }
 
-bool LLLocalAssetBrowserTimer::isRunning()
+bool LocalAssetBrowserTimer::isRunning()
 {
 	return mEventTimer.getStarted();
 }

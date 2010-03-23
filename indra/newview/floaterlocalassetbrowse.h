@@ -44,7 +44,7 @@ enum bitmaplist_cols
 #define LOCAL_TEXTURE_PICKER_CREATEIFMISSING true
 
 /*=======================================*/
-/*  LLLocalBitmapUnit: unit class        */
+/*  LocalBitmap: unit class              */
 /*=======================================*/ 
 /*
 	Product of a complete rewrite of this
@@ -54,12 +54,12 @@ enum bitmaplist_cols
 	itself as much as possible.
 */
 
-class LLLocalBitmap
+class LocalBitmap
 {
 	public:
-		LLLocalBitmap(std::string filename);
-		virtual ~LLLocalBitmap(void);
-		friend class LLLocalAssetBrowser;
+		LocalBitmap(std::string filename);
+		virtual ~LocalBitmap(void);
+		friend class LocalAssetBrowser;
 
 	public: /* [enums, typedefs, etc] */
 		enum link_status
@@ -102,7 +102,7 @@ class LLLocalBitmap
 		void updateSelf(void);
 		bool decodeSelf(void);
 		void setUpdateBool(void);
-		LLLocalBitmap* getThis(void);
+		LocalBitmap* getThis(void);
 
 	protected: /* [basic properties] */
 		std::string    shortname;
@@ -120,7 +120,7 @@ class LLLocalBitmap
 };
 
 /*=======================================*/
-/*  LLLocalAssetBrowser: main class      */
+/*  LocalAssetBrowser: main class        */
 /*=======================================*/ 
 /*
 	Responsible for internal workings.
@@ -130,13 +130,13 @@ class LLLocalBitmap
 */
 
 
-class LLLocalAssetBrowser
+class LocalAssetBrowser
 {
 	public:
-		LLLocalAssetBrowser();
-		virtual ~LLLocalAssetBrowser();
-		friend class LLFloaterLocalAssetBrowser;
-		friend class LLLocalAssetBrowserTimer;
+		LocalAssetBrowser();
+		virtual ~LocalAssetBrowser();
+		friend class FloaterLocalAssetBrowser;
+		friend class LocalAssetBrowserTimer;
 		static void UpdateTextureCtrlList(LLScrollListCtrl*);
 		static void setLayerUpdated(bool toggle) { mLayerUpdated = toggle; }
 		static void setSculptUpdated(bool toggle) { mSculptUpdated = toggle; }
@@ -151,21 +151,21 @@ class LLLocalAssetBrowser
 		static bool DelBitmap(LLUUID);
 		static void onUpdateBool(LLUUID);
 		static void onSetType(LLUUID, S32);
-		static LLLocalBitmap* GetBitmapUnit(LLUUID);
+		static LocalBitmap* GetBitmapUnit(LLUUID);
 		static bool IsDoingUpdates(void);
 		static void PingTimer(void);
 		static void PerformTimedActions(void);
-		static void PerformSculptUpdates(LLLocalBitmap*);
+		static void PerformSculptUpdates(LocalBitmap*);
 
 	protected:
-		static  std::vector<LLLocalBitmap> loaded_bitmaps;
-		typedef std::vector<LLLocalBitmap>::iterator local_list_iter;
+		static  std::vector<LocalBitmap> loaded_bitmaps;
+		typedef std::vector<LocalBitmap>::iterator local_list_iter;
 		static  bool    mLayerUpdated;
 		static  bool    mSculptUpdated;
 };
 
 /*==================================================*/
-/*  LLLocalAssetBrowserInterface : interface class  */
+/*  FloaterLocalAssetBrowser : interface class      */
 /*==================================================*/ 
 /*
 	Responsible for talking to the user.
@@ -173,11 +173,11 @@ class LLLocalAssetBrowser
 	Destroyed when the floater is closed.
 
 */
-class LLFloaterLocalAssetBrowser : public LLFloater
+class FloaterLocalAssetBrowser : public LLFloater
 {
 public:
-    LLFloaterLocalAssetBrowser();
-    virtual ~LLFloaterLocalAssetBrowser();
+    FloaterLocalAssetBrowser();
+    virtual ~FloaterLocalAssetBrowser();
     static void show(void*);
 
 
@@ -227,7 +227,7 @@ private:
 	LLTextBox* mCaptionTimeTxt;
 
 	/* static pointer to self, wai? oh well. */
-    static LLFloaterLocalAssetBrowser* sInstance;
+    static FloaterLocalAssetBrowser* sInstance;
 
 	// non-widget functions
 	static void FloaterResize(bool expand);
@@ -238,20 +238,20 @@ private:
 };
 
 /*==================================================*/
-/*     LLLocalAssetBrowserTimer : timer class       */
+/*     LocalAssetBrowserTimer : timer class         */
 /*==================================================*/ 
 /*
 	A small, simple timer class inheriting from
 	LLEventTimer, responsible for pinging the
-	LLLocalAssetBrowser class to perform it's
+	LocalAssetBrowser class to perform it's
 	updates / checks / etc.
 
 */
-class LLLocalAssetBrowserTimer : public LLEventTimer
+class LocalAssetBrowserTimer : public LLEventTimer
 {
 	public:
-		LLLocalAssetBrowserTimer();
-		~LLLocalAssetBrowserTimer();
+		LocalAssetBrowserTimer();
+		~LocalAssetBrowserTimer();
 		virtual BOOL tick();
 		void		 start();
 		void		 stop();

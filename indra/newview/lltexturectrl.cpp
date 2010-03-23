@@ -69,7 +69,7 @@
 #include "lltrans.h"
 
 // tag: vaa emerald local_asset_browser [begin]
-#include "llfloaterlocalassetbrowse.h"
+#include "floaterlocalassetbrowse.h"
 #include "llscrolllistctrl.h"
 #define	LOCALLIST_COL_ID 1
 // tag: vaa emerald local_asset_browser [end]
@@ -249,7 +249,7 @@ LLFloaterTexturePicker::LLFloaterTexturePicker(
 	mLocalScrollCtrl = getChild<LLScrollListCtrl>("local_name_list");
 	mLocalScrollCtrl->setCallbackUserData(this);                            
 	mLocalScrollCtrl->setCommitCallback(onLocalScrollCommit);
-	LLLocalAssetBrowser::UpdateTextureCtrlList( mLocalScrollCtrl );
+	LocalAssetBrowser::UpdateTextureCtrlList( mLocalScrollCtrl );
 	// tag: vaa emerald local_asset_browser [end]	
 		
 	childSetCommitCallback("show_folders_check", onShowFolders, this);

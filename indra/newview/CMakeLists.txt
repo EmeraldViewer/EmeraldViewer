@@ -65,6 +65,7 @@ include_directories(
 
 set(viewer_SOURCE_FILES
 	chatbar_as_cmdline.cpp
+	floaterlocalassetbrowse.cpp
 	floateravatarlist.cpp
 	jc_lslviewerbridge.cpp
 	mfdkeywordfloater.cpp
@@ -173,7 +174,6 @@ set(viewer_SOURCE_FILES
     llfloaterland.cpp
     llfloaterlandholdings.cpp
     llfloaterlandmark.cpp
-	llfloaterlocalassetbrowse.cpp
     llfloatermap.cpp
     llfloatermemleak.cpp
     llfloatermute.cpp
@@ -486,6 +486,7 @@ set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
 	chatbar_as_cmdline.h
+	floaterlocalassetbrowse.h
 	floateravatarlist.h
 	jc_lslviewerbridge.h
 	mfdkeywordfloater.h
@@ -596,7 +597,6 @@ set(viewer_HEADER_FILES
     llfloaterland.h
     llfloaterlandholdings.h
     llfloaterlandmark.h
-	llfloaterlocalassetbrowse.h
     llfloatermap.h
     llfloatermemleak.h
     llfloatermute.h

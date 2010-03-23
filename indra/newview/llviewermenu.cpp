@@ -217,7 +217,7 @@
 
 #include "lltexlayer.h"
 
-#include "llfloaterlocalassetbrowse.h" // tag: vaa emerald local_asset_browser
+#include "floaterlocalassetbrowse.h" // tag: vaa emerald local_asset_browser
 
 using namespace LLVOAvatarDefines;
 void init_client_menu(LLMenuGL* menu);
@@ -7610,7 +7610,7 @@ class LLEmeraldLocalAssetBrowser : public view_listener_t
 {
     bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
     {
-		LLFloaterLocalAssetBrowser::show(NULL);
+		FloaterLocalAssetBrowser::show(NULL);
         return true;
     }
 };
