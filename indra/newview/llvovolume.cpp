@@ -123,8 +123,11 @@ U32 LLVOVolume::processUpdateMessage(LLMessageSystem *mesgsys,
 	if (isSculpted())
 	{
 		LLSculptParams *sculpt_params = (LLSculptParams *)getParameterEntry(LLNetworkData::PARAMS_SCULPT);
-		sculpt_id = sculpt_params->getSculptTexture();
-		sculpt_type = sculpt_params->getSculptType();
+		LLUUID id =  sculpt_params->getSculptTexture();
+		if (id.notNull())
+		{
+			mSculptTexture = LLViewerTextureManager::getFetchedTexture(id, TRUE, LLViewerTexture::BOOST_NONE, LLViewerTexture::LOD_TEXTURE);
+		}
 	}
 
 	if (!dp)
