@@ -218,6 +218,7 @@
 #include "lltexlayer.h"
 
 #include "floaterlocalassetbrowse.h" // tag: vaa emerald local_asset_browser
+#include "floateravatarlist.h"
 
 using namespace LLVOAvatarDefines;
 void init_client_menu(LLMenuGL* menu);
@@ -7433,6 +7434,22 @@ class LLWorldChat : public view_listener_t
 	}
 };
 
+class LLEmeraldToggleRadar: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		//open the radar panel
+		LLFloaterAvatarList::toggle(0);
+		bool vis = false;
+		if(LLFloaterAvatarList::getInstance())
+		{
+			vis = (bool)LLFloaterAvatarList::getInstance()->getVisible();
+		}
+		//gMenuHolder->findControl(userdata["control"].asString())->setValue(vis);
+		return true;
+	}
+};
+
 class LLToolsSelectTool : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -7720,7 +7737,7 @@ void initialize_menus()
 	//addMenu(new LLEmeraldCheckSit(), "Emerald.CheckSit");
 	addMenu(new LLEmeraldToggleDoubleClickTeleport(), "Emerald.ToggleDoubleClickTeleport");
 	addMenu(new LLEmeraldCheckDoubleClickTeleport(), "Emerald.CheckDoubleClickTeleport");
-	//addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
+	addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
 	//addMenu(new LLEmeraldCheckRadar(), "Emerald.CheckAvatarList");
 	//addMenu(new LLEmeraldDisable(), "Emerald.Disable");
 	//addMenu(new LLToggleDebugMenus(), "ToggleDebugMenus");

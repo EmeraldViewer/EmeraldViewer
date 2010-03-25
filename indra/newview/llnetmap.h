@@ -67,6 +67,8 @@ public:
 
 	void			renderScaledPointGlobal( const LLVector3d& pos, const LLColor4U &color, F32 radius );
 
+	static void mm_setcolor(LLUUID key,LLColor4 col); //moymod
+
 private:
 
 	void			setScale( F32 scale );
@@ -114,6 +116,7 @@ private:
 
 private:
 	LLUUID			mClosestAgentToCursor;
+	LLVector3d		mClosestAgentPosition;
 	LLUUID			mClosestAgentAtLastRightClick;
 
 	static BOOL		sRotateMap;
@@ -155,6 +158,12 @@ private:
 	};
 
 	class LLShowAgentProfile : public LLMemberListener<LLNetMap>
+	{
+	public:
+		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);
+	};
+
+	class LLCamFollow : public LLMemberListener<LLNetMap> //moymod
 	{
 	public:
 		/*virtual*/ bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata);

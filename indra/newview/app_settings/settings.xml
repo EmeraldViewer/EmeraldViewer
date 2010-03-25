@@ -1,6 +1,155 @@
 <?xml version="1.0" ?>
 <llsd>
 <map>
+	<key>EmeraldAvatarAgeAlert</key>
+	<map>
+		<key>Comment</key>
+		<string>Enables the avatar age alert</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<real>0</real>
+	</map>
+	<key>EmeraldAvatarAgeAlertDays</key>
+	<map>
+		<key>Comment</key>
+		<string>You will be notified when an avatar younger than X days appears on the radar</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>F32</string>
+		<key>Value</key>
+		<real>3</real>
+	</map>
+	<key>EmeraldAvatarAgeAlertSoundUUID</key>
+	<map>
+		<key>Comment</key>
+		<string>The signal sound for the avatar age alert</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>String</string>
+		<key>Value</key>
+		<string>5fcbee19-8dd4-2888-d6bf-14310d2f7c9f</string>
+	</map>
+	<key>EmeraldAvatarListKeepOpen</key>
+	<map>
+		<key>Comment</key>
+		<string>Keeps Avatar List updates running in background</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<integer>0</integer>
+	</map>
+	<key>EmeraldRadarAlertChatRange</key>
+	<map>
+		<key>Comment</key>
+		<string>Whether the radar emits chat alerts for entering / exiting chat range</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<integer>0</integer>
+	</map>
+	<key>EmeraldRadarAlertDraw</key>
+	<map>
+		<key>Comment</key>
+		<string>Whether the radar emits chat alerts for entering / exiting draw distance</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<integer>0</integer>
+	</map>
+	<key>EmeraldRadarAlertSim</key>
+	<map>
+		<key>Comment</key>
+		<string>Whether the radar emits chat alerts for entering / exiting sim</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<integer>0</integer>
+	</map>
+	<key>EmeraldRadarChatAlerts</key>
+	<map>
+		<key>Comment</key>
+		<string>Whether the radar emits chat alerts regarding the status of avatars it displays</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<integer>0</integer>
+	</map>
+	<key>EmeraldRadarChatKeys</key>
+	<map>
+		<key>Comment</key>
+		<string>Enable silent chat of avatar keys when they enter the region to boost lsl radars speed and range</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<integer>0</integer>
+	</map>
+	<key>EmeraldRadarChatKeysChannel</key>
+	<map>
+		<key>Comment</key>
+		<string>What channel you want the avatar key chat to go on, -777777777 is default</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>S32</string>
+		<key>Value</key>
+		<integer>-777777777</integer>
+	</map>
+	<key>FloaterAvatarListRect</key>
+	<map>
+		<key>Comment</key>
+		<string>Rectangle for Radar</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Rect</string>
+		<key>Value</key>
+		<array>
+			<integer>0</integer>
+			<integer>400</integer>
+			<integer>200</integer>
+			<integer>0</integer>
+		</array>
+	</map>
+	<key>ShowAvatarList</key>
+	<map>
+		<key>Comment</key>
+		<string>Show Avatar List Floater</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<integer>0</integer>
+	</map>
+	<key>WarnEmeraldRadarChat</key>
+	<map>
+		<key>Comment</key>
+		<string>Enables radarchat info dialog</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<integer>1</integer>
+	</map>
+	
     <key>AFKTimeout</key>
     <map>
       <key>Comment</key>

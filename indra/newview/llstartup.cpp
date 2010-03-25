@@ -189,6 +189,8 @@
 #include "llwaterparammanager.h"
 #include "llagentlanguage.h"
 #include "llsocks5.h"
+#include "floateravatarlist.h"
+#include "scriptcounter.h"
 
 #if LL_WINDOWS
 #include "llwindebug.h"
@@ -716,6 +718,13 @@ void update_texture_fetch()
 
 // Returns false to skip other idle processing. Should only return
 // true when all initialization done.
+
+void pass_process_sound_trigger(LLMessageSystem* msg,void**)
+{
+	process_sound_trigger(msg,0);
+	LLFloaterAvatarList::processSoundTrigger(msg,0);
+	//JCLSLBridge::processSoundTrigger(msg,0);
+}
 bool idle_startup()
 {
 	LLMemType mt1(LLMemType::MTYPE_STARTUP);
@@ -2555,6 +2564,16 @@ bool idle_startup()
 			LLFloaterActiveSpeakers::showInstance();
 		}
 
+		if (gSavedSettings.getBOOL("ShowAvatarList"))
+		{
+			LLFloaterAvatarList::showInstance();
+		}
+		else if (gSavedSettings.getBOOL("EmeraldAvatarListKeepOpen"))
+		{
+			LLFloaterAvatarList::showInstance();
+			LLFloaterAvatarList::toggle(NULL);
+		}
+
 		if (gSavedSettings.getBOOL("BeaconAlwaysOn"))
 		{
 			LLFloaterBeacons::showInstance();
@@ -3887,6 +3906,30 @@ void use_circuit_callback(void**, S32 result)
 			gGotUseCircuitCodeAck = true;
 		}
 	}
+}
+
+void pass_processAvatarPropertiesReply(LLMessageSystem *msg, void**)
+{
+	// send it to 'observers'
+	LLPanelAvatar::processAvatarPropertiesReply(msg,0);
+	LLFloaterAvatarList::processAvatarPropertiesReply(msg,0);
+}
+
+void pass_processObjectPropertiesFamily(LLMessageSystem *msg, void**)
+{
+	// send it to 'observers'
+	LLSelectMgr::processObjectPropertiesFamily(msg,0);
+	//JCFloaterAnimList::processObjectPropertiesFamily(msg,0);
+	//JCFloaterAreaSearch::processObjectPropertiesFamily(msg,0);
+	ScriptCounter::processObjectPropertiesFamily(msg,0);
+}
+
+void pass_processObjectProperties(LLMessageSystem *msg, void**)
+{
+	// send it to 'observers'
+	//JCExportTracker::processObjectProperties(msg,0);
+	LLSelectMgr::processObjectProperties(msg,0);
+	ScriptCounter::processObjectProperties(msg,0);
 }
 
 void register_viewer_callbacks(LLMessageSystem* msg)

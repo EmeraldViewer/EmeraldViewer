@@ -41,6 +41,8 @@
 #include "llfocusmgr.h"
 #include "llrender.h"
 
+#include "floateravatarlist.h"
+
 #include "llagent.h"
 #include "llcallingcard.h"
 #include "llcolorscheme.h"
@@ -548,8 +550,25 @@ BOOL LLNetMap::handleToolTip( S32 x, S32 y, std::string& msg, LLRect* sticky_rec
 		{
 			msg.append(fullname);
 			msg.append("\n");
+
+			LLVector3d mypos = gAgent.getPositionGlobal();
+			LLVector3d position = mClosestAgentPosition;
+
+			if ( LLFloaterAvatarList::getInstance() )
+			{
+				LLAvatarListEntry *ent = LLFloaterAvatarList::getInstance()->getAvatarEntry(mClosestAgentToCursor);
+				if ( NULL != ent )
+				{
+					//position = LLFloaterAvatarList::AvatarPosition(mClosestAgentToCursor);
+					position = ent->getPosition();
+				}
+			}
+			LLVector3d delta = position - mypos;
+			F32 distance = (F32)delta.magVec();
+
+			msg.append( llformat("\n(Distance: %.02fm)\n\n",distance) );
 		}
-		msg.append( region->getName() );
+		//msg.append( region->getName() );
 
 #ifndef LL_RELEASE_FOR_DOWNLOAD
 		std::string buffer;
@@ -932,6 +951,13 @@ bool LLNetMap::LLEnableTracking::handleEvent(LLPointer<LLEvent> event, const LLS
 {
 	LLNetMap *self = mPtr;
 	self->findControl(userdata["control"].asString())->setValue(LLTracker::isTracking(NULL));
+	return true;
+}
+
+bool LLNetMap::LLCamFollow::handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+{
+	LLNetMap *self = mPtr;
+	LLFloaterAvatarList::lookAtAvatar(self->mClosestAgentAtLastRightClick);
 	return true;
 }
 
