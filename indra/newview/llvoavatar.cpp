@@ -1433,6 +1433,9 @@ void LLVOAvatar::initClass()
 		llerrs << "Error parsing skeleton node in avatar XML file: " << skeleton_path << llendl;
 	}
 
+	{
+		loadClientTags();
+	}
 }
 
 
@@ -2978,6 +2981,65 @@ void LLVOAvatar::idleUpdateWindEffect()
 			mRipplePhase = fmodf(mRipplePhase, F_TWO_PI);
 		}
 	}
+}
+bool LLVOAvatar::updateClientTags()
+{
+	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
+	LLSD response = LLHTTPClient::blockingGet("http://modularsystems.sl/app/client_tags/client_list.xml");
+	if(response.has("body"))
+	{
+		const LLSD &client_list = response["body"];
+
+		if(client_list.has("isComplete"))
+		{
+			llofstream export_file;
+			export_file.open(client_list_filename);
+			LLSDSerialize::toPrettyXML(client_list, export_file);
+			export_file.close();
+			return true;
+		}
+	}
+	return false;
+}
+
+bool LLVOAvatar::loadClientTags()
+{
+	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
+
+	if(!LLFile::isfile(client_list_filename))
+	{
+		client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "client_list.xml");
+	}
+
+	if(LLFile::isfile(client_list_filename))
+	{
+		LLSD client_list;
+
+		llifstream importer(client_list_filename);
+		LLSDSerialize::fromXMLDocument(client_list, importer);
+		if(client_list.has("isComplete"))
+		{
+			sClientResolutionList = client_list;
+		}else
+		{
+			return false;
+		}
+	}else
+	{
+		return false;
+	}
+
+	for (std::vector<LLCharacter*>::iterator iter = LLCharacter::sInstances.begin();
+	iter != LLCharacter::sInstances.end(); ++iter)
+	{
+		LLVOAvatar* avatarp = (LLVOAvatar*) *iter;
+		if(avatarp)
+		{
+			LLVector3 root_pos_last = avatarp->mRoot.getWorldPosition();
+			avatarp->idleUpdateNameTag(root_pos_last);
+		}
+	}
+	return true;
 }
 void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar)
 {
@@ -7407,7 +7469,7 @@ void LLVOAvatar::setCachedBakedTexture( ETextureIndex te, const LLUUID& uuid )
 // release any component texture UUIDs for which we have a baked texture
 //-----------------------------------------------------------------------------
 void LLVOAvatar::releaseUnnecessaryTextures()
-{
+{/*
 	// Backwards Compat: detect if the baked hair texture actually wasn't sent, and if so set to default
 	if (isTextureDefined(TEX_HAIR_BAKED) && getTEImage(TEX_HAIR_BAKED)->getID() == getTEImage(TEX_SKIRT_BAKED)->getID())
 	{
@@ -7433,7 +7495,7 @@ void LLVOAvatar::releaseUnnecessaryTextures()
 			const U8 te = (ETextureIndex)bakedDicEntry->mLocalTextures[texture];
 			setTETexture(te, IMG_DEFAULT_AVATAR);
 		}
-	}
+	}*/
 }
 
 //-----------------------------------------------------------------------------

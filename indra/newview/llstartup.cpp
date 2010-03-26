@@ -3336,6 +3336,8 @@ bool idle_startup()
 	{
 		set_startup_status(1.0, "", "");
 
+		LLVOAvatar::updateClientTags();
+		LLVOAvatar::loadClientTags();
 		// Let the map know about the inventory.
 		if(gFloaterWorldMap)
 		{
