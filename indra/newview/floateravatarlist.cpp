@@ -919,15 +919,15 @@ void LLFloaterAvatarList::refreshAvatarList()
 
 		element["id"] = av_id;
 
-		element["columns"][LIST_AVATAR_ICON]["column"] = "avatar_icon";
-		element["columns"][LIST_AVATAR_ICON]["type"] = "text";
+		//element["columns"][LIST_AVATAR_ICON]["column"] = "avatar_icon";
+		//element["columns"][LIST_AVATAR_ICON]["type"] = "text";
 		element["columns"][LIST_AVATAR_NAME]["color"] = gColors.getColor("DefaultListText").getValue();
-		if ( ent->isMarked() )
+		/*if ( ent->isMarked() )
 		{
 			element["columns"][LIST_AVATAR_ICON]["type"] = "icon";
-			element["columns"][LIST_AVATAR_ICON]["value"] = /*gViewerArt.getString(*/"flag_blue.tga"/*)*/;
+			element["columns"][LIST_AVATAR_ICON]["value"] = "flag_blue.tga";
 			element["columns"][LIST_AVATAR_ICON]["color"] = gColors.getColor("DefaultListIcon").getValue();
-		}
+		}*/
 
 
 		if ( ent->getIsLinden() )

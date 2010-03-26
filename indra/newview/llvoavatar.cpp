@@ -83,6 +83,7 @@
 #include "llvoiceclient.h"
 #include "llvoicevisualizer.h" // Ventrella
 #include "llsdserialize.h" // client resolver
+#include "floateravatarlist.h"
 
 #if LL_MSVC
 // disable boost::lexical_cast warning
@@ -3138,7 +3139,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 			mRenderGroupTitles = sRenderGroupTitles;
 			new_name = TRUE;
 		}
-
+		std::string client;
 		// First Calculate Alpha
 		// If alpha > 0, create mNameText if necessary, otherwise delete it
 		{
@@ -3179,6 +3180,16 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				}
 				
 				LLColor4 avatar_name_color = gColors.getColor( "AvatarNameColor" );
+				if(!mIsSelf)
+					resolveClient(avatar_name_color,client, this);
+				if(!gSavedSettings.getBOOL("EmeraldChangeColorOnClient"))
+				{
+					avatar_name_color = gColors.getColor( "AvatarNameColor" );
+				}
+				if(!gSavedSettings.getBOOL("EmeraldClientTagDisplay"))
+				{
+					client = "";
+				}
 				avatar_name_color.setAlpha(alpha);
 				mNameText->setColor(avatar_name_color);
 				
@@ -3235,7 +3246,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				(!title && !mTitle.empty()) ||
 				(title && mTitle != title->getString()) ||
 				(is_away != mNameAway || is_busy != mNameBusy || is_muted != mNameMute)
-				|| is_appearance != mNameAppearance)
+				|| is_appearance != mNameAppearance || client.length() != 0)
 			{
 				std::string line;
 				if (!sRenderGroupTitles)
@@ -3261,7 +3272,7 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				line += lastname->getString();
 				BOOL need_comma = FALSE;
 
-				if (is_away || is_muted || is_busy)
+				if (is_away || is_muted || is_busy || client.length() != 0)
 				{
 					line += " (";
 					if (is_away)
@@ -3285,6 +3296,15 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 							line += ", ";
 						}
 						line += "Muted";
+						need_comma = TRUE;
+					}
+					if (client.length() != 0)
+					{
+						if (need_comma)
+						{
+							line += ", ";
+						}
+						line += client;
 						need_comma = TRUE;
 					}
 					line += ")";
