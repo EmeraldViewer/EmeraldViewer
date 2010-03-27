@@ -226,8 +226,6 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
-    <key>EmeraldSpamTime</key>
-    <map>
 		<key>AFKTimeout</key>
 		<map>
 			<key>Comment</key>
