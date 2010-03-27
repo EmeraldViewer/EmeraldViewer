@@ -67,6 +67,7 @@ set(viewer_SOURCE_FILES
 	chatbar_as_cmdline.cpp
 	floaterlocalassetbrowse.cpp
 	floateravatarlist.cpp
+	importtracker.cpp
 	jc_lslviewerbridge.cpp
 	mfdkeywordfloater.cpp
 	scriptcounter.cpp
@@ -488,6 +489,8 @@ set(viewer_HEADER_FILES
 	chatbar_as_cmdline.h
 	floaterlocalassetbrowse.h
 	floateravatarlist.h
+	importtracker.h
+	jclslpreproc.h
 	jc_lslviewerbridge.h
 	mfdkeywordfloater.h
 	scriptcounter.h
