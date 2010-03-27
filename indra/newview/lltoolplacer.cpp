@@ -64,6 +64,8 @@
 #include "llviewerobjectlist.h"
 #include "llviewercamera.h"
 #include "llviewerstats.h"
+#include "llparcel.h" // moymod
+#include "llviewerparcelmgr.h" // moymod
 
 const LLVector3 DEFAULT_OBJECT_SCALE(0.5f, 0.5f, 0.5f);
 
@@ -233,7 +235,16 @@ BOOL LLToolPlacer::addObject( LLPCode pcode, S32 x, S32 y, U8 use_physics )
 	gMessageSystem->nextBlockFast(_PREHASH_AgentData);
 	gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
 	gMessageSystem->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	gMessageSystem->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+	//MOYMOD 2009-05, If avatar is in land group/land owner group,
+	//	it rezzes it with it to prevent autoreturn/whatever
+	if(gSavedSettings.getBOOL("mm_alwaysRezWithLandGroup")){
+		LLParcel *parcel = LLViewerParcelMgr::getInstance()->getAgentParcel();
+		if(gAgent.isInGroup(parcel->getGroupID())){
+			gMessageSystem->addUUIDFast(_PREHASH_GroupID, parcel->getGroupID());
+		}else if(gAgent.isInGroup(parcel->getOwnerID())){
+			gMessageSystem->addUUIDFast(_PREHASH_GroupID, parcel->getOwnerID());
+		}else gMessageSystem->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
+	}else gMessageSystem->addUUIDFast(_PREHASH_GroupID, gAgent.getGroupID());
 	gMessageSystem->nextBlockFast(_PREHASH_ObjectData);
 	gMessageSystem->addU8Fast(_PREHASH_Material,	material);
 
