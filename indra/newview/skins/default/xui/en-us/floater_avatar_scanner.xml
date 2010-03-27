@@ -247,9 +247,17 @@
 				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
 				   initial_value="true" enabled="true" radio_style="false" 
 				   tool_tip="Set whether the avatar list should update" />
+      
+      <check_box height="16" label="Update even when closed"
+				   left="10" bottom_delta="-21" name="keep_open"
+				   width="200" follows="bottom|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+				   initial_value="true" enabled="true" radio_style="false"
+                   control_name="EmeraldAvatarListKeepOpen"
+			   tool_tip="Hides floater instead of closing to still announce in chat" />
 			
 			<check_box height="16" label="Get avatar info"
-				   left="20" bottom_delta="-21" name="fetch_avdata_enabled_cb" 
+				   left="10" bottom_delta="-21" name="fetch_avdata_enabled_cb" 
 				   width="200" follows="bottom|left"
 				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
 				   initial_value="true" enabled="true" radio_style="false" 
@@ -263,24 +271,35 @@
                    control_name="EmeraldRadarChatKeys"
 			   tool_tip="Set whether to chat keys of avatars to LSL scripts" />
 
-      <check_box height="16" label="Announce even when closed"
-				   left="20" bottom_delta="-21" name="keep_open"
-				   width="200" follows="bottom|left"
-				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
-				   initial_value="true" enabled="true" radio_style="false"
-                   control_name="EmeraldAvatarListKeepOpen"
-			   tool_tip="Hides floater instead of closing to still announce in chat" />
       <check_box height="16" label="Enable Avatar Age Alert"
-				   left="180" bottom_delta="63" name="agealert"
+				   left="140" bottom_delta="20" name="agealert"
 				   width="200" follows="bottom|left"
 				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
 				   initial_value="true" enabled="true" radio_style="false"
                     control_name="EmeraldAvatarAgeAlert"
 			   tool_tip="Enables Avatar Age Alert" />
-      <spinner bottom_delta="130" decimal_digits="0" follows="left|top" height="16"
-          left="200" increment="1" initial_val="3" max_val="9999" min_val="0"
+      <spinner bottom_delta="155" decimal_digits="0" follows="left|top" height="16"
+          left="165" increment="1" initial_val="3" max_val="999" min_val="0"
           mouse_opaque="true" name="AgeAlertDays" label="Age Alert Treshold" label_width="100"
-          tool_tip="Age Alert Treshold" width="160" />
+          tool_tip="Age Alert Treshold" width="140" />
+      <check_box height="16" label="Radar Alerts to Chat"
+				   left="290" bottom_delta="60" 
+				   width="200" follows="top|left"
+				   hidden="false" mouse_opaque="true" font="SansSerifSmall"
+		       enabled="true" radio_style="false"
+                   control_name="EmeraldRadarChatAlerts"/>
+      <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 label="Avatars entering / leaving simulator" left_delta="25"
+					 mouse_opaque="true" name="radar_chat_sim_toggle" radio_style="false" width="270"
+					 control_name="EmeraldRadarAlertSim"/>
+      <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+         label="Avatars entering / leaving draw distance"
+         left_delta="0" mouse_opaque="true" name="radar_chat_draw_toggle" radio_style="false"
+         width="270" control_name="EmeraldRadarAlertDraw"/>
+      <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+         label="Avatars entering / leaving chat range" left_delta="0"
+         mouse_opaque="true" name="radar_chat_chatrange_toggle" radio_style="false" width="270"
+         control_name="EmeraldRadarAlertChatRange"/>
     </panel>
 	</tab_container>
 	

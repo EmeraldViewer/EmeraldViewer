@@ -266,27 +266,8 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"
 					 name="EmeraldHelp_Chat" tool_tip="Click here for help regarding the settings in this page."
 					 right="490" width="18"/>
-				<check_box bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Display radar info to chat" left="10" mouse_opaque="true"
-					 name="radar_chat_toggle" radio_style="false" width="270" control_name="EmeraldRadarChatAlerts"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="true" label="Also display while radar is closed" left="20" mouse_opaque="true"
-					 name="keep_open" radio_style="false" width="270" control_name="EmeraldAvatarListKeepOpen"
-                          tool_tip="Hides floater instead of closing to still announce in chat"/>
-				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Display on avatars entering / leaving simulator" left_delta="25"
-					 mouse_opaque="true" name="radar_chat_sim_toggle" radio_style="false" width="270"
-					 control_name="EmeraldRadarAlertSim"/>
-				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Display on avatars entering / leaving draw distance"
-					 left_delta="0" mouse_opaque="true" name="radar_chat_draw_toggle" radio_style="false"
-					 width="270" control_name="EmeraldRadarAlertDraw"/>
-				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Display on avatars entering / leaving chat range" left_delta="0"
-					 mouse_opaque="true" name="radar_chat_chatrange_toggle" radio_style="false" width="270"
-					 control_name="EmeraldRadarAlertChatRange"/>
-				<check_box bottom_delta="-40" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Display Total Script Count changes:" left_delta="-25"
+					 initial_value="false" label="Display Total Script Count changes:" left_delta="-460"
 					 mouse_opaque="true" name="totalscriptjumps" radio_style="false" width="270" control_name="EmeraldDisplayTotalScriptJumps"/>
 				<spinner bottom_delta="0" decimal_digits="0" follows="left|top" height="16" increment="1"
 					 label="" label_width="0" digits="4" left_delta="205" max_val="9999"
