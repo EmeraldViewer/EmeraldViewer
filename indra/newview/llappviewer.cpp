@@ -725,6 +725,15 @@ bool LLAppViewer::init()
 	//
 	initWindow();
 
+	{
+		BOOL download = gSavedSettings.getBOOL("EmeraldDownloadClientTags");
+
+		if(download)
+		{
+			LLVOAvatar::updateClientTags();
+		}
+	}
+
 	// call all self-registered classes
 	LLInitClassList::instance().fireCallbacks();
 
@@ -1926,6 +1935,7 @@ bool LLAppViewer::initConfiguration()
     mYieldTime = gSavedSettings.getS32("YieldTime");
              
 	// XUI:translate
+
 	gSecondLife = "Emerald Viewer";
 
 	// Read skin/branding settings if specified.
@@ -1989,6 +1999,11 @@ bool LLAppViewer::initConfiguration()
 #else
 	gWindowTitle = gSecondLife + std::string(" ") + gArgs;
 #endif
+	gWindowTitle += llformat(" %d.%d.%d.%d",
+		LL_VERSION_MAJOR,
+		LL_VERSION_MINOR,
+		LL_VERSION_PATCH,
+		LL_VERSION_BUILD);
 	LLStringUtil::truncate(gWindowTitle, 255);
 
 	//RN: if we received a URL, hand it off to the existing instance.

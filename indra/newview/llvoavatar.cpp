@@ -8194,7 +8194,7 @@ void LLVOAvatar::onBakedTextureMasksLoaded( BOOL success, LLViewerImage *src_vi,
 		{
 			if (!aux_src->getData())
 			{
-				llerrs << "No auxiliary source data for onBakedTextureMasksLoaded" << llendl;
+				//llerrs << "No auxiliary source data for onBakedTextureMasksLoaded" << llendl;
 				return;
 			}
 
