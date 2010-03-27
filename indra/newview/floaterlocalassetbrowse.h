@@ -100,7 +100,7 @@ class LocalBitmap
 
 	private: /* [maintenence functions] */
 		void updateSelf(void);
-		bool decodeSelf(void);
+		bool decodeSelf(LLImageRaw* rawimg);
 		void setUpdateBool(void);
 		LocalBitmap* getThis(void);
 
@@ -113,7 +113,6 @@ class LocalBitmap
 		link_status    linkstatus;
 		bool           keep_updating;
 		bool           valid;
-		LLImageRaw*    rawpointer;
 		S32		       bitmap_type;
 		bool           sculpt_dirty;
 		bool           volume_dirty;

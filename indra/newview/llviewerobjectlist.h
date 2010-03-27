@@ -64,6 +64,8 @@ public:
 	~LLViewerObjectList();
 
 	void destroy();
+	
+	friend class LocalAssetBrowser; // tag: vaa emerald local_asset_browser
 
 	// For internal use only.  Does NOT take a local id, takes an index into
 	// an internal dynamic array.

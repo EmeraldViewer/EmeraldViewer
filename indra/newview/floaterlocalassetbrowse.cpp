@@ -48,10 +48,7 @@ other changed files:
 #include "llvoavatar.h"
 
 /* sculpt refresh */
-#include "lldrawable.h"
 #include "llvovolume.h"
-#include "pipeline.h"
-#include "llspatialpartition.h"
 
 
 /*=======================================*/
@@ -86,7 +83,6 @@ LocalBitmap::LocalBitmap(std::string fullpath)
 		this->linkstatus    = LINK_OFF;
 		this->keep_updating = false;
 		this->shortname     = gDirUtilp->getBaseFileName(this->filename, true);
-		this->rawpointer    = new LLImageRaw;
 		this->bitmap_type   = TYPE_TEXTURE;
 		this->sculpt_dirty  = false;
 		this->volume_dirty  = false;
@@ -106,11 +102,13 @@ LocalBitmap::LocalBitmap(std::string fullpath)
 		this->last_modified = asctime( localtime(&time) );
 		
 		/* checking if the bitmap is valid && decoding if it is */
-		if ( this->decodeSelf() )
+		LLImageRaw* raw_image = new LLImageRaw();
+		if ( this->decodeSelf(raw_image) )
 		{
 			/* creating a shell LLViewerImage and fusing raw image into it */
 			LLViewerImage* viewer_image = new LLViewerImage( "file://"+this->filename, this->id, LOCAL_USE_MIPMAPS );
-			viewer_image->createGLTexture( LOCAL_DISCARD_LEVEL, this->rawpointer );
+			viewer_image->createGLTexture( LOCAL_DISCARD_LEVEL, raw_image );
+			viewer_image->mCachedRawImage = raw_image;
 
 			/* making damn sure gImageList will not delete it prematurely */
 			viewer_image->ref(); 
@@ -143,8 +141,14 @@ void LocalBitmap::updateSelf()
 		if ( this->last_modified.asString() == new_last_modified.asString() ) { return; }
 
 		/* here we update the image */
-		if ( !decodeSelf() ) { this->linkstatus = LINK_BROKEN; return; }
-		gImageList.hasImage(this->id)->createGLTexture( LOCAL_DISCARD_LEVEL, this->rawpointer );
+		LLImageRaw* new_imgraw = new LLImageRaw();
+		if ( !decodeSelf(new_imgraw) ) { this->linkstatus = LINK_BROKEN; return; }
+		LLViewerImage* image = gImageList.hasImage(this->id);
+		
+		if (!image->mForSculpt) 
+		    { image->createGLTexture( LOCAL_DISCARD_LEVEL, new_imgraw ); }
+		else
+		    { image->mCachedRawImage = new_imgraw; }
 
 		/* finalizing by updating lastmod to current */
 		this->last_modified = new_last_modified;
@@ -178,7 +182,7 @@ void LocalBitmap::updateSelf()
 
 }
 
-bool LocalBitmap::decodeSelf()
+bool LocalBitmap::decodeSelf(LLImageRaw* rawimg)
 {
 	switch (this->extension)
 	{
@@ -186,9 +190,9 @@ bool LocalBitmap::decodeSelf()
 			{
 				LLPointer<LLImageBMP> bmp_image = new LLImageBMP;
 				if ( !bmp_image->load(filename) ) { break; }
-				if ( !bmp_image->decode(rawpointer, 0.0f) ) { break; }
+				if ( !bmp_image->decode(rawimg, 0.0f) ) { break; }
 
-				this->rawpointer->biasedScaleToPowerOfTwo( LLViewerImage::MAX_IMAGE_SIZE_DEFAULT );
+				rawimg->biasedScaleToPowerOfTwo( LLViewerImage::MAX_IMAGE_SIZE_DEFAULT );
 				return true;
 			}
 
@@ -196,12 +200,12 @@ bool LocalBitmap::decodeSelf()
 			{
 				LLPointer<LLImageTGA> tga_image = new LLImageTGA;
 				if ( !tga_image->load(filename) ) { break; }
-				if ( !tga_image->decode(rawpointer) ) { break; }
+				if ( !tga_image->decode(rawimg) ) { break; }
 
 				if(	( tga_image->getComponents() != 3) &&
 					( tga_image->getComponents() != 4) ) { break; }
 
-				this->rawpointer->biasedScaleToPowerOfTwo( LLViewerImage::MAX_IMAGE_SIZE_DEFAULT );
+				rawimg->biasedScaleToPowerOfTwo( LLViewerImage::MAX_IMAGE_SIZE_DEFAULT );
 				return true;
 			}
 
@@ -209,9 +213,9 @@ bool LocalBitmap::decodeSelf()
 			{
 				LLPointer<LLImageJPEG> jpeg_image = new LLImageJPEG;
 				if ( !jpeg_image->load(filename) ) { break; }
-				if ( !jpeg_image->decode(rawpointer, 0.0f) ) { break; }
+				if ( !jpeg_image->decode(rawimg, 0.0f) ) { break; }
 
-				this->rawpointer->biasedScaleToPowerOfTwo( LLViewerImage::MAX_IMAGE_SIZE_DEFAULT );
+				rawimg->biasedScaleToPowerOfTwo( LLViewerImage::MAX_IMAGE_SIZE_DEFAULT );
 				return true;
 			}
 
@@ -219,9 +223,9 @@ bool LocalBitmap::decodeSelf()
 			{
 				LLPointer<LLImagePNG> png_image = new LLImagePNG;
 				if ( !png_image->load(filename) ) { break; }
-				if ( !png_image->decode(rawpointer, 0.0f) ) { break; }
+				if ( !png_image->decode(rawimg, 0.0f) ) { break; }
 
-				this->rawpointer->biasedScaleToPowerOfTwo( LLViewerImage::MAX_IMAGE_SIZE_DEFAULT );
+				rawimg->biasedScaleToPowerOfTwo( LLViewerImage::MAX_IMAGE_SIZE_DEFAULT );
 				return true;
 			}
 
@@ -542,47 +546,35 @@ void LocalAssetBrowser::PerformTimedActions(void)
 
 void LocalAssetBrowser::PerformSculptUpdates(LocalBitmap* unit)
 {
-	// i hate the pipeline. someone please shoot it :o
 
-	for ( LLCullResult::sg_list_t::iterator sg_iter = gPipeline.getsCull()->beginVisibleGroups();
-		  sg_iter != gPipeline.getsCull()->endVisibleGroups(); sg_iter++ )
+	for( LLDynamicArrayPtr< LLPointer<LLViewerObject>, 256 >::iterator  iter = gObjectList.mObjects.begin();
+		 iter != gObjectList.mObjects.end(); iter++ )
 	{
-		LLSpatialGroup* sgroup = *sg_iter;
+		LLViewerObject* obj = *iter;
 		
-		for ( LLOctreeNode<LLDrawable>::element_iter elem_iter = sgroup->getData().begin();
-		      elem_iter != sgroup->getData().end(); elem_iter++ )
+		if ( obj && obj->mDrawable && obj->isSculpted() && obj->getVolume() )
 		{
-
-			LLDrawable* pdraw = *elem_iter;
-			if ( pdraw && pdraw->getVObj() && pdraw->getVObj()->isSculpted() )
+			if ( unit->getID() == obj->getVolume()->getParams().getSculptID() )
 			{
-				/* update code here */
-				
-				if ( unit->getID() == pdraw->getVObj()->getVolume()->getParams().getSculptID() )
+				// update code [begin]
+				if ( unit->volume_dirty )
 				{
+					LLImageRaw* rawimage = gImageList.hasImage( unit->getID() )->getCachedRawImage();
 
-					// do shared volume recalculation only once per sharing drawables
-					if ( unit->volume_dirty )
-					{
-						
-						pdraw->getVObj()->getVolume()->sculpt(unit->rawpointer->getWidth(), unit->rawpointer->getHeight(), 
-													unit->rawpointer->getComponents(), unit->rawpointer->getData(), 0);	
+					obj->getVolume()->sculpt(rawimage->getWidth(), rawimage->getHeight(), 
+					                         rawimage->getComponents(), rawimage->getData(), 0);	
 
-						unit->volume_dirty = false;
-					}
-
-					// tell affected drawable it's got updated
-					pdraw->getVOVolume()->setSculptChanged( true );
-					pdraw->getVOVolume()->markForUpdate( true );
-
+					unit->volume_dirty = false;
 				}
 
-				/* end update code */
+					// tell affected drawable it's got updated
+					obj->mDrawable->getVOVolume()->setSculptChanged( true );
+					obj->mDrawable->getVOVolume()->markForUpdate( true );
+				// update code [end]
 			}
+		}
+	}
 
-		} // [end for treenode]
-
-	} // [end for spatial group]	
 }
 
 /*==================================================*/

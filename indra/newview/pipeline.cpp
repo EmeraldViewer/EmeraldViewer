@@ -546,13 +546,6 @@ void LLPipeline::updateRenderDeferred()
 	sRenderDeferred = deferred;			
 }
 
-// tag: vaa emerald local_asset_browser [begin]
-LLCullResult* LLPipeline::getsCull()
-{
-	return sCull;
-}
-// tag: vaa emerald local_asset_browser [end]
-
 void LLPipeline::releaseGLBuffers()
 {
 	assertInitialized();
