@@ -439,10 +439,12 @@ class WindowsManifest(ViewerManifest):
 class DarwinManifest(ViewerManifest):
     def construct(self):
         # copy over the build result (this is a no-op if run within the xcode script)
-        self.path(self.args['configuration'] + "/" + self.app_name() + ".app", dst="")
+        #self.path(self.args['configuration'] + "/" + self.app_name() + ".app", dst="")
+        self.path(self.args['configuration'] + "/" + "Emerald Viewer" + ".app", dst="")
 
         if self.prefix(src="", dst="Contents"):  # everything goes in Contents
-            self.path(self.info_plist_name(), dst="Info.plist")
+            #self.path(self.info_plist_name(), dst="Info.plist")
+            self.path("Info-Emerald Viewer.plist", dst="Info.plist")
 
             # copy additional libs in <bundle>/Contents/MacOS/
             self.path("../../libraries/universal-darwin/lib_release/libndofdev.dylib", dst="MacOS/libndofdev.dylib")
@@ -467,7 +469,8 @@ class DarwinManifest(ViewerManifest):
                     else:
                         self.path("secondlife_firstlook.icns", "secondlife.icns")
                 elif self.viewer_branding_id()=="snowglobe":
-                    self.path("snowglobe.icns")
+                    #self.path("snowglobe.icns")
+                    self.path("emerald_icon.icns")
 
                 # Translations
                 self.path("English.lproj")
