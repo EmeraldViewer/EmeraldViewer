@@ -44,7 +44,7 @@
 #include "llassetstorage.h"
 #include "llviewerobjectlist.h"
 
-//#include "importtracker.h"
+#include "importtracker.h"
 
 #include "llviewerobject.h"
 
