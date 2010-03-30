@@ -1302,7 +1302,11 @@ void LLSpatialGroup::doOcclusion(LLCamera* camera)
 {
 	if (mSpatialPartition->isOcclusionEnabled() && LLPipeline::sUseOcclusion > 1)
 	{
-		if (earlyFail(camera, this))
+		static LLCachedControl<BOOL> render_water_void_culling("RenderWaterVoidCulling", TRUE);
+		// Don't cull hole/edge water, unless RenderWaterVoidCulling is set and we have the GL_ARB_depth_clamp extension.
+		if ((mSpatialPartition->mDrawableType == LLPipeline::RENDER_TYPE_VOIDWATER &&
+			 !(render_water_void_culling && gGLManager.mHasDepthClamp)) ||
+		    earlyFail(camera, this))
 		{
 			setState(LLSpatialGroup::DISCARD_QUERY);
 			assert_states_valid(this);
@@ -1329,7 +1333,8 @@ void LLSpatialGroup::doOcclusion(LLCamera* camera)
 				// it being culled while still visible.
 				bool const use_depth_clamp =
 					gGLManager.mHasDepthClamp &&
-					mSpatialPartition->mDrawableType == LLPipeline::RENDER_TYPE_WATER;
+					(mSpatialPartition->mDrawableType == LLPipeline::RENDER_TYPE_WATER ||
+					 mSpatialPartition->mDrawableType == LLPipeline::RENDER_TYPE_VOIDWATER);
 				if (use_depth_clamp)
 				{
 					glEnable(GL_DEPTH_CLAMP);
@@ -2299,7 +2304,7 @@ void renderBoundingBox(LLDrawable* drawable, BOOL set_color = TRUE)
 				case LLViewerObject::LL_VO_HUD_PART_GROUP:
 						gGL.color4f(0,0,1,1);
 						break;
-				case LLViewerObject::LL_VO_EDGE_WATER:
+				case LLViewerObject::LL_VO_VOID_WATER:
 				case LLViewerObject::LL_VO_WATER:
 						gGL.color4f(0,0.5f,1,1);
 						break;

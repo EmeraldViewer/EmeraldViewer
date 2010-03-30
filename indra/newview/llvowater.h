@@ -35,6 +35,7 @@
 
 #include "llviewerobject.h"
 #include "llviewerimage.h"
+#include "pipeline.h"
 #include "v2math.h"
 
 const U32 N_RES	= 16; //32			// number of subdivisions of wave tile
@@ -76,12 +77,25 @@ public:
 	/*virtual*/ BOOL isActive() const; // Whether this object needs to do an idleUpdate.
 
 	void setUseTexture(const BOOL use_texture);
+	void setIsEdgePatch(const BOOL edge_patch);
 	BOOL getUseTexture() const { return mUseTexture; }
-
-	bool isEdgeWater(void) const { return mPrimitiveCode == LL_VO_EDGE_WATER; }
+	BOOL getIsEdgePatch() const { return mIsEdgePatch; }
 
 protected:
 	BOOL mUseTexture;
+	BOOL mIsEdgePatch;
+	LLPipeline::LLRenderTypeMask mRenderType;
+};
+
+class LLVOVoidWater : public LLVOWater
+{
+public:
+	LLVOVoidWater(LLUUID const& id, LLPCode pcode, LLViewerRegion* regionp) : LLVOWater(id, pcode, regionp)
+	{
+		mRenderType = LLPipeline::RENDER_TYPE_VOIDWATER;
+	}
+
+	/*virtual*/ U32 getPartitionType() const;
 };
 
 #endif // LL_VOSURFACEPATCH_H
