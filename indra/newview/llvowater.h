@@ -71,18 +71,17 @@ public:
 	/*virtual*/ void updateTextures();
 	/*virtual*/ void setPixelAreaAndAngle(LLAgent &agent); // generate accurate apparent angle and area
 
-	virtual U32 getPartitionType() const;
+	/*virtual*/ U32 getPartitionType() const;
 
 	/*virtual*/ BOOL isActive() const; // Whether this object needs to do an idleUpdate.
 
 	void setUseTexture(const BOOL use_texture);
-	void setIsEdgePatch(const BOOL edge_patch);
 	BOOL getUseTexture() const { return mUseTexture; }
-	BOOL getIsEdgePatch() const { return mIsEdgePatch; }
+
+	bool isEdgeWater(void) const { return mPrimitiveCode == LL_VO_EDGE_WATER; }
 
 protected:
 	BOOL mUseTexture;
-	BOOL mIsEdgePatch;
 };
 
 #endif // LL_VOSURFACEPATCH_H
