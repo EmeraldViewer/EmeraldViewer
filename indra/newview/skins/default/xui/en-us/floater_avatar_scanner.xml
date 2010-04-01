@@ -23,7 +23,7 @@
 		    name="avatar_list"
 		    left="5"
 		    right="-5"
-		    top="-15"
+		    top="-20"
 		    bottom="130"
 		    column_padding="0"
 		    can_resize="true"

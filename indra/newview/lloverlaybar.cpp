@@ -64,6 +64,7 @@
 #include "llvoiceremotectrl.h"
 #include "llmediactrl.h"
 #include "llselectmgr.h"
+#include "wlfPanel_AdvSettings.h"
 
 //
 // Globals
@@ -72,6 +73,9 @@
 LLOverlayBar *gOverlayBar = NULL;
 
 extern S32 MENU_BAR_HEIGHT;
+
+BOOL LLOverlayBar::sAdvSettingsPopup;
+BOOL LLOverlayBar::sChatVisible;
 
 //
 // Functions
@@ -91,6 +95,13 @@ void* LLOverlayBar::createVoiceRemote(void* userdata)
 	LLOverlayBar *self = (LLOverlayBar*)userdata;	
 	self->mVoiceRemote = new LLVoiceRemoteCtrl(std::string("voice_remote"));
 	return self->mVoiceRemote;
+}
+
+void* LLOverlayBar::createAdvSettings(void* userdata)
+{
+	LLOverlayBar *self = (LLOverlayBar*)userdata;	
+	self->mAdvSettings = new wlfPanel_AdvSettings();
+	return self->mAdvSettings;
 }
 
 void* LLOverlayBar::createChatBar(void* userdata)
@@ -113,6 +124,7 @@ LLOverlayBar::LLOverlayBar()
 	LLCallbackMap::map_t factory_map;
 	factory_map["media_remote"] = LLCallbackMap(LLOverlayBar::createMediaRemote, this);
 	factory_map["voice_remote"] = LLCallbackMap(LLOverlayBar::createVoiceRemote, this);
+	factory_map["Adv_Settings"] = LLCallbackMap(LLOverlayBar::createAdvSettings, this);
 	factory_map["chat_bar"] = LLCallbackMap(LLOverlayBar::createChatBar, this);
 	
 	LLUICtrlFactory::getInstance()->buildPanel(this, "panel_overlaybar.xml", &factory_map);
@@ -127,12 +139,37 @@ BOOL LLOverlayBar::postBuild()
  	childSetAction("Flycam",onClickFlycam,this);
 	childSetVisible("chat_bar", gSavedSettings.getBOOL("ChatVisible"));
 
+
 	setFocusRoot(TRUE);
 	mBuilt = true;
 
+	mOriginalIMLabel = getChild<LLButton>("IM Received")->getLabelSelected();
+
 	layoutButtons();
+
+	sAdvSettingsPopup = gSavedSettings.getBOOL("wlfAdvSettingsPopup");
+	sChatVisible = gSavedSettings.getBOOL("ChatVisible");
+
+	gSavedSettings.getControl("wlfAdvSettingsPopup")->getSignal()->connect(&updateAdvSettingsPopup);
+	gSavedSettings.getControl("ChatVisible")->getSignal()->connect(&updateChatVisible);
+	childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
+	childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
+
 	return TRUE;
 }
+
+void LLOverlayBar::updateAdvSettingsPopup(const LLSD &data)
+{
+	sAdvSettingsPopup = data.asBoolean();
+	gOverlayBar->childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
+	gOverlayBar->childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
+}
+
+void LLOverlayBar::updateChatVisible(const LLSD &data)
+{
+	sChatVisible = data.asBoolean();
+}
+
 
 LLOverlayBar::~LLOverlayBar()
 {
@@ -193,9 +230,25 @@ void LLOverlayBar::refresh()
 	BOOL buttons_changed = FALSE;
 
 	BOOL im_received = gIMMgr->getIMReceived();
+	int unread_count = gIMMgr->getIMUnreadCount();
 	LLButton* button = getChild<LLButton>("IM Received");
-	if (button && button->getVisible() != im_received)
+
+	if ((button && button->getVisible() != im_received) ||
+			(button && button->getVisible()))
 	{
+		if (unread_count > 0)
+		{
+			if (unread_count > 1)
+			{
+				std::stringstream ss;
+				ss << unread_count << " " << getString("unread_count_string_plural");
+				button->setLabel(ss.str());
+			}
+			else
+			{
+				button->setLabel("1 " + mOriginalIMLabel);
+			}
+		}
 		button->setVisible(im_received);
 		sendChildToFront(button);
 		moveChildToBackOfTabGroup(button);
@@ -254,23 +307,38 @@ void LLOverlayBar::refresh()
 	moveChildToBackOfTabGroup(mMediaRemote);
 	moveChildToBackOfTabGroup(mVoiceRemote);
 
+
+	static BOOL last_mouselook = FALSE;
+	BOOL in_mouselook = gAgent.cameraMouselook();
+
 	// turn off the whole bar in mouselook
-	if (gAgent.cameraMouselook())
+	if(last_mouselook != in_mouselook)
 	{
-		childSetVisible("media_remote_container", FALSE);
-		childSetVisible("voice_remote_container", FALSE);
-		childSetVisible("state_buttons", FALSE);
+		last_mouselook = in_mouselook;
+		if (in_mouselook)
+		{
+			childSetVisible("media_remote_container", FALSE);
+			childSetVisible("voice_remote_container", FALSE);
+			childSetVisible("AdvSettings_container", FALSE);
+			childSetVisible("AdvSettings_container_exp", FALSE);
+			childSetVisible("state_buttons", FALSE);
+		}
+		else
+		{
+			// update "remotes"
+			childSetVisible("media_remote_container", TRUE);
+			childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
+			childSetVisible("AdvSettings_container", !sAdvSettingsPopup);//!gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
+			childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);//gSavedSettings.getBOOL("wlfAdvSettingsPopup")); 
+			
+			childSetVisible("state_buttons", TRUE);
+		}
 	}
-	else
-	{
-		// update "remotes"
-		childSetVisible("media_remote_container", TRUE);
-		childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
-		childSetVisible("state_buttons", TRUE);
-	}
+	if(!in_mouselook)childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
 
 	// always let user toggle into and out of chatbar
-	childSetVisible("chat_bar", gSavedSettings.getBOOL("ChatVisible"));
+	childSetVisible("chat_bar", sChatVisible);//gSavedSettings.getBOOL("ChatVisible"));
+
 
 	if (buttons_changed)
 	{

@@ -463,6 +463,7 @@ set(viewer_SOURCE_FILES
     llxmlrpctransaction.cpp
     noise.cpp
     pipeline.cpp
+    wlfPanel_AdvSettings.cpp
     )
 
 # This gets renamed in the packaging step
@@ -896,6 +897,7 @@ set(viewer_HEADER_FILES
     randgauss.h
     VertexCache.h
     VorbisFramework.h
+    wlfPanel_AdvSettings.h
     )
 
 source_group("CMake Rules" FILES ViewerInstall.cmake)

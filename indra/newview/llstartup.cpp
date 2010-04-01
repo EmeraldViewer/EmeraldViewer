@@ -192,6 +192,8 @@
 #include "floateravatarlist.h"
 #include "scriptcounter.h"
 
+#include "wlfPanel_AdvSettings.h"
+
 #if LL_WINDOWS
 #include "llwindebug.h"
 #include "lldxhardware.h"
@@ -3394,6 +3396,8 @@ bool idle_startup()
 
 		// reset keyboard focus to sane state of pointing at world
 		gFocusMgr.setKeyboardFocus(NULL);
+
+		wlfPanel_AdvSettings::fixPanel();
 
 #if 0 // sjb: enable for auto-enabling timer display 
 		gDebugView->mFastTimerView->setVisible(TRUE);
