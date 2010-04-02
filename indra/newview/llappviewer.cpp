@@ -859,6 +859,8 @@ bool LLAppViewer::mainLoop()
 	joystick->setNeedsReset(true);
 
 	bind_gsavedsetting("MainloopTimeoutDefault", &sMainloopTimeoutDefault, true);
+
+	bind_gsavedsetting("ThrottleBandwidthKBPS",&LLViewerThrottle::sThrottleBandwidthKBPS,true);
  	
 	// Handle messages
 	while (!LLApp::isExiting())
@@ -3605,7 +3607,7 @@ void LLAppViewer::idleShutdown()
 		static S32 total_uploads = 0;
 		// Sometimes total upload count can change during logout.
 		total_uploads = llmax(total_uploads, pending_uploads);
-		gViewerWindow->setShowProgress(TRUE);
+		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("EmeraldDisableLogoutScreens"));
 		S32 finished_uploads = total_uploads - pending_uploads;
 		F32 percent = 100.f * finished_uploads / total_uploads;
 		gViewerWindow->setProgressPercent(percent);
@@ -3620,7 +3622,7 @@ void LLAppViewer::idleShutdown()
 
 		// Wait for a LogoutReply message
 		gViewerWindow->setShowProgress(TRUE);
-		gViewerWindow->setProgressPercent(100.f);
+		gViewerWindow->setProgressPercent(!gSavedSettings.getBOOL("EmeraldDisableLogoutScreens"));
 		gViewerWindow->setProgressString("Logging out...");
 		return;
 	}

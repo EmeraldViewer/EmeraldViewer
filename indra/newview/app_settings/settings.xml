@@ -3575,6 +3575,39 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
+    <key>EmeraldDisableLoginScreens</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable login screen progress bar</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldDisableLogoutScreens</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable logout screen progress bar</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldDisableTeleportScreens</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable teleport screens</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
 		<key>DragAndDropToolTipDelay</key>
 		<map>
 			<key>Comment</key>

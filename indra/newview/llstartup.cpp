@@ -1458,7 +1458,7 @@ bool idle_startup()
 		}
 
 		// Display the startup progress bar.
-		gViewerWindow->setShowProgress(TRUE);
+		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("EmeraldDisableLoginScreens"));
 		gViewerWindow->setProgressCancelButtonVisible(TRUE, std::string("Quit")); // *TODO: Translate
 
 		// Poke the VFS, which could potentially block for a while if
@@ -2077,7 +2077,8 @@ bool idle_startup()
 					gUTCOffset = (server_utc_time - now);
 				}
 			}
-			gAgent.mMOTD.assign(LLUserAuth::getInstance()->mResult["message"]);
+			if(ModularSystemsLink::getInstance()->ms_motd == "")gAgent.mMOTD = LLUserAuth::getInstance()->mResult["message"].asString();
+			else gAgent.mMOTD = ModularSystemsLink::getInstance()->ms_motd;
 			// OGPX : note: currently OGP strips out array/folder_id bits. 
 			if (!LLUserAuth::getInstance()->mResult["inventory-root"].asUUID().isNull())
 			{
@@ -2307,7 +2308,9 @@ bool idle_startup()
 				gAgent.setHomePosRegion(region_handle, position);
 			}
 
-			gAgent.mMOTD.assign(LLUserAuth::getInstance()->getResponse("message"));
+			if(ModularSystemsLink::getInstance()->ms_motd == "")gAgent.mMOTD = LLUserAuth::getInstance()->getResponse("message");
+			else gAgent.mMOTD = ModularSystemsLink::getInstance()->ms_motd;
+
 			LLUserAuth::options_t options;
 			if(LLUserAuth::getInstance()->getOptions("inventory-root", options))
 			{
@@ -3677,12 +3680,34 @@ bool first_run_dialog_callback(const LLSD& notification, const LLSD& response)
 
 
 
+
 void set_startup_status(const F32 frac, const std::string& string, const std::string& msg)
 {
-	gViewerWindow->setProgressPercent(frac*100);
-	gViewerWindow->setProgressString(string);
+	if(gSavedSettings.getBOOL("EmeraldDisableLoginScreens"))
+	{
+		static std::string last_d;
+		std::string new_d = string;
+		if(new_d != last_d)
+		{
+			last_d = new_d;
+			LLChat chat;
+			chat.mText = new_d;
+			chat.mSourceType = (EChatSourceType)(CHAT_SOURCE_OBJECT+1);
+			LLFloaterChat::addChat(chat);
+			if(new_d == LLTrans::getString("LoginWaitingForRegionHandshake"))
+			{
+				chat.mText = "MOTD: "+msg;
+				chat.mSourceType = (EChatSourceType)(CHAT_SOURCE_OBJECT+1);
+				LLFloaterChat::addChat(chat);
+			}
+		}
+	}else
+	{
+		gViewerWindow->setProgressPercent(frac*100);
+		gViewerWindow->setProgressString(string);
 
-	gViewerWindow->setProgressMessage(msg);
+		gViewerWindow->setProgressMessage(msg);
+	}
 }
 
 bool login_alert_status(const LLSD& notification, const LLSD& response)

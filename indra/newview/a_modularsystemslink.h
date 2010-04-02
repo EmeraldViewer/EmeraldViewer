@@ -58,6 +58,8 @@ public:
 
 	std::set<std::string> blocked_versions;
 
+	std::string ms_motd;
+
 };
 
 class ModularSystemsDownloader : public LLHTTPClient::Responder

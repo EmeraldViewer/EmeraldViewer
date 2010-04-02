@@ -83,6 +83,8 @@
 
 #include "jc_lslviewerbridge.h"
 
+#include "llfloatergroups.h"
+
 // Statics
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
 BOOL LLPanelAvatar::sAllowFirstLife = FALSE;
@@ -368,6 +370,7 @@ BOOL LLPanelAvatarSecondLife::postBuild(void)
 
 	childSetAction("Find on Map", LLPanelAvatar::onClickTrack, getPanelAvatar());
 	childSetAction("Instant Message...", LLPanelAvatar::onClickIM, getPanelAvatar());
+	childSetAction("EmeraldGroupInvite_Button", LLPanelAvatar::onClickGroupInvite, getPanelAvatar());
 	
 	childSetAction("Add Friend...", LLPanelAvatar::onClickAddFriend, getPanelAvatar());
 	childSetAction("Pay...", LLPanelAvatar::onClickPay, getPanelAvatar());
@@ -1378,6 +1381,12 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 			name_edit->setText(name);
 		}
 	}
+
+	LLNameEditor* key_edit = getChild<LLNameEditor>("key_");
+	if(key_edit)
+	{
+		key_edit->setText(mAvatarID.asString());
+	}
 // 	if (avatar_changed)
 	{
 		// While we're waiting for data off the network, clear out the
@@ -1419,6 +1428,8 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 			}
 			childSetVisible("Instant Message...",FALSE);
 			childSetEnabled("Instant Message...",FALSE);
+			childSetVisible("EmeraldGroupInvite_Button",FALSE);
+			childSetEnabled("EmeraldGroupInvite_Button",FALSE);
 			childSetVisible("Mute",FALSE);
 			childSetEnabled("Mute",FALSE);
 			childSetVisible("Offer Teleport...",FALSE);
@@ -1548,6 +1559,23 @@ void LLPanelAvatar::onClickIM(void* userdata)
 	if (nameedit) name = nameedit->getText();
 	gIMMgr->addSession(name, IM_NOTHING_SPECIAL, self->mAvatarID);
 }
+void callback_invite_to_group(LLUUID group_id, void *user_data);
+void LLPanelAvatar::onClickGroupInvite(void* userdata)
+{
+	LLPanelAvatar* self = (LLPanelAvatar*) userdata;
+	if (self->getAvatarID().notNull())
+	{
+		LLFloaterGroupPicker* widget;
+		widget = LLFloaterGroupPicker::showInstance(LLSD(gAgent.getID()));
+		if (widget)
+		{
+			widget->center();
+			widget->setPowersMask(GP_MEMBER_INVITE);
+			widget->setSelectCallback(callback_invite_to_group, (void *)&(self->getAvatarID()));
+		}
+	}
+}
+
 
 
 // static

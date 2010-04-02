@@ -44,6 +44,8 @@
 
 #include "llversionviewer.h"
 
+#include "llagent.h"
+
 ModularSystemsLink* ModularSystemsLink::sInstance;
 
 ModularSystemsLink::ModularSystemsLink()
@@ -109,6 +111,15 @@ void ModularSystemsLink::msdata(U32 status, std::string body)
 		{
 			std::string vers = (*itr).asString();
 			self->blocked_versions.insert(vers);
+		}
+
+		if(data.has("MOTD"))
+		{
+			self->ms_motd = data["MOTD"].asString();
+			gAgent.mMOTD = self->ms_motd;
+		}else
+		{
+			self->ms_motd = "";
 		}
 	}
 

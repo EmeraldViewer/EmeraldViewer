@@ -210,13 +210,6 @@ LLViewerThrottle::LLViewerThrottle() :
 	mPresets.push_back(LLViewerThrottleGroup(BW_PRESET_300));
 	mPresets.push_back(LLViewerThrottleGroup(BW_PRESET_500));
 	mPresets.push_back(LLViewerThrottleGroup(BW_PRESET_1000));
-
-	static BOOL needs_init = TRUE;
-	if(needs_init)
-	{
-		needs_init = FALSE;
-		bind_gsavedsetting("ThrottleBandwidthKBPS",&sThrottleBandwidthKBPS,true);
-	}
 }
 
 

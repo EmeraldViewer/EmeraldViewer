@@ -265,11 +265,29 @@ BOOL LLPanelFriends::addFriend(const LLUUID& agent_id)
 	edit_my_object_column["type"] = "checkbox";
 	edit_my_object_column["value"] = relationInfo->isRightGrantedTo(LLRelationship::GRANT_MODIFY_OBJECTS);
 
-	LLSD& edit_their_object_column = element["columns"][LIST_EDIT_THEIRS];
-	edit_their_object_column["column"] = "icon_edit_theirs";
-	edit_their_object_column["type"] = "checkbox";
-	edit_their_object_column["enabled"] = "";
-	edit_their_object_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MODIFY_OBJECTS);
+	{
+		LLSD& lol_column = element["columns"][LIST_VISIBLE_ONLINE_THEIRS];
+		lol_column["column"] = "icon_visible_online_theirs";
+		lol_column["type"] = "checkbox";
+		lol_column["enabled"] = "";
+		lol_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_ONLINE_STATUS);
+	}
+
+	{
+		LLSD& lol_column = element["columns"][LIST_VISIBLE_MAP_THEIRS];
+		lol_column["column"] = "icon_visible_map_theirs";
+		lol_column["type"] = "checkbox";
+		lol_column["enabled"] = "";
+		lol_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MAP_LOCATION);
+	}
+
+	{
+		LLSD& lol_column = element["columns"][LIST_EDIT_THEIRS];
+		lol_column["column"] = "icon_edit_theirs";
+		lol_column["type"] = "checkbox";
+		lol_column["enabled"] = "";
+		lol_column["value"] = relationInfo->isRightGrantedFrom(LLRelationship::GRANT_MODIFY_OBJECTS);
+	}
 
 	LLSD& update_gen_column = element["columns"][LIST_FRIEND_UPDATE_GEN];
 	update_gen_column["column"] = "friend_last_update_generation";
@@ -313,6 +331,13 @@ BOOL LLPanelFriends::updateFriendItem(const LLUUID& agent_id, const LLRelationsh
 	itemp->getColumn(LIST_VISIBLE_ONLINE)->setValue(info->isRightGrantedTo(LLRelationship::GRANT_ONLINE_STATUS));
 	itemp->getColumn(LIST_VISIBLE_MAP)->setValue(info->isRightGrantedTo(LLRelationship::GRANT_MAP_LOCATION));
 	itemp->getColumn(LIST_EDIT_MINE)->setValue(info->isRightGrantedTo(LLRelationship::GRANT_MODIFY_OBJECTS));
+
+	itemp->getColumn(LIST_VISIBLE_ONLINE_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_ONLINE_STATUS));
+	//unreliable? broken?
+	itemp->getColumn(LIST_VISIBLE_MAP_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_MAP_LOCATION));
+	itemp->getColumn(LIST_EDIT_THEIRS)->setValue(info->isRightGrantedFrom(LLRelationship::GRANT_MODIFY_OBJECTS));
+
+
 	S32 change_generation = have_name ? info->getChangeSerialNum() : -1;
 	itemp->getColumn(LIST_FRIEND_UPDATE_GEN)->setValue(change_generation);
 
