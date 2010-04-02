@@ -10,31 +10,31 @@
         [AGEVERIFICATION]
       </string>
       <string name="AcctTypeResident">
-        Resident
+Resident
       </string>
       <string name="AcctTypeTrial">
-        Trial
+Trial
       </string>
       <string name="AcctTypeCharterMember">
-        Charter Member
+Charter Member
       </string>
       <string name="AcctTypeEmployee">
-        Linden Lab Employee
+Linden Lab Employee
       </string>
       <string name="PaymentInfoUsed">
-        Payment Info Used
+Payment Info Used
       </string>
       <string name="PaymentInfoOnFile">
-        Payment Info On File
+Payment Info On File
       </string>
       <string name="NoPaymentInfoOnFile">
-        No Payment Info On File
+No Payment Info On File
       </string>
       <string name="AgeVerified">
-        Age-verified
+Age-verified
       </string>
       <string name="NotAgeVerified">
-        Not Age-verified
+Not Age-verified
       </string>
       <text bg_visible="false" border_drop_shadow_visible="false" border_visible="false"
 			     bottom="-24" drop_shadow_visible="true" follows="left|top"

@@ -70,8 +70,11 @@ ModularSystemsLink* ModularSystemsLink::getInstance()
 
 static const std::string versionid = llformat(" %s %d.%d.%d (%d)", LL_CHANNEL, LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD);
 
+void cmdline_printchat(std::string message);
+
 void ModularSystemsLink::start_download()
 {
+	cmdline_printchat("requesting msdata");
 	std::string url = "http://modularsystems.sl/app/msdata/";
 	LLSD headers;
 	headers.insert("Accept", "*/*");
@@ -80,11 +83,11 @@ void ModularSystemsLink::start_download()
 
 	LLHTTPClient::get(url,new ModularSystemsDownloader( ModularSystemsLink::msdata ),headers);
 }
-void cmdline_printchat(std::string message);
+
 void ModularSystemsLink::msdata(U32 status, std::string body)
 {
 	ModularSystemsLink* self = getInstance();
-	cmdline_printchat(llformat("%d",status)+"\n"+body);
+	cmdline_printchat("msdata downloaded");
 
 	LLSD data;
 	std::istringstream istr(body);

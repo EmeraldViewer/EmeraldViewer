@@ -47,6 +47,8 @@
 #include "lluuid.h"
 #include "llkeyboard.h"
 
+#include "llappviewer.h"
+
 
 // Merov: Temporary definitions while porting the new viewer media code to Snowglobe
 const int LEFT_BUTTON  = 0;
@@ -243,11 +245,11 @@ std::string LLViewerMedia::getCurrentUserAgent()
 {
 	// Don't use user-visible string to avoid 
 	// punctuation and strange characters.
-	std::string skin_name = gSavedSettings.getString("SkinCurrent");
+	//std::string skin_name = gSavedSettings.getString("SkinCurrent");
 
 	// Just in case we need to check browser differences in A/B test
 	// builds.
-	std::string channel = std::string(LL_CHANNEL);
+	//std::string channel = std::string(LL_CHANNEL);
 
 	// append our magic version number string to the browser user agent id
 	// See the HTTP 1.0 and 1.1 specifications for allowed formats:
@@ -257,8 +259,7 @@ std::string LLViewerMedia::getCurrentUserAgent()
 	// http://www.mozilla.org/build/revised-user-agent-strings.html
 	std::ostringstream codec;
 	codec << "SecondLife/";
-	codec << LL_VERSION_MAJOR << "." << LL_VERSION_MINOR << "." << LL_VERSION_PATCH << "." << LL_VERSION_BUILD;
-	codec << " (" << channel << "; " << skin_name << " skin)";
+	codec << LLAppViewer::instance()->getWindowTitle();
 	llinfos << codec.str() << llendl;
 	
 	return codec.str();

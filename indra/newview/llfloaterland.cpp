@@ -76,6 +76,7 @@
 #include "llviewerwindow.h"
 #include "llviewercontrol.h"
 #include "roles_constants.h"
+#include "llworld.h"
 
 static std::string OWNER_ONLINE 	= "0";
 static std::string OWNER_OFFLINE	= "1";
@@ -1465,6 +1466,11 @@ void LLPanelLandObjects::processParcelObjectOwnersReply(LLMessageSystem *msg, vo
 		self->mFirstReply = FALSE;
 	}
 
+	LLVector3d mypos = gAgent.getPositionGlobal();
+	std::vector<LLUUID> avatar_ids;
+	std::vector<LLVector3d> positions;
+	LLWorld::instance().getAvatars(&avatar_ids, &positions, mypos, F32_MAX);
+
 	for(S32 i = 0; i < rows; ++i)
 	{
 		msg->getUUIDFast(_PREHASH_Data, _PREHASH_OwnerID,		owner_id,		i);
@@ -1480,13 +1486,15 @@ void LLPanelLandObjects::processParcelObjectOwnersReply(LLMessageSystem *msg, vo
 			continue;
 		}
 
+		BOOL in_sim = (std::find(avatar_ids.begin(), avatar_ids.end(), owner_id) != avatar_ids.end());
+
 		LLScrollListItem *row = new LLScrollListItem( TRUE, NULL, owner_id);
 		if (is_group_owned)
 		{
 			row->addColumn(self->mIconGroup);
 			row->addColumn(OWNER_GROUP, FONT);
 		}
-		else if (is_online)
+		else if (in_sim)
 		{
 			row->addColumn(self->mIconAvatarOnline);
 			row->addColumn(OWNER_ONLINE, FONT);
