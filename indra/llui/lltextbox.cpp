@@ -70,11 +70,18 @@ LLTextBox::LLTextBox(const std::string& name_and_label, const LLRect& rect) :
 
 void LLTextBox::initDefaults()
 {
-	mTextColor = LLUI::sColorsGroup->getColor("LabelTextColor");
-	mDisabledColor = LLUI::sColorsGroup->getColor("LabelDisabledColor");
-	mBackgroundColor = LLUI::sColorsGroup->getColor("DefaultBackgroundColor");
-	mBorderColor = LLUI::sColorsGroup->getColor("DefaultHighlightLight");
-	mHoverColor = LLUI::sColorsGroup->getColor( "LabelSelectedColor" );
+	static LLColor4 sTextColor = LLUI::sColorsGroup->getColor("LabelTextColor");
+	static LLColor4 sDisabledColor = LLUI::sColorsGroup->getColor("LabelDisabledColor");
+	static LLColor4 sBackgroundColor = LLUI::sColorsGroup->getColor("DefaultBackgroundColor");
+	static LLColor4 sBorderColor = LLUI::sColorsGroup->getColor("DefaultHighlightLight");
+	static LLColor4 sHoverColor = LLUI::sColorsGroup->getColor( "LabelSelectedColor" );
+
+
+	mTextColor = sTextColor;
+	mDisabledColor = sDisabledColor;
+	mBackgroundColor = sBackgroundColor;
+	mBorderColor = sBorderColor;
+	mHoverColor = sHoverColor;
 	mHoverActive = FALSE;
 	mHasHover = FALSE;
 	mBackgroundVisible = FALSE;

@@ -372,7 +372,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 name="EmeraldUseBridgeOnline" radio_style="false" width="270" control_name="EmeraldUseBridgeOnline"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Use llMoveToTarget TP" left_delta="0" mouse_opaque="true"
-					 name="EmeraldMoveLockDCT" radio_style="false" width="270" control_name="EmeraldMoveLockDCT"/>
+					 name="EmeraldUseBridgeMoveToTarget" radio_style="false" width="270" control_name="EmeraldUseBridgeMoveToTarget"/>
 			</panel>
 			<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="CmdLine"
 				 left="1" mouse_opaque="true" name="CmdLine" width="418">
@@ -409,7 +409,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 font="SansSerifSmall" height="20" left_delta="0" max_length="256" mouse_opaque="true"
 					 tool_tip="" name="EmeraldCmdLineRezPlatform" control_name="EmeraldCmdLineRezPlatform"
 					 width="200"/>
-				<slider bottom_delta="-20" left="15" name="EmeraldPlatformSize" control_name="EmeraldPlatformSize"
+				<slider bottom_delta="-20" left="15" name="EmeraldCmdLinePlatformSize" control_name="EmeraldCmdLinePlatformSize"
 					 decimal_digits="1" enabled="true" follows="left|top" height="18" increment="0.5"
 					 initial_val="5" label="Width" label_width="30" max_val="30" min_val="5"
 					 mouse_opaque="true" show_text="true" width="200" auto_resize="false" tool_tip="How big do you want the platform to appear to be?"/>
@@ -420,7 +420,7 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 tool_tip="" name="EmeraldCmdLineMapTo" control_name="EmeraldCmdLineMapTo" width="200"/>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Use same position between sims" left_delta="0" mouse_opaque="true"
-					 name="toggle" radio_style="false" width="270" control_name="EmeraldMapToKeepPos"/>
+					 name="toggle" radio_style="false" width="270" control_name="EmeraldCmdLineMapToKeepPos"/>
 				<text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="0"
 					 name="loltxt8" width="512">        Calc. expressions (usage: cmd SIN(2+2))</text>
 				<line_editor bevel_style="in" border_style="line" border_thickness="1" bottom_delta="-20" follows="left|top"

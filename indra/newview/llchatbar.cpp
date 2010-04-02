@@ -68,6 +68,8 @@
 #include "llviewermenu.h"
 #include "lluictrlfactory.h"
 
+#include "chatbar_as_cmdline.h"
+
 
 //
 // Globals
@@ -406,7 +408,7 @@ void LLChatBar::sendChat( EChatType type )
 
 			utf8_revised_text = utf8str_trim(utf8_revised_text);
 
-			if (!utf8_revised_text.empty())
+			if (!utf8_revised_text.empty() && cmd_line_chat(utf8_revised_text, CHAT_TYPE_NORMAL))
 			{
 				// Chat with animation
 				sendChatFromViewer(utf8_revised_text, type, TRUE);

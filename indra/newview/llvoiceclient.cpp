@@ -1215,7 +1215,7 @@ void LLVoiceClient::terminate()
 
 void LLVoiceClient::updateSettings()
 {
-	setVoiceEnabled(gSavedSettings.getBOOL("EnableVoiceChat"));
+	setVoiceEnabled(gSavedSettings.getBOOL("EnableVoiceChat") && !gSavedSettings.getBOOL("CmdLineDisableVoice"));
 	setUsePTT(gSavedSettings.getBOOL("PTTCurrentlyEnabled"));
 	std::string keyString = gSavedSettings.getString("PushToTalkButton");
 	setPTTKey(keyString);
@@ -3555,10 +3555,11 @@ void LLVoiceClient::sendFriendsListUpdates()
 	{
 		mFriendsListDirty = false;
 		
-		if(0)
+		if(gSavedSettings.getBOOL("EmeraldLargeFriendslistNoSLim"))
 		{
 			// FOR TESTING ONLY -- clear all buddy list, block list, and auto-accept list entries.
 			clearAllLists();
+			mBuddyListMap.clear();
 			return;
 		}
 		
@@ -5808,7 +5809,7 @@ void LLVoiceClient::setVoiceEnabled(bool enabled)
 
 bool LLVoiceClient::voiceEnabled()
 {
-	return gSavedSettings.getBOOL("EnableVoiceChat") && !gSavedSettings.getBOOL("CmdLineDisableVoice");
+	return LLVoiceClient::getInstance()->mVoiceEnabled;//gSavedSettings.getBOOL("EnableVoiceChat") && !gSavedSettings.getBOOL("CmdLineDisableVoice");
 }
 
 void LLVoiceClient::setLipSyncEnabled(BOOL enabled)

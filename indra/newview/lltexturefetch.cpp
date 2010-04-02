@@ -54,6 +54,8 @@
 #include "llviewerregion.h"
 #include "llworld.h"
 
+#include "llviewerthrottle.h"
+
 //////////////////////////////////////////////////////////////////////////////
 class LLTextureFetchWorker : public LLWorkerClass
 {
@@ -1358,7 +1360,7 @@ LLTextureFetch::LLTextureFetch(LLTextureCache* cache, LLImageDecodeThread* image
 	  mTextureBandwidth(0),
 	  mCurlGetRequest(NULL)
 {
-	mMaxBandwidth = gSavedSettings.getF32("ThrottleBandwidthKBPS");
+	mMaxBandwidth = LLViewerThrottle::sThrottleBandwidthKBPS;
 	mTextureInfo.setUpLogging(gSavedSettings.getBOOL("LogTextureDownloadsToViewerLog"), gSavedSettings.getBOOL("LogTextureDownloadsToSimulator"), gSavedSettings.getU32("TextureLoggingThreshold"));
 }
 
@@ -1595,7 +1597,7 @@ S32 LLTextureFetch::update(U32 max_time_ms)
 {
 	S32 res;
 	
-	mMaxBandwidth = gSavedSettings.getF32("ThrottleBandwidthKBPS");
+	mMaxBandwidth = LLViewerThrottle::sThrottleBandwidthKBPS;
 	
 	res = LLWorkerThread::update(max_time_ms);
 	

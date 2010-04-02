@@ -655,7 +655,7 @@ void LLWorld::updateParticles()
 
 void LLWorld::updateClouds(const F32 dt)
 {
-	if (gSavedSettings.getBOOL("FreezeTime") ||
+	if (sFreezeTime ||
 		!gSavedSettings.getBOOL("SkyUseClassicClouds"))
 	{
 		// don't move clouds in snapshot mode

@@ -64,10 +64,14 @@ include_directories(
     )
 
 set(viewer_SOURCE_FILES
+	a_modularsystemslink.cpp
+	emerald.cpp
 	chatbar_as_cmdline.cpp
 	floaterlocalassetbrowse.cpp
 	floateravatarlist.cpp
+	floaterao.cpp
 	importtracker.cpp
+	jclslpreproc.cpp
 	jc_lslviewerbridge.cpp
 	mfdkeywordfloater.cpp
 	scriptcounter.cpp
@@ -487,9 +491,12 @@ endif (LINUX)
 set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
+    a_modularsystemslink.h
+    emerald.h
 	chatbar_as_cmdline.h
 	floaterlocalassetbrowse.h
 	floateravatarlist.h
+	floaterao.h
 	importtracker.h
 	jclslpreproc.h
 	jc_lslviewerbridge.h

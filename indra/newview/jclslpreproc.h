@@ -1,4 +1,4 @@
-/* Copyright (c) 2009
+/* Copyright (c) 2010
  *
  * Modular Systems All rights reserved.
  *
@@ -46,14 +46,18 @@ public:
 	static bool mono_directive(std::string& text, bool agent_inv = true);
 	std::string encode(std::string script);
 	std::string decode(std::string script);
+
 	std::string lslopt(std::string script);
 	std::string lslcomp(std::string script);
+
 	static LLUUID findInventoryByName(std::string name);
 	static void JCProcCacheCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType type,
 									void *userdata, S32 result, LLExtStat extstat);
 	void preprocess_script(BOOL close = FALSE, BOOL defcache = FALSE);
 	void start_process();
 	void display_error(std::string err);
+
+	std::string uncollide_string_literals(std::string script);
 
 	//dual function, determines if files have been modified this session and if we have cached them
 	//also assetids exposed in-preprocessing as a predefined macro for use in include once style include files, e.g. #define THISFILE file_ ## __ASSETIDRAW__
@@ -66,6 +70,8 @@ public:
 
 	//(it seems rather dumb that readable scripts don't show the asset id without a DL, but thats beside the point.)
 	static std::map<std::string,LLUUID> cached_assetids;
+
+	static std::map<std::string,std::string> decollided_literals;
 
 	std::set<std::string> caching_files;
 	std::set<std::string> defcached_files;

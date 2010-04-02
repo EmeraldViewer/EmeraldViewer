@@ -81,6 +81,8 @@
 #include "roles_constants.h"
 #include "lluictrlfactory.h"
 
+#include "jc_lslviewerbridge.h"
+
 // Statics
 std::list<LLPanelAvatar*> LLPanelAvatar::sAllPanels;
 BOOL LLPanelAvatar::sAllowFirstLife = FALSE;
@@ -1235,18 +1237,67 @@ void LLPanelAvatar::setAvatar(LLViewerObject *avatarp)
 	setAvatarID(avatarp->getID(), name, ONLINE_STATUS_YES);
 }
 
+class JCProfileCallback : public JCBridgeCallback
+{
+public:
+	JCProfileCallback(LLUUID avvie)
+	{
+		avatar = avvie;
+	}
+
+	void fire(LLSD data)
+	{
+		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
+		//LLPanelAvatar
+		for (std::list<LLPanelAvatar*>::iterator iter = LLPanelAvatar::sAllPanels.begin(); iter != LLPanelAvatar::sAllPanels.end(); ++iter)
+		{
+			LLPanelAvatar* panelp = *iter;
+			if (panelp->mAvatarID == avatar)
+			{
+				BOOL status = atoi(data[0].asString().c_str());
+
+				panelp->childSetVisible("online_yes", TRUE);
+				if(status)
+				{
+					panelp->childSetColor("online_yes",LLColor4::green);
+					panelp->childSetValue("online_yes","Currently Online");
+				}else
+				{
+					panelp->childSetColor("online_yes",LLColor4::red);
+					panelp->childSetValue("online_yes","Currently Offline");
+				}
+			}
+		}
+		//printchat("lol, \n"+std::string(LLSD::dumpXML(data)));
+	}
+
+private:
+	LLUUID avatar;
+};
+
+
 void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 {
 	// Online status NO could be because they are hidden
 	// If they are a friend, we may know the truth!
-	if ((ONLINE_STATUS_YES != online_status)
-		&& mIsFriend
-		&& (LLAvatarTracker::instance().isBuddyOnline( mAvatarID )))
+		// Online status NO could be because they are hidden
+	// If they are a friend, we may know the truth!
+	if (ONLINE_STATUS_YES != online_status)
 	{
-		online_status = ONLINE_STATUS_YES;
-	}
+		if(mIsFriend
+		&& (LLAvatarTracker::instance().isBuddyOnline( mAvatarID )))
+		{
+			online_status = ONLINE_STATUS_YES;
+			mPanelSecondLife->childSetVisible("online_yes", TRUE);
+			mPanelSecondLife->childSetColor("online_yes",LLColor4::green);
+			mPanelSecondLife->childSetValue("online_yes","Currently Online");
+		}else
+		{
+			mPanelSecondLife->childSetVisible("online_yes", FALSE);
 
-	mPanelSecondLife->childSetVisible("online_yes", (online_status == ONLINE_STATUS_YES));
+			if(gSavedSettings.getBOOL("EmeraldUseBridgeOnline"))JCLSLBridge::bridgetolsl("online_status|"+mAvatarID.asString(), new JCProfileCallback(mAvatarID));
+		}
+	}
 
 	// Since setOnlineStatus gets called after setAvatarID
 	// need to make sure that "Offer Teleport" doesn't get set
@@ -1256,7 +1307,10 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 		childSetVisible("Offer Teleport...",TRUE);
 	}
 
-	BOOL in_prelude = gAgent.inPrelude();
+	childSetEnabled("Offer Teleport...", TRUE);
+	childSetToolTip("Offer Teleport...", childGetValue("TeleportNormal").asString());
+
+	/*BOOL in_prelude = gAgent.inPrelude();
 	if(gAgent.isGodlike())
 	{
 		childSetEnabled("Offer Teleport...", TRUE);
@@ -1271,7 +1325,7 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 	{
 		childSetEnabled("Offer Teleport...", (online_status == ONLINE_STATUS_YES));
 		childSetToolTip("Offer Teleport...", childGetValue("TeleportNormal").asString());
-	}
+	}*/
 }
 
 void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name,
@@ -1290,7 +1344,7 @@ void LLPanelAvatar::setAvatarID(const LLUUID &avatar_id, const std::string &name
 	mIsFriend = is_agent_friend(mAvatarID); 
 
 	// setOnlineStatus uses mIsFriend
-	setOnlineStatus(online_status);
+	if(mIsFriend)setOnlineStatus(online_status);
 	
 	BOOL own_avatar = (mAvatarID == gAgent.getID() );
 	BOOL avatar_is_friend = LLAvatarTracker::instance().getBuddyInfo(mAvatarID) != NULL;
@@ -1794,6 +1848,21 @@ void LLPanelAvatar::processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 		}
 		
 		self->mPanelSecondLife->childSetValue("acct", caption_text);
+		//Chalice - Show avatar age in days.
+		int year, month, day;
+		sscanf(born_on.c_str(),"%d/%d/%d",&month,&day,&year);
+		time_t now = time(NULL);
+		struct tm * timeinfo;
+		timeinfo=localtime(&now);
+		timeinfo->tm_mon = --month;
+		timeinfo->tm_year = year - 1900;
+		timeinfo->tm_mday = day;
+		time_t birth = mktime(timeinfo);
+		std::stringstream NumberString;
+		NumberString << (difftime(now,birth) / (60*60*24));
+		born_on += " (";
+		born_on += NumberString.str();
+		born_on += ")";
 		self->mPanelSecondLife->childSetValue("born", born_on);
 
 		EOnlineStatus online_status = (online) ? ONLINE_STATUS_YES : ONLINE_STATUS_NO;

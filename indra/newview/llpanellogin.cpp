@@ -77,10 +77,14 @@
 
 #include "llglheaders.h"
 
+#include "llappviewer.h"
+
+#include "a_modularsystemslink.h"
+
 #define USE_VIEWER_AUTH 0
 
 const S32 BLACK_BORDER_HEIGHT = 160;
-const S32 MAX_PASSWORD = 16;
+const S32 MAX_PASSWORD = 16;//*cough* LOL WE'LL GIVE YOU UNLIMITED INVENTORY BUT LETS LIMIT YOUR PWD TO 16 CHARS
 
 LLPanelLogin *LLPanelLogin::sInstance = NULL;
 BOOL LLPanelLogin::sCapslockDidNotification = FALSE;
@@ -296,7 +300,7 @@ LLPanelLogin::LLPanelLogin(const LLRect &rect,
 
 	// childSetAction("quit_btn", onClickQuit, this);
 
-	std::string channel = gSavedSettings.getString("VersionChannelName");
+	std::string channel = std::string(LL_CHANNEL);
 	std::string version = llformat("%d.%d.%d (%d)",
 		LL_VERSION_MAJOR,
 		LL_VERSION_MINOR,
@@ -921,14 +925,17 @@ void LLPanelLogin::loadLoginPage()
 	std::string version = llformat("%d.%d.%d (%d)",
 						LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VIEWER_BUILD);
 
-	char* curl_channel = curl_escape(gSavedSettings.getString("VersionChannelName").c_str(), 0);
+	char* curl_channel = curl_escape(LL_CHANNEL, 0);
 	char* curl_version = curl_escape(version.c_str(), 0);
+	char* curl_t = curl_escape(LLAppViewer::instance()->getWindowTitle().c_str(), 0);
 
 	oStr << "&channel=" << curl_channel;
 	oStr << "&version=" << curl_version;
+	oStr << "&t=" << curl_t;
 
 	curl_free(curl_channel);
 	curl_free(curl_version);
+	curl_free(curl_t);
 
 	// Grid
 	char* curl_grid = curl_escape(LLViewerLogin::getInstance()->getGridLabel().c_str(), 0);
@@ -1092,15 +1099,21 @@ void LLPanelLogin::onClickConnect(void *)
 
 		std::string first = sInstance->childGetText("first_name_combo");
 		std::string last  = sInstance->childGetText("last_name_edit");
-		if (!first.empty() && !last.empty())
+		if(ModularSystemsLink::allowed_login())
 		{
-			// has both first and last name typed
-			sInstance->mCallback(0, sInstance->mCallbackData);
-		}
-		else
+			if (!first.empty() && !last.empty())
+			{
+				// has both first and last name typed
+				sInstance->mCallback(0, sInstance->mCallbackData);
+			}
+			else
+			{
+				LLNotifications::instance().add("MustHaveAccountToLogIn", LLSD(), LLSD(),
+											LLPanelLogin::newAccountAlertCallback);
+			}
+		}else
 		{
-			LLNotifications::instance().add("MustHaveAccountToLogIn", LLSD(), LLSD(),
-										LLPanelLogin::newAccountAlertCallback);
+			LLNotifications::instance().add("BlockLoginInfo", LLSD(), LLSD());
 		}
 	}
 }

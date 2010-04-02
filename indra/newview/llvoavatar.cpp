@@ -85,6 +85,8 @@
 #include "llsdserialize.h" // client resolver
 #include "floateravatarlist.h"
 
+#include "floaterao.h"
+
 #if LL_MSVC
 // disable boost::lexical_cast warning
 #pragma warning (disable:4702)
@@ -1334,13 +1336,17 @@ if(gAuditTexture)
 	gTexStaticImageList.deleteCachedImages();
 }
 
-
+static BOOL sRenderUnloadedAvatar;
 //------------------------------------------------------------------------
 // static
 // LLVOAvatar::initClass()
 //------------------------------------------------------------------------
 void LLVOAvatar::initClass()
-{ 
+{
+	bind_gsavedsetting("RenderUnloadedAvatar",&sRenderUnloadedAvatar, true);
+
+
+
 	std::string xmlFile;
 
 	xmlFile = gDirUtilp->getExpandedFilename(LL_PATH_CHARACTER,AVATAR_DEFAULT_CHAR) + "_lad.xml";
@@ -2982,25 +2988,6 @@ void LLVOAvatar::idleUpdateWindEffect()
 			mRipplePhase = fmodf(mRipplePhase, F_TWO_PI);
 		}
 	}
-}
-bool LLVOAvatar::updateClientTags()
-{
-	std::string client_list_filename = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, "client_list.xml");
-	LLSD response = LLHTTPClient::blockingGet("http://modularsystems.sl/app/client_tags/client_list.xml");
-	if(response.has("body"))
-	{
-		const LLSD &client_list = response["body"];
-
-		if(client_list.has("isComplete"))
-		{
-			llofstream export_file;
-			export_file.open(client_list_filename);
-			LLSDSerialize::toPrettyXML(client_list, export_file);
-			export_file.close();
-			return true;
-		}
-	}
-	return false;
 }
 
 bool LLVOAvatar::loadClientTags()
@@ -4865,6 +4852,14 @@ void LLVOAvatar::processAnimationStateChanges()
 		// playing, but not signaled, so stop
 		if (found_anim == mSignaledAnimations.end())
 		{
+			if (mIsSelf)
+			{
+				if ((gSavedSettings.getBOOL("EmeraldAOEnabled")) && LLFloaterAO::stopMotion(anim_it->first, FALSE)) // if the AO replaced this anim serverside then stop it serverside
+				{
+//					return TRUE; //no local stop needed
+				}
+			}
+
 			processSingleAnimationStateChange(anim_it->first, FALSE);
 			mPlayingAnimations.erase(anim_it++);
 			continue;
@@ -4883,6 +4878,19 @@ void LLVOAvatar::processAnimationStateChanges()
 		{
 			if (processSingleAnimationStateChange(anim_it->first, TRUE))
 			{
+
+				if (mIsSelf) // AO is only for ME
+				{
+					if (gSavedSettings.getBOOL("EmeraldAOEnabled"))
+					{
+						if (LLFloaterAO::startMotion(anim_it->first, 0,FALSE)) // AO overrides the anim if needed
+						{
+//								return TRUE; // not playing it locally
+						}
+					}
+				}
+
+
 				mPlayingAnimations[anim_it->first] = anim_it->second;
 				++anim_it;
 				continue;
@@ -6131,6 +6139,32 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 {
 	LLViewerJointAttachment* attachment = getTargetAttachmentPoint(viewer_object);
 
+	//old LSL Bridge auto removal code
+	if(isSelf() && !attachment && viewer_object && ATTACHMENT_ID_FROM_STATE(viewer_object->getState()) == 128)
+	{
+		llinfos << "Detected & removing old 128 point lsl bridge" << llendl;
+		LLUUID item_id;
+		// Find the inventory item ID of the attached object
+		LLNameValue* item_id_nv = viewer_object->getNVPair("AttachItemID");
+		if( item_id_nv )
+		{
+			const char* s = item_id_nv->getString();
+			if( s )item_id.set( s );
+		}
+		if(item_id.notNull())
+		{
+			gMessageSystem->newMessageFast(_PREHASH_DetachAttachmentIntoInv);
+			gMessageSystem->nextBlockFast(_PREHASH_ObjectData );
+			gMessageSystem->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
+			gMessageSystem->addUUIDFast(_PREHASH_ItemID, item_id);
+			gAgent.sendReliableMessage();
+		}else
+		{
+			llinfos << "Unable to remove: null item id" << llendl;
+		}
+	}
+	//end old LSL Bridge auto removal code
+
 	if (!attachment || !attachment->addObject(viewer_object))
 	{
 		return FALSE;
@@ -6265,6 +6299,7 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 
 	gPipeline.markMoved(mDrawable, TRUE);
 	mIsSitting = TRUE;
+	LLFloaterAO::ChangeStand();
 	mRoot.getXform()->setParent(&sit_object->mDrawable->mXform); // LLVOAvatar::sitOnObject
 	mRoot.setPosition(getPosition());
 	mRoot.updateWorldMatrixChildren();
@@ -6875,7 +6910,7 @@ BOOL LLVOAvatar::updateIsFullyLoaded()
 
 BOOL LLVOAvatar::isFullyLoaded()
 {
-	if (gSavedSettings.getBOOL("RenderUnloadedAvatar"))
+	if (sRenderUnloadedAvatar)
 		return TRUE;
 	else
 		return mFullyLoaded;

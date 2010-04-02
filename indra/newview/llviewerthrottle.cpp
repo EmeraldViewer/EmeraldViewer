@@ -198,6 +198,8 @@ public:
 	}
 };
 
+F32 LLViewerThrottle::sThrottleBandwidthKBPS;
+
 LLViewerThrottle::LLViewerThrottle() :
 	mMaxBandwidth(0.f),
 	mCurrentBandwidth(0.f),
@@ -208,6 +210,13 @@ LLViewerThrottle::LLViewerThrottle() :
 	mPresets.push_back(LLViewerThrottleGroup(BW_PRESET_300));
 	mPresets.push_back(LLViewerThrottleGroup(BW_PRESET_500));
 	mPresets.push_back(LLViewerThrottleGroup(BW_PRESET_1000));
+
+	static BOOL needs_init = TRUE;
+	if(needs_init)
+	{
+		needs_init = FALSE;
+		bind_gsavedsetting("ThrottleBandwidthKBPS",&sThrottleBandwidthKBPS,true);
+	}
 }
 
 
@@ -227,7 +236,7 @@ void LLViewerThrottle::setMaxBandwidth(F32 kbits_per_second, BOOL from_event)
 
 void LLViewerThrottle::load()
 {
-	mMaxBandwidth = gSavedSettings.getF32("ThrottleBandwidthKBPS")*1024;
+	mMaxBandwidth = LLViewerThrottle::sThrottleBandwidthKBPS*1024;
 	resetDynamicThrottle();
 	mCurrent.dump();
 }

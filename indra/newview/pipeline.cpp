@@ -1014,8 +1014,8 @@ U32 LLPipeline::addObject(LLViewerObject *vobj)
 	{
 		return 0;
 	}
-
-	if (gSavedSettings.getBOOL("RenderDelayCreation"))
+	static BOOL sRenderDelayCreation = gSavedSettings.getBOOL("RenderDelayCreation");
+	if (sRenderDelayCreation)
 	{
 		mCreateQ.push_back(vobj);
 	}
@@ -1078,7 +1078,9 @@ void LLPipeline::createObject(LLViewerObject* vobj)
 
 	markRebuild(drawablep, LLDrawable::REBUILD_ALL, TRUE);
 
-	if (drawablep->getVOVolume() && gSavedSettings.getBOOL("RenderAnimateRes"))
+	static BOOL sRenderAnimateRes = gSavedSettings.getBOOL("RenderAnimateRes");
+
+	if (drawablep->getVOVolume() && sRenderAnimateRes)
 	{
 		// fun animated res
 		drawablep->updateXform(TRUE);
@@ -1117,7 +1119,7 @@ void LLPipeline::resetFrameStats()
 //external functions for asynchronous updating
 void LLPipeline::updateMoveDampedAsync(LLDrawable* drawablep)
 {
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	if (sFreezeTime)
 	{
 		return;
 	}
@@ -1147,7 +1149,7 @@ void LLPipeline::updateMoveDampedAsync(LLDrawable* drawablep)
 
 void LLPipeline::updateMoveNormalAsync(LLDrawable* drawablep)
 {
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	if (sFreezeTime)
 	{
 		return;
 	}
@@ -1200,7 +1202,7 @@ void LLPipeline::updateMove()
 	LLFastTimer t(LLFastTimer::FTM_UPDATE_MOVE);
 	LLMemType mt(LLMemType::MTYPE_PIPELINE);
 
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	if (sFreezeTime)
 	{
 		return;
 	}

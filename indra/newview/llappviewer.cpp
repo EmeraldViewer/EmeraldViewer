@@ -581,7 +581,7 @@ bool LLAppViewer::init()
 
 	// Build a string representing the current version number.
     gCurrentVersion = llformat("%s %d.%d.%d.%d", 
-        gSavedSettings.getString("VersionChannelName").c_str(), 
+        LL_CHANNEL, 
         LL_VERSION_MAJOR, 
         LL_VERSION_MINOR, 
         LL_VERSION_PATCH, 
@@ -725,15 +725,6 @@ bool LLAppViewer::init()
 	//
 	initWindow();
 
-	{
-		BOOL download = gSavedSettings.getBOOL("EmeraldDownloadClientTags");
-
-		if(download)
-		{
-			LLVOAvatar::updateClientTags();
-		}
-	}
-
 	// call all self-registered classes
 	LLInitClassList::instance().fireCallbacks();
 
@@ -840,6 +831,8 @@ bool LLAppViewer::init()
 	return true;
 }
 
+static F32 sMainloopTimeoutDefault;
+
 bool LLAppViewer::mainLoop()
 {
 	mMainloopTimeout = new LLWatchdogTimeout();
@@ -864,6 +857,8 @@ bool LLAppViewer::mainLoop()
 	LLTimer debugTime;
 	LLViewerJoystick* joystick(LLViewerJoystick::getInstance());
 	joystick->setNeedsReset(true);
+
+	bind_gsavedsetting("MainloopTimeoutDefault", &sMainloopTimeoutDefault, true);
  	
 	// Handle messages
 	while (!LLApp::isExiting())
@@ -1522,12 +1517,12 @@ bool LLAppViewer::initLogging()
 	
 	// Remove the last ".old" log file.
 	std::string old_log_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,
-							     "SecondLife.old");
+							     "EmeraldViewer.old");
 	LLFile::remove(old_log_file);
 
 	// Rename current log file to ".old"
 	std::string log_file = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,
-							     "SecondLife.log");
+							     "EmeraldViewer.log");
 	LLFile::rename(log_file, old_log_file);
 
 	// Set the log file to SecondLife.log
@@ -2118,7 +2113,7 @@ void LLAppViewer::checkForCrash(void)
             std::ostringstream msg;
             msg << gSecondLife
             << " appears to have frozen or crashed on the previous run.\n"
-            << "Would you like to send a crash report?";
+			<< "Would you like to send a crash report to http://modularsystems.sl/?";
             std::string alert;
             alert = gSecondLife;
             alert += " Alert";
@@ -2225,7 +2220,7 @@ bool LLAppViewer::initWindow()
 
 void LLAppViewer::writeDebugInfo()
 {
-	std::string debug_filename = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,"debug_info.log");
+	std::string debug_filename = gDirUtilp->getExpandedFilename(LL_PATH_LOGS,"emerald_debug_info.log");
 	llinfos << "Opening debug file " << debug_filename << llendl;
 	llofstream out_file(debug_filename);
 	LLSDSerialize::toPrettyXML(gDebugInfo, out_file);
@@ -2293,7 +2288,7 @@ void LLAppViewer::writeSystemInfo()
 {
 	gDebugInfo["SLLog"] = LLError::logFileName();
 
-	gDebugInfo["ClientInfo"]["Name"] = gSavedSettings.getString("VersionChannelName");
+	gDebugInfo["ClientInfo"]["Name"] = std::string(LL_CHANNEL);
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
 	gDebugInfo["ClientInfo"]["PatchVersion"] = LL_VERSION_PATCH;
@@ -2389,7 +2384,7 @@ void LLAppViewer::handleViewerCrash()
 	
 	//We already do this in writeSystemInfo(), but we do it again here to make /sure/ we have a version
 	//to check against no matter what
-	gDebugInfo["ClientInfo"]["Name"] = gSavedSettings.getString("VersionChannelName");
+	gDebugInfo["ClientInfo"]["Name"] = std::string(LL_CHANNEL);
 
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;
@@ -2471,7 +2466,7 @@ void LLAppViewer::handleViewerCrash()
 	if (gMessageSystem && gDirUtilp)
 	{
 		std::string filename;
-		filename = gDirUtilp->getExpandedFilename(LL_PATH_LOGS, "stats.log");
+		filename = gDirUtilp->getExpandedFilename(LL_PATH_LOGS, "emerald_stats.log");
 		llofstream file(filename, llofstream::binary);
 		if(file.good())
 		{
@@ -4005,7 +4000,7 @@ void LLAppViewer::resumeMainloopTimeout(const std::string& state, F32 secs)
 	{
 		if(secs < 0.0f)
 		{
-			secs = gSavedSettings.getF32("MainloopTimeoutDefault");
+			secs = sMainloopTimeoutDefault;
 		}
 		
 		mMainloopTimeout->setTimeout(secs);
@@ -4032,7 +4027,7 @@ void LLAppViewer::pingMainloopTimeout(const std::string& state, F32 secs)
 	{
 		if(secs < 0.0f)
 		{
-			secs = gSavedSettings.getF32("MainloopTimeoutDefault");
+			secs = sMainloopTimeoutDefault;
 		}
 
 		mMainloopTimeout->setTimeout(secs);
@@ -4045,7 +4040,7 @@ void LLAppViewer::handleLoginComplete()
 	initMainloopTimeout("Mainloop Init");
 
 	// Store some data to DebugInfo in case of a freeze.
-	gDebugInfo["ClientInfo"]["Name"] = gSavedSettings.getString("VersionChannelName");
+	gDebugInfo["ClientInfo"]["Name"] = std::string(LL_CHANNEL);
 
 	gDebugInfo["ClientInfo"]["MajorVersion"] = LL_VERSION_MAJOR;
 	gDebugInfo["ClientInfo"]["MinorVersion"] = LL_VERSION_MINOR;

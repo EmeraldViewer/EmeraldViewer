@@ -247,7 +247,7 @@ std::string LLViewerMedia::getCurrentUserAgent()
 
 	// Just in case we need to check browser differences in A/B test
 	// builds.
-	std::string channel = gSavedSettings.getString("VersionChannelName");
+	std::string channel = std::string(LL_CHANNEL);
 
 	// append our magic version number string to the browser user agent id
 	// See the HTTP 1.0 and 1.1 specifications for allowed formats:
@@ -396,7 +396,7 @@ bool LLViewerMediaImpl::initializeMedia(const std::string& mime_type)
 {
 	if((mMediaSource == NULL) || (mMimeType != mime_type))
 	{
-		if(! initializePlugin(mime_type))
+		if(! initializePlugin(mime_type) && mime_type != "none/none")
 		{
 			LL_WARNS("Plugin") << "plugin intialization failed for mime type: " << mime_type << LL_ENDL;
 			LLSD args;

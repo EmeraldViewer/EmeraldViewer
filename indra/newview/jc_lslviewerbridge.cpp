@@ -1,4 +1,4 @@
-/* Copyright (c) 2009
+/* Copyright (c) 2010
  *
  * Modular Systems All rights reserved.
  *
@@ -68,18 +68,16 @@
 
 //#include "greenlife_utility_stream.h"
 
-//#include "floaterao.h"
+#include "floaterao.h"
 
-#define vCatType (LLAssetType::EType)128
-#define vBridgeName "#LSL<->Client Bridge v0.05"
-#define vBridgeOpCat "#Emerald"
+#define emerald_point (LLAssetType::EType)127
+#define emerald_bridge_name "#LSL<->Client Bridge v0.06"
 
 void cmdline_printchat(std::string message);
 
-//static
 U8 JCLSLBridge::sBridgeStatus;
-//static
 JCLSLBridge* JCLSLBridge::sInstance;
+BOOL JCLSLBridge::sBuildBridge;
 
 LLViewerObject* JCLSLBridge::sBridgeObject;
 
@@ -103,9 +101,32 @@ JCLSLBridge::JCLSLBridge() : LLEventTimer( (F32)1.0 )
 		lastcall = 0;
 		l2c = 0;
 		l2c_inuse = false;
+		gSavedSettings.getControl("EmeraldBuildBridge")->getSignal()->connect(&updateBuildBridge);
+		sBuildBridge = gSavedSettings.getBOOL("EmeraldBuildBridge");
 		//getPermissions();
 	}
 }
+
+void JCLSLBridge::updateBuildBridge(const LLSD &data)
+{
+	BOOL newvalue = data.asBoolean();
+	if(sBuildBridge != newvalue)
+	{
+		if(newvalue)
+		{
+			cmdline_printchat("LSLBridge reinitializing.");
+			sBridgeStatus = UNINITIALIZED;
+		}else
+		{
+			cmdline_printchat("LSLBridge process terminated.");
+			sBridgeStatus = FAILED;
+		}
+		sBuildBridge = newvalue;
+	}
+
+}
+
+
 JCLSLBridge::~JCLSLBridge()
 {
 }
@@ -140,7 +161,7 @@ void callbackname2key(const LLUUID& id, const std::string& first, const std::str
 	//if(id == subjectA.owner_id)sInstance->childSetValue("owner_a_name", first + " " + last);
 	//else if(id == subjectB.owner_id)sInstance->childSetValue("owner_b_name", first + " " + last);
 }
-/*
+
 bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID source_id, LLUUID owner_id)
 {
 	if(message == "someshit")
@@ -240,7 +261,7 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 					S32 chan = atoi(args[2].asString().c_str());
 					std::string tmp="off";
 					if(gSavedSettings.getBOOL("EmeraldAOEnabled"))tmp="on";
-					send_chat_to_object(tmp,chan,LLUUID(NULL));
+					send_chat_to_object(tmp,chan,gAgent.getID());
 				}
 				return true;
 			}
@@ -248,10 +269,10 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 			{
 				S32 chan = atoi(args[2].asString().c_str());
 				std::string tmp = llformat("%f",gSavedSettings.getF32("RenderFarClip"));
-				send_chat_to_object(tmp,chan,LLUUID(NULL));
+				send_chat_to_object(tmp,chan,gAgent.getID());
 				return true;
 			}
-			else if(cmd == GUS::ping_command)
+			/*else if(cmd == GUS::ping_command)
 			{
 				GUS::ping();
 				return true;
@@ -267,8 +288,8 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				S32	channel = atoi(args[1].asString().c_str());
 				GUS::chan(channel);
 				return true;
-			}
-			else if(cmd == "gettext")
+			}*/
+			/*else if(cmd == "gettext")
 			{
 				S32	channel = atoi(args[2].asString().c_str());
 				LLUUID target = LLUUID(args[1].asString());
@@ -287,7 +308,7 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				llinfos << "gettext returning: " << floating_text << llendl;
 				send_chat_to_object(floating_text,channel,source_id);
 				return true;
-			}
+			}*/ //rendered obsolete by llGetLinkPrimitiveParams and/or PRIM_TEXT in 1.38+
 		}else if(message.substr(0,3) == "l2c")
 		{
 			std::string lolnum = message.substr(3);
@@ -300,8 +321,7 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 	}
 	return false;
 }
-
-void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
+void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
 void JCLSLBridge::bridgetolsl(std::string cmd, JCBridgeCallback* cb)
 {
 	if(sBridgeStatus == ACTIVE)
@@ -310,11 +330,11 @@ void JCLSLBridge::bridgetolsl(std::string cmd, JCBridgeCallback* cb)
 		send_chat_from_viewer(chat, CHAT_TYPE_WHISPER, l2c_inuse ? l2c : JCLSLBridge::bridge_channel(gAgent.getID()));
 	}else
 	{
-		////cmdline_printchat("bridge not RECHAN");
+		////cmdline_printchat("bridge not RECHANNEL");
 		delete cb;
 	}
 }
-*/
+
 std::string md5hash(const std::string &text, U32 thing)
 {
 	char temp[MD5HEX_STR_SIZE];
@@ -360,21 +380,34 @@ private:
 	std::string sName;
 };
 
-/*
 
-const LLUUID& JCLSLBridge::findInventoryByName(const std::string& object_name)
+LLUUID JCLSLBridge::findCategoryByNameOrCreate(std::string name)
+{
+	LLUUID emerald_category;
+	emerald_category = gInventory.findCategoryByName(emerald_category_name);
+	if(emerald_category.isNull())
+	{
+		emerald_category = gInventory.createNewCategory(gAgent.getInventoryRootID(), LLAssetType::AT_NONE, emerald_category_name);
+	}
+	return emerald_category;
+}
+
+
+const LLUUID& JCLSLBridge::findInventoryByName(const std::string& object_name, std::string catname)
 {
 	LLViewerInventoryCategory::cat_array_t cats;
 	LLViewerInventoryItem::item_array_t items;
 	ObjectBNameMatches objectnamematches(object_name);
-	LLUUID vcatid;
-	vcatid = gInventory.findCategoryByName(vBridgeOpCat);
-	if(vcatid.isNull())
+	LLUUID category;
+	if(catname.length() > 0)
 	{
-		////cmdline_printchat("creating folder");
-		vcatid = gInventory.createNewCategory(gAgent.getInventoryRootID(), LLAssetType::AT_NONE, vBridgeOpCat);
+		category = findCategoryByNameOrCreate(catname);
+	}else
+	{
+		category = gAgent.getInventoryRootID();
 	}
-	gInventory.collectDescendentsIf(vcatid,cats,items,FALSE,objectnamematches);
+
+	gInventory.collectDescendentsIf(category,cats,items,FALSE,objectnamematches);
 
 	if (items.count())
 	{
@@ -392,39 +425,294 @@ bool isworn(LLUUID item)
 	}
 	return false;
 }
+
+static const std::string bridgeprefix = std::string("#LSL<->Client Bridge v");
+static const U32 bridgeprefix_length = U32(bridgeprefix.length());
+
+void callbackBridgeCleanup(const LLSD &notification, const LLSD &response, LLViewerInventoryItem::item_array_t items)
+{
+	gSavedSettings.setWarning("EmeraldOldBridgeCleanup", FALSE);
+
+	S32 option = LLNotification::getSelectedOption(notification, response);
+	
+	if ( option == 0 )
+	{
+		if(items.count())
+		{
+			cmdline_printchat("Moving out-of-date bridge objects to your trash folder.");
+			//delete
+			LLUUID trash_cat = gInventory.findCategoryUUIDForType(LLAssetType::AT_TRASH);
+			for(LLDynamicArray<LLPointer<LLViewerInventoryItem>>::iterator itr = items.begin(); itr != items.end(); ++itr)
+			{
+				LLViewerInventoryItem* item = *itr;
+				if(item)
+				{
+					move_inventory_item(gAgent.getID(),gAgent.getSessionID(),item->getUUID(),trash_cat,item->getName(), NULL);
+					cmdline_printchat("Moved item "+item->getName());
+				}
+			}
+			cmdline_printchat("Items moved.");
+		}
+	}
+}
+class BridgeCleanupMatches : public LLInventoryCollectFunctor
+{
+public:
+	BridgeCleanupMatches()
+	{
+		trash_cat = gInventory.findCategoryUUIDForType(LLAssetType::AT_TRASH);
+	}
+	virtual ~BridgeCleanupMatches() {}
+	virtual bool operator()(LLInventoryCategory* cat,
+							LLInventoryItem* item)
+	{
+		if(item)
+		{
+			if(item->getName().substr(0,bridgeprefix_length) == bridgeprefix)
+			{
+				LLUUID parent_id = item->getParentUUID();
+				BOOL in_trash = (parent_id == trash_cat);
+				if(in_trash == FALSE)
+				{
+					LLViewerInventoryCategory* parent = gInventory.getCategory(parent_id);
+					while(parent)
+					{
+						parent_id = parent->getParentUUID();
+						if(parent_id == trash_cat)
+						{
+							in_trash = TRUE;
+							break;
+						}else if(parent_id.isNull())break;
+
+						parent = gInventory.getCategory(parent_id);
+					}
+					if(in_trash == FALSE)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+private:
+	LLUUID trash_cat;
+};
+
+void bridge_trash_check()
+{
+	if(gSavedSettings.getWarning("EmeraldOldBridgeCleanup"))
+	{
+		//cmdline_printchat("doing cleaner scan");
+		BridgeCleanupMatches prefixmatcher;
+		LLViewerInventoryCategory::cat_array_t cats;
+		LLViewerInventoryItem::item_array_t items;
+
+		gInventory.collectDescendentsIf(gAgent.getInventoryRootID(),cats,items,FALSE,prefixmatcher);
+
+		LLViewerInventoryItem::item_array_t delete_queue;
+
+		if(items.count())
+		{
+			//cmdline_printchat("items.count()");
+			for(LLDynamicArray<LLPointer<LLViewerInventoryItem>>::iterator itr = items.begin(); itr != items.end(); ++itr)
+			{
+				LLViewerInventoryItem* item = *itr;
+				//cmdline_printchat("item");
+				if(item)
+				{
+					/*cmdline_printchat("item exists");
+					if(
+						(item->getPermissions().allowCopyBy(gAgent.getID()) == TRUE) &&
+						(item->getPermissions().allowModifyBy(gAgent.getID()) == TRUE) &&
+						(item->getPermissions().allowTransferTo(LLUUID::null) == TRUE)
+						)*/
+					{
+						//cmdline_printchat("full perm");
+						std::string name = item->getName();
+						//cmdline_printchat("name="+name);
+						if(name.length() > bridgeprefix_length)
+						{
+							std::string version_str = name.substr(bridgeprefix_length,-1);
+							std::istringstream vstream(version_str);
+							F32 version_float;
+							if(vstream >> version_float)
+							{
+								if(version_float < 0.06f)
+								{
+									llinfos << "bridge older than 0.06f found (" << version_float << ")[" << version_str << "] in inv but not in trash" << llendl;
+									delete_queue.push_back(item);
+								}else
+								{
+									llinfos << "bridge >= 0.06f found (" << version_float << ")[" << version_str << "] in inv but not in trash" << llendl;
+								}
+							}else
+							{
+								llinfos << "bridge object " << name << " [" << version_str << "] failed decoding version" << llendl;
+							}
+						}else
+						{
+							llinfos << "bridge object name " << name << " is less than bridgeprefix_length?" << llendl;	
+						}
+					}
+				}
+			}
+			int dqlen = delete_queue.count();
+			if(dqlen > 0)
+			{
+				//cmdline_printchat("dqlen > 0");
+				std::string bridges = llformat("%d",delete_queue.count())+" older Emerald LSL Bridge object";
+				if(dqlen > 1)bridges += "s";
+				LLSD args;
+				args["BRIDGES"] = bridges;
+				LLNotifications::instance().add("QueryBridgeCleanup", args,LLSD(), boost::bind(callbackBridgeCleanup, _1, _2, delete_queue));
+			}
+		}
+	}
+}
+/*
+
+struct JC_BIND_TYPE_OVERLOADER
+{
+#ifdef LL_WINDOWS
+#define JC_BIND_INLINE __forceinline
+#else
+#define JC_BIND_INLINE inline
+#endif
+	JC_BIND_INLINE static BOOL JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asBoolean(); }
+	JC_BIND_INLINE static S32 JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asInteger(); }
+	JC_BIND_INLINE static F32 JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asReal(); }
+	JC_BIND_INLINE static U32 JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asInteger(); }
+	JC_BIND_INLINE static std::string JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asString(); }
+	JC_BIND_INLINE static LLVector3 JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
+	JC_BIND_INLINE static LLVector3d JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
+	JC_BIND_INLINE static LLRect JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
+	JC_BIND_INLINE static LLColor4U JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
+	JC_BIND_INLINE static LLColor4 JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
+	JC_BIND_INLINE static LLColor3 JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
+	JC_BIND_INLINE static LLSD JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
+#undef JC_BIND_INLINE
+}
+
+#define JC_BIND_GENERATE(JC_BIND_TYPE) \
+void bind_llcontrol_updator(const LLSD &data, JC_BIND_TYPE* reciever){ reciever = JC_BIND_TYPE_OVERLOADER::JC_BIND_LLCONTROL_RET(data); } \
+bool bind_gsavedsetting(std::string& name, JC_BIND_TYPE& reciever) \
+{ \
+	LLControlVariable* var = gSavedSettings.getControl(name); \
+	if(var) \
+	{ \
+		signal_t* signal = var->getSignal(); \
+		if(signal) \
+		{ \
+			signal->connect(boost::bind(&bind_llcontrol_updator, _1, reciever)); \
+			return true; \
+		} \
+	} \
+	return false; \
+} //
+
+
+JC_BIND_GENERATE(BOOL)
+
+JC_BIND_GENERATE(S32)
+
+JC_BIND_GENERATE(F32)
+
+JC_BIND_GENERATE(U32)
+
+JC_BIND_GENERATE(std::string)
+
+JC_BIND_GENERATE(LLVector3)
+
+JC_BIND_GENERATE(LLVector3d)
+
+JC_BIND_GENERATE(LLRect)
+
+JC_BIND_GENERATE(LLColor4U)
+
+JC_BIND_GENERATE(LLColor4)
+
+JC_BIND_GENERATE(LLColor3)
+
+JC_BIND_GENERATE(LLSD)
+
+#undef JC_BIND_GENERATE
+
 */
+
+
+/*
+BOOL
+S32
+F32
+U32
+std::string&
+LLVector3&
+LLVector3d&
+LLRect&
+LLColor4U&
+LLColor4&
+LLColor3&
+LLSD&
+*/
+
+
 BOOL JCLSLBridge::tick()
-{/*
+{
+	static BOOL firstsim = TRUE;
 	if(LLStartUp::getStartupState() >= STATE_INVENTORY_SEND)
 	{
+		if(firstsim == TRUE && gInventory.isInventoryUsable())
+		{
+			//cmdline_printchat("firstsim fetching #Emerald");
+			firstsim = FALSE;
+			LLUUID emerald_category = findCategoryByNameOrCreate(emerald_category_name);
+			gInventory.fetchDescendentsOf(emerald_category);
+		}
+		static BOOL first_full_load = TRUE;
+		if(first_full_load)
+		{
+			if(gInventory.isEverythingFetched())
+			{
+				//cmdline_printchat("first full inv load");
+				first_full_load = FALSE;
+				bridge_trash_check();
+			}
+		}
 		switch(sBridgeStatus)
 		{
 		case UNINITIALIZED:
 			{
-				if(!gSavedSettings.getBOOL("EmeraldBuildBridge"))
+				if(!sBuildBridge)
 				{
+					//cmdline_printchat("EmeraldBuildBridge is false");
 					sBridgeStatus = FAILED;
 					break;
 				}
 				//cmdline_printchat("initializing");//<< llendl;
-				LLUUID item_id = findInventoryByName(vBridgeName);
-				if(gInventory.isEverythingFetched())// || (item_id.notNull() && isworn(item_id)))
+				LLUUID emerald_category = findCategoryByNameOrCreate(emerald_category_name);
+				LLUUID item_id = findInventoryByName(emerald_bridge_name);
+				if(gInventory.isCategoryComplete(emerald_category))// || (item_id.notNull() && isworn(item_id)))
 				{
-					//cmdline_printchat("inv is fetched");//<< llendl;
+					//cmdline_printchat("#Emerald is fetched");//<< llendl;
 					
 					if(item_id.notNull())
 					{
+						//cmdline_printchat("item not null");
 						//cmdline_printchat("id="+item_id.asString());
 						LLViewerInventoryItem* bridge = gInventory.getItem(item_id);
 						if(bridge)
 						{
+							//cmdline_printchat("bridge there");
 							//cmdline_printchat("bridge is ready to attach");//<< llendl;
 							if(isworn(bridge->getUUID()))
 							{
+								//cmdline_printchat("worn; rechannelling");
 								//cmdline_printchat("bridge is already worn");//<< llendl;
-								sBridgeStatus = RECHAN;
-							}else if(bridge->isComplete())
+								sBridgeStatus = RECHANNEL;
+							}else// if(bridge->isComplete())
 							{
+								//cmdline_printchat("attaching");
 								//cmdline_printchat("bridge is complete, attaching");//<< llendl;
 								LLMessageSystem* msg = gMessageSystem;
 								msg->newMessageFast(_PREHASH_RezSingleAttachmentFromInv);
@@ -434,42 +722,60 @@ BOOL JCLSLBridge::tick()
 								msg->nextBlockFast(_PREHASH_ObjectData);
 								msg->addUUIDFast(_PREHASH_ItemID, bridge->getUUID());
 								msg->addUUIDFast(_PREHASH_OwnerID, bridge->getPermissions().getOwner());
-								msg->addU8Fast(_PREHASH_AttachmentPt, 128);
+								msg->addU8Fast(_PREHASH_AttachmentPt, emerald_point);
 								pack_permissions_slam(msg, bridge->getFlags(), bridge->getPermissions());
 								msg->addStringFast(_PREHASH_Name, bridge->getName());
 								msg->addStringFast(_PREHASH_Description, bridge->getDescription());
 								msg->sendReliable(gAgent.getRegionHost());
-								sBridgeStatus = RECHAN;
+								sBridgeStatus = RECHANNEL;
 							}
-						}
+						}/*else
+						{
+							cmdline_printchat("bridge* null");
+						}*/
 					}else
 					{
+						//cmdline_printchat("itemid is null");
 						//cmdline_printchat("no bridge");//<< llendl;
 						//sBridgeStatus = BUILDING;
 						std::string directory = gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS,"bridge.xml");
 						if(!LLFile::isfile(directory.c_str()))
 						{
+							//cmdline_printchat("bridge failed");
 							//cmdline_printchat("file not there o.o");//<< llendl;
 							sBridgeStatus = FAILED;
 						}else
 						{
-							//cmdline_printchat("bridge.xml located. importing..");//<< llendl;
-							gImportTracker.importer(directory,&setBridgeObject);
-							sBridgeStatus = BUILDING;
+							
+							if(LLStartUp::getStartupState() >= STATE_STARTED)
+							{
+								
+								//cmdline_printchat("building bridge");
+								//cmdline_printchat("bridge.xml located. importing..");//<< llendl;
+								gImportTracker.importer(directory,&setBridgeObject);
+								sBridgeStatus = BUILDING;
+							}/*else
+							{
+								cmdline_printchat("state is not quite ready");
+							}*/
 						}
 					}
-				}
+				}/*else
+				{
+					cmdline_printchat("#Emerald is not fetched");
+				}*/
 			}
 			break;
 		case RENAMING:
 			{
+				//cmdline_printchat("renaming");
 				////cmdline_printchat("renaming");
 				LLMessageSystem* msg = gMessageSystem;
 				msg->newMessageFast(_PREHASH_ObjectAttach);
 				msg->nextBlockFast(_PREHASH_AgentData);
 				msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID() );
 				msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-				msg->addU8Fast(_PREHASH_AttachmentPoint, vCatType);
+				msg->addU8Fast(_PREHASH_AttachmentPoint, emerald_point);
 				
 				msg->nextBlockFast(_PREHASH_ObjectData);
 				msg->addU32Fast(_PREHASH_ObjectLocalID, sBridgeObject->getLocalID());
@@ -481,42 +787,40 @@ BOOL JCLSLBridge::tick()
 			break;
 		case FOLDERING:
 			{
+				//cmdline_printchat("foldering");
 				////cmdline_printchat("foldering");
-				LLUUID vcatid;
-				vcatid = gInventory.findCategoryByName(vBridgeOpCat);
-				if(vcatid.isNull())
-				{
-					////cmdline_printchat("creating folder");
-					vcatid = gInventory.createNewCategory(gAgent.getInventoryRootID(), LLAssetType::AT_NONE, vBridgeOpCat);
-				}
-				LLUUID bridge_id = findInventoryByName(vBridgeName);
+				LLUUID emerald_category = findCategoryByNameOrCreate(emerald_category_name);
+
+				LLUUID bridge_id = findInventoryByName(emerald_bridge_name);
+				//cmdline_printchat("bridge_id="+bridge_id.asString());
 				//cmdline_printchat("id="+bridge_id.asString());
 				LLViewerInventoryItem* bridge = gInventory.getItem(bridge_id);
 				if(bridge)
 				{
-					move_inventory_item(gAgent.getID(),gAgent.getSessionID(),bridge->getUUID(),vcatid,vBridgeName, NULL);
-					sBridgeStatus = RECHAN;
+					//cmdline_printchat("bridge exists, moving to #Emerald.");
+					move_inventory_item(gAgent.getID(),gAgent.getSessionID(),bridge->getUUID(),emerald_category,emerald_bridge_name, NULL);
+					sBridgeStatus = RECHANNEL;
 					////cmdline_printchat("moving to folder");
 				}
 			}
 			break;
-		case RECHAN:
+		case RECHANNEL:
 			{
 				{
-					//if(l2c == 0) is this really needed ._. 
-					//{//todo make bridge run in catface mode
-					send_chat_from_viewer(LLAppViewer::instance()->getSecondLifeTitle()+std::string("|l2c"), CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
-						sBridgeStatus = ACTIVE;
-					//}
+					//cmdline_printchat("sending rechannel cmd");
+					send_chat_from_viewer(LLAppViewer::instance()->getWindowTitle()+std::string("|l2c"), CHAT_TYPE_WHISPER, JCLSLBridge::bridge_channel(gAgent.getID()));
+					sBridgeStatus = ACTIVE;
 				}
 			}
+			break;
 		case ACTIVE:
 			{
-				LLUUID bridge = findInventoryByName(vBridgeName);
+				LLUUID bridge = findInventoryByName(emerald_bridge_name,emerald_category_name);
 				//if(bridge)
 				//LLVOAvatar* avatar = gAgent.getAvatarObject();
 				if(bridge.isNull() || !isworn(bridge))
 				{
+					//cmdline_printchat("bridge="+bridge.asString()+" || "+(!isworn(bridge) ? "1" : "0"));
 					l2c = 0;
 					l2c_inuse = false;
 					////cmdline_printchat("reattaching");
@@ -524,7 +828,7 @@ BOOL JCLSLBridge::tick()
 				}
 			}
 		}
-	}*/
+	}
 	return FALSE;
 }
 void JCLSLBridge::setBridgeObject(LLViewerObject* obj)
@@ -541,7 +845,7 @@ void JCLSLBridge::setBridgeObject(LLViewerObject* obj)
 		msg->addUUIDFast(_PREHASH_SessionID,gAgent.getSessionID());
 		msg->nextBlockFast(_PREHASH_ObjectData);
 		msg->addU32Fast(_PREHASH_LocalID,obj->getLocalID());
-		msg->addStringFast(_PREHASH_Name,vBridgeName);
+		msg->addStringFast(_PREHASH_Name,emerald_bridge_name);
 		gAgent.sendReliableMessage();
 	}
 }
@@ -637,7 +941,7 @@ void JCLSLBridge::storePermissions()
 	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
 	msg->nextBlock("Data");
 	msg->addUUID("TargetID", BridgePermissions_Emerald);
-	msg->addString("Notes", "");//RECHAN_permissions);
+	msg->addString("Notes", "");//RECHANNEL_permissions);
 	gAgent.sendReliableMessage();
 }
 */
@@ -654,6 +958,6 @@ void JCLSLBridge::processAvatarNotesReply(LLMessageSystem *msg, void**)
 		std::string text;
 		msg->getString("Data", "Notes", text);
 		//LLSD arguments = JCLSLBridge::parse_string_to_list(text, '|');
-		//RECHAN_permissions = text;//arguments;
+		//RECHANNEL_permissions = text;//arguments;
 	}*/
 }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2009
+/* Copyright (c) 2010
  *
  * Modular Systems All rights reserved.
  *
@@ -35,6 +35,8 @@
 
 #include "llviewerobject.h"
 
+#define emerald_category_name "#Emerald"
+
 class JCBridgeCallback : public LLRefCount
 {
 public:
@@ -52,8 +54,8 @@ public:
 	static void bridgetolsl(std::string cmd, JCBridgeCallback* cb);
 	static S32 bridge_channel(LLUUID user);
 	static JCLSLBridge* sInstance;
-	static const LLUUID& findInventoryByName(const std::string& object_name);
-
+	static const LLUUID& findInventoryByName(const std::string& object_name, std::string catname = std::string());
+	static LLUUID findCategoryByNameOrCreate(std::string name);
 	static U8 sBridgeStatus;
 	//0 = uninitialized
 	//1 = not found, building
@@ -61,13 +63,16 @@ public:
 	//3 = finished
 	//4 = failed
 
+	static void	updateBuildBridge(const LLSD &data);
+	static BOOL sBuildBridge;
+
 	enum BridgeStat
 	{
 		UNINITIALIZED,
 		BUILDING,
 		RENAMING,
 		FOLDERING,
-		RECHAN,
+		RECHANNEL,
 		ACTIVE,
 		FAILED
 	};

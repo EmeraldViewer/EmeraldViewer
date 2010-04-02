@@ -6456,7 +6456,52 @@ The region you have entered is running a different simulator version. Click this
    type="notifytip">
 The URL you clicked cannot be opened from this web browser.
   </notification>
+  
+  <notification
+   icon="notify.tga"
+   name="QueryBridgeCleanup"
+   type="notify">
+    Emerald has noticed that you have [BRIDGES] in your inventory. Emerald does not need older bridges. If you do not want these for something else, you should click Yes to have them automatically moved to the trash folder for you. If you have do not want this done, you should click No, and you won't be bothered about it again.
+    <form name="form">
+      <button
+       index="0"
+       name="Yes"
+       text="Yes"/>
+      <button
+       index="1"
+       name="No"
+       text="No"/>
+    </form>
+  </notification>
 
+  <notification
+   icon="notify.tga"
+   name="NotifyAOMove"
+   type="notify">
+     You used the Client AO in a older version of Emerald. In order to improve performance, Emerald now only searches the #Emerald folder for your AO. Your currently set AO will be moved into that folder.
+    <form name="form">
+      <button
+       index="0"
+       name="OK"
+       text="OK"/>
+    </form>
+  </notification>
+
+  <notification
+   icon="alertmodal.tga"
+   name="BlockLoginInfo"
+   type="alertmodal">
+    This version of the Emerald Viewer is blocked from logging in.
+    This is probably for a good reason; for more information you should check the site at
+    http://modularsystems.sl/
+    <form name="form">
+      <button
+       index="0"
+       name="OK"
+       text="OK"/>
+    </form>
+  </notification>
+  
   <global name="UnsupportedCPU">
 - Your CPU speed does not meet the minimum requirements.
   </global>

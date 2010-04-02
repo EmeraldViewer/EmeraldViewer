@@ -829,7 +829,7 @@ void ImportTracker::send_image(LLSD& prim)
 	
 	msg->sendReliable(gAgent.getRegion()->getHost());
 }
-//void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channel);
+void send_chat_from_viewer(const std::string& utf8_out_text, EChatType type, S32 channel);
 void ImportTracker::send_extras(LLSD& prim)
 {	
 	LLMessageSystem* msg = gMessageSystem;
@@ -885,11 +885,11 @@ void ImportTracker::send_extras(LLSD& prim)
 		}
 	}
 	//Phox: Is this really necessary? I think not.
-	/*if (prim.has("chat"))
+	if (prim.has("chat"))
 	{
 		send_chat_from_viewer(prim["chat"].asString(), CHAT_TYPE_SHOUT, 0);
 	}
-	*/ 
+	
 	
 	if (prim.has("sculpt"))
 	{

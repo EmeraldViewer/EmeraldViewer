@@ -1715,7 +1715,8 @@ void LLFloater::buildButtons()
 		buttonp->setFollowsTop();
 		buttonp->setFollowsRight();
 		buttonp->setToolTip( sButtonToolTips[i] );
-		buttonp->setImageColor(LLUI::sColorsGroup->getColor("FloaterButtonImageColor"));
+		static LLColor4 sFloaterButtonImageColor = LLUI::sColorsGroup->getColor("FloaterButtonImageColor");
+		buttonp->setImageColor(sFloaterButtonImageColor);
 		buttonp->setHoverImages(sButtonPressedImageNames[i],
 								sButtonPressedImageNames[i]);
 		buttonp->setScaleImage(TRUE);

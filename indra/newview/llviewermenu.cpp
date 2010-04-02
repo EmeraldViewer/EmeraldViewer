@@ -220,6 +220,8 @@
 #include "floaterlocalassetbrowse.h" // tag: vaa emerald local_asset_browser
 #include "floateravatarlist.h"
 
+#include "floaterao.h"
+
 using namespace LLVOAvatarDefines;
 void init_client_menu(LLMenuGL* menu);
 void init_server_menu(LLMenuGL* menu);
@@ -6654,7 +6656,7 @@ class LLViewEnableMouselook : public view_listener_t
 	{
 		// You can't go directly from customize avatar to mouselook.
 		// TODO: write code with appropriate dialogs to handle this transition.
-		bool new_value = (CAMERA_MODE_CUSTOMIZE_AVATAR != gAgent.getCameraMode() && !gSavedSettings.getBOOL("FreezeTime"));
+		bool new_value = (CAMERA_MODE_CUSTOMIZE_AVATAR != gAgent.getCameraMode() && !sFreezeTime);
 		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
 		return true;
 	}
@@ -7450,6 +7452,16 @@ class LLEmeraldToggleRadar: public view_listener_t
 	}
 };
 
+class LLAO : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLFloaterAO::show(NULL);
+		return true;
+	}
+};
+
+
 class LLToolsSelectTool : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -7746,6 +7758,9 @@ void initialize_menus()
 	//addMenu(new LLPhoxCheckAssetBrowser(),"Phox.CheckAssetBrowser");
 	//addMenu(new LLAO(), "AO");
 	addMenu(new LLEmeraldLocalAssetBrowser(), "Emerald.LocalAssetBrowser"); // tag: vaa emerald local_asset_browser
+	
+	addMenu(new LLAO(), "AO");
+
 
 	// World menu
 	addMenu(new LLWorldChat(), "World.Chat");

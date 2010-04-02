@@ -2528,6 +2528,8 @@ void LLCloseAllFoldersFunctor::doItem(LLFolderViewItem* item)
 /// Class LLFolderView
 ///----------------------------------------------------------------------------
 
+static S32 sFilterItemsPerFrame;
+
 // Default constructor
 LLFolderView::LLFolderView( const std::string& name, LLUIImagePtr root_folder_icon, 
 						   const LLRect& rect, const LLUUID& source_id, LLView *parent_view ) :
@@ -2562,6 +2564,13 @@ LLFolderView::LLFolderView( const std::string& name, LLUIImagePtr root_folder_ic
 	mMinWidth(0),
 	mDragAndDropThisFrame(FALSE)
 {
+	static BOOL needs_init = TRUE;
+	if(needs_init)
+	{
+		needs_init = FALSE;
+		bind_gsavedsetting("FilterItemsPerFrame", &sFilterItemsPerFrame, true);
+	}
+
 	LLRect new_rect(rect.mLeft, rect.mBottom + getRect().getHeight(), rect.mLeft + getRect().getWidth(), rect.mBottom);
 	setRect( rect );
 	reshape(rect.getWidth(), rect.getHeight());
@@ -2825,7 +2834,7 @@ const std::string LLFolderView::getFilterSubString(BOOL trim)
 void LLFolderView::filter( LLInventoryFilter& filter )
 {
 	LLFastTimer t2(LLFastTimer::FTM_FILTER);
-	filter.setFilterCount(llclamp(gSavedSettings.getS32("FilterItemsPerFrame"), 1, 5000));
+	filter.setFilterCount(llclamp(sFilterItemsPerFrame, 1, 5000));
 
 	if (getCompletedFilterGeneration() < filter.getCurrentGeneration())
 	{

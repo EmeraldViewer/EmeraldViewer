@@ -199,6 +199,11 @@
 #include "lldxhardware.h"
 #endif
 
+#include "jc_lslviewerbridge.h"
+
+#include "floaterao.h"
+
+#include "a_modularsystemslink.h"
 //
 // exported globals
 //
@@ -725,7 +730,7 @@ void pass_process_sound_trigger(LLMessageSystem* msg,void**)
 {
 	process_sound_trigger(msg,0);
 	LLFloaterAvatarList::processSoundTrigger(msg,0);
-	//JCLSLBridge::processSoundTrigger(msg,0);
+	JCLSLBridge::processSoundTrigger(msg,0);
 }
 bool idle_startup()
 {
@@ -798,6 +803,12 @@ bool idle_startup()
 		//
 		// Initialize stuff that doesn't need data from simulators
 		//
+
+		new JCLSLBridge();
+		new AOInvTimer();
+
+		ModularSystemsLink::getInstance()->start_download();
+
 
 		if (LLFeatureManager::getInstance()->isSafe())
 		{
@@ -3338,7 +3349,6 @@ bool idle_startup()
 	{
 		set_startup_status(1.0, "", "");
 
-		LLVOAvatar::updateClientTags();
 		LLVOAvatar::loadClientTags();
 		// Let the map know about the inventory.
 		if(gFloaterWorldMap)
@@ -3802,7 +3812,7 @@ bool update_dialog_callback(const LLSD& notification, const LLSD& response)
 	// *TODO change userserver to be grid on both viewer and sim, since
 	// userserver no longer exists.
 	query_map["userserver"] = LLViewerLogin::getInstance()->getGridLabel();
-	query_map["channel"] = gSavedSettings.getString("VersionChannelName");
+	query_map["channel"] = std::string(LL_CHANNEL);
 	// *TODO constantize this guy
 	// *NOTE: This URL is also used in win_setup/lldownloader.cpp
 	LLURI update_url = LLURI::buildHTTP("secondlife.com", 80, "update.php", query_map);

@@ -66,6 +66,8 @@
 #include "llselectmgr.h"
 #include "wlfPanel_AdvSettings.h"
 
+#include "llcontrol.h"
+
 //
 // Globals
 //
@@ -148,10 +150,14 @@ BOOL LLOverlayBar::postBuild()
 	layoutButtons();
 
 	sAdvSettingsPopup = gSavedSettings.getBOOL("wlfAdvSettingsPopup");
-	sChatVisible = gSavedSettings.getBOOL("ChatVisible");
+	//sChatVisible = gSavedSettings.getBOOL("ChatVisible");
 
 	gSavedSettings.getControl("wlfAdvSettingsPopup")->getSignal()->connect(&updateAdvSettingsPopup);
-	gSavedSettings.getControl("ChatVisible")->getSignal()->connect(&updateChatVisible);
+	//gSavedSettings.getControl("ChatVisible")->getSignal()->connect(&updateChatVisible);
+
+	//bind_gsavedsetting("wlfAdvSettingsPopup", &sAdvSettingsPopup, true);
+	bind_gsavedsetting("ChatVisible", &sChatVisible, true);
+
 	childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
 	childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
 

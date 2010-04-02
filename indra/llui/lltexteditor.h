@@ -182,6 +182,11 @@ public:
 								 const std::vector<std::string>& funcs,
 								 const std::vector<std::string>& tooltips,
 								 const LLColor3& func_color);
+	void addToken(LLKeywordToken::TOKEN_TYPE type,
+					const std::string& key,
+					const LLColor3& color,
+					const std::string& tool_tip = LLStringUtil::null,
+					const std::string& delimiter = LLStringUtil::null);
 	LLKeywords::keyword_iterator_t keywordsBegin()	{ return mKeywords.begin(); }
 	LLKeywords::keyword_iterator_t keywordsEnd()	{ return mKeywords.end(); }
 

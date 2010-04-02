@@ -1,4 +1,4 @@
-/* Copyright (c) 2009
+/* Copyright (c) 2010
  *
  * Modular Systems All rights reserved.
  *
@@ -135,16 +135,15 @@ void wlfPanel_AdvSettings::onClickExpandBtn(void* user_data)
 }
 void wlfPanel_AdvSettings::onChangePresetName(LLUICtrl* ctrl, void * userData)
 {
-	LLWLParamManager::instance()->mAnimator.mIsRunning = false;
-	LLWLParamManager::instance()->mAnimator.mUseLindenTime = false;
-
 	LLComboBox * combo_box = static_cast<LLComboBox*>(ctrl);
 	
 	if(combo_box->getSimple() == "")
 	{
 		return;
 	}
-	
+
+	LLWLParamManager::instance()->mAnimator.mIsRunning = false;
+	LLWLParamManager::instance()->mAnimator.mUseLindenTime = false;
 	LLWLParamManager::instance()->loadPreset(
 		combo_box->getSelectedValue().asString());
 }

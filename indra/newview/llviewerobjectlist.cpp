@@ -718,7 +718,7 @@ void LLViewerObjectList::update(LLAgent &agent, LLWorld &world)
 		}
 	}
 
-	if (gSavedSettings.getBOOL("FreezeTime"))
+	if (sFreezeTime)
 	{
 		for (std::vector<LLViewerObject*>::iterator iter = idle_list.begin();
 			iter != idle_list.end(); iter++)
