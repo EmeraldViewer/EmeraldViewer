@@ -1284,8 +1284,7 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 	// If they are a friend, we may know the truth!
 	if (ONLINE_STATUS_YES != online_status)
 	{
-		if(mIsFriend
-		&& (LLAvatarTracker::instance().isBuddyOnline( mAvatarID )))
+		if(mIsFriend && LLAvatarTracker::instance().isBuddyOnline(mAvatarID) )
 		{
 			online_status = ONLINE_STATUS_YES;
 			mPanelSecondLife->childSetVisible("online_yes", TRUE);
