@@ -761,13 +761,13 @@
             <key>url</key>
             <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jsoncpp-svn-r69-linux64-20090922.tar.bz2</uri>
           </map>
-          <key>windows</key>
-          <map>
-            <key>md5sum</key>
-            <string>caf152cfc730737c124f7612cf68fbd3</string>
-            <key>url</key>
-            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/jsoncpp-svn-r69-windows-20090922.tar.bz2</uri>
-          </map>
+ 	      <key>windows</key> 
+ 	      <map> 
+ 	        <key>md5sum</key> 
+ 	        <string>6912b5137a8533096a731f77fb1363b4</string> 
+ 	        <key>url</key> 
+ 	        <uri>http://modularsystems.sl/box/json-windows.tar.bz2</uri> 
+	      </map> 
         </map>
       </map>
       <key>kdu</key>
