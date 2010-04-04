@@ -139,15 +139,16 @@ class LocalAssetBrowser
 		static void UpdateTextureCtrlList(LLScrollListCtrl*);
 		static void setLayerUpdated(bool toggle) { mLayerUpdated = toggle; }
 		static void setSculptUpdated(bool toggle) { mSculptUpdated = toggle; }
+		static bool AddBitmap(std::string);
+		static bool DelBitmap(LLUUID);
 
-		/* UpdateTextureCtrlList was made public cause texturectrl requests it once on spawn. 
+		/* UpdateTextureCtrlList was made public cause texturectrl requests it once on spawn 
+		   ( added: when it's own add/remove funcs are used. )
 		   i've made it update on spawn instead of on pressing 'local' because the former does it once, 
 		   the latter - each time the button's pressed. */
 
 	private:
 		static void onChangeHappened(void);
-		static bool AddBitmap(std::string);
-		static bool DelBitmap(LLUUID);
 		static void onUpdateBool(LLUUID);
 		static void onSetType(LLUUID, S32);
 		static LocalBitmap* GetBitmapUnit(LLUUID);
@@ -160,7 +161,7 @@ class LocalAssetBrowser
 		static  std::vector<LocalBitmap> loaded_bitmaps;
 		typedef std::vector<LocalBitmap>::iterator local_list_iter;
 		static  bool    mLayerUpdated;
-		static  bool    mSculptUpdated;
+		static  bool    mSculptUpdated; 
 };
 
 /*==================================================*/
@@ -230,8 +231,10 @@ private:
 
 	// non-widget functions
 	static void FloaterResize(bool expand);
-	static void UpdateBitmapScrollList(void);
 	static void UpdateRightSide(void);
+
+public:
+	static void UpdateBitmapScrollList(void);
 
 
 };

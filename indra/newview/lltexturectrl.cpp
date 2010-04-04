@@ -71,6 +71,7 @@
 // tag: vaa emerald local_asset_browser [begin]
 #include "floaterlocalassetbrowse.h"
 #include "llscrolllistctrl.h"
+#include "llfilepicker.h"
 #define	LOCALLIST_COL_ID 1
 // tag: vaa emerald local_asset_browser [end]
 
@@ -169,6 +170,13 @@ public:
 
 	// tag: vaa emerald local_asset_browser [begin]
 	static void     onBtnLocal( void* userdata );
+	static void     onBtnServer( void* userdata );
+	static void     switchModes( bool localmode, void* userdata );
+
+	static void     onBtnAdd( void* userdata );
+	static void     onBtnRemove( void* userdata );
+	static void     onBtnBrowser( void* userdata );
+
 	static void     onLocalScrollCommit ( LLUICtrl* ctrl, void *userdata );
 	// tag: vaa emerald local_asset_browser [end]
 
@@ -245,6 +253,10 @@ LLFloaterTexturePicker::LLFloaterTexturePicker(
 
 	// tag: vaa emerald local_asset_browser [begin]
 	childSetAction("Local", LLFloaterTexturePicker::onBtnLocal, this);  
+	childSetAction("Server", LLFloaterTexturePicker::onBtnServer, this);
+	childSetAction("Add", LLFloaterTexturePicker::onBtnAdd, this);
+	childSetAction("Remove", LLFloaterTexturePicker::onBtnRemove, this);
+	childSetAction("Browser", LLFloaterTexturePicker::onBtnBrowser, this);
 
 	mLocalScrollCtrl = getChild<LLScrollListCtrl>("local_name_list");
 	mLocalScrollCtrl->setCallbackUserData(this);                            
@@ -760,7 +772,15 @@ void LLFloaterTexturePicker::onBtnSelect(void* userdata)
 	LLFloaterTexturePicker* self = (LLFloaterTexturePicker*) userdata;
 	if (self->mOwner)
 	{
-		self->mOwner->onFloaterCommit(LLTextureCtrl::TEXTURE_SELECT);
+		// tag: vaa emerald local_asset_browser ~
+		if ( self->mInventoryPanel->getVisible() )
+			{ self->mOwner->onFloaterCommit(LLTextureCtrl::TEXTURE_SELECT); }
+		else if ( self->mLocalScrollCtrl->getVisible() && !self->mLocalScrollCtrl->isEmpty() )
+			{ 
+				self->mOwner->onFloaterCommit
+					(LLTextureCtrl::TEXTURE_CHANGE, 
+					(LLUUID)self->mLocalScrollCtrl->getSelectedItemLabel(LOCALLIST_COL_ID) ); 
+			} 
 	}
 	self->close();
 }
@@ -771,13 +791,64 @@ void LLFloaterTexturePicker::onBtnSelect(void* userdata)
 // to showing the scroll list for local ones and back.
 void LLFloaterTexturePicker::onBtnLocal(void *userdata)
 {
-	LLFloaterTexturePicker* self = (LLFloaterTexturePicker*) userdata;
-	bool visible_toggle = self->mLocalScrollCtrl->getVisible();
+	switchModes( true, userdata );
+}
 
-	self->mSearchEdit->setVisible(visible_toggle);
-	self->mInventoryPanel->setVisible(visible_toggle);
-		
-	self->mLocalScrollCtrl->setVisible(!visible_toggle);
+void LLFloaterTexturePicker::onBtnServer(void *userdata)
+{
+	switchModes( false, userdata );
+}
+
+void LLFloaterTexturePicker::switchModes(bool localmode, void *userdata)
+{
+	LLFloaterTexturePicker* self = (LLFloaterTexturePicker*) userdata;
+
+	// servermode widgets
+	self->childSetVisible("Local", !localmode);
+	self->childSetVisible("Default", !localmode);
+	self->childSetVisible("None", !localmode);
+	self->childSetVisible("Blank", !localmode);
+	self->mSearchEdit->setVisible(!localmode);
+	self->mInventoryPanel->setVisible(!localmode);
+	
+	// localmode widgets
+	self->childSetVisible("Server", localmode);
+	self->childSetVisible("Add", localmode);
+	self->childSetVisible("Remove", localmode);
+	self->childSetVisible("Browser", localmode);
+	self->mLocalScrollCtrl->setVisible(localmode);
+}
+
+void LLFloaterTexturePicker::onBtnAdd(void *userdata)
+{
+	LLFilePicker& picker = LLFilePicker::instance();
+	if ( !picker.getOpenFile(LLFilePicker::FFLOAD_IMAGE) ) 
+	   { return; }
+
+	std::string filename = picker.getFirstFile();
+
+	if ( !filename.empty() )
+	{ 
+		if ( LocalAssetBrowser::AddBitmap(filename) )
+		{ FloaterLocalAssetBrowser::UpdateBitmapScrollList(); }
+	}
+}
+
+void LLFloaterTexturePicker::onBtnRemove(void *userdata)
+{
+	LLFloaterTexturePicker* self = (LLFloaterTexturePicker*) userdata;
+	std::string temp_id = self->mLocalScrollCtrl->getSelectedItemLabel(LOCALLIST_COL_ID);
+
+	if ( !temp_id.empty() )
+	{
+		if ( LocalAssetBrowser::DelBitmap( (LLUUID)temp_id ) )
+		{ FloaterLocalAssetBrowser::UpdateBitmapScrollList(); }
+	}
+}
+
+void LLFloaterTexturePicker::onBtnBrowser(void *userdata)
+{
+	FloaterLocalAssetBrowser::show(NULL);
 }
 
 // static, reacts to user clicking a valid field in the local scroll list.
@@ -787,7 +858,8 @@ void LLFloaterTexturePicker::onLocalScrollCommit(LLUICtrl *ctrl, void *userdata)
 	LLUUID id = (LLUUID)self->mLocalScrollCtrl->getSelectedItemLabel( LOCALLIST_COL_ID ); 
 
 	self->mOwner->setImageAssetID( id );
-	self->mOwner->onFloaterCommit(LLTextureCtrl::TEXTURE_CHANGE, id); // calls an overridden function.
+	if ( self->childGetValue("apply_immediate_check").asBoolean() )
+	{ self->mOwner->onFloaterCommit(LLTextureCtrl::TEXTURE_CHANGE, id); } // calls an overridden function.
 }
 
 // tag: vaa emerald local_asset_browser [end]
@@ -1580,6 +1652,4 @@ BOOL LLToolTexEyedropper::handleHover(S32 x, S32 y, MASK mask)
 	gViewerWindow->getWindow()->setCursor(UI_CURSOR_CROSS);  // TODO: better cursor
 	return TRUE;
 }
-
-
 

@@ -21,7 +21,18 @@
 	<button bottom="-228" enabled="false" follows="left|bottom" font="SansSerifSmall"
 	     halign="center" height="20" label="Default" label_selected="Default"
 	     left="4" mouse_opaque="true" name="Default" scale_image="true" width="64" />
-	<button bottom="-228" enabled="false" follows="left|bottom" font="SansSerifSmall"
+  
+  <!-- tag: vaa emerald local_asset_browser [begin] -->
+  <button bottom="-228" enabled="true" follows="left|bottom" font="SansSerifSmall"
+     halign="center" height="20" label="Add" label_selected="Add"
+     left="4" mouse_opaque="true" name="Add" scale_image="true" width="64" visible="false" />
+
+  <button bottom="-228" enabled="true" follows="left|bottom" font="SansSerifSmall"
+	     halign="center" height="20" label="Remove" label_selected="Remove" left="72"
+	     mouse_opaque="true" name="Remove" scale_image="true" width="64" visible="false" /> 
+  <!-- tag: vaa emerald local_asset_browser [end] -->
+	
+  <button bottom="-228" enabled="false" follows="left|bottom" font="SansSerifSmall"
 	     halign="center" height="20" label="None" label_selected="None" left="72"
 	     mouse_opaque="true" name="None" scale_image="true" width="64" />
 	<button bottom="-252" enabled="true" follows="left|bottom" font="SansSerifSmall"
@@ -30,8 +41,16 @@
   
   <!-- tag: vaa emerald local_asset_browser [begin] -->
   <button bottom="-252" enabled="true" follows="left|bottom" font="SansSerifSmall"
+     halign="center" height="20" label="Browser" label_selected="Browser" left="4"
+     mouse_opaque="true" name="Browser" scale_image="true" width="64" visible="false" />
+  
+  <button bottom="-252" enabled="true" follows="left|bottom" font="SansSerifSmall"
      halign="center" height="20" label="Local" label_selected="Local" left="72"
-     mouse_opaque="true" name="Local" scale_image="true" width="64" />
+     mouse_opaque="true" name="Local" scale_image="true" width="64" visible="true" />
+  
+  <button bottom="-252" enabled="true" follows="left|bottom" font="SansSerifSmall"
+     halign="center" height="20" label="Server" label_selected="Server" left="72"
+     mouse_opaque="true" name="Server" scale_image="true" width="64" visible="false" />
   <!-- tag: vaa emerald local_asset_browser [end] -->
 
   <check_box bottom="-44" enabled="true" follows="left|top" font="SansSerifSmall"

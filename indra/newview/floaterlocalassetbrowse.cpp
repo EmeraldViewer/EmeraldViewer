@@ -3,11 +3,7 @@
 
 tag: vaa emerald local_asset_browser
 
-other changed files:
-	llviewermenu.cpp, menu_viewer.xml
-	lltexturectrl.h, lltexturectrl.cpp, floater_texture_ctrl.xml
-	pipeline.cpp, pipeline.h
-	llvovolume.h
+this feature is still a work in progress.
 
 */
 
@@ -130,7 +126,7 @@ LocalBitmap::~LocalBitmap()
 /* [maintenence functions] */
 void LocalBitmap::updateSelf()
 {
-	if ( this->linkstatus == LINK_ON )
+	if ( this->linkstatus == LINK_ON || this->linkstatus == LINK_UPDATING )
 	{
 		/* making sure file still exists */
 		if ( !gDirUtilp->fileExists(this->filename) ) { this->linkstatus = LINK_BROKEN; return; }
@@ -142,7 +138,10 @@ void LocalBitmap::updateSelf()
 
 		/* here we update the image */
 		LLImageRaw* new_imgraw = new LLImageRaw();
-		if ( !decodeSelf(new_imgraw) ) { this->linkstatus = LINK_BROKEN; return; }
+		
+		if ( !decodeSelf(new_imgraw) ) { this->linkstatus = LINK_UPDATING; return; }
+		else { this->linkstatus = LINK_ON; }
+
 		LLViewerImage* image = gImageList.hasImage(this->id);
 		
 		if (!image->mForSculpt) 
@@ -670,6 +669,7 @@ FloaterLocalAssetBrowser::FloaterLocalAssetBrowser()
 
 	// checkbox callbacks
 	mUpdateChkBox->setCommitCallback(onClickUpdateChkbox);
+
 }
 
 void FloaterLocalAssetBrowser::show(void*)
@@ -698,7 +698,6 @@ void FloaterLocalAssetBrowser::onClickAdd(void* userdata)
 		if ( gLocalBrowser->AddBitmap(filename) )
 		{
 			sInstance->UpdateBitmapScrollList();
-			sInstance->UpdateRightSide();
 		}
 	}
 }
@@ -712,7 +711,6 @@ void FloaterLocalAssetBrowser::onClickDel(void* userdata)
 		if ( gLocalBrowser->DelBitmap( (LLUUID)temp_id ) )
 		{
 			sInstance->UpdateBitmapScrollList();
-			sInstance->UpdateRightSide();
 		}
 	}
 }
@@ -807,8 +805,9 @@ void FloaterLocalAssetBrowser::FloaterResize(bool expand)
 
 void FloaterLocalAssetBrowser::UpdateBitmapScrollList()
 {
-	sInstance->mBitmapList->clearRows();
+	if ( !sInstance ) { return; }
 
+	sInstance->mBitmapList->clearRows();
 	if (!gLocalBrowser->loaded_bitmaps.empty())
 	{
 		
@@ -922,5 +921,3 @@ bool LocalAssetBrowserTimer::isRunning()
 {
 	return mEventTimer.getStarted();
 }
-
-
