@@ -1290,15 +1290,18 @@ void LLPanelAvatar::setOnlineStatus(EOnlineStatus online_status)
 		if(mIsFriend && LLAvatarTracker::instance().isBuddyOnline(mAvatarID) )
 		{
 			online_status = ONLINE_STATUS_YES;
-			mPanelSecondLife->childSetVisible("online_yes", TRUE);
-			mPanelSecondLife->childSetColor("online_yes",LLColor4::green);
-			mPanelSecondLife->childSetValue("online_yes","Currently Online");
 		}else
 		{
 			mPanelSecondLife->childSetVisible("online_yes", FALSE);
 
 			if(gSavedSettings.getBOOL("EmeraldUseBridgeOnline"))JCLSLBridge::bridgetolsl("online_status|"+mAvatarID.asString(), new JCProfileCallback(mAvatarID));
 		}
+	}
+	if(online_status == ONLINE_STATUS_YES)
+	{
+		mPanelSecondLife->childSetVisible("online_yes", TRUE);
+		mPanelSecondLife->childSetColor("online_yes",LLColor4::green);
+		mPanelSecondLife->childSetValue("online_yes","Currently Online");
 	}
 
 	// Since setOnlineStatus gets called after setAvatarID
