@@ -575,6 +575,8 @@ bool LLAppViewer::init()
     // Called before threads are created.
     LLCurl::initClass();
 
+	LLViewerThrottle::sThrottleBandwidthKBPS = rebind_llcontrol<F32>("ThrottleBandwidthKBPS", &gSavedSettings, true);
+	
     initThreads();
 
     writeSystemInfo();
@@ -831,7 +833,7 @@ bool LLAppViewer::init()
 	return true;
 }
 
-static F32 sMainloopTimeoutDefault;
+//static F32 *sMainloopTimeoutDefault;
 
 bool LLAppViewer::mainLoop()
 {
@@ -858,10 +860,9 @@ bool LLAppViewer::mainLoop()
 	LLViewerJoystick* joystick(LLViewerJoystick::getInstance());
 	joystick->setNeedsReset(true);
 
-	bind_gsavedsetting("MainloopTimeoutDefault", &sMainloopTimeoutDefault, true);
 
-	bind_gsavedsetting("ThrottleBandwidthKBPS",&LLViewerThrottle::sThrottleBandwidthKBPS,true);
- 	
+	
+
 	// Handle messages
 	while (!LLApp::isExiting())
 	{
@@ -4002,7 +4003,8 @@ void LLAppViewer::resumeMainloopTimeout(const std::string& state, F32 secs)
 	{
 		if(secs < 0.0f)
 		{
-			secs = sMainloopTimeoutDefault;
+			static F32 *sMainloopTimeoutDefault = rebind_llcontrol<F32>("MainloopTimeoutDefault", &gSavedSettings, true);
+			secs = *sMainloopTimeoutDefault;
 		}
 		
 		mMainloopTimeout->setTimeout(secs);
@@ -4029,7 +4031,8 @@ void LLAppViewer::pingMainloopTimeout(const std::string& state, F32 secs)
 	{
 		if(secs < 0.0f)
 		{
-			secs = sMainloopTimeoutDefault;
+			static F32 *sMainloopTimeoutDefault = rebind_llcontrol<F32>("MainloopTimeoutDefault", &gSavedSettings, true);
+			secs = *sMainloopTimeoutDefault;
 		}
 
 		mMainloopTimeout->setTimeout(secs);

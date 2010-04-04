@@ -1336,17 +1336,12 @@ if(gAuditTexture)
 	gTexStaticImageList.deleteCachedImages();
 }
 
-static BOOL sRenderUnloadedAvatar;
 //------------------------------------------------------------------------
 // static
 // LLVOAvatar::initClass()
 //------------------------------------------------------------------------
 void LLVOAvatar::initClass()
 {
-	bind_gsavedsetting("RenderUnloadedAvatar",&sRenderUnloadedAvatar, true);
-
-
-
 	std::string xmlFile;
 
 	xmlFile = gDirUtilp->getExpandedFilename(LL_PATH_CHARACTER,AVATAR_DEFAULT_CHAR) + "_lad.xml";
@@ -6910,7 +6905,8 @@ BOOL LLVOAvatar::updateIsFullyLoaded()
 
 BOOL LLVOAvatar::isFullyLoaded()
 {
-	if (sRenderUnloadedAvatar)
+	static BOOL* sRenderUnloadedAvatar = rebind_llcontrol<BOOL>("RenderUnloadedAvatar", &gSavedSettings, true);
+	if (*sRenderUnloadedAvatar)
 		return TRUE;
 	else
 		return mFullyLoaded;

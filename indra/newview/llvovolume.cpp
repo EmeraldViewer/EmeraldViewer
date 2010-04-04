@@ -2177,9 +2177,6 @@ void LLVolumeGeometryManager::getGeometry(LLSpatialGroup* group)
 }
 
 
-static S32 sRenderMaxVBOSize;
-static S32 sRenderMaxNodeSize;
-
 void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 {
 	if (LLPipeline::sSkipUpdate)
@@ -2222,16 +2219,13 @@ void LLVolumeGeometryManager::rebuildGeom(LLSpatialGroup* group)
 	std::vector<LLFace*> alpha_faces;
 	U32 useage = group->mSpatialPartition->mBufferUsage;
 
-	static BOOL needs_init = TRUE;
-	if(needs_init)
-	{
-		needs_init = FALSE;
-		bind_gsavedsetting("RenderMaxVBOSize",&sRenderMaxVBOSize, true);
-		bind_gsavedsetting("RenderMaxNodeSize",&sRenderMaxNodeSize, true);
-	}
 
-	U32 max_vertices = (sRenderMaxVBOSize*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
-	U32 max_total = (sRenderMaxNodeSize*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
+	static S32* sRenderMaxVBOSize = rebind_llcontrol<S32>("RenderMaxVBOSize", &gSavedSettings, true);
+	static S32* sRenderMaxNodeSize = rebind_llcontrol<S32>("RenderMaxNodeSize", &gSavedSettings, true);
+
+
+	U32 max_vertices = ((*sRenderMaxVBOSize)*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
+	U32 max_total = ((*sRenderMaxNodeSize)*1024)/LLVertexBuffer::calcStride(group->mSpatialPartition->mVertexDataMask);
 	max_vertices = llmin(max_vertices, (U32) 65535);
 
 	U32 cur_total = 0;

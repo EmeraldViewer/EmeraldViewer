@@ -66,7 +66,7 @@ BOOL LLPanelNetwork::postBuild()
 	childSetCommitCallback("connection_port_enabled", onCommitPort, this);
 
 	childSetValue("cache_size", (F32)gSavedSettings.getU32("CacheSize"));
-	childSetValue("max_bandwidth", LLViewerThrottle::sThrottleBandwidthKBPS);
+	childSetValue("max_bandwidth", *LLViewerThrottle::sThrottleBandwidthKBPS);
 	childSetValue("connection_port_enabled", gSavedSettings.getBOOL("ConnectionPortEnabled"));
 	childSetValue("connection_port", (F32)gSavedSettings.getU32("ConnectionPort"));
 

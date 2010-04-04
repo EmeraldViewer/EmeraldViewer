@@ -46,7 +46,6 @@ extern BOOL gHackGodmode;
 // These functions found in llcontroldef.cpp *TODO: clean this up!
 //setting variables are declared in this function
 void settings_setup_listeners();
-static BOOL sFreezeTime;
 
 extern std::map<std::string, LLControlGroup*> gSettings;
 
@@ -178,91 +177,81 @@ void test_cached_control();
 #endif // TEST_CACHED_CONTROL
 
 
+
 ///////////////////////
-struct jcb
+
+class jc_rebind
 {
-#ifdef LL_WINDOWS
-#define JC_BIND_INLINE __forceinline
-#else
-#define JC_BIND_INLINE inline
+	template <typename REC>		static void rebind_callback(const LLSD &data, REC *reciever){ *reciever = data; }
+	template <>					static void rebind_callback<S32>(const LLSD &data, S32 *reciever){ *reciever = data.asInteger(); }
+	template <>					static void rebind_callback<F32>(const LLSD &data, F32 *reciever){ *reciever = data.asReal(); }
+	template <>					static void rebind_callback<U32>(const LLSD &data, U32 *reciever){ *reciever = data.asInteger(); }
+	template <>					static void rebind_callback<std::string>(const LLSD &data, std::string *reciever){ *reciever = data.asString(); }
+
+	typedef boost::signal<void(const LLSD&)> signal_t;
+
+public:
+
+//#define binder_debug
+
+	template <typename RBTYPE> static RBTYPE* rebind_llcontrol(std::string name, LLControlGroup* controlgroup, bool init)
+	{
+		static std::map<LLControlGroup*, std::map<std::string, void*> > references;
+
+#ifdef binder_debug
+		llinfos << "rebind_llcontrol" << llendl;
 #endif
 
-#define JC_BIND_UPDN(x,y) x ## y
+		RBTYPE* type = NULL;
+		if(controlgroup)
+		{
+			if(references.find(controlgroup) == references.end())
+			{
+#ifdef binder_debug
+				llinfos << "was no map for a group, adding" << llendl;
+#endif
+				references[controlgroup] = std::map<std::string, void*>();
+			}
 
-#define JC_BIND_UPDATER_GENERATE(JC_BIND_TYPE, JC_BIND_RETURN) \
-JC_BIND_INLINE static void JC_BIND_UPDN(bind_llcontrol_updater_,JC_BIND_TYPE)(const LLSD &data, JC_BIND_TYPE* reciever){ *reciever = JC_BIND_RETURN; }
-
-#define JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, JC_BIND_TYPE, JC_BIND_RETURN) \
-JC_BIND_INLINE static bool JC_BIND_FUNCNAME(const char* name, JC_BIND_TYPE* reciever, bool init) \
-{ \
-	if(name) \
-	{ \
-		return JC_BIND_FUNCNAME(std::string(name), reciever, init); \
-	} \
-	return false; \
-} \
-JC_BIND_INLINE static bool JC_BIND_FUNCNAME(std::string& name, JC_BIND_TYPE* reciever, bool init) \
-{ \
-	LLControlVariable* var = JC_BIND_CONTROLGROUP.getControl(name); \
-	if(var) \
-	{ \
-		boost::signal<void(const LLSD&)>* signal = var->getSignal(); \
-		if(signal) \
-		{ \
-			signal->connect(boost::bind(&JC_BIND_UPDN(bind_llcontrol_updater_,JC_BIND_TYPE), _1, reciever)); \
-			if(init)jcb::JC_BIND_UPDN(bind_llcontrol_updater_,JC_BIND_TYPE)(var->getValue(),reciever); \
-			return true; \
-		} \
-	} \
-	return false; \
-}
-
-typedef std::string jcb_string;//hack around :: in function names due to macro expansion
-
-JC_BIND_UPDATER_GENERATE(S32, data.asInteger())
-JC_BIND_UPDATER_GENERATE(F32, data.asReal())
-JC_BIND_UPDATER_GENERATE(U32, data.asInteger())
-JC_BIND_UPDATER_GENERATE(jcb_string, data.asString())
-JC_BIND_UPDATER_GENERATE(LLVector3, data)
-JC_BIND_UPDATER_GENERATE(LLVector3d, data)
-JC_BIND_UPDATER_GENERATE(LLRect, data)
-JC_BIND_UPDATER_GENERATE(LLColor4U, data)
-JC_BIND_UPDATER_GENERATE(LLColor4, data)
-JC_BIND_UPDATER_GENERATE(LLSD, data)
-
-#define JC_BIND_FUNCS_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, S32, data.asInteger()) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, F32, data.asReal()) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, U32, data.asInteger()) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, jcb_string, data.asString()) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, LLVector3, data) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, LLVector3d, data) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, LLRect, data) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, LLColor4U, data) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, LLColor4, data) \
-JC_BIND_FUNC_GENERATE(JC_BIND_FUNCNAME, JC_BIND_CONTROLGROUP, LLSD, data)
-
-JC_BIND_FUNCS_GENERATE(bind_gsavedsetting, gSavedSettings)
-
-JC_BIND_FUNCS_GENERATE(bind_gsavedperaccountsetting, gSavedPerAccountSettings)
-
-JC_BIND_FUNCS_GENERATE(bind_gcolor, gColors)
-
-//JC_BIND_FUNC_GENERATE(BOOL, data.asBoolean())
-//equivalent to S32
-//JC_BIND_FUNC_GENERATE(LLColor3, data)
-//effectively equivalent to LLColor4
-
-#undef JC_BIND_INLINE
-#undef JC_BIND_UPDATER_GENERATE
-#undef JC_BIND_FUNC_GENERATE
-#undef JC_BIND_FUNCS_GENERATE
-#undef JC_BIND_UPDN
-#define bind_gsavedsetting jcb::bind_gsavedsetting
-#define bind_gsavedperaccountsetting jcb::bind_gsavedperaccountsetting
-#define bind_gcolor jcb::bind_gcolor
+			if(references[controlgroup].find(name) != references[controlgroup].end())
+			{
+#ifdef binder_debug
+				llinfos << "pulling type from map for " << name << llendl;
+#endif
+				type = (RBTYPE*)(references[controlgroup][name]);
+				if(type == NULL)llerrs << "bad type stored" << llendl;
+			}else
+			{
+#ifdef binder_debug
+				llinfos << "creating type in map for " << name << llendl;
+#endif
+				type = new RBTYPE();
+				references[controlgroup][name] = (void*)type;
+				LLControlVariable* control = controlgroup->getControl(name);
+				if(control)
+				{
+#ifdef binder_debug
+					llinfos << "control there " << name << llendl;
+#endif
+					signal_t* signal = control->getSignal();
+					if(signal)
+					{
+#ifdef binder_debug
+						llinfos << "signal there" << name << llendl;
+#endif
+						signal->connect(boost::bind(&jc_rebind::rebind_callback<RBTYPE>, _1, type));
+						if(init)jc_rebind::rebind_callback<RBTYPE>(control->getValue(),type);
+					}else llerrs << "no signal!" << llendl;
+				}else llerrs << "no control!" << llendl;
+			}
+		}
+		return type;
+	}
 };
+#define rebind_llcontrol jc_rebind::rebind_llcontrol
+
 ///////////////////////
+
 
 
 

@@ -446,7 +446,6 @@ bool handleTranslateChatPrefsChanged(const LLSD& newvalue)
 
 void settings_setup_listeners()
 {
-	bind_gsavedsetting("FreezeTime",&sFreezeTime, true);
 	gSavedSettings.getControl("FirstPersonAvatarVisible")->getSignal()->connect(boost::bind(&handleRenderAvatarMouselookChanged, _1));
 	gSavedSettings.getControl("RenderFarClip")->getSignal()->connect(boost::bind(&handleRenderFarClipChanged, _1));
 	gSavedSettings.getControl("RenderTerrainDetail")->getSignal()->connect(boost::bind(&handleTerrainDetailChanged, _1));

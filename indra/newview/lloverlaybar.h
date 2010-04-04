@@ -103,7 +103,6 @@ protected:
 
 private:
 	static BOOL sAdvSettingsPopup;
-	static BOOL sChatVisible;
 
 	static void	updateAdvSettingsPopup(const LLSD &data);
 	static void	updateChatVisible(const LLSD &data);

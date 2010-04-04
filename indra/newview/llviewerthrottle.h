@@ -80,7 +80,7 @@ public:
 
 	static const std::string sNames[TC_EOF];
 
-	static F32 sThrottleBandwidthKBPS;
+	static F32 *sThrottleBandwidthKBPS;
 
 protected:
 	F32 mMaxBandwidth;

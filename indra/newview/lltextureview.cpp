@@ -507,7 +507,7 @@ void LLGLTexMemBar::draw()
 					LLImageRaw::sRawImageCount,
 					LLAppViewer::getTextureFetch()->getNumHTTPRequests(),
 					LLAppViewer::getTextureFetch()->getTextureBandwidth(),
-					LLViewerThrottle::sThrottleBandwidthKBPS);
+					*LLViewerThrottle::sThrottleBandwidthKBPS);
 
 	LLFontGL::getFontMonospace()->renderUTF8(text, 0, 0, line_height*2,
 									 text_color, LLFontGL::LEFT, LLFontGL::TOP);

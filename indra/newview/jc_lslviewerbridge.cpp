@@ -70,6 +70,7 @@
 
 #include "floaterao.h"
 
+
 #define emerald_point (LLAssetType::EType)127
 #define emerald_bridge_name "#LSL<->Client Bridge v0.06"
 
@@ -570,91 +571,7 @@ void bridge_trash_check()
 		}
 	}
 }
-/*
 
-struct JC_BIND_TYPE_OVERLOADER
-{
-#ifdef LL_WINDOWS
-#define JC_BIND_INLINE __forceinline
-#else
-#define JC_BIND_INLINE inline
-#endif
-	JC_BIND_INLINE static BOOL JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asBoolean(); }
-	JC_BIND_INLINE static S32 JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asInteger(); }
-	JC_BIND_INLINE static F32 JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asReal(); }
-	JC_BIND_INLINE static U32 JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asInteger(); }
-	JC_BIND_INLINE static std::string JC_BIND_LLCONTROL_RET(LLSD& data){ return data.asString(); }
-	JC_BIND_INLINE static LLVector3 JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
-	JC_BIND_INLINE static LLVector3d JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
-	JC_BIND_INLINE static LLRect JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
-	JC_BIND_INLINE static LLColor4U JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
-	JC_BIND_INLINE static LLColor4 JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
-	JC_BIND_INLINE static LLColor3 JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
-	JC_BIND_INLINE static LLSD JC_BIND_LLCONTROL_RET(LLSD& data){ return data; }
-#undef JC_BIND_INLINE
-}
-
-#define JC_BIND_GENERATE(JC_BIND_TYPE) \
-void bind_llcontrol_updator(const LLSD &data, JC_BIND_TYPE* reciever){ reciever = JC_BIND_TYPE_OVERLOADER::JC_BIND_LLCONTROL_RET(data); } \
-bool bind_gsavedsetting(std::string& name, JC_BIND_TYPE& reciever) \
-{ \
-	LLControlVariable* var = gSavedSettings.getControl(name); \
-	if(var) \
-	{ \
-		signal_t* signal = var->getSignal(); \
-		if(signal) \
-		{ \
-			signal->connect(boost::bind(&bind_llcontrol_updator, _1, reciever)); \
-			return true; \
-		} \
-	} \
-	return false; \
-} //
-
-
-JC_BIND_GENERATE(BOOL)
-
-JC_BIND_GENERATE(S32)
-
-JC_BIND_GENERATE(F32)
-
-JC_BIND_GENERATE(U32)
-
-JC_BIND_GENERATE(std::string)
-
-JC_BIND_GENERATE(LLVector3)
-
-JC_BIND_GENERATE(LLVector3d)
-
-JC_BIND_GENERATE(LLRect)
-
-JC_BIND_GENERATE(LLColor4U)
-
-JC_BIND_GENERATE(LLColor4)
-
-JC_BIND_GENERATE(LLColor3)
-
-JC_BIND_GENERATE(LLSD)
-
-#undef JC_BIND_GENERATE
-
-*/
-
-
-/*
-BOOL
-S32
-F32
-U32
-std::string&
-LLVector3&
-LLVector3d&
-LLRect&
-LLColor4U&
-LLColor4&
-LLColor3&
-LLSD&
-*/
 
 
 BOOL JCLSLBridge::tick()

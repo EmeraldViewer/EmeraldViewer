@@ -64,29 +64,29 @@
 #include "llfocusmgr.h"
 void cmdline_printchat(std::string message);
 
-static BOOL sEmeraldRadarChatAlerts;
-static BOOL sEmeraldRadarAlertSim;
-static BOOL sEmeraldRadarChatKeys;
-static S32 sEmeraldRadarChatKeysChannel;
-static BOOL sEmeraldRadarAlertDraw;
-static BOOL sEmeraldRadarAlertChatRange;
-static BOOL sEmeraldAvatarAgeAlert;
-static BOOL sEmeraldAvatarListKeepOpen;
-static F32 sEmeraldAvatarAgeAlertDays;
-static F32 sRenderFarClip;
-static BOOL sEmeraldUseBridgeRadar;
-static BOOL sWarnEmeraldRadarChat;
-static BOOL sEmeraldModerateConfirm;
+static BOOL *sEmeraldRadarChatAlerts;
+static BOOL *sEmeraldRadarAlertSim;
+static BOOL *sEmeraldRadarChatKeys;
+static S32 *sEmeraldRadarChatKeysChannel;
+static BOOL *sEmeraldRadarAlertDraw;
+static BOOL *sEmeraldRadarAlertChatRange;
+static BOOL *sEmeraldAvatarAgeAlert;
+static BOOL *sEmeraldAvatarListKeepOpen;
+static F32 *sEmeraldAvatarAgeAlertDays;
+static F32 *sRenderFarClip;
+static BOOL *sEmeraldUseBridgeRadar;
+static BOOL *sWarnEmeraldRadarChat;
+//static BOOL *sEmeraldModerateConfirm;
 
-static LLColor4 sDefaultListText;
-static LLColor4 sDefaultListIcon;
-static LLColor4 sAvatarNameColor;
-static LLColor4 sScrollUnselectedColor;
-static LLColor4 sAvatarListTextDistNormalRange;
-static LLColor4 sAvatarListTextDistShoutRange;
-static LLColor4 sAvatarListTextDistOver;
-static LLColor4 sAvatarListTextAgeYoung;
-static LLColor4 sAvatarListTextAgeNormal;
+static LLColor4 *sDefaultListText;
+static LLColor4 *sDefaultListIcon;
+static LLColor4 *sAvatarNameColor;
+static LLColor4 *sScrollUnselectedColor;
+static LLColor4 *sAvatarListTextDistNormalRange;
+static LLColor4 *sAvatarListTextDistShoutRange;
+static LLColor4 *sAvatarListTextDistOver;
+static LLColor4 *sAvatarListTextAgeYoung;
+static LLColor4 *sAvatarListTextAgeNormal;
 
 // Timeouts
 /**
@@ -162,20 +162,20 @@ typedef enum e_radar_alert_type
 } ERadarAlertType;
 void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool entering)
 {
-	if(sEmeraldRadarChatAlerts &&
+	if(*sEmeraldRadarChatAlerts &&
 		(name.find("(???) (???)")== std::string::npos))
 	{
 		LLChat chat;
 		switch(type)
 		{
 		case ALERT_TYPE_SIM:
-			if(sEmeraldRadarAlertSim)
+			if(*sEmeraldRadarAlertSim)
 			{
 				chat.mFromName = name;
 				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
 				chat.mText = name+" has "+(entering ? "entered" : "left")+" the sim.";// ("+key.asString()+")";
 			}
-			if(sEmeraldRadarChatKeys)
+			if(*sEmeraldRadarChatKeys)
 			if(!entering)
 			{
 				gMessageSystem->newMessage("ScriptDialogReply");
@@ -184,14 +184,14 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 				 gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
 				 gMessageSystem->nextBlock("Data");
 				 gMessageSystem->addUUID("ObjectID", gAgent.getID());
-				 gMessageSystem->addS32("ChatChannel", sEmeraldRadarChatKeysChannel);
+				 gMessageSystem->addS32("ChatChannel", *sEmeraldRadarChatKeysChannel);
 				 gMessageSystem->addS32("ButtonIndex", 1);
 				gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, 0) + key.asString());
 				gAgent.sendReliableMessage();
 			}
 			break;
 		case ALERT_TYPE_DRAW:
-			if(sEmeraldRadarAlertDraw)
+			if(*sEmeraldRadarAlertDraw)
 			{
 				chat.mFromName = name;
 				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
@@ -199,7 +199,7 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 			}
 			break;
 		case ALERT_TYPE_CHATRANGE:
-			if(sEmeraldRadarAlertChatRange)
+			if(*sEmeraldRadarAlertChatRange)
 			{
 				chat.mFromName = name;
 				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
@@ -207,7 +207,7 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 			}
 			break;
 		case ALERT_TYPE_AGE:
-			if(sEmeraldAvatarAgeAlert)
+			if(*sEmeraldAvatarAgeAlert)
 			{
 				chat.mFromName = name;
 				chat.mURL = llformat("secondlife:///app/agent/%s/about",key.asString().c_str());
@@ -477,30 +477,34 @@ LLFloaterAvatarList::LLFloaterAvatarList() :  LLFloater(std::string("avatar list
 	if(needs_init)
 	{
 		needs_init = FALSE;
-		bind_gsavedsetting("EmeraldRadarChatAlerts", &sEmeraldRadarChatAlerts, true);
-		bind_gsavedsetting("EmeraldRadarAlertSim", &sEmeraldRadarAlertSim, true);
-		bind_gsavedsetting("EmeraldRadarChatKeys", &sEmeraldRadarChatKeys, true);
-		bind_gsavedsetting("EmeraldRadarChatKeysChannel", &sEmeraldRadarChatKeysChannel, true);
-		bind_gsavedsetting("EmeraldRadarAlertDraw", &sEmeraldRadarAlertDraw, true);
-		bind_gsavedsetting("EmeraldRadarAlertChatRange", &sEmeraldRadarAlertChatRange, true);
-		bind_gsavedsetting("EmeraldAvatarAgeAlert", &sEmeraldAvatarAgeAlert, true);
-		bind_gsavedsetting("EmeraldAvatarListKeepOpen", &sEmeraldAvatarListKeepOpen, true);
-		bind_gsavedsetting("EmeraldAvatarAgeAlertDays", &sEmeraldAvatarAgeAlertDays, true);
-		bind_gsavedsetting("RenderFarClip", &sRenderFarClip, true);
-		bind_gsavedsetting("EmeraldUseBridgeRadar", &sEmeraldUseBridgeRadar, true);
-		bind_gsavedsetting("WarnEmeraldRadarChat", &sWarnEmeraldRadarChat, true);
-		bind_gsavedsetting("EmeraldModerateConfirm", &sEmeraldModerateConfirm, true);
 
 
-		bind_gcolor("DefaultListText", &sDefaultListText, true);
-		bind_gcolor("DefaultListIcon", &sDefaultListIcon, true);
-		bind_gcolor("AvatarNameColor", &sAvatarNameColor, true);
-		bind_gcolor("ScrollUnselectedColor", &sScrollUnselectedColor, true);
-		bind_gcolor("AvatarListTextDistNormalRange", &sAvatarListTextDistNormalRange, true);
-		bind_gcolor("AvatarListTextDistShoutRange", &sAvatarListTextDistShoutRange, true);
-		bind_gcolor("AvatarListTextDistOver", &sAvatarListTextDistOver, true);
-		bind_gcolor("AvatarListTextAgeYoung", &sAvatarListTextAgeYoung, true);
-		bind_gcolor("AvatarListTextAgeNormal", &sAvatarListTextAgeNormal, true);
+		sEmeraldRadarChatAlerts = rebind_llcontrol<BOOL>("EmeraldRadarChatAlerts",&gSavedSettings,true);
+		sEmeraldRadarAlertSim = rebind_llcontrol<BOOL>("EmeraldRadarAlertSim",&gSavedSettings,true);
+		sEmeraldRadarChatKeys = rebind_llcontrol<BOOL>("EmeraldRadarChatKeys",&gSavedSettings,true);
+		sEmeraldRadarChatKeysChannel = rebind_llcontrol<BOOL>("EmeraldRadarChatKeysChannel",&gSavedSettings,true);
+		sEmeraldRadarAlertDraw = rebind_llcontrol<BOOL>("EmeraldRadarAlertDraw",&gSavedSettings,true);
+		sEmeraldRadarAlertChatRange = rebind_llcontrol<BOOL>("EmeraldRadarAlertChatRange",&gSavedSettings,true);
+		sEmeraldAvatarAgeAlert = rebind_llcontrol<BOOL>("EmeraldAvatarAgeAlert",&gSavedSettings,true);
+		sEmeraldAvatarListKeepOpen = rebind_llcontrol<BOOL>("EmeraldAvatarListKeepOpen",&gSavedSettings,true);
+		sEmeraldAvatarAgeAlertDays = rebind_llcontrol<F32>("EmeraldAvatarAgeAlertDays",&gSavedSettings,true);
+		sRenderFarClip = rebind_llcontrol<F32>("RenderFarClip",&gSavedSettings,true);
+		sEmeraldUseBridgeRadar = rebind_llcontrol<BOOL>("EmeraldUseBridgeRadar",&gSavedSettings,true);
+		sWarnEmeraldRadarChat = rebind_llcontrol<BOOL>("WarnEmeraldRadarChat",&gSavedSettings,true);
+		//sEmeraldModerateConfirm = rebind_llcontrol<BOOL>("EmeraldModerateConfirm",&gSavedSettings,true);
+
+		sDefaultListText = rebind_llcontrol<LLColor4>("DefaultListText",&gColors,true);
+		sDefaultListIcon = rebind_llcontrol<LLColor4>("DefaultListIcon",&gColors,true);
+		sAvatarNameColor = rebind_llcontrol<LLColor4>("AvatarNameColor",&gColors,true);
+		sScrollUnselectedColor = rebind_llcontrol<LLColor4>("ScrollUnselectedColor",&gColors,true);
+		sAvatarListTextDistNormalRange = rebind_llcontrol<LLColor4>("AvatarListTextDistNormalRange",&gColors,true);
+		sAvatarListTextDistShoutRange = rebind_llcontrol<LLColor4>("AvatarListTextDistShoutRange",&gColors,true);
+		sAvatarListTextDistOver = rebind_llcontrol<LLColor4>("AvatarListTextDistOver",&gColors,true);
+		sAvatarListTextAgeYoung = rebind_llcontrol<LLColor4>("AvatarListTextAgeYoung",&gColors,true);
+		sAvatarListTextAgeNormal = rebind_llcontrol<LLColor4>("AvatarListTextAgeNormal",&gColors,true);
+
+		
+		
 	}
 }
 
@@ -565,7 +569,7 @@ void LLFloaterAvatarList::onClose(bool app_quitting)
 	{
 		gSavedSettings.setBOOL("ShowAvatarList", FALSE);
 	}
-	if ( !sEmeraldAvatarListKeepOpen || app_quitting )
+	if ( !*sEmeraldAvatarListKeepOpen || app_quitting )
 	{
 		destroy();
 	}
@@ -637,10 +641,10 @@ BOOL LLFloaterAvatarList::postBuild()
 	childSetAction("script_count_btn", onClickScriptCount, this);
 
 	childSetCommitCallback("agealert", onClickAgeAlert,this);
-	childSetValue("agealert",sEmeraldAvatarAgeAlert);
+	childSetValue("agealert",*sEmeraldAvatarAgeAlert);
 
 	childSetCommitCallback("AgeAlertDays",onClickAgeAlertDays,this);
-	childSetValue("AgeAlertDays",sEmeraldAvatarAgeAlertDays);
+	childSetValue("AgeAlertDays",*sEmeraldAvatarAgeAlertDays);
 
 
 	// *FIXME: Uncomment once onClickRefresh has been restored
@@ -966,12 +970,12 @@ void LLFloaterAvatarList::refreshAvatarList()
 
 		//element["columns"][LIST_AVATAR_ICON]["column"] = "avatar_icon";
 		//element["columns"][LIST_AVATAR_ICON]["type"] = "text";
-		element["columns"][LIST_AVATAR_NAME]["color"] = sDefaultListText.getValue();
+		element["columns"][LIST_AVATAR_NAME]["color"] = sDefaultListText->getValue();
 		/*if ( ent->isMarked() )
 		{
 			element["columns"][LIST_AVATAR_ICON]["type"] = "icon";
 			element["columns"][LIST_AVATAR_ICON]["value"] = "flag_blue.tga";
-			element["columns"][LIST_AVATAR_ICON]["color"] = sDefaultListIcon;
+			element["columns"][LIST_AVATAR_ICON]["color"] = *sDefaultListIcon;
 		}*/
 
 
@@ -1000,14 +1004,14 @@ void LLFloaterAvatarList::refreshAvatarList()
 		if(flagForFedUpDistance)
 		{
 			//lgg fix for out of draw distance
-			element["columns"][LIST_DISTANCE]["value"] = llformat("> %d", (S32)sRenderFarClip );
+			element["columns"][LIST_DISTANCE]["value"] = llformat("> %d", (S32)*sRenderFarClip );
 		}
 		element["columns"][LIST_DISTANCE]["color"] = getAvatarColor(ent, distance, CT_DISTANCE).getValue();
 
 		
 		if ( avinfo_status == DATA_RETRIEVED )
 		{
-			if ((avinfo.getAge() < sEmeraldAvatarAgeAlertDays) && !ent->getAlert())
+			if ((avinfo.getAge() < *sEmeraldAvatarAgeAlertDays) && !ent->getAlert())
 			{
 				ent->setAlert();
 				chat_avatar_status(ent->getName().c_str(),av_id,ALERT_TYPE_AGE, true);
@@ -1078,7 +1082,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		//if ( PAYMENT_NONE != avinfo.Payment && DATA_UNKNOWN != avinfo_status )
 		if ( !icon.empty() )
 		{
-			element["columns"][LIST_PAYMENT]["color"] = sDefaultListIcon.getValue();
+			element["columns"][LIST_PAYMENT]["color"] = sDefaultListIcon->getValue();
 			element["columns"][LIST_PAYMENT]["type"] = "icon";
 			element["columns"][LIST_PAYMENT]["value"] =  icon;
 			//llinfos << "Payment icon: " << payment_icon << llendl;
@@ -1126,7 +1130,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		{
 			element["columns"][LIST_ACTIVITY]["type"] = "icon";
 			element["columns"][LIST_ACTIVITY]["value"] = icon;
-			element["columns"][LIST_ACTIVITY]["color"] = sDefaultListIcon.getValue();
+			element["columns"][LIST_ACTIVITY]["color"] = sDefaultListIcon->getValue();
 		}
 
 		S32 seentime = (S32)difftime( time(NULL) , ent->getTime() );
@@ -1136,12 +1140,12 @@ void LLFloaterAvatarList::refreshAvatarList()
 
 		element["columns"][LIST_TIME]["column"] = "time";
 		element["columns"][LIST_TIME]["type"] = "text";
-		element["columns"][LIST_TIME]["color"] = sDefaultListText.getValue();
+		element["columns"][LIST_TIME]["color"] = sDefaultListText->getValue();
 		element["columns"][LIST_TIME]["value"] = llformat("%d:%02d:%02d", hours,mins,secs);
 
 		element["columns"][LIST_CLIENT]["column"] = "client";
 		element["columns"][LIST_CLIENT]["type"] = "text";
-		LLColor4 avatar_name_color = sAvatarNameColor;
+		LLColor4 avatar_name_color = *sAvatarNameColor;
 		std::string client;
 		LLVOAvatar *av = (LLVOAvatar*)gObjectList.findObject(av_id);
 		if(av)
@@ -1149,7 +1153,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 			LLVOAvatar::resolveClient(avatar_name_color, client, av);
 			if(client == "")
 			{
-				avatar_name_color = sScrollUnselectedColor;
+				avatar_name_color = *sScrollUnselectedColor;
 				client = "?";
 			}
 			element["columns"][LIST_CLIENT]["value"] = client.c_str();
@@ -1157,10 +1161,10 @@ void LLFloaterAvatarList::refreshAvatarList()
 		else
 		{
 			element["columns"][LIST_CLIENT]["value"] = "Out Of Range";
-			avatar_name_color = sScrollUnselectedColor;
+			avatar_name_color = *sScrollUnselectedColor;
 		}
 
-		avatar_name_color = avatar_name_color * 0.5 + sScrollUnselectedColor * 0.5;
+		avatar_name_color = avatar_name_color * 0.5 + *sScrollUnselectedColor * 0.5;
 
 		element["columns"][LIST_CLIENT]["color"] = avatar_name_color.getValue();
 		
@@ -1177,7 +1181,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 	}
 	
 	//lgg send batch of names to bridge
-	if(toSendToBridge != "" && sEmeraldUseBridgeRadar)
+	if(toSendToBridge != "" && *sEmeraldUseBridgeRadar)
 	{
 		if(gFocusMgr.getAppHasFocus()) // Phox: This interaction seems to cause a lockup if it happens too much while the window is out of focus.
 		{
@@ -1460,13 +1464,13 @@ void LLFloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 	if(owner_id == gAgent.getID() && sound_id == LLUUID("76c78607-93f9-f55a-5238-e19b1a181389"))
 	{
 		//lgg we need to auto turn on settings for ppl now that we know they has the thingy
-		if(sEmeraldRadarChatKeys)
+		if(*sEmeraldRadarChatKeys)
 		{
 			LLFloaterAvatarList* self = getInstance();
 			if(self) self->clearAnnouncements();
 		}else
 		{
-			if(sWarnEmeraldRadarChat)
+			if(*sWarnEmeraldRadarChat)
 				LLNotifications::instance().add("EmeraldRadarChat", LLSD(),LLSD(), callbackEmeraldChat);
 	
 		}
@@ -1586,25 +1590,25 @@ void LLFloaterAvatarList::onClickMark(void *userdata)
 LLColor4 LLFloaterAvatarList::getAvatarColor(LLAvatarListEntry *ent, F32 distance, e_coloring_type type)
 {
 // 	F32 r = 0.0f, g = 0.0f, b = 0.0f, a = 0.5f;
-	LLColor4 av_color = sDefaultListText;
+	LLColor4 av_color = *sDefaultListText;
 
 	switch(type)
 	{
 		case CT_NONE:
-			av_color = sDefaultListText;
+			av_color = *sDefaultListText;
 			break;
 		case CT_DISTANCE:
 			if ( distance <= 20.0f )
 			{
-				av_color = sAvatarListTextDistNormalRange;
+				av_color = *sAvatarListTextDistNormalRange;
 			}
 			else if ( distance > 20.0f && distance <= 96.0f )
 			{
-				av_color = sAvatarListTextDistShoutRange;
+				av_color = *sAvatarListTextDistShoutRange;
 			}
 			else
 			{
-				av_color = sAvatarListTextDistOver;
+				av_color = *sAvatarListTextDistOver;
 			}
 			break;
 		case CT_AGE:
@@ -1613,11 +1617,11 @@ LLColor4 LLFloaterAvatarList::getAvatarColor(LLAvatarListEntry *ent, F32 distanc
 				S32 age = ent->mAvatarInfo.getValue().getAge();
 				if ( age <= 7 )
 				{
-					av_color = sAvatarListTextAgeYoung;
+					av_color = *sAvatarListTextAgeYoung;
 				}
 				else
 				{
-					av_color = sAvatarListTextAgeNormal;
+					av_color = *sAvatarListTextAgeNormal;
 				}
 			}
 			break;
@@ -2153,12 +2157,12 @@ void LLFloaterAvatarList::onClickFreeze(void *userdata)
 
 void LLFloaterAvatarList::onClickEject(void *userdata)
 {
-	if(sEmeraldModerateConfirm)
+	/*if(*sEmeraldModerateConfirm)
 	{
 		LLSD args;
 		args["AVATAR_NAME"] = ((LLFloaterAvatarList*)userdata)->getSelectedNames();
 		LLNotifications::instance().add("EjectAvatarFullnameNoBan", args, LLSD(), callbackEject);
-	}else
+	}else*/
 	{
 		LLFloaterAvatarList *avlist = (LLFloaterAvatarList*)userdata;
 		avlist->doCommand(cmd_eject);
@@ -2338,7 +2342,7 @@ void LLFloaterAvatarList::checkAnnouncements()
 	int transact_num = (int)gFrameCount;
 	int num_ids = 0;
 
-	if(!sEmeraldRadarChatKeys)
+	if(!*sEmeraldRadarChatKeys)
 	{
 		mAnnouncedAvatars.clear();
 		return;
@@ -2376,7 +2380,7 @@ void LLFloaterAvatarList::checkAnnouncements()
 		 		gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
 		 		gMessageSystem->nextBlock("Data");
 		 		gMessageSystem->addUUID("ObjectID", gAgent.getID());
-		 		gMessageSystem->addS32("ChatChannel", sEmeraldRadarChatKeysChannel);
+		 		gMessageSystem->addS32("ChatChannel", *sEmeraldRadarChatKeysChannel);
 		 		gMessageSystem->addS32("ButtonIndex", 1);
 				gMessageSystem->addString("ButtonLabel",llformat("%d,%d", transact_num, num_ids) + ids.str());
 				gAgent.sendReliableMessage();
@@ -2396,7 +2400,7 @@ void LLFloaterAvatarList::checkAnnouncements()
 	 	gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
 	 	gMessageSystem->nextBlock("Data");
 	 	gMessageSystem->addUUID("ObjectID", gAgent.getID());
-	 	gMessageSystem->addS32("ChatChannel", sEmeraldRadarChatKeysChannel);
+	 	gMessageSystem->addS32("ChatChannel", *sEmeraldRadarChatKeysChannel);
 	 	gMessageSystem->addS32("ButtonIndex", 1);
 	 	gMessageSystem->addString("ButtonLabel",llformat("%d,%d", transact_num, num_ids) + ids.str());
 		gAgent.sendReliableMessage();

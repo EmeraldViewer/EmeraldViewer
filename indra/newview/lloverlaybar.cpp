@@ -77,7 +77,6 @@ LLOverlayBar *gOverlayBar = NULL;
 extern S32 MENU_BAR_HEIGHT;
 
 BOOL LLOverlayBar::sAdvSettingsPopup;
-BOOL LLOverlayBar::sChatVisible;
 
 //
 // Functions
@@ -150,13 +149,11 @@ BOOL LLOverlayBar::postBuild()
 	layoutButtons();
 
 	sAdvSettingsPopup = gSavedSettings.getBOOL("wlfAdvSettingsPopup");
-	//sChatVisible = gSavedSettings.getBOOL("ChatVisible");
-
+	
 	gSavedSettings.getControl("wlfAdvSettingsPopup")->getSignal()->connect(&updateAdvSettingsPopup);
-	//gSavedSettings.getControl("ChatVisible")->getSignal()->connect(&updateChatVisible);
-
-	//bind_gsavedsetting("wlfAdvSettingsPopup", &sAdvSettingsPopup, true);
-	bind_gsavedsetting("ChatVisible", &sChatVisible, true);
+	
+	
+	
 
 	childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
 	childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
@@ -170,12 +167,6 @@ void LLOverlayBar::updateAdvSettingsPopup(const LLSD &data)
 	gOverlayBar->childSetVisible("AdvSettings_container", !sAdvSettingsPopup);
 	gOverlayBar->childSetVisible("AdvSettings_container_exp", sAdvSettingsPopup);
 }
-
-void LLOverlayBar::updateChatVisible(const LLSD &data)
-{
-	sChatVisible = data.asBoolean();
-}
-
 
 LLOverlayBar::~LLOverlayBar()
 {
@@ -342,8 +333,9 @@ void LLOverlayBar::refresh()
 	}
 	if(!in_mouselook)childSetVisible("voice_remote_container", LLVoiceClient::voiceEnabled());
 
+	static BOOL *sChatVisible = rebind_llcontrol<BOOL>("ChatVisible", &gSavedSettings, true);
 	// always let user toggle into and out of chatbar
-	childSetVisible("chat_bar", sChatVisible);//gSavedSettings.getBOOL("ChatVisible"));
+	childSetVisible("chat_bar", *sChatVisible);//gSavedSettings.getBOOL("ChatVisible"));
 
 
 	if (buttons_changed)
