@@ -250,7 +250,7 @@ public:
 	}
 };
 }
-using jc_you_suck;
+using namespace jc_you_suck;
 #define rebind_llcontrol jc_rebind::rebind_llcontrol
 
 ///////////////////////
