@@ -184,10 +184,6 @@ namespace jc_you_suck
 class jc_rebind
 {
 	template <typename REC>		static void rebind_callback(const LLSD &data, REC *reciever){ *reciever = data; }
-	template <>					static void rebind_callback<S32>(const LLSD &data, S32 *reciever){ *reciever = data.asInteger(); }
-	template <>					static void rebind_callback<F32>(const LLSD &data, F32 *reciever){ *reciever = data.asReal(); }
-	template <>					static void rebind_callback<U32>(const LLSD &data, U32 *reciever){ *reciever = data.asInteger(); }
-	template <>					static void rebind_callback<std::string>(const LLSD &data, std::string *reciever){ *reciever = data.asString(); }
 
 	typedef boost::signal<void(const LLSD&)> signal_t;
 
@@ -249,6 +245,12 @@ public:
 		return type;
 	}
 };
+
+template <>					static void jc_rebind::rebind_callback<S32>(const LLSD &data, S32 *reciever){ *reciever = data.asInteger(); }
+template <>					static void jc_rebind::rebind_callback<F32>(const LLSD &data, F32 *reciever){ *reciever = data.asReal(); }
+template <>					static void jc_rebind::rebind_callback<U32>(const LLSD &data, U32 *reciever){ *reciever = data.asInteger(); }
+template <>					static void jc_rebind::rebind_callback<std::string>(const LLSD &data, std::string *reciever){ *reciever = data.asString(); }
+
 }
 using namespace jc_you_suck;
 #define rebind_llcontrol jc_rebind::rebind_llcontrol
