@@ -597,7 +597,7 @@ void cmdline_rezplat(bool use_saved_value, F32 visual_radius) //cmdline_rezplat(
 
 	static F32 *sEmeraldCmdLinePlatformSize = rebind_llcontrol<F32>("EmeraldCmdLinePlatformSize", &gSavedSettings, true);
 
-	if (use_saved_value) visua l_radius = *sEmeraldCmdLinePlatformSize;
+	if (use_saved_value) visual_radius = *sEmeraldCmdLinePlatformSize;
 	F32 realsize = visual_radius / 3.0f;
 	if (realsize < 0.01f) realsize = 0.01f;
 	else if (realsize > 10.0f) realsize = 10.0f;
