@@ -443,7 +443,7 @@ void callbackBridgeCleanup(const LLSD &notification, const LLSD &response, LLVie
 			cmdline_printchat("Moving out-of-date bridge objects to your trash folder.");
 			//delete
 			LLUUID trash_cat = gInventory.findCategoryUUIDForType(LLAssetType::AT_TRASH);
-			for(LLDynamicArray<LLPointer<LLViewerInventoryItem>>::iterator itr = items.begin(); itr != items.end(); ++itr)
+			for(LLDynamicArray<LLPointer<LLViewerInventoryItem> >::iterator itr = items.begin(); itr != items.end(); ++itr)
 			{
 				LLViewerInventoryItem* item = *itr;
 				if(item)
@@ -516,7 +516,7 @@ void bridge_trash_check()
 		if(items.count())
 		{
 			//cmdline_printchat("items.count()");
-			for(LLDynamicArray<LLPointer<LLViewerInventoryItem>>::iterator itr = items.begin(); itr != items.end(); ++itr)
+			for(LLDynamicArray<LLPointer<LLViewerInventoryItem> >::iterator itr = items.begin(); itr != items.end(); ++itr)
 			{
 				LLViewerInventoryItem* item = *itr;
 				//cmdline_printchat("item");
