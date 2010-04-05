@@ -234,8 +234,7 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 	static std::string *sEmeraldCmdLineCalc = rebind_llcontrol<std::string>("EmeraldCmdLineCalc", &gSavedSettings, true);
 	static std::string *sEmeraldCmdLineTP2 = rebind_llcontrol<std::string>("EmeraldCmdLineTP2", &gSavedSettings, true);
 	static std::string *sEmeraldCmdLineClearChat = rebind_llcontrol<std::string>("EmeraldCmdLineClearChat", &gSavedSettings, true);
-	static F32 *sEmeraldCmdLinePlatformSize = rebind_llcontrol<F32>("EmeraldCmdLinePlatformSize", &gSavedSettings, true);
-
+	
 	if(*sEmeraldCmdLine)
 	{
 		std::istringstream i(revised_text);
@@ -596,7 +595,9 @@ void cmdline_rezplat(bool use_saved_value, F32 visual_radius) //cmdline_rezplat(
     LLQuaternion rotation;
     rotation.setQuat(90.f * DEG_TO_RAD, LLVector3::y_axis);
 
-	if (use_saved_value) visual_radius = gSavedSettings.getF32("EmeraldCmdLinePlatformSize");
+	static F32 *sEmeraldCmdLinePlatformSize = rebind_llcontrol<F32>("EmeraldCmdLinePlatformSize", &gSavedSettings, true);
+
+	if (use_saved_value) visua l_radius = *sEmeraldCmdLinePlatformSize;
 	F32 realsize = visual_radius / 3.0f;
 	if (realsize < 0.01f) realsize = 0.01f;
 	else if (realsize > 10.0f) realsize = 10.0f;
