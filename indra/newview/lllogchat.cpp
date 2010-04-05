@@ -71,13 +71,10 @@ std::string LLLogChat::timestamp(bool withdate)
 	// it's daylight savings time there.
 	timep = utc_to_pacific_time(utc_time, gPacificDaylightTime);
 
-	std::string text;
 	if (withdate)
-		text = llformat("[%d/%02d/%02d %d:%02d]  ", (timep->tm_year-100)+2000, timep->tm_mon+1, timep->tm_mday, timep->tm_hour, timep->tm_min);
+		return llformat("[%d/%02d/%02d %d:%02d]  ", (timep->tm_year-100)+2000, timep->tm_mon+1, timep->tm_mday, timep->tm_hour, timep->tm_min);
 	else
-		text = llformat("[%d:%02d]  ", timep->tm_hour, timep->tm_min);
-
-	return text;
+		return llformat("[%d:%02d]  ", timep->tm_hour, timep->tm_min);
 }
 
 

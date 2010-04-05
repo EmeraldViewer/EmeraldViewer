@@ -71,6 +71,13 @@
  
 BOOL LLAgent::setLookAt(ELookAtType target_type, LLViewerObject *object, LLVector3 position)
 {
+	if(!gSavedSettings.getBOOL("EmeraldBroadcastPointers"))
+	{
+		if(!mLookAt || mLookAt->isDead())
+			return FALSE;
+		position.clearVec();
+		return mLookAt->setLookAt(LOOKAT_TARGET_NONE, mAvatarObject, position);
+	}
 	if(object && object->isAttachment())
 	{
 		LLViewerObject* parent = object;
@@ -97,7 +104,7 @@ BOOL LLAgent::setLookAt(ELookAtType target_type, LLViewerObject *object, LLVecto
 BOOL LLAgent::setPointAt(EPointAtType target_type, LLViewerObject *object, LLVector3 position)
 {
 	// disallow pointing at attachments and avatars
-	if (object && (object->isAttachment() || object->isAvatar()))
+	if ((object && (object->isAttachment() || object->isAvatar())) || !gSavedSettings.getBOOL("EmeraldBroadcastPointers2"))
 	{
 		return FALSE;
 	}

@@ -71,6 +71,7 @@
 #include "llurlhistory.h"
 #include "llfirstuse.h"
 #include "llrender.h"
+#include "greenlife_utility_stream.h"
 
 #include "llweb.h"
 #include "llsecondlifeurls.h"
@@ -3271,20 +3272,55 @@ void LLAppViewer::idle()
 	    gAgentPilot.updateTarget();
 	    gAgent.autoPilot(&yaw);
     
-	    static LLFrameTimer agent_update_timer;
+		static LLFrameTimer agent_update_timer;
+		
+		static LLFrameTimer GUS_update_timer;
+		static LLFrameTimer GUS_FE_update_timer;
 	    static U32 				last_control_flags;
     
 	    //	When appropriate, update agent location to the simulator.
 	    F32 agent_update_time = agent_update_timer.getElapsedTimeF32();
+
+		F32 GUS_update_time = GUS_update_timer.getElapsedTimeF32();
+		F32 GUS_FE_update_time = GUS_update_timer.getElapsedTimeF32();
+
 	    BOOL flags_changed = gAgent.controlFlagsDirty() || (last_control_flags != gAgent.getControlFlags());
-    
-	    if (flags_changed || (agent_update_time > (1.0f / (F32) AGENT_UPDATES_PER_SECOND)))
+		/*
+		//Name Short - Added to adjust agent updates.
+		F32 AgentUpdateFrequency = gSavedSettings.getF32("EmeraldAgentUpdatesPerSecond");
+		if (flags_changed || (agent_update_time > (1.0f / llmax(AgentUpdateFrequency, 0.0001f))))
 	    {
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();
-		    send_agent_update(TRUE);
+			if(!gAgent.getPhantom())
+				send_agent_update(TRUE);
 		    agent_update_timer.reset();
 	    }
+		*/
+		BOOL canSend = gAgent.getTeleportState() == LLAgent::TELEPORT_NONE
+					&& !LLAppViewer::instance()->logoutRequestSent()
+					&& gAgent.getRegion() != NULL;
+		if(canSend)
+		{
+			GUS* GussyWussy = GUS::getInstance(); //This is for Laura =P
+			if(GussyWussy)
+			{
+				if(GUS::Enabled && GUS::pinged())
+				{
+					if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
+					{
+						if(GUS::streamData())
+							GUS_update_timer.reset();
+						GUS::FELimiter_dec();
+					}
+					if(GUS::FEEnabled && GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
+					{
+						if(GUS::fastEvent())
+							GUS_FE_update_timer.reset();
+					}
+				}
+			}
+		}
 	}
 
 	//////////////////////////////////////
@@ -3622,8 +3658,8 @@ void LLAppViewer::idleShutdown()
 		sendLogoutRequest();
 
 		// Wait for a LogoutReply message
-		gViewerWindow->setShowProgress(TRUE);
-		gViewerWindow->setProgressPercent(!gSavedSettings.getBOOL("EmeraldDisableLogoutScreens"));
+		gViewerWindow->setShowProgress(!gSavedSettings.getBOOL("EmeraldDisableLogoutScreens"));
+		gViewerWindow->setProgressPercent(100.f);
 		gViewerWindow->setProgressString("Logging out...");
 		return;
 	}
