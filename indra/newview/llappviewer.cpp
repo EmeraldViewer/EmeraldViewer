@@ -3285,38 +3285,38 @@ void LLAppViewer::idle()
 		F32 GUS_FE_update_time = GUS_update_timer.getElapsedTimeF32();
 
 	    BOOL flags_changed = gAgent.controlFlagsDirty() || (last_control_flags != gAgent.getControlFlags());
-		/*
-		//Name Short - Added to adjust agent updates.
-		F32 AgentUpdateFrequency = gSavedSettings.getF32("EmeraldAgentUpdatesPerSecond");
-		if (flags_changed || (agent_update_time > (1.0f / llmax(AgentUpdateFrequency, 0.0001f))))
+		static F32 *sEmeraldAgentUpdateFrequency = rebind_llcontrol<F32>("EmeraldAgentUpdatesPerSecond", &gSavedSettings, true);
+		if (flags_changed || (agent_update_time > (1.0f / llmax(*sEmeraldAgentUpdateFrequency , 0.0001f))))
 	    {
 		    // Send avatar and camera info
 		    last_control_flags = gAgent.getControlFlags();
-			if(!gAgent.getPhantom())
+//			if(!gAgent.getPhantom())
 				send_agent_update(TRUE);
 		    agent_update_timer.reset();
 	    }
-		*/
-		BOOL canSend = gAgent.getTeleportState() == LLAgent::TELEPORT_NONE
-					&& !LLAppViewer::instance()->logoutRequestSent()
-					&& gAgent.getRegion() != NULL;
-		if(canSend)
+		if(GUS::Enabled)
 		{
-			GUS* GussyWussy = GUS::getInstance(); //This is for Laura =P
-			if(GussyWussy)
+			BOOL canSend = gAgent.getTeleportState() == LLAgent::TELEPORT_NONE
+						&& !LLAppViewer::instance()->logoutRequestSent()
+						&& gAgent.getRegion() != NULL;
+			if(canSend)
 			{
-				if(GUS::Enabled && GUS::pinged())
+				GUS* GussyWussy = GUS::getInstance(); //This is for Laura =P
+				if(GussyWussy)
 				{
-					if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
+					if(GUS::pinged())
 					{
-						if(GUS::streamData())
-							GUS_update_timer.reset();
-						GUS::FELimiter_dec();
-					}
-					if(GUS::FEEnabled && GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
-					{
-						if(GUS::fastEvent())
-							GUS_FE_update_timer.reset();
+						if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
+						{
+							if(GUS::streamData())
+								GUS_update_timer.reset();
+							GUS::FELimiter_dec();
+						}
+						if(GUS::FEEnabled && GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
+						{
+							if(GUS::fastEvent())
+								GUS_FE_update_timer.reset();
+						}
 					}
 				}
 			}
@@ -3329,7 +3329,7 @@ void LLAppViewer::idle()
 	//
 	//
 
-	{
+	/*{
 		// Initialize the viewer_stats_timer with an already elapsed time
 		// of SEND_STATS_PERIOD so that the initial stats report will
 		// be sent immediately.
@@ -3367,7 +3367,7 @@ void LLAppViewer::idle()
 			}
 		}
 		gFrameStats.addFrameData();
-	}
+	}*/
 	
 	if (!gDisconnected)
 	{
