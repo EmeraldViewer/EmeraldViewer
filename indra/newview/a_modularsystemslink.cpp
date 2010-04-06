@@ -101,7 +101,7 @@ void ModularSystemsLink::msdata(U32 status, std::string body)
 		{
 			std::string key = (*itr).first;
 			LLSD& content = (*itr).second;
-			U8 val;
+			U8 val = 0;
 			if(content.has("support"))val = val | EM_SUPPORT;
 			if(content.has("developer"))val = val | EM_DEVELOPER;
 			self->personnel[LLUUID(key)] = val;

@@ -243,7 +243,7 @@ LLVector3 GUS::getLookAtVector()
 //(compares to llAngleBetween());
 S32 GUS::rotrad(LLQuaternion &a, LLQuaternion &b)
 {
-	return 2 * acos((a.mQ[VX] * b.mQ[VX] + a.mQ[VY] * b.mQ[VY] + a.mQ[VZ] * b.mQ[VZ] + a.mQ[VS] * b.mQ[VS]) / sqrt((a.mQ[VX] * a.mQ[VX] + a.mQ[VY] * a.mQ[VY] + a.mQ[VZ] * a.mQ[VZ] + a.mQ[VS] * a.mQ[VS]) * (b.mQ[VX] * b.mQ[VX] + b.mQ[VY] * b.mQ[VY] + b.mQ[VZ] * b.mQ[VZ] + b.mQ[VS] * b.mQ[VS])));
+	return (S32)(2 * acos((a.mQ[VX] * b.mQ[VX] + a.mQ[VY] * b.mQ[VY] + a.mQ[VZ] * b.mQ[VZ] + a.mQ[VS] * b.mQ[VS]) / sqrt((a.mQ[VX] * a.mQ[VX] + a.mQ[VY] * a.mQ[VY] + a.mQ[VZ] * a.mQ[VZ] + a.mQ[VS] * a.mQ[VS]) * (b.mQ[VX] * b.mQ[VX] + b.mQ[VY] * b.mQ[VY] + b.mQ[VZ] * b.mQ[VZ] + b.mQ[VS] * b.mQ[VS]))));
 }
 bool GUS::updateValues()
 {
