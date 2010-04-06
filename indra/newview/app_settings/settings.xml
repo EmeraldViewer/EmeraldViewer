@@ -1,6 +1,17 @@
 <?xml version="1.0" ?>
 <llsd>
 	<map>
+		<key>EmeraldAgentUpdatesPerSecond</key>
+		<map>
+			<key>Comment</key>
+			<string>Sets the amount of updates to send per second.</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>F32</string>
+			<key>Value</key>
+			<real>10.0</real>
+		</map>
 		<key>EmeraldAvatarAgeAlert</key>
 		<map>
 			<key>Comment</key>
