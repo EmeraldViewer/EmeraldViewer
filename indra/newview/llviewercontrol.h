@@ -246,10 +246,10 @@ public:
 	}
 };
 
-template <>					void jc_rebind::rebind_callback<S32>(const LLSD &data, S32 *reciever){ *reciever = data.asInteger(); }
-template <>					void jc_rebind::rebind_callback<F32>(const LLSD &data, F32 *reciever){ *reciever = data.asReal(); }
-template <>					void jc_rebind::rebind_callback<U32>(const LLSD &data, U32 *reciever){ *reciever = data.asInteger(); }
-template <>					void jc_rebind::rebind_callback<std::string>(const LLSD &data, std::string *reciever){ *reciever = data.asString(); }
+template <>					void jc_rebind::rebind_callback<S32>(const LLSD &data, S32 *reciever);
+template <>					void jc_rebind::rebind_callback<F32>(const LLSD &data, F32 *reciever);
+template <>					void jc_rebind::rebind_callback<U32>(const LLSD &data, U32 *reciever);
+template <>					void jc_rebind::rebind_callback<std::string>(const LLSD &data, std::string *reciever);
 
 }
 using namespace jc_you_suck;
