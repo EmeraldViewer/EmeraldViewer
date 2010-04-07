@@ -78,6 +78,17 @@
 			<key>Value</key>
 			<integer>1</integer>
 		</map>
+		<key>EmeraldBroadcastPointers2</key>
+		<map>
+			<key>Comment</key>
+			<string>Disable to prevent broadcasting your Pointat target (Enabled by default)</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
 		<key>EmeraldBuildPrefs_Item</key>
 		<map>
 			<key>Comment</key>
