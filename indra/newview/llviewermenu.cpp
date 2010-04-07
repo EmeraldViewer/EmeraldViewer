@@ -7489,6 +7489,54 @@ class LLEmeraldCheckPhantom: public view_listener_t
 	}
 };
 
+class LLEmeraldToggleSit: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+// [RLVa:KB] - Alternate: Emerald-370
+		// Can't sit on land when @unsit=n restricted
+		//if (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT))
+		//{
+			//return true;
+		//}
+// [/RLVa:KB]
+
+		if(gSavedSettings.getBOOL("EmeraldAllowSitToggle"))
+		{
+			LLChat chat;
+			chat.mSourceType = CHAT_SOURCE_SYSTEM;
+			if(!gAgent.getAvatarObject()->mIsSitting)
+			{
+				gAgent.setControlFlags(AGENT_CONTROL_SIT_ON_GROUND);
+				chat.mText = "Forcing Ground Sit";
+			}
+			else
+			{
+				gAgent.setControlFlags(!AGENT_CONTROL_SIT_ON_GROUND);
+				gAgent.setControlFlags(AGENT_CONTROL_STAND_UP);
+				chat.mText = "Standing up";
+			}
+			LLFloaterChat::addChat(chat);
+		}
+		return true;
+	}
+
+};
+class LLEmeraldCheckSit : public view_listener_t
+{
+    bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+    {
+		if(gAgent.getAvatarObject()->mIsSitting)
+		{
+			gMenuHolder->findControl(userdata["control"].asString())->setValue(true);
+		}
+		else
+		{
+			gMenuHolder->findControl(userdata["control"].asString())->setValue(false);
+		}
+		return true;
+	}
+};
 class LLToolsSelectTool : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -7772,8 +7820,8 @@ void initialize_menus()
 	//Emerald menu
 	addMenu(new LLEmeraldTogglePhantom(), "Emerald.TogglePhantom");
 	addMenu(new LLEmeraldCheckPhantom(), "Emerald.CheckPhantom");
-	//addMenu(new LLEmeraldToggleSit(), "Emerald.ToggleSit");
-	//addMenu(new LLEmeraldCheckSit(), "Emerald.CheckSit");
+	addMenu(new LLEmeraldToggleSit(), "Emerald.ToggleSit");
+	addMenu(new LLEmeraldCheckSit(), "Emerald.CheckSit");
 	addMenu(new LLEmeraldToggleDoubleClickTeleport(), "Emerald.ToggleDoubleClickTeleport");
 	addMenu(new LLEmeraldCheckDoubleClickTeleport(), "Emerald.CheckDoubleClickTeleport");
 	addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
