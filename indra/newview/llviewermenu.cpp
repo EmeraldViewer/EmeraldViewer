@@ -7437,7 +7437,24 @@ class LLWorldChat : public view_listener_t
 		return true;
 	}
 };
+class LLEmeraldTogglePhantom: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		if(gSavedSettings.getBOOL("EmeraldAllowPhantomToggle"))
+		{
+			LLAgent::togglePhantom();
+			BOOL ph = LLAgent::getPhantom();
+			LLChat chat;
+			chat.mSourceType = CHAT_SOURCE_SYSTEM;
+			chat.mText = llformat("%s%s","Phantom ",(ph ? "On" : "Off"));
+			LLFloaterChat::addChat(chat);
+			//gMenuHolder->findControl(userdata["control"].asString())->setValue(ph);
+		}
+		return true;
+	}
 
+};
 class LLEmeraldToggleRadar: public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -7463,6 +7480,14 @@ class LLAO : public view_listener_t
 	}
 };
 
+class LLEmeraldCheckPhantom: public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(LLAgent::getPhantom());
+		return true;
+	}
+};
 
 class LLToolsSelectTool : public view_listener_t
 {
@@ -7745,8 +7770,8 @@ void initialize_menus()
 	addMenu(new LLViewCheckHUDAttachments(), "View.CheckHUDAttachments");
 
 	//Emerald menu
-	//addMenu(new LLEmeraldTogglePhantom(), "Emerald.TogglePhantom");
-	//addMenu(new LLEmeraldCheckPhantom(), "Emerald.CheckPhantom");
+	addMenu(new LLEmeraldTogglePhantom(), "Emerald.TogglePhantom");
+	addMenu(new LLEmeraldCheckPhantom(), "Emerald.CheckPhantom");
 	//addMenu(new LLEmeraldToggleSit(), "Emerald.ToggleSit");
 	//addMenu(new LLEmeraldCheckSit(), "Emerald.CheckSit");
 	addMenu(new LLEmeraldToggleDoubleClickTeleport(), "Emerald.ToggleDoubleClickTeleport");

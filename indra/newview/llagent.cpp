@@ -222,6 +222,7 @@ LLAgent gAgent;
 // Statics
 //
 
+BOOL LLAgent::emeraldPhantom = 0;
 BOOL LLAgent::ignorePrejump = 0;
 BOOL LLAgent::EmeraldForceFly;
 
@@ -794,6 +795,20 @@ BOOL LLAgent::canFly()
 	return parcel->getAllowFly();
 }
 
+//-----------------------------------------------------------------------------
+// setPhantom()  lgg
+//-----------------------------------------------------------------------------
+void LLAgent::setPhantom(BOOL phantom)
+{
+	emeraldPhantom = phantom;
+}
+//-----------------------------------------------------------------------------
+// getPhantom()  lgg
+//-----------------------------------------------------------------------------
+BOOL LLAgent::getPhantom()
+{
+	return emeraldPhantom;
+}
 
 //-----------------------------------------------------------------------------
 // setFlying()
@@ -853,6 +868,16 @@ void LLAgent::toggleFlying()
 	resetView();
 }
 
+
+//-----------------------------------------------------------------------------
+// togglePhantom()
+//-----------------------------------------------------------------------------
+void LLAgent::togglePhantom()
+{
+	BOOL phan = !(emeraldPhantom);
+
+	setPhantom( phan );
+}
 
 //-----------------------------------------------------------------------------
 // setRegion()
