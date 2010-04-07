@@ -56,6 +56,28 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
+		<key>EmeraldBroadcastEffects</key>
+		<map>
+			<key>Comment</key>
+			<string>Whether or not to broadcast your head and point at movements</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
+		<key>EmeraldBroadcastPointers</key>
+		<map>
+			<key>Comment</key>
+			<string>Disable to prevent broadcasting your Lookat target (Enabled by default)</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
 		<key>EmeraldBuildPrefs_Item</key>
 		<map>
 			<key>Comment</key>
