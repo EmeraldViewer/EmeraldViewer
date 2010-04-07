@@ -656,6 +656,7 @@ class LinuxManifest(ViewerManifest):
             self.path("client-readme.txt","README-linux.txt")
             self.path("client-readme-voice.txt","README-linux-voice.txt")
             self.path("client-readme-joystick.txt","README-linux-joystick.txt")
+            self.path("fetch_bins.sh")
             self.path("wrapper.sh",self.wrapper_name())
             self.path("handle_secondlifeprotocol.sh")
             self.path("register_secondlifeprotocol.sh")
@@ -752,31 +753,31 @@ class Linux_i686Manifest(LinuxManifest):
 
         # install either the libllkdu we just built, or a prebuilt one, in
         # decreasing order of preference.  for linux package, this goes to bin/
-        try:
-            self.path(self.find_existing_file('../llkdu/libllkdu.so',
-                '../../libraries/i686-linux/lib_release_client/libllkdu.so'), 
-                  dst='bin/libllkdu.so')
+#        try:
+#            self.path(self.find_existing_file('../llkdu/libllkdu.so',
+#                '../../libraries/i686-linux/lib_release_client/libllkdu.so'), 
+#                  dst='bin/libllkdu.so')
             # keep this one to preserve syntax, open source mangling removes previous lines
-            pass
-        except:
-            print "Skipping libllkdu.so - not found"
-            pass
+#            pass
+#        except:
+#            print "Skipping libllkdu.so - not found"
+#            pass
 
         if self.prefix("../../libraries/i686-linux/lib_release_client", dst="lib"):
 
-            try:
-                self.path("libkdu_v42R.so", "libkdu.so")
-                pass
-            except:
-                print "Skipping libkdu_v42R.so - not found"
-                pass
+#            try:
+#                self.path("libkdu_v42R.so", "libkdu.so")
+#                pass
+#            except:
+#                print "Skipping libkdu_v42R.so - not found"
+#                pass
 
-            try:
-                self.path("libfmod-3.75.so")
-                pass
-            except:
-                print "Skipping libfmod-3.75.so - not found"
-                pass
+#            try:
+#                self.path("libfmod-3.75.so")
+#                pass
+#            except:
+#                print "Skipping libfmod-3.75.so - not found"
+#                pass
 
             self.path("libapr-1.so.0")
             self.path("libaprutil-1.so.0")
@@ -793,13 +794,13 @@ class Linux_i686Manifest(LinuxManifest):
             self.end_prefix("lib")
 
             # Vivox runtimes
-            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
-                    self.path("SLVoice")
-                    self.end_prefix()
-            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
-                    self.path("libortp.so")
-                    self.path("libvivoxsdk.so")
-                    self.end_prefix("lib")
+#            if self.prefix(src="vivox-runtime/i686-linux", dst="bin"):
+#                    self.path("SLVoice")
+#                    self.end_prefix()
+#            if self.prefix(src="vivox-runtime/i686-linux", dst="lib"):
+#                    self.path("libortp.so")
+#                    self.path("libvivoxsdk.so")
+#                    self.end_prefix("lib")
 
 class Linux_x86_64Manifest(LinuxManifest):
     def construct(self):
