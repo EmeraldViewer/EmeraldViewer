@@ -793,6 +793,12 @@ public:
 
 private:
 	bool mbTeleportKeepsLookAt; // try to keep look-at after teleport is complete
+	static BOOL ignorePrejump;
+	static BOOL EmeraldForceFly;
+	static void updateIgnorePrejump(const LLSD &data);
+	static void	updateEmeraldForceFly(const LLSD &data);
+	
+	static BOOL emeraldPhantom;
 	bool mbAlwaysRun; // should the avatar run by default rather than walk
 	bool mbRunning;	// is the avatar trying to run right now
 

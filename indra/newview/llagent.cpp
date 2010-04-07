@@ -222,6 +222,9 @@ LLAgent gAgent;
 // Statics
 //
 
+BOOL LLAgent::ignorePrejump = 0;
+BOOL LLAgent::EmeraldForceFly;
+
 const F32 LLAgent::TYPING_TIMEOUT_SECS = 5.f;
 
 std::map<std::string, std::string> LLAgent::sTeleportErrorMessages;
@@ -419,8 +422,18 @@ LLAgent::LLAgent() :
 	}
 
 	mFollowCam.setMaxCameraDistantFromSubject( MAX_CAMERA_DISTANCE_FROM_AGENT );
+	//EmeraldForceFly = gSavedSettings.getBOOL("EmeraldAlwaysFly");
+	//gSavedSettings.getControl("EmeraldAlwaysFly")->getSignal()->connect(&updateEmeraldForceFly);
+}
+void LLAgent::updateEmeraldForceFly(const LLSD &data)
+{
+	EmeraldForceFly = data.asBoolean();
 }
 
+void LLAgent::updateIgnorePrejump(const LLSD &data)
+{
+	ignorePrejump = data.asBoolean();
+}
 // Requires gSavedSettings to be initialized.
 //-----------------------------------------------------------------------------
 // init()
@@ -451,7 +464,10 @@ void LLAgent::init()
 //	LLDebugVarMessageBox::show("Camera Lag", &CAMERA_FOCUS_HALF_LIFE, 0.5f, 0.01f);
 
 	mEffectColor = gSavedSettings.getColor4("EffectColor");
-	
+	ignorePrejump = gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation");
+	gSavedSettings.getControl("EmeraldIgnoreFinishAnimation")->getSignal()->connect(&updateIgnorePrejump);
+	EmeraldForceFly = gSavedSettings.getBOOL("EmeraldAlwaysFly");
+	gSavedSettings.getControl("EmeraldAlwaysFly")->getSignal()->connect(&updateEmeraldForceFly);
 	mInitialized = TRUE;
 }
 
