@@ -441,6 +441,28 @@
       <key>Value</key>
       <integer>1</integer>
     </map>
+    <key>EmeraldBlockClickSit</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to block left-click sitting on things</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldResetCamOnEscape</key>
+    <map>
+      <key>Comment</key>
+      <string>Setting this value to False prevents the camera from resetting when escape is pressed.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
 		<key>FloaterAvatarListRect</key>
 		<map>
 			<key>Comment</key>

@@ -3209,12 +3209,37 @@ class LLViewResetView : public view_listener_t
 // Note: extra parameters allow this function to be called from dialog.
 void reset_view_final( BOOL proceed, void* ) 
 {
-	if( !proceed )
-	{
-		return;
-	}
+    if( !proceed )
+    {
+        return;
+    }
 
-	gAgent.resetView(TRUE, TRUE);
+    gAgent.changeCameraToDefault();
+    
+    if (LLViewerJoystick::getInstance()->getOverrideCamera())
+    {
+        handle_toggle_flycam();
+    }
+
+    // reset avatar mode from eventual residual motion
+    if (LLToolMgr::getInstance()->inBuildMode())
+    {
+        LLViewerJoystick::getInstance()->moveAvatar(true);
+    }
+    if(gSavedSettings.getBOOL("EmeraldResetCamOnEscape"))
+    {
+        gAgent.resetView(TRUE,TRUE);
+    }
+    else
+    {
+        gAgent.resetView(!gFloaterTools->getVisible());
+    }
+    gFloaterTools->close();
+    
+    gViewerWindow->showCursor();
+
+    // Switch back to basic toolset
+    LLToolMgr::getInstance()->setCurrentToolset(gBasicToolset);
 }
 
 class LLViewLookAtLastChatter : public view_listener_t
