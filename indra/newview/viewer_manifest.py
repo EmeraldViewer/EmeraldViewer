@@ -444,7 +444,7 @@ class DarwinManifest(ViewerManifest):
 
         if self.prefix(src="", dst="Contents"):  # everything goes in Contents
             #self.path(self.info_plist_name(), dst="Info.plist")
-            self.path("Info-Emerald Viewer.plist", dst="Info.plist")
+            self.path("Info-EmeraldViewer.plist", dst="Info.plist")
 
             # copy additional libs in <bundle>/Contents/MacOS/
             self.path("../../libraries/universal-darwin/lib_release/libndofdev.dylib", dst="MacOS/libndofdev.dylib")
