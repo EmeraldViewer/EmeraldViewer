@@ -435,8 +435,8 @@ LLFloaterAvatarList::LLFloaterAvatarList() :  LLFloater(std::string("avatar list
 		sWarnEmeraldRadarChat = rebind_llcontrol<BOOL>("WarnEmeraldRadarChat",&gSavedSettings,true);
 		//sEmeraldModerateConfirm = rebind_llcontrol<BOOL>("EmeraldModerateConfirm",&gSavedSettings,true);
 
-		sDefaultListText = rebind_llcontrol<LLColor4>("DefaultListText",&gColors,true);
-		sDefaultListIcon = rebind_llcontrol<LLColor4>("DefaultListIcon",&gColors,true);
+		//sDefaultListText = rebind_llcontrol<LLColor4>("DefaultListText",&gColors,true);
+		//sDefaultListIcon = rebind_llcontrol<LLColor4>("DefaultListIcon",&gColors,true);
 		sAvatarNameColor = rebind_llcontrol<LLColor4>("AvatarNameColor",&gColors,true);
 		sScrollUnselectedColor = rebind_llcontrol<LLColor4>("ScrollUnselectedColor",&gColors,true);
 		sAvatarListTextDistNormalRange = rebind_llcontrol<LLColor4>("AvatarListTextDistNormalRange",&gColors,true);
@@ -1018,7 +1018,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 		//if ( PAYMENT_NONE != avinfo.Payment && DATA_UNKNOWN != avinfo_status )
 		if ( !icon.empty() )
 		{
-			element["columns"][LIST_PAYMENT]["color"] = sDefaultListIcon->getValue();
+			//element["columns"][LIST_PAYMENT]["color"] = sDefaultListIcon->getValue();
 			element["columns"][LIST_PAYMENT]["type"] = "icon";
 			element["columns"][LIST_PAYMENT]["value"] =  icon;
 			//llinfos << "Payment icon: " << payment_icon << llendl;
@@ -1031,7 +1031,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 
 		element["columns"][LIST_TIME]["column"] = "time";
 		element["columns"][LIST_TIME]["type"] = "text";
-		element["columns"][LIST_TIME]["color"] = sDefaultListText->getValue();
+		//element["columns"][LIST_TIME]["color"] = sDefaultListText->getValue();
 		element["columns"][LIST_TIME]["value"] = llformat("%d:%02d:%02d", hours,mins,secs);
 
 		element["columns"][LIST_CLIENT]["column"] = "client";
@@ -1055,7 +1055,7 @@ void LLFloaterAvatarList::refreshAvatarList()
 			avatar_name_color = *sScrollUnselectedColor;
 		}
 
-		avatar_name_color = avatar_name_color * 0.5 + *sScrollUnselectedColor * 0.5;
+		//avatar_name_color = avatar_name_color * 0.5 + *sScrollUnselectedColor * 0.5;
 
 		element["columns"][LIST_CLIENT]["color"] = avatar_name_color.getValue();
 		
