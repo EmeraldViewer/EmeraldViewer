@@ -8,7 +8,7 @@
 	can_drag_on_left="false"
 	rect_control="FloaterAvatarListRect"
 	min_width="380"
-	min_height="250"
+	min_height="240"
 	>
 	<!-- <text
 		  name="help_label"
@@ -45,7 +45,7 @@
 		<!-- Payment data icons -->
 		<column name="payment_data" label="" width="20" />
 		<!-- What the avatar is doing: producing sounds, rezzing, particles, etc -->
-		<column name="activity" label="" width="20" />
+		<!--<column name="activity" label="" width="20" /> -->
     <column name="client" label="Client" dynamicwidth="true" />
 	</scroll_list>
 	
@@ -191,40 +191,40 @@
 			       />
 
 		</panel>
-		<panel border="false" bottom_delta="-130" follows="left|top|right|bottom" height="255"
+		<panel border="false" bottom_delta="-130" follows="left|top|right|bottom" height="240"
 		       label="Moderation" left="1" mouse_opaque="true"
 		       name="land_tab" width="410">
 			
 			<!-- Upper row -->
-      <button name="mute_btn" label="Mute" tool_tip="Mute this avatar" left="5"
-      bottom_delta="-195" width="60" height="20" font="SansSerifSmall" follows="bottom|left" />
+      <button name="mute_btn" label="Mute" tool_tip="Mute this avatar" left="10"
+      bottom_delta="-185" width="80" height="20" font="SansSerifSmall" follows="bottom|left" />
       
 			<button name="eject_btn" label="Eject" tool_tip="Eject the avatar from the parcel" left_delta="0"
-			bottom_delta="-22" width="60" height="20" follows="bottom|left" />
-			
+			bottom_delta="-22" width="80" height="20" follows="bottom|left" />
+
+			<button name="ar_btn" label="AR" tool_tip="Report abuse on this avatar" left="190"
+      bottom_delta="22" width="80" height="20" font="SansSerifSmall" follows="bottom|left" />
+
       <button name="freeze_btn" label="Freeze" tool_tip="Freeze the avatar, preventing it from moving"
-      left_delta="0" bottom_delta="-22" width="60" height="20" follows="bottom|left" />
-
-			<button name="ar_btn" label="AR" tool_tip="Report abuse on this avatar" left_delta="0"
-      bottom_delta="-22" width="60" height="20" font="SansSerifSmall" follows="bottom|left" />
-
-      <button name="unmute_btn" label="Unmute" tool_tip="Unmute this avatar" left_delta="62"
-			bottom_delta="66" width="60" height="20" follows="bottom|left" />
+      left_delta="0" bottom_delta="-22" width="80" height="20" follows="bottom|left" />
+      
+      <button name="unmute_btn" label="Unmute" tool_tip="Unmute this avatar" left="100"
+			bottom_delta="22" width="80" height="20" follows="bottom|left" />
 
       <button name="ban_btn" label="Ban" tool_tip="Ban this avatar from parcel" left_delta="0"
-			bottom_delta="-22" width="60" height="20" follows="bottom|left" />
+			bottom_delta="-22" width="80" height="20" follows="bottom|left" />
 
-			<!-- middle row -->
-      <button name="estate_tph_btn" label="Estate TP Home" tool_tip="Teleport avatar home" left_delta="90"
-			bottom_delta="22" width="100" height="20" follows="bottom|left" />
-      <button name="estate_kick_btn" label="Estate Kick" tool_tip="Kick avatar from the estate" left_delta="0"
+			<!-- fourth column -->
+      <button name="estate_tph_btn" label="Estate TP Home" tool_tip="Teleport avatar home" left_delta="-90"
 			bottom_delta="-22" width="100" height="20" follows="bottom|left" />
-			<!-- lower row-->
-			<button name="estate_ban_btn" label="Estate Ban" tool_tip="Ban this avatar from the estate" left_delta="0"
-			bottom_delta="-22" width="100" height="20" follows="bottom|left" />
+      <button name="estate_kick_btn" label="Estate Kick" tool_tip="Kick avatar from the estate" left_delta="105"
+			bottom_delta="0" width="100" height="20" follows="bottom|left" />
 
-      <button name="estate_gtfo_btn" label="Estate GTFO" tool_tip="Bans, ejects, teleports home, and kicks" left_delta="0"
-			bottom_delta="-22" width="100" height="20" follows="bottom|left" />
+			<button name="estate_ban_btn" label="Estate Ban" tool_tip="Ban this avatar from the estate" left_delta="105"
+			bottom_delta="0" width="100" height="20" follows="bottom|left" />
+
+      <button name="estate_gtfo_btn" label="Estate GTFO" tool_tip="Bans, ejects, teleports home, and kicks" left_delta="105"
+			bottom_delta="0" width="100" height="20" follows="bottom|left" />
       
       
       <check_box height="16" label="Estate Does All Estates" left_delta="112"

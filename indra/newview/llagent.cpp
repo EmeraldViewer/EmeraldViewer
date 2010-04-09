@@ -136,6 +136,7 @@
 #include "llappviewer.h"
 #include "llviewerjoystick.h"
 #include "llfollowcam.h"
+#include "jc_lslviewerbridge.h"
 
 #include "floaterao.h"
 
@@ -1303,11 +1304,11 @@ F32 LLAgent::clampPitchToLimits(F32 angle)
 
 	LLVector3 skyward = getReferenceUpVector();
 
-	F32			look_down_limit;
-	F32			look_up_limit = 10.f * DEG_TO_RAD;
+	F32			look_down_limit = 179.5 * DEG_TO_RAD;
+	F32			look_up_limit = 0.5 * DEG_TO_RAD;
 
 	F32 angle_from_skyward = acos( mFrameAgent.getAtAxis() * skyward );
-
+	/*
 	if (mAvatarObject.notNull() && mAvatarObject->mIsSitting)
 	{
 		look_down_limit = 130.f * DEG_TO_RAD;
@@ -1316,7 +1317,7 @@ F32 LLAgent::clampPitchToLimits(F32 angle)
 	{
 		look_down_limit = 170.f * DEG_TO_RAD;
 	}
-
+	*/
 	// clamp pitch to limits
 	if ((angle >= 0.f) && (angle_from_skyward + angle > look_down_limit))
 	{
@@ -6175,7 +6176,10 @@ bool LLAgent::teleportCore(bool is_local)
 		//release geometry from old location
 		gPipeline.resetVertexBuffers();
 	}
+	if(gSavedSettings.getBOOL("EmeraldPlayTpSound"))
+	{
 	make_ui_sound("UISndTeleportOut");
+	}
 	
 	// MBW -- Let the voice client know a teleport has begun so it can leave the existing channel.
 	// This was breaking the case of teleporting within a single sim.  Backing it out for now.
@@ -7474,7 +7478,11 @@ void LLAgent::sendAgentSetAppearance()
 			msg->nextBlockFast(_PREHASH_VisualParam );
 			
 			// We don't send the param ids.  Instead, we assume that the receiver has the same params in the same sequence.
-			const F32 param_value = param->getWeight();
+			F32 param_value;
+			if(param->getID() == 507)
+				param_value = mAvatarObject->getActualBoobGrav();
+			else
+				param_value = param->getWeight();
 			const U8 new_weight = F32_to_U8(param_value, param->getMinWeight(), param->getMaxWeight());
 			msg->addU8Fast(_PREHASH_ParamValue, new_weight );
 			transmitted_params++;

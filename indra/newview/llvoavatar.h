@@ -49,6 +49,8 @@
 #include "llwearable.h"
 #include "llvoavatardefines.h"
 
+#include "emeraldboobutils.h"
+
 extern const LLUUID ANIM_AGENT_BODY_NOISE;
 extern const LLUUID ANIM_AGENT_BREATHE_ROT;
 extern const LLUUID ANIM_AGENT_EDITING;
@@ -106,6 +108,7 @@ public:
 	void idleUpdateLipSync(bool voice_enabled);
 	void idleUpdateLoadingEffect();
 	void idleUpdateWindEffect();
+	void idleUpdateBoobEffect();
 	void idleUpdateNameTag(const LLVector3& root_pos_last);
 	void idleUpdateRenderCost();
 	void idleUpdateTractorBeam();
@@ -494,6 +497,30 @@ private:
 	F32				mLastAppearanceBlendTime;
 
 	//--------------------------------------------------------------------
+	// boob bounce stuff
+	//--------------------------------------------------------------------
+
+private:
+	bool			mFirstSetActualBoobGravRan;
+	LLFrameTimer	mBoobBounceTimer;
+	EmeraldAvatarLocalBoobConfig mLocalBoobConfig;
+	EmeraldBoobState mBoobState;
+	static EmeraldGlobalBoobConfig sBoobConfig;
+
+public:
+	//boob
+	F32				getActualBoobGrav() { return mLocalBoobConfig.actualBoobGrav; }
+	void			setActualBoobGrav(F32 grav)
+	{
+		mLocalBoobConfig.actualBoobGrav = grav;
+		if(!mFirstSetActualBoobGravRan)
+		{
+			mBoobState.boobGrav = grav;
+			mFirstSetActualBoobGravRan = true;
+		}
+	}
+
+	//--------------------------------------------------------------------
 	// Attachments
 	//--------------------------------------------------------------------
 public:
@@ -534,6 +561,7 @@ public:
 	LLViewerJoint mRoot; // avatar skeleton
 	BOOL mIsSitting; // sitting state
 
+	static bool updateClientTags();
 	static bool loadClientTags();
 	//--------------------------------------------------------------------
 	// Private member variables.

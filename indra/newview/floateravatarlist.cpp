@@ -88,14 +88,6 @@ static LLColor4 *sAvatarListTextDistOver;
 static LLColor4 *sAvatarListTextAgeYoung;
 static LLColor4 *sAvatarListTextAgeNormal;
 
-// Timeouts
-/**
- * @brief How long to keep showing an activity, in seconds
- */
-const F32 ACTIVITY_TIMEOUT = 1.0f;
-const F32 ACTIVITY_TIMEOUT_TYPING = 30.0f;
-
-
 /**
  * @brief How many seconds to wait between data requests
  *
@@ -160,6 +152,7 @@ typedef enum e_radar_alert_type
 	ALERT_TYPE_CHATRANGE = 2,
 	ALERT_TYPE_AGE = 3
 } ERadarAlertType;
+
 void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool entering)
 {
 	if(*sEmeraldRadarChatAlerts &&
@@ -226,28 +219,19 @@ void chat_avatar_status(std::string name, LLUUID key, ERadarAlertType type, bool
 }
 
 LLAvatarListEntry::LLAvatarListEntry(const LLUUID& id, const std::string &name, const LLVector3d &position, BOOL isLinden) :
-		mID(id), mName(name), mTime(time(NULL)), mPosition(position), mDrawPosition(), mAlert(FALSE), mMarked(FALSE), mFocused(FALSE), mIsLinden(isLinden), mActivityType(ACTIVITY_NEW), mAccountTitle(""),
-			mUpdateTimer(), mActivityTimer(), mFrame(gFrameCount), mInSimFrame(U32_MAX), mInDrawFrame(U32_MAX), mInChatFrame(U32_MAX)
+		mID(id), mName(name), mTime(time(NULL)), mPosition(position), mDrawPosition(), mAlert(FALSE), mMarked(FALSE), mFocused(FALSE), mIsLinden(isLinden), mAccountTitle(""),
+			mUpdateTimer(),mFrame(gFrameCount), mInSimFrame(U32_MAX), mInDrawFrame(U32_MAX), mInChatFrame(U32_MAX)
 {
 }
 
 void LLAvatarListEntry::setPosition(LLVector3d position, bool this_sim, bool drawn, bool chatrange)
 {
-	if ( mActivityType == ACTIVITY_DEAD )
-	{
-		resetTime();
-		setActivity(ACTIVITY_NEW);
-	}
-
 	if ( drawn )
 	{
-		if ( mDrawPosition != position && !mDrawPosition.isExactlyZero() )
-		{
-			setActivity(ACTIVITY_MOVING);
-		}
-
 		mDrawPosition = position;
-	} else if( mInDrawFrame == U32_MAX ) {
+	} 
+	else if( mInDrawFrame == U32_MAX ) 
+	{
 		mDrawPosition.setZero();
 	}
 
@@ -317,18 +301,6 @@ bool LLAvatarListEntry::getAlive()
 	}
 	return ((current - mFrame) <= 2);
 }
-//U32 LLAvatarListEntry::getOffSimFrames()
-//{
-//	return (gFrameCount - mInSimFrame);
-//}
-//U32 LLAvatarListEntry::getOffDrawFrames()
-//{
-//	return (gFrameCount - mInDrawFrame);
-//}
-//U32 LLAvatarListEntry::getOutsideChatRangeFrames();
-//{
-//	return (gFrameCount - mInChatFrame);
-//}
 
 F32 LLAvatarListEntry::getEntryAgeSeconds()
 {
@@ -389,36 +361,6 @@ void LLAvatarListEntry::setAccountCustomTitle(std::string &title)
 std::string LLAvatarListEntry::getAccountCustomTitle()
 {
 	return mAccountTitle;
-}
-
-
-
-void LLAvatarListEntry::setActivity(ACTIVITY_TYPE activity)
-{
-	if ( activity >= mActivityType || mActivityTimer.getElapsedTimeF32() > ACTIVITY_TIMEOUT )
-	{
-		mActivityType = activity;
-		mActivityTimer.start();
-	}
-}
-
-ACTIVITY_TYPE LLAvatarListEntry::getActivity()
-{
-	if (mActivityType == ACTIVITY_TYPING)
-	{
-		if ( mActivityTimer.getElapsedTimeF32() > ACTIVITY_TIMEOUT_TYPING )
-		{
-			mActivityType = ACTIVITY_NONE;
-		}
-	}
-	else
-	{
-		if ( mActivityTimer.getElapsedTimeF32() > ACTIVITY_TIMEOUT )
-		{
-			mActivityType = ACTIVITY_NONE;
-		}
-	}
-	return mActivityType;
 }
 	
 void LLAvatarListEntry::setAlert()
@@ -845,12 +787,6 @@ void LLFloaterAvatarList::expireAvatarList()
 	{
 		LLAvatarListEntry *ent = &iter->second;
 		
-		if ( !ent->getAlive())
-		{
-			ent->setActivity(ACTIVITY_DEAD);
-		}
-
-
 		if ( ent->getEntryAgeSeconds() > CLEANUP_TIMEOUT )
 		{
 			//llinfos << "avatar list: expiring avatar " << ent->getName() << llendl;
@@ -1086,51 +1022,6 @@ void LLFloaterAvatarList::refreshAvatarList()
 			element["columns"][LIST_PAYMENT]["type"] = "icon";
 			element["columns"][LIST_PAYMENT]["value"] =  icon;
 			//llinfos << "Payment icon: " << payment_icon << llendl;
-		}
-
-		
-		ACTIVITY_TYPE activity = ent->getActivity();
-		icon = "";
-		switch( activity )
-		{
-			case ACTIVITY_NONE:
-				break;
-			case ACTIVITY_MOVING:
-				icon = "inv_item_animation.tga";
-				break;
-			case ACTIVITY_GESTURING:
-				icon = "inv_item_gesture.tga";
-				break;
-			case ACTIVITY_SOUND:
-				icon = "inv_item_sound.tga";
-				break;
-			case ACTIVITY_REZZING:
-				icon = "ff_edit_theirs.tga";
-				break;
-			case ACTIVITY_PARTICLES:
-				// TODO: Replace with something better
-				icon = "particles.tga";
-				break;
-			case ACTIVITY_NEW:
-				icon = "avatar_new.tga";
-				break;
-			case ACTIVITY_TYPING:
-				icon = "avatar_typing.tga";
-				break;
-			case ACTIVITY_DEAD:
-				// TODO: Replace, icon is quite inappropiate
-				icon = "avatar_gone.tga";
-				break;
-		}
-
-		element["columns"][LIST_ACTIVITY]["column"] = "activity";
-		element["columns"][LIST_ACTIVITY]["type"] = "text";
-
-		if (!icon.empty() )
-		{
-			element["columns"][LIST_ACTIVITY]["type"] = "icon";
-			element["columns"][LIST_ACTIVITY]["value"] = icon;
-			element["columns"][LIST_ACTIVITY]["color"] = sDefaultListIcon->getValue();
 		}
 
 		S32 seentime = (S32)difftime( time(NULL) , ent->getTime() );

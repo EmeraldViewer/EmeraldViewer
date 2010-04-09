@@ -46,27 +46,6 @@ enum PAYMENT_TYPE
 	PAYMENT_LINDEN            /** Payment info doesn't apply (Linden, etc) */
 };
 
-
-/**
- * @brief Activity
- *
- * This enum is ordered by priority, higher values have higher priority.
- * Since we only have one column to show activity, priority decides what
- * to show in case of conflict.
- */
-enum ACTIVITY_TYPE
-{
-	ACTIVITY_NONE,           /** Avatar not doing anything */ 
-	ACTIVITY_MOVING,         /** Changing position */
-	ACTIVITY_GESTURING,	 /** Playing a gesture */
-	ACTIVITY_SOUND,          /** Playing a sound */
-	ACTIVITY_REZZING,        /** Rezzing objects */
-	ACTIVITY_PARTICLES,      /** Creating particles */
-	ACTIVITY_TYPING,         /** Typing */
-	ACTIVITY_NEW,            /** Avatar just appeared */
-	ACTIVITY_DEAD            /** Avatar isn't around anymore, and will be removed soon from the list */
-};
-
 enum DATA_STATUS
 {
 	DATA_UNKNOWN,
@@ -409,23 +388,9 @@ public:
 	 */
 	std::string getAccountCustomTitle();
 
-	/**
-	 * @brief Sets the activity type for this avatar
-	 *
-	 * Has no effect if the specified type is lower priority than the
-	 * current one.
-	 */
-	void setActivity(ACTIVITY_TYPE activity);
-
-
 	void setAlert();
 
 	BOOL getAlert();
-
-	/**
-	 * @brief Returns the activity type
-	 */
-	ACTIVITY_TYPE getActivity();
 
 	/**
 	 * @brief Sets the 'focus' status on this entry (camera focused on this avatar)
@@ -459,8 +424,6 @@ private:
 	BOOL mFocused;
 	BOOL mIsLinden;
 
-	ACTIVITY_TYPE mActivityType;
-
 	std::string mAccountTitle;
 
 	LLAvatarListDatum<LLAvatarInfo>   mAvatarInfo;
@@ -470,11 +433,6 @@ private:
 	 * @brief Timer to keep track of whether avatars are still there
 	 */
 	LLTimer mUpdateTimer;
-
-	/**
-	 * @brief Timer for avatar activities
-	 */
-	LLTimer mActivityTimer;
 
 	/**
 	 * @brief Last frame when this avatar was updated
@@ -584,13 +542,11 @@ private:
 	
 	enum AVATARS_COLUMN_ORDER
 	{
-		LIST_AVATAR_ICON,
 		LIST_AVATAR_NAME,
 		LIST_DISTANCE,
 		LIST_AGE,
 		LIST_SIM,
 		LIST_PAYMENT,
-		LIST_ACTIVITY,
 		LIST_TIME,
 		LIST_CLIENT
 	};

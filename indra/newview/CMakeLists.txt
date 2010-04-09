@@ -66,6 +66,7 @@ include_directories(
 set(viewer_SOURCE_FILES
 	a_modularsystemslink.cpp
 	emerald.cpp
+	emeraldboobutils.cpp
 	chatbar_as_cmdline.cpp
 	floaterlocalassetbrowse.cpp
 	floateravatarlist.cpp
@@ -494,6 +495,7 @@ set(viewer_HEADER_FILES
     ViewerInstall.cmake
     a_modularsystemslink.h
     emerald.h
+	emeraldboobutils.h
 	chatbar_as_cmdline.h
 	floaterlocalassetbrowse.h
 	floateravatarlist.h
