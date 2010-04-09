@@ -38,9 +38,10 @@
 #if LL_WINDOWS
 #include <windows.h>
 #pragma warning (disable : 4005)
-#define LOADLIB LoadLibraryA
-#else
-#define LOADLIB LoadLibrary
+#ifdef LoadLibrary
+#undef LoadLibrary
+#endif
+#define LoadLibrary LoadLibraryA
 #endif
 #if LL_WINDOWS || LL_LINUX
 #include "fmoddyn.h"
