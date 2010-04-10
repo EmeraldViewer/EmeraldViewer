@@ -34,22 +34,26 @@
 
 #include "llmath.h"
 
-//hack for fmod dynamic loading
+// FMOD is silly and calls LoadLibrary instead of LoadLibraryA even though it calls with a normal char.
+// This seems to cause issues sometimes, so tell it who's bawce.
 #if LL_WINDOWS
-#include <windows.h>
-#pragma warning (disable : 4005)
-#ifdef LoadLibrary
-#undef LoadLibrary
+	#include <windows.h>
+	#pragma warning (disable : 4005)
+	#ifdef LoadLibrary
+		#undef LoadLibrary
+	#endif
+	#define LoadLibrary LoadLibraryA
 #endif
-#define LoadLibrary LoadLibraryA
-#endif
-#if LL_WINDOWS || LL_LINUX
+
+// Hack for loading FMOD dynamically while not making the library required to run the viewer
+//#if LL_WINDOWS || LL_LINUX
 #include "fmoddyn.h"
 #define FMOD_API(x) gFmod->x
 extern FMOD_INSTANCE* gFmod;
-#else //LL_WINDOWS
-#define FMOD_API(x) x
-#endif //LL_WINDOWS || LL_LINUX
+//#else //LL_WINDOWS
+//#define FMOD_API(x) x
+//#endif //LL_WINDOWS || LL_LINUX
+
 #include "fmod.h"
 #include "fmod_errors.h"
 
