@@ -121,6 +121,7 @@
 			       height="20"
 			       font="SansSerifSmall"
 			       follows="bottom|left"
+             visible="false"
 			       />
 			<button
 			       name="get_key_btn"
@@ -155,6 +156,7 @@
 			       height="20"
 			       font="SansSerifSmall"
 			       follows="bottom|left"
+             visible="false"
 			       />
 			<button
 			       name="next_in_list_btn"
@@ -166,6 +168,7 @@
 			       height="20"
 			       font="SansSerifSmall"
 			       follows="bottom|left"
+             visible="false"
 			       />
 			<button
 			       name="prev_marked_btn"
@@ -177,6 +180,7 @@
 			       height="20"
 			       font="SansSerifSmall"
 			       follows="bottom|left"
+             visible="false"
 			       />
 			<button
 			       name="next_marked_btn"
@@ -188,6 +192,7 @@
 			       height="20"
 			       font="SansSerifSmall"
 			       follows="bottom|left"
+             visible="false"
 			       />
 
 		</panel>
@@ -281,7 +286,7 @@
       <spinner bottom_delta="155" decimal_digits="0" follows="left|top" height="16"
           left="165" increment="1" initial_val="3" max_val="999" min_val="0"
           mouse_opaque="true" name="AgeAlertDays" label="Age Alert Treshold" label_width="100"
-          tool_tip="Age Alert Treshold" width="140" />
+          tool_tip="Age Alert Treshold" width="140" control_name="EmeraldAvatarAgeAlertDays" />
       <check_box height="16" label="Radar Alerts to Chat"
 				   left="290" bottom_delta="60" 
 				   width="200" follows="top|left"

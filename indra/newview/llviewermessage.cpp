@@ -5233,14 +5233,7 @@ void handle_lure(LLDynamicArray<LLUUID>& ids)
 	{
 		payload["ids"].append(*it);
 	}
-	if (gAgent.isGodlike())
-	{
-		LLNotifications::instance().add("OfferTeleportFromGod", edit_args, payload, handle_lure_callback);
-	}
-	else
-	{
-		LLNotifications::instance().add("OfferTeleport", edit_args, payload, handle_lure_callback);
-	}
+	LLNotifications::instance().add("OfferTeleport", edit_args, payload, handle_lure_callback);
 }
 
 

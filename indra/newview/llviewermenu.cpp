@@ -7485,11 +7485,11 @@ class LLEmeraldToggleRadar: public view_listener_t
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
 	{
 		//open the radar panel
-		LLFloaterAvatarList::toggle(0);
+		FloaterAvatarList::toggle();
 		bool vis = false;
-		if(LLFloaterAvatarList::getInstance())
+		if(FloaterAvatarList::getInstance())
 		{
-			vis = (bool)LLFloaterAvatarList::getInstance()->getVisible();
+			vis = (bool)FloaterAvatarList::getInstance()->getVisible();
 		}
 		//gMenuHolder->findControl(userdata["control"].asString())->setValue(vis);
 		return true;

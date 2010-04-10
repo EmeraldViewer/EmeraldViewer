@@ -1541,6 +1541,10 @@ void LLPanelAvatar::resetGroupList()
 				row["columns"][0]["value"] = group_string;
 				row["columns"][0]["font"] = "SANSSERIF_SMALL";
 				row["columns"][0]["width"] = 0;
+				if (group_data.mListInProfile == FALSE)
+				{
+					row["columns"][0]["color"] = gColors.getColor("ScrollUnselectedColor").getValue();
+				}
 				group_list->addElement(row);
 			}
 			group_list->sortByColumnIndex(0, TRUE);
@@ -1985,6 +1989,11 @@ void LLPanelAvatar::processAvatarGroupsReply(LLMessageSystem *msg, void**)
 		LLPanelAvatar* self = *iter;
 		if (self->mAvatarID != avatar_id)
 		{
+			continue;
+		}
+		if(self->mAvatarID == avatar_id && avatar_id == gAgent.getID())
+		{
+			self->resetGroupList();
 			continue;
 		}
 		

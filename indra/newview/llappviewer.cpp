@@ -630,15 +630,15 @@ bool LLAppViewer::init()
 	
 	// Load art UUID information, don't require these strings to be declared in code.
 	std::string colors_base_filename = gDirUtilp->findSkinnedFilename("colors_base.xml");
-	LL_DEBUGS("InitInfo") << "Loading base colors from " << colors_base_filename << LL_ENDL;
+	LL_INFOS("InitInfo") << "Loading base colors from " << colors_base_filename << LL_ENDL;
 	gColors.loadFromFileLegacy(colors_base_filename, FALSE, TYPE_COL4U);
 
 	// Load overrides from user colors file
 	std::string user_colors_filename = gDirUtilp->findSkinnedFilename("colors.xml");
-	LL_DEBUGS("InitInfo") << "Loading user colors from " << user_colors_filename << LL_ENDL;
+	LL_INFOS("InitInfo") << "Loading user colors from " << user_colors_filename << LL_ENDL;
 	if (gColors.loadFromFileLegacy(user_colors_filename, FALSE, TYPE_COL4U) == 0)
 	{
-		LL_DEBUGS("InitInfo") << "Cannot load user colors from " << user_colors_filename << LL_ENDL;
+		LL_INFOS("InitInfo") << "Cannot load user colors from " << user_colors_filename << LL_ENDL;
 	}
 
 	// Widget construction depends on LLUI being initialized

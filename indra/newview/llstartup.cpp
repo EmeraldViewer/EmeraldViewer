@@ -729,7 +729,7 @@ void update_texture_fetch()
 void pass_process_sound_trigger(LLMessageSystem* msg,void**)
 {
 	process_sound_trigger(msg,0);
-	LLFloaterAvatarList::processSoundTrigger(msg,0);
+	FloaterAvatarList::processSoundTrigger(msg,0);
 	JCLSLBridge::processSoundTrigger(msg,0);
 }
 bool idle_startup()
@@ -2582,12 +2582,14 @@ bool idle_startup()
 
 		if (gSavedSettings.getBOOL("ShowAvatarList"))
 		{
-			LLFloaterAvatarList::showInstance();
+			//FloaterAvatarList::showInstance();
+			FloaterAvatarList::toggle();
 		}
 		else if (gSavedSettings.getBOOL("EmeraldAvatarListKeepOpen"))
 		{
-			LLFloaterAvatarList::showInstance();
-			LLFloaterAvatarList::toggle(NULL);
+			//FloaterAvatarList::showInstance();
+			FloaterAvatarList::toggle();
+			FloaterAvatarList::toggle();
 		}
 
 		if (gSavedSettings.getBOOL("BeaconAlwaysOn"))
@@ -3953,7 +3955,7 @@ void pass_processAvatarPropertiesReply(LLMessageSystem *msg, void**)
 {
 	// send it to 'observers'
 	LLPanelAvatar::processAvatarPropertiesReply(msg,0);
-	LLFloaterAvatarList::processAvatarPropertiesReply(msg,0);
+	FloaterAvatarList::processAvatarPropertiesReply(msg,0);
 }
 
 void pass_processObjectPropertiesFamily(LLMessageSystem *msg, void**)
@@ -4015,8 +4017,9 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 
 	msg->setHandlerFuncFast(_PREHASH_ImprovedInstantMessage,	process_improved_im);
 	msg->setHandlerFuncFast(_PREHASH_ScriptQuestion,			process_script_question);
-	msg->setHandlerFuncFast(_PREHASH_ObjectProperties,			LLSelectMgr::processObjectProperties, NULL);
-	msg->setHandlerFuncFast(_PREHASH_ObjectPropertiesFamily,	LLSelectMgr::processObjectPropertiesFamily, NULL);
+
+	msg->setHandlerFuncFast(_PREHASH_ObjectProperties,			pass_processObjectProperties, NULL);
+	msg->setHandlerFuncFast(_PREHASH_ObjectPropertiesFamily,	pass_processObjectPropertiesFamily, NULL);
 	msg->setHandlerFunc("ForceObjectSelect", LLSelectMgr::processForceObjectSelect);
 
 	msg->setHandlerFuncFast(_PREHASH_MoneyBalanceReply,		process_money_balance_reply,	NULL);
@@ -4051,7 +4054,7 @@ void register_viewer_callbacks(LLMessageSystem* msg)
 		LLViewerParcelMgr::processParcelDwellReply);
 
 	msg->setHandlerFunc("AvatarPropertiesReply",
-						LLPanelAvatar::processAvatarPropertiesReply);
+						pass_processAvatarPropertiesReply);
 	msg->setHandlerFunc("AvatarInterestsReply",
 						LLPanelAvatar::processAvatarInterestsReply);
 	msg->setHandlerFunc("AvatarGroupsReply",

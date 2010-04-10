@@ -624,7 +624,7 @@ private:
 	static LLSD sClientResolutionList;
 
 	static void resolveClient(LLColor4& avatar_name_color, std::string& client, LLVOAvatar* avatar);
-	friend class LLFloaterAvatarList;
+	friend class FloaterAvatarList;
 
 protected:
 	LLPointer<LLHUDEffectSpiral> mBeam;
