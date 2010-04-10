@@ -47,13 +47,13 @@
 #endif
 
 // Hack for loading FMOD dynamically while not making the library required to run the viewer
-//#if LL_WINDOWS || LL_LINUX
-#include "fmoddyn.h"
-#define FMOD_API(x) gFmod->x
-extern FMOD_INSTANCE* gFmod;
-//#else //LL_WINDOWS
-//#define FMOD_API(x) x
-//#endif //LL_WINDOWS || LL_LINUX
+#if LL_WINDOWS || LL_LINUX
+	#include "fmoddyn.h"
+	#define FMOD_API(x) gFmod->x
+	extern FMOD_INSTANCE* gFmod;
+#else
+	#define FMOD_API(x) x
+#endif
 
 #include "fmod.h"
 

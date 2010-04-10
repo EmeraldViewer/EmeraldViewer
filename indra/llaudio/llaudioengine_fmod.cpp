@@ -56,13 +56,13 @@
 #endif
 
 // Hack for loading FMOD dynamically while not making the library required to run the viewer
-//#if LL_WINDOWS || LL_LINUX
-#include "fmoddyn.h"
-#define FMOD_API(x) gFmod->x
-FMOD_INSTANCE* gFmod = NULL;
-//#else //LL_WINDOWS
-//#define FMOD_API(x) x
-//#endif //LL_WINDOWS || LL_LINUX
+#if LL_WINDOWS || LL_LINUX
+	#include "fmoddyn.h"
+	#define FMOD_API(x) gFmod->x
+	FMOD_INSTANCE* gFmod = NULL;
+#else
+	#define FMOD_API(x) x
+#endif
 
 #include "fmod.h"
 #include "fmod_errors.h"
@@ -96,16 +96,20 @@ bool LLAudioEngine_FMOD::init(const S32 num_channels, void* userdata)
 	gFmod = FMOD_CreateInstance("fmod.dll");
 #elif LL_LINUX
 	gFmod = FMOD_CreateInstance("libfmod-3.75.so");
-#elif LL_DARWIN
-	gFmod = FMOD_CreateInstance("libfmodwrapper.dylib");
 #endif
+/*
+#elif LL_DARWIN
+	LL_INFOS("AppInit") << "LLAudioEngine_FMOD::init(), info: Attempting FMOD dylib load" << LL_ENDL;
+	gFmod = FMOD_CreateInstance("@executable_path/../Resources/libfmodwrapper.dylib");
+#endif
+*/
 
-//#if LL_WINDOWS || LL_LINUX
+#if LL_WINDOWS || LL_LINUX
 	if(!gFmod) {
 		LL_WARNS("AppInit") << "LLAudioEngine_FMOD::init(), error: Cannot load FMOD" << LL_ENDL;
 		return false;
 	}
-//#endif //LL_WINDOWS || LL_LINUX
+#endif //LL_WINDOWS || LL_LINUX
 	mFadeIn = -10000;
 
 	LLAudioEngine::init(num_channels, userdata);
