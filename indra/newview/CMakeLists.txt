@@ -1343,7 +1343,6 @@ target_link_libraries(${VIEWER_BINARY_NAME}
 	${BOOST_THREAD_LIBRARY}
     ${DBUSGLIB_LIBRARIES}
     ${OPENGL_LIBRARIES}
-#    ${FMODWRAPPER_LIBRARY}
     ${OPENGL_LIBRARIES}
     ${JSONCPP_LIBRARIES}
     ${SDL_LIBRARY}
@@ -1353,6 +1352,12 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${XMLRPCEPI_LIBRARIES}
     ${ELFIO_LIBRARIES}
     )
+
+if (DARWIN)
+	target_link_libraries(${VIEWER_BINARY_NAME}
+		${FMODWRAPPER_LIBRARY}
+	)
+endif (DARWIN)
 
 if (LINUX)
   add_custom_command(
