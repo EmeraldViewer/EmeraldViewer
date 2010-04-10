@@ -155,6 +155,7 @@ private:
 
 		avatar_entry()
 		{
+			last_info_req = 0.0f;
 			last_in_sim = false;
 			last_in_draw = false;
 			last_in_chat = false;

@@ -468,10 +468,11 @@ BOOL FloaterAvatarList::tick()
 						{
 							F32 now = entry->lifetime.getElapsedTimeF32();
 							F32 diff = now - entry->last_info_req;
-							if(diff > entry->request_timeout || !entry->info_requested())
+							bool requested = entry->info_requested();
+							if(diff > entry->request_timeout || !requested)
 							{
 								
-								if(entry->info_requested() && entry->request_timeout < 256.0f)entry->request_timeout *= 2.0f;
+								if(requested && entry->request_timeout < 256.0f)entry->request_timeout *= 2.0f;
 
 								last_av_req.reset();
 
