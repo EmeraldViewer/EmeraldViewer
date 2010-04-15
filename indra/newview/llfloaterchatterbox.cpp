@@ -89,12 +89,26 @@ void* LLFloaterMyFriends::createGroupsPanel(void* data)
 //
 // LLFloaterChatterBox
 //
+
+/* Preliminary code for dynamic layout switch. commented out waiting for the floater rebuild part. [WoLf]
+BOOL LLFloaterChatterBox::postBuild()
+{
+	childSetAction("EmTabsLayout", onClickLayoutBtn, this);
+	return TRUE;
+}
+*/
+
 LLFloaterChatterBox::LLFloaterChatterBox(const LLSD& seed) :
 	mActiveVoiceFloater(NULL)
 {
 	mAutoResize = FALSE;
 
-	LLUICtrlFactory::getInstance()->buildFloater(this, "floater_chatterbox.xml", NULL, FALSE);
+std::string chatterbox_layout;
+	if(gSavedSettings.getBOOL("EmeraldVerticalIMTabs"))
+	{ chatterbox_layout = "floater_chatterbox_emerald.xml"; }
+	else chatterbox_layout = "floater_chatterbox.xml";
+
+	LLUICtrlFactory::getInstance()->buildFloater(this, chatterbox_layout, NULL, FALSE);
 	if (gSavedSettings.getBOOL("ContactsTornOff"))
 	{
 		LLFloaterMyFriends* floater_contacts = LLFloaterMyFriends::getInstance(0);
@@ -322,3 +336,9 @@ LLFloater* LLFloaterChatterBox::getCurrentVoiceFloater()
 	}
 	return NULL;
 }
+/* Preliminary code for dynamic layout switch. commented out waiting for the floater rebuild part. [WoLf]
+void LLFloaterChatterBox::onClickLayoutBtn(void* user_data)
+{
+	gSavedSettings.setBOOL("EmeraldVerticalIMTabs",!gSavedSettings.getBOOL("EmeraldVerticalIMTabs"));
+}
+*/

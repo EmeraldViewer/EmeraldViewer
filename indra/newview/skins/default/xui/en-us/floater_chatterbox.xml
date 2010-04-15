@@ -2,6 +2,9 @@
 <multi_floater can_close="true" can_drag_on_left="false" can_minimize="true" can_resize="true"
      height="390" name="floater_chatterbox"
      rect_control="ChatterboxRect" title="Communicate" width="392">
+<button-DISABLED bottom="372" right="20" width="18" height="15" follows="left|top" font="SansSerifSmall" label=""
+	name="EmTabsLayout" tool_tip="Click here to switch between horizontal and vertical tabs layout."
+     image_unselected="scrollbutton_right_out_blue.tga" image_selected="scrollbutton_right_in_blue.tga"/>
 <icon enabled="false" image_name="tabarea.tga"
 	     bg_alpha_color="blue" color="DefaultShadowLight" border="false"
 	     bottom="-388" follows="left|right|bottom" height="17" left="1" scale_image="true"
