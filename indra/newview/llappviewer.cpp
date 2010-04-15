@@ -192,6 +192,7 @@
 //----------------------------------------------------------------------------
 // viewer.cpp - these are only used in viewer, should be easily moved.
 
+#include "otr_wrapper.h"
 #if LL_DARWIN
 extern void init_apple_menu(const char* product);
 #endif // LL_DARWIN
@@ -2648,6 +2649,7 @@ void LLAppViewer::forceQuit()
 void LLAppViewer::requestQuit()
 {
 	llinfos << "requestQuit" << llendl;
+	OTR_Wrapper::logout();
 
 	LLViewerRegion* region = gAgent.getRegion();
 	
@@ -4115,5 +4117,6 @@ void LLAppViewer::handleLoginComplete()
 		gDebugInfo["MainloopTimeoutState"] = LLAppViewer::instance()->mMainloopTimeout->getState();
 	}
 	writeDebugInfo();
+	OTR_Wrapper::init();
 }
 

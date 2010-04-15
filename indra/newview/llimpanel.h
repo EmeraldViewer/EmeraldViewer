@@ -41,6 +41,12 @@
 #include "llvoiceclient.h"
 #include "llstyle.h"
 
+          // [$PLOTR$]
+#include "otr_wrapper.h"
+class OtrFloaterSmpDialog;
+class OtrFloaterSmpProgress;
+ // USE_OTR    // [/$PLOTR$]
+
 class LLLineEditor;
 class LLViewerTextEditor;
 class LLInventoryItem;
@@ -173,6 +179,22 @@ private:
 	BOOL		mReceivedCall;
 };
 
+       // [$PLOTR$]
+extern void otr_authenticate_key(LLUUID session_id, const char *trust);
+extern void otr_log_message_getstring_name(LLUUID session_id, const char *message_name);
+extern void otr_log_message_getstring(LLUUID session_id, const char *message_name);
+extern void otr_log_message(LLUUID session_id, const char *message);
+extern void otr_show_status(LLUUID session_id);
+extern void otr_deliver_message(const std::string& utf8_text,
+                                const LLUUID& im_session_id,
+                                const LLUUID& other_participant_id,
+                                EInstantMessage dialog);
+extern void deliver_message(const std::string& utf8_text,
+                            const LLUUID& im_session_id,
+                            const LLUUID& other_participant_id,
+                            EInstantMessage dialog);
+ // USE_OTR // [/$PLOTR$]
+
 class LLFloaterIMPanel : public LLFloater
 {
 public:
@@ -271,6 +293,7 @@ public:
 
 	static bool onConfirmForceCloseError(const LLSD& notification, const LLSD& response);
 
+	bool isEncrypted();
 private:
 	// called by constructors
 	void init(const std::string& session_label);
@@ -297,6 +320,41 @@ private:
 
 	void sendTypingState(BOOL typing);
 	
+// [$PLOTR$]
+public:
+    static void onClickOtr(LLUICtrl* source, void* userdata);
+    void doOtrMenu();
+    void showOtrStatus();
+    void otrLogMessage(std::string message);
+    void otrLogMessageGetstring(const char *message_name);
+    void otrLogMessageGetstringName(const char *message_name);
+    bool otherIsOtrAuthenticated();
+    void otrAuthenticateKey(const char *trust);
+    void doOtrStart();
+    void doOtrStop(bool pretend_they_did=false);
+    void pretendTheyOtrStop();
+    ConnContext *getOtrContext(int add_if_not = 0, int *context_added = NULL);
+    void startSmpProgress(LLUUID session_id, LLUUID other_id,
+                          std::string a_question, std::string a_secret_answer,
+                          bool is_reply = false);
+    void startSmpProgress(LLUUID session_id, LLUUID other_id,
+                          std::string a_secret,
+                          bool is_reply = false);
+    void endSmpProgress();
+    void endSmpDialog();
+    void handleOtrTlvs(OtrlTLV *tlvs);
+private:
+    void startSmpDialog(LLUUID session_id, LLUUID other_id,
+                        std::string my_fingerprint, std::string other_fingerprint);
+    void startSmpDialogQA(LLUUID session_id, LLUUID other_id,
+                          std::string question, OtrlTLV *tlv);
+    void startSmpDialogSS(LLUUID session_id, LLUUID other_id,
+                          OtrlTLV *tlv);
+    void doOtrAuth();
+    OtrlMessageState mOtrLastStatus;
+    OtrFloaterSmpDialog *mOtrSmpDialog;
+    OtrFloaterSmpProgress *mOtrSmpProgress;
+ // USE_OTR // [/$PLOTR$]
 private:
 	LLLineEditor* mInputEditor;
 	LLViewerTextEditor* mHistoryEditor;

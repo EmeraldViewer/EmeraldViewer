@@ -41,6 +41,14 @@ if (WINDOWS)
     include(CopyWinLibs)
 endif (WINDOWS)
 
+include(libgcrypt)
+include(libgpg-error)
+include(libotr)
+
+if (DARWIN OR LINUX)
+    include(libotrb)
+endif (DARWIN OR LINUX)
+
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
     ${ELFIO_INCLUDE_DIR}
@@ -61,6 +69,18 @@ include_directories(
     ${LLXML_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
+if (WINDOWS)
+    include_directories(
+        ../gpg.vs/inc.vs
+        ../gpg.vs/libgpg-error-1.1.vs/custom
+        ../gpg.vs/libgcrypt-1.2.2.vs/custom
+    )
+endif (WINDOWS)
+include_directories(
+    ../libgpg-error/libgpg-error-1.0/src
+    ../libgcrypt/libgcrypt-1.2.2/src
+    ../libotr/libotr-3.2.0/src
+	)
     )
 
 set(viewer_SOURCE_FILES
@@ -76,6 +96,9 @@ set(viewer_SOURCE_FILES
 	jclslpreproc.cpp
 	jc_lslviewerbridge.cpp
 	mfdkeywordfloater.cpp
+	otr_wrapper.cpp
+    otr_floater_smp_dialog.cpp
+    otr_floater_smp_progress.cpp
 	scriptcounter.cpp
     llagent.cpp
     llagentaccess.cpp
@@ -505,6 +528,9 @@ set(viewer_HEADER_FILES
 	jclslpreproc.h
 	jc_lslviewerbridge.h
 	mfdkeywordfloater.h
+	otr_wrapper.h
+    otr_floater_smp_dialog.h
+    otr_floater_smp_progress.h
 	scriptcounter.h
     llagent.h
     llagentaccess.h
@@ -1312,6 +1338,9 @@ if (WINDOWS)
 endif (WINDOWS)
 
 target_link_libraries(${VIEWER_BINARY_NAME}
+	${LIBGPG-ERROR_LIBRARIES}
+	${LIBGCRYPT_LIBRARIES}
+	${LIBOTR_LIBRARIES}
     ${LLAUDIO_LIBRARIES}
     ${LLCHARACTER_LIBRARIES}
     ${LLIMAGE_LIBRARIES}
@@ -1351,6 +1380,9 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${WINDOWS_LIBRARIES}
     ${XMLRPCEPI_LIBRARIES}
     ${ELFIO_LIBRARIES}
+	${GCRYPT_LIBRARY}
+	${GPG-ERROR_LIBRARY}
+	${OTR_LIBRARY}
     )
 
 if (DARWIN)
