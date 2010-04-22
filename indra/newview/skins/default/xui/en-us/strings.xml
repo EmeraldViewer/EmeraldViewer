@@ -1645,7 +1645,7 @@ Returns the value for header for request_id
     integer llSetPrimMediaParams(integer face, list params)
     Returns an integer that is a STATUS_* flag which details the success/failure of the operation(s).
   </string>
-  <string name="LSLTipText_lllGetPrimMediaParams">
+  <string name="LSLTipText_llGetPrimMediaParams">
     list llGetPrimMediaParams(integer face, list params)
     Returns a list of values in the order requested.
   </string>
