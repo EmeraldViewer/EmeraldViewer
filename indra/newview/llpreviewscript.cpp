@@ -174,7 +174,7 @@ public:
 private:
 
 	LLScriptEdCore* mEditorCore;
-
+	
 	static LLFloaterScriptSearch*	sInstance;
 };
 
@@ -328,13 +328,14 @@ LLScriptEdCore::LLScriptEdCore(
 	mEnableSave(FALSE),
 	mHasScriptData(FALSE),
 	mErrorListResizer(NULL),
-	LLEventTimer(60)
+	LLEventTimer(1)
 {
 	setFollowsAll();
 	setBorderVisible(FALSE);
 
 	BOOL preproc = gSavedSettings.getBOOL("EmeraldLSLPreprocessor");
-
+	
+	
 	
 	std::string xmlname = "floater_script_ed_panel.xml";
 	if(preproc)xmlname = "floater_script_ed_panel_adv.xml";
@@ -578,7 +579,16 @@ void LLScriptEdCore::updateResizer(void* userdata)
 
 BOOL LLScriptEdCore::tick()
 {
-	autoSave();
+	//autoSave();
+	if (gSavedSettings.getString("EmeraldLSLExternalEditor").length() < 3)
+	{
+		if (hasChanged(this))
+		{
+			autoSave();
+		}
+	} else {
+	XedUpd();
+	}
 	return FALSE;
 }
 
@@ -668,8 +678,13 @@ void LLScriptEdCore::setScriptText(const std::string& text, BOOL is_valid)
 			if(mPostEditor)mPostEditor->setText(ntext);
 			ntext = mLSLProc->decode(ntext);
 		}
+		LLStringUtil::replaceTabsWithSpaces(ntext, 4);   // fix tabs in text
 		mEditor->setText(ntext);
 		mHasScriptData = is_valid;
+		if (gSavedSettings.getString("EmeraldLSLExternalEditor").length() > 3)
+		{
+		this->xedLaunch();
+		}
 	}
 }
 
@@ -779,7 +794,83 @@ void LLScriptEdCore::updateDynamicHelp(BOOL immediate)
 		setHelpPage(LLStringUtil::null);
 	}
 }
+//dim
+void LLScriptEdCore::xedLaunch()
+{
+	//llinfos << "LLScriptEdCore::autoSave()" << llendl;
 
+	//std::string filepath = gDirUtilp->getExpandedFilename(gDirUtilp->getTempDir(),asset_id.asString());
+	if( mXfname.empty() ) {
+		std::string asfilename = gDirUtilp->getTempFilename();
+		asfilename.replace( asfilename.length()-4, 12, "_Xed.lsl" );
+		mXfname = asfilename;
+		//mAutosaveFilename = llformat("%s.lsl", asfilename.c_str());		
+	}
+	
+	FILE* fp = LLFile::fopen(mXfname.c_str(), "wb");
+	if(!fp)
+	{
+		llwarns << "Unable to write to " << mXfname << llendl;
+		
+		LLSD row;
+		row["columns"][0]["value"] = "Error writing to temp file. Is your hard drive full?";
+		row["columns"][0]["font"] = "SANSSERIF_SMALL";
+		mErrorList->addElement(row);
+		return;
+	}
+	
+	std::string utf8text = mEditor->getText();
+	fputs(utf8text.c_str(), fp);
+	fclose(fp);
+	fp = NULL;
+	llinfos << "XEditor: " << mXfname << llendl;
+	//record the stat
+	stat(mXfname.c_str(), &mXstbuf);
+	//launch
+	llinfos << std::string(gSavedSettings.getString("EmeraldLSLExternalEditor") + " " + mXfname).c_str() << llendl;		
+	 std::system(std::string(gSavedSettings.getString("EmeraldLSLExternalEditor") + " " + mXfname).c_str());
+}
+void LLScriptEdCore::XedUpd()
+{
+   struct stat stbuf;
+   stat(this->mXfname.c_str() , &stbuf);
+   if (this->mXstbuf.st_mtime != stbuf.st_mtime)
+   {
+	   this->mErrorList->addCommentText(std::string("Change Detected... Updating"));
+
+	this->mXstbuf = stbuf;  
+	  
+	  LLFILE* file = LLFile::fopen(this->mXfname, "rb");		/*Flawfinder: ignore*/
+ 	if(file)
+ 	{
+ 		// read in the whole file
+ 		fseek(file, 0L, SEEK_END);
+ 		long file_length = ftell(file);
+ 		fseek(file, 0L, SEEK_SET);
+ 		char* buffer = new char[file_length+1];
+ 		size_t nread = fread(buffer, 1, file_length, file);
+ 		if (nread < (size_t) file_length)
+ 		{
+ 			llwarns << "Short read" << llendl;
+ 		}
+ 		buffer[nread] = '\0';
+ 		fclose(file);
+		std::string ttext = LLStringExplicit(buffer);
+		LLStringUtil::replaceTabsWithSpaces(ttext, 4);
+		mEditor->setText(ttext);
+		LLScriptEdCore::doSave( this, FALSE );
+ 		//mEditor->makePristine();
+ 		delete[] buffer;
+ 	}
+ 	else
+ 	{
+ 		llwarns << "Error opening " << this->mXfname << llendl;
+ 	}
+
+
+   }					 
+}
+//end dim
 void LLScriptEdCore::autoSave()
 {
 	//llinfos << "LLScriptEdCore::autoSave()" << llendl;
@@ -907,6 +998,11 @@ bool LLScriptEdCore::handleSaveChangesDialog(const LLSD& notification, const LLS
 		{
 			llinfos << "remove autosave: " << mAutosaveFilename << llendl;
 			LLFile::remove(mAutosaveFilename.c_str());
+		}
+		if( !mXfname.empty()) 
+		{
+			llinfos << "remove autosave: " << mXfname << llendl;
+			LLFile::remove(mXfname.c_str());
 		}
 		mForceClose = TRUE;
 		// This will close immediately because mForceClose is true, so we won't
@@ -1530,6 +1626,10 @@ void LLPreviewLSL::closeIfNeeded()
 		if( !mScriptEd->mAutosaveFilename.empty()) {
 			llinfos << "remove autosave: " << mScriptEd->mAutosaveFilename << llendl;
 			LLFile::remove(mScriptEd->mAutosaveFilename.c_str());
+		}
+		if( !mScriptEd->mXfname.empty()) {
+			llinfos << "remove autosave: " << mScriptEd->mXfname << llendl;
+			LLFile::remove(mScriptEd->mXfname.c_str());
 		}
 		close();
 	}
@@ -2694,6 +2794,10 @@ void LLLiveLSLEditor::closeIfNeeded()
 		if( !mScriptEd->mAutosaveFilename.empty()) {
 			llinfos << "remove autosave: " << mScriptEd->mAutosaveFilename << llendl;
 			LLFile::remove(mScriptEd->mAutosaveFilename.c_str());
+		}
+		if( !mScriptEd->mXfname.empty()) {
+			llinfos << "remove autosave: " << mScriptEd->mXfname << llendl;
+			LLFile::remove(mScriptEd->mXfname.c_str());
 		}
 		close();
 	}

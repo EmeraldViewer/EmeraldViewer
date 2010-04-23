@@ -130,6 +130,9 @@ public:
 	void selectFirstError();
 	
 	void autoSave();
+	//dim external ed
+	void XedUpd();
+	void xedLaunch();
 
 	virtual BOOL handleKeyHere(KEY key, MASK mask);
 	
@@ -149,6 +152,8 @@ protected:
 private:
 	std::string		mSampleText;
 	std::string		mAutosaveFilename;
+	std::string     mXfname;
+	struct stat     mXstbuf;
 	std::string		mHelpURL;
 	LLTextEditor*	mEditor;
 	LLTextEditor*	mPostEditor;
@@ -172,6 +177,7 @@ private:
 	BOOL			mEnableSave;
 	BOOL			mHasScriptData;
 	JCLSLPreprocessor* mLSLProc;
+	
 };
 
 

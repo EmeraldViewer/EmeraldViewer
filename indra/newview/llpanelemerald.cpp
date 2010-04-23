@@ -62,6 +62,7 @@
 
 #include "lldirpicker.h"
 
+
 #include "llweb.h" // [$PLOTR$/]
 //#include "lggbeamcolormapfloater.h"
 #include "llsliderctrl.h"
@@ -351,6 +352,11 @@ BOOL LLPanelEmerald::postBuild()
 
 	childSetAction("set_includeHDD", onClickSetHDDInclude, this);
 	childSetCommitCallback("include_location", onCommitApplyControl);
+
+	//EmeraldLSLExternalEditor
+	childSetAction("set_xed", onClickSetXed, this);
+	childSetCommitCallback("xed_location", onCommitApplyControl);
+	childSetValue("xed_location", gSavedSettings.getString("EmeraldLSLExternalEditor"));
 
 	getChild<LLCheckBoxCtrl>("telerequest_toggle")->setCommitCallback(onConditionalPreferencesChanged);
 	getChild<LLCheckBoxCtrl>("mldct_toggle")->setCommitCallback(onConditionalPreferencesChanged);
@@ -788,6 +794,29 @@ void LLPanelEmerald::onClickSetHDDInclude(void* user_data)
 	{
 		self->childSetText("include_location", dir_name);
 		gSavedSettings.setString("EmeraldHDDIncludeLocation", dir_name);
+	}
+}
+void LLPanelEmerald::onClickSetXed(void* user_data)
+{
+	LLPanelEmerald* self = (LLPanelEmerald*)user_data;
+
+	std::string cur_name(gSavedSettings.getString("EmeraldLSLExternalEditor"));
+	std::string proposed_name(cur_name);
+	
+	LLFilePicker& picker = LLFilePicker::instance();
+	if (! picker.getOpenFile() )
+	{
+		return; //Canceled!
+	}
+	std::string file_name = picker.getFirstFile();
+	if (!file_name.empty() && file_name != cur_name)
+	{
+		self->childSetText("xed_location", file_name);
+		gSavedSettings.setString("EmeraldLSLExternalEditor", file_name);
+		
+	} else {
+		//self->childSetText("xed_location", " ");
+	  gSavedSettings.setString("EmeraldLSLExternalEditor", " ");
 	}
 }
 
