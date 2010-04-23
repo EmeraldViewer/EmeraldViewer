@@ -828,7 +828,13 @@ void LLScriptEdCore::xedLaunch()
 	stat(mXfname.c_str(), &mXstbuf);
 	//launch
 	llinfos << std::string(gSavedSettings.getString("EmeraldLSLExternalEditor") + " " + mXfname).c_str() << llendl;		
-	 std::system(std::string(gSavedSettings.getString("EmeraldLSLExternalEditor") + " " + mXfname).c_str());
+	#if LL_WINDOWS
+	//just to get rid of the pesky black window
+	std::system(std::string("cmd.exe /c START " + gSavedSettings.getString("EmeraldLSLExternalEditor") + " " + mXfname + " & exit").c_str());
+
+	#else
+	std::system(std::string(gSavedSettings.getString("EmeraldLSLExternalEditor") + " " + mXfname).c_str());
+	#endif
 }
 void LLScriptEdCore::XedUpd()
 {
