@@ -1336,6 +1336,12 @@
 		<layer name="base" global_color="hair_color" write_all_channels="true">
 			<texture local_texture="hair_grain" />
 		</layer>
+		<layer name="hair texture alpha layer" visibility_mask="TRUE">
+			<texture local_texture="hair_grain" />
+		</layer>
+		<layer name="hair alpha" visibility_mask="TRUE">
+			<texture local_texture="hair_alpha" />
+		</layer>
 	</layer_set>
 	<!-- =========================================================== -->
 	<layer_set body_region="head" width="512" height="512" clear_alpha="false" alpha_tga_file="head_alpha.tga">
@@ -1637,6 +1643,15 @@
 		<layer name="head_bodypaint">
 			<texture local_texture="head_bodypaint" />
 		</layer>
+		<layer name="eyelash alpha" visibility_mask="TRUE">
+			<texture tga_file="head_alpha.tga" file_is_mask="TRUE" />
+		</layer>
+		<layer name="head alpha" visibility_mask="TRUE">
+			<texture local_texture="head_alpha" />
+		</layer>
+		<layer name="head_tattoo">
+			<texture local_texture="head_tattoo" />
+		</layer>
 	</layer_set>
 	<!-- =========================================================== -->
 	<layer_set body_region="upper_body" width="512" height="512">
@@ -1678,6 +1693,9 @@
 			<param id="776" group="1" name="freckles upper" wearable="skin" value_min="0" value_max="1">
 				<param_alpha tga_file="upperbodyfreckles_alpha.tga" skip_if_zero="true" domain="0.6" />
 			</param>
+		</layer>
+		<layer name="upper_tattoo">
+			<texture local_texture="upper_tattoo" />
 		</layer>
 		<layer name="upper_undershirt bump" render_pass="bump" fixed_color="128,128,128,255">
 			<texture local_texture="upper_undershirt" local_texture_alpha_only="true" />
@@ -1953,6 +1971,9 @@
 				<param_alpha multiply_blend="true" tga_file="jacket_open_upper_alpha.tga" domain="0.01" />
 			</param>
 		</layer>
+		<layer name="upper alpha" visibility_mask="TRUE">
+			<texture local_texture="upper_alpha" />
+		</layer>
 	</layer_set>
 	<!-- =========================================================== -->
 	<layer_set body_region="lower_body" width="512" height="512">
@@ -1994,6 +2015,9 @@
 			<param id="777" group="1" name="freckles lower" wearable="skin" value_min="0" value_max="1">
 				<param_alpha tga_file="bodyfreckles_alpha.tga" skip_if_zero="true" domain="0.6" />
 			</param>
+		</layer>
+		<layer name="lower_tattoo">
+			<texture local_texture="lower_tattoo" />
 		</layer>
 		<layer name="lower_underpants bump" render_pass="bump" fixed_color="128,128,128,255">
 			<texture local_texture="lower_underpants" local_texture_alpha_only="true" />
@@ -2214,6 +2238,9 @@
 				<param_alpha multiply_blend="true" tga_file="jacket_open_lower_alpha.tga" domain="0.01" />
 			</param>
 		</layer>
+		<layer name="lower alpha" visibility_mask="TRUE">
+			<texture local_texture="lower_alpha" />
+		</layer>
 	</layer_set>
 	<!-- =========================================================== -->
 	<layer_set body_region="eyes" width="128" height="128">
@@ -2222,6 +2249,9 @@
 		</layer>
 		<layer name="iris" global_color="eye_color">
 			<texture local_texture="eyes_iris" />
+		</layer>
+		<layer name="eyes alpha" visibility_mask="TRUE">
+			<texture local_texture="eyes_alpha" />
 		</layer>
 	</layer_set>
 	<!-- =========================================================== -->
