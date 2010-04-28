@@ -81,6 +81,7 @@
 #include "otr_wrapper.h"
 #include "otr_floater_smp_dialog.h"
 #include "otr_floater_smp_progress.h"
+#include "emerald.h"
 // USE_OTR // [/$PLOTR$]
 
 //
@@ -2979,7 +2980,8 @@ void LLFloaterIMPanel::sendMsg()
 								mOtherParticipantUUID,
 								mDialog);
 // [$PLOTR$]
-            }
+            		}
+				}
 // USE_OTR // [/$PLOTR$]
 				// local echo
 				if((mDialog == IM_NOTHING_SPECIAL) && 
@@ -2992,25 +2994,44 @@ void LLFloaterIMPanel::sendMsg()
 					std::string prefix = utf8_text.substr(0, 4);
 					if (prefix == "/me " || prefix == "/me'")
 					{
-						utf8_text.replace(0,3,"");
+	                    if(isEncrypted())
+	                    {
+	                        utf8_text.replace(0,3,"\xe2\x80\xa7");
+	                    }
+	                    else
+	                    {
+							utf8_text.replace(0,3,"");
+						}
 					}
 					else
 					{
-						history_echo += ": ";
-					}
+						if(isEncrypted())
+	                    {
+		                    history_echo += "\xe2\x80\xa7: ";
+	                    }
+						else
+                    	{
+							history_echo += ": ";
+						}
+                	}
 					history_echo += utf8_text;
 
 					BOOL other_was_typing = mOtherTyping;
-
-					addHistoryLine(history_echo, gSavedSettings.getColor("IMChatColor"), true, gAgent.getID());
-
+	                if(isEncrypted())
+	                {
+	                    addHistoryLine(history_echo, gSavedSettings.getColor("EmeraldIMEncryptedChatColor"), true, gAgent.getID());
+	                }
+	                else
+	                {
+						addHistoryLine(history_echo, gSavedSettings.getColor("IMChatColor"), true, gAgent.getID());
+	                }
+	
 					if (other_was_typing) 
 					{
 						addTypingIndicator(mOtherTypingName);
 					}
 
 				}
-			}
 			else
 			{
 				//queue up the message to send once the session is
