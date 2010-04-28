@@ -1722,6 +1722,10 @@ F32 LLAgent::getCameraZoomFraction()
 		// already [0,1]
 		return mHUDTargetZoom;
 	}
+	else if (gSavedSettings.getBOOL("EmeraldDisableMinZoomDist"))
+	{
+		return mCameraZoomFraction;
+	}
 	else if (mFocusOnAvatar && cameraThirdPerson())
 	{
 		return clamp_rescale(mCameraZoomFraction, MIN_ZOOM_FRACTION, MAX_ZOOM_FRACTION, 1.f, 0.f);

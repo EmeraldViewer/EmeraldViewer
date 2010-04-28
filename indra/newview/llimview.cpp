@@ -594,6 +594,33 @@ void LLIMMgr::addMessage(
 	// create IM window as necessary
 	if(!floater)
 	{
+		BOOL all_groups_muted = gSavedSettings.getBOOL("EmeraldMuteAllGroups");
+		if (gSavedSettings.getBOOL("EmeraldMuteGroupWhenNoticesDisabled")
+			|| all_groups_muted)
+		{
+			LLGroupData *group_data = NULL;
+
+			// Search for this group in the agent's groups list
+			LLDynamicArray<LLGroupData>::iterator i;
+
+			for (i = gAgent.mGroups.begin(); i != gAgent.mGroups.end(); i++)
+			{
+				if (i->mID == session_id)
+				{
+					group_data = &*i;
+					break;
+				}
+			}
+
+			// If the group is in our list and set up to not accept notices, and the Emerald
+			// option to mute such is enabled, return.
+
+			if (group_data && (!group_data->mAcceptNotices || all_groups_muted))
+			{
+				return;
+			}
+		}
+
 		std::string name = from;
 		if(!session_name.empty() && session_name.size()>1)
 		{
