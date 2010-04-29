@@ -18,9 +18,9 @@ tag: vaa emerald local_asset_browser
 /*  Global structs / enums / defines     */
 /*=======================================*/ 
 
-#define LLF_FLOATER_EXPAND_WIDTH 735
-#define LLF_FLOATER_CONTRACT_WIDTH 415
-#define LLF_FLOATER_HEIGHT 260
+#define LF_FLOATER_EXPAND_WIDTH 735
+#define LF_FLOATER_CONTRACT_WIDTH 415
+#define LF_FLOATER_HEIGHT 260
 
 #define LOCAL_USE_MIPMAPS true
 #define LOCAL_DISCARD_LEVEL 0
@@ -36,6 +36,15 @@ enum bitmaplist_cols
 	BITMAPLIST_COL_ID
 };
 
+/* upload & sculpt update related */
+struct affected_object
+{
+	LLViewerObject* object;
+	std::vector<LLFace*> face_list;
+	bool local_sculptmap;
+
+};
+
 /* texture picker defines */
 
 #define LOCAL_TEXTURE_PICKER_NAME "texture picker"
@@ -43,15 +52,13 @@ enum bitmaplist_cols
 #define LOCAL_TEXTURE_PICKER_RECURSE true
 #define LOCAL_TEXTURE_PICKER_CREATEIFMISSING true
 
+
 /*=======================================*/
 /*  LocalBitmap: unit class              */
 /*=======================================*/ 
 /*
-	Product of a complete rewrite of this
-	system.
-	
-	The idea is to have each unit manage
-	itself as much as possible.
+	The basic unit class responsible for
+	containing one loaded local texture.
 */
 
 class LocalBitmap
@@ -96,13 +103,17 @@ class LocalBitmap
 		void        setType( S32 );
 		bool        getIfValidBool(void);
 		S32		    getType(void);
-		void        getDebugInfo(void);
+		void		getDebugInfo(void);
 
 	private: /* [maintenence functions] */
 		void updateSelf(void);
 		bool decodeSelf(LLImageRaw* rawimg);
 		void setUpdateBool(void);
-		LocalBitmap* getThis(void);
+
+		LocalBitmap*				 getThis(void);
+		std::vector<LLFace*>		 getFaceUsesThis(LLDrawable*);
+		std::vector<affected_object> getUsingObjects(bool seek_by_type = true,
+												     bool seek_textures = false, bool seek_sculptmaps = false);
 
 	protected: /* [basic properties] */
 		std::string    shortname;
@@ -139,8 +150,8 @@ class LocalAssetBrowser
 		static void UpdateTextureCtrlList(LLScrollListCtrl*);
 		static void setLayerUpdated(bool toggle) { mLayerUpdated = toggle; }
 		static void setSculptUpdated(bool toggle) { mSculptUpdated = toggle; }
-		static bool AddBitmap(std::string);
-		static bool DelBitmap(LLUUID);
+		static void AddBitmap(void);
+		static void DelBitmap( std::vector<LLScrollListItem*>, S32 column = BITMAPLIST_COL_ID );
 
 		/* UpdateTextureCtrlList was made public cause texturectrl requests it once on spawn 
 		   ( added: when it's own add/remove funcs are used. )
@@ -158,8 +169,8 @@ class LocalAssetBrowser
 		static void PerformSculptUpdates(LocalBitmap*);
 
 	protected:
-		static  std::vector<LocalBitmap> loaded_bitmaps;
-		typedef std::vector<LocalBitmap>::iterator local_list_iter;
+		static  std::vector<LocalBitmap*> loaded_bitmaps;
+		typedef std::vector<LocalBitmap*>::iterator local_list_iter;
 		static  bool    mLayerUpdated;
 		static  bool    mSculptUpdated; 
 };
@@ -227,7 +238,7 @@ private:
 	LLTextBox* mCaptionTimeTxt;
 
 	/* static pointer to self, wai? oh well. */
-    static FloaterLocalAssetBrowser* sInstance;
+    static FloaterLocalAssetBrowser* sLFInstance;
 
 	// non-widget functions
 	static void FloaterResize(bool expand);

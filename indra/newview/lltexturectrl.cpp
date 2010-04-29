@@ -821,29 +821,13 @@ void LLFloaterTexturePicker::switchModes(bool localmode, void *userdata)
 
 void LLFloaterTexturePicker::onBtnAdd(void *userdata)
 {
-	LLFilePicker& picker = LLFilePicker::instance();
-	if ( !picker.getOpenFile(LLFilePicker::FFLOAD_IMAGE) ) 
-	   { return; }
-
-	std::string filename = picker.getFirstFile();
-
-	if ( !filename.empty() )
-	{ 
-		if ( LocalAssetBrowser::AddBitmap(filename) )
-		{ FloaterLocalAssetBrowser::UpdateBitmapScrollList(); }
-	}
+	LocalAssetBrowser::AddBitmap();	
 }
 
 void LLFloaterTexturePicker::onBtnRemove(void *userdata)
 {
 	LLFloaterTexturePicker* self = (LLFloaterTexturePicker*) userdata;
-	std::string temp_id = self->mLocalScrollCtrl->getSelectedItemLabel(LOCALLIST_COL_ID);
-
-	if ( !temp_id.empty() )
-	{
-		if ( LocalAssetBrowser::DelBitmap( (LLUUID)temp_id ) )
-		{ FloaterLocalAssetBrowser::UpdateBitmapScrollList(); }
-	}
+	LocalAssetBrowser::DelBitmap( self->mLocalScrollCtrl->getAllSelected(), LOCALLIST_COL_ID );
 }
 
 void LLFloaterTexturePicker::onBtnBrowser(void *userdata)

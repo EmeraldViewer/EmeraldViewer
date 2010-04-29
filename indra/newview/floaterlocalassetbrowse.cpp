@@ -17,8 +17,9 @@ this feature is still a work in progress.
 #endif
 #include <boost/filesystem.hpp>
 
-/* own class header */
+/* own class header && upload floater header */
 #include "floaterlocalassetbrowse.h"
+//#include "floaterlocaluploader.h" <- in development.
 
 /* image compression headers. */
 #include "llimagebmp.h"
@@ -29,8 +30,8 @@ this feature is still a work in progress.
 /* misc headers */
 #include <time.h>
 #include <ctime>
-#include "llviewerimagelist.h"  // gImageList
-#include "llviewerobjectlist.h" // gObjectList
+#include "llviewerimagelist.h"
+#include "llviewerobjectlist.h"
 #include "llfilepicker.h"
 #include "llviewermenufile.h"
 #include "llfloaterimagepreview.h"
@@ -45,6 +46,7 @@ this feature is still a work in progress.
 
 /* sculpt refresh */
 #include "llvovolume.h"
+#include "llface.h"
 
 
 /*=======================================*/
@@ -53,7 +55,7 @@ this feature is still a work in progress.
 /*=======================================*/ 
 LocalAssetBrowser* gLocalBrowser;
 LocalAssetBrowserTimer* gLocalBrowserTimer;
-std::vector<LocalBitmap> LocalAssetBrowser::loaded_bitmaps;
+std::vector<LocalBitmap*> LocalAssetBrowser::loaded_bitmaps;
 bool    LocalAssetBrowser::mLayerUpdated;
 bool    LocalAssetBrowser::mSculptUpdated;
 
@@ -61,11 +63,8 @@ bool    LocalAssetBrowser::mSculptUpdated;
 /*  LocalBitmap: unit class              */
 /*=======================================*/ 
 /*
-	Product of a complete rewrite of this
-	system.
-	
-	The idea is to have each unit manage
-	itself as much as possible.
+	The basic unit class responsible for
+	containing one loaded local texture.
 */
 
 LocalBitmap::LocalBitmap(std::string fullpath)
@@ -89,7 +88,7 @@ LocalBitmap::LocalBitmap(std::string fullpath)
 
 		if (temp_exten == "bmp") { this->extension = IMG_EXTEN_BMP; }
 		else if (temp_exten == "tga") { this->extension = IMG_EXTEN_TGA; }
-		else if (temp_exten == "jpg") { this->extension = IMG_EXTEN_JPG; }
+		else if (temp_exten == "jpg" || temp_exten == "jpeg") { this->extension = IMG_EXTEN_JPG; }
 		else if (temp_exten == "png") { this->extension = IMG_EXTEN_PNG; }
 		else { return; } // no valid extension.
 		
@@ -120,7 +119,6 @@ LocalBitmap::LocalBitmap(std::string fullpath)
 
 LocalBitmap::~LocalBitmap()
 {
-
 }
 
 /* [maintenence functions] */
@@ -152,6 +150,7 @@ void LocalBitmap::updateSelf()
 		/* finalizing by updating lastmod to current */
 		this->last_modified = new_last_modified;
 
+		/* setting unit property to reflect that it has been changed */
 		switch (this->bitmap_type)
 		{
 			case TYPE_TEXTURE:
@@ -322,20 +321,81 @@ S32 LocalBitmap::getType()
 	return this->bitmap_type;
 }
 
+std::vector<LLFace*> LocalBitmap::getFaceUsesThis(LLDrawable* drawable)
+{
+	std::vector<LLFace*> matching_faces;
+
+	for ( S32 face_iter = 0; face_iter <= drawable->getNumFaces(); face_iter++ )
+	{
+		LLFace* newface = drawable->getFace(face_iter);
+
+		if ( this->id == newface->getTexture()->getID() )
+		{ matching_faces.push_back(newface); }
+	}
+
+	return matching_faces;
+}
+
+std::vector<affected_object> LocalBitmap::getUsingObjects(bool seek_by_type, bool seek_textures, bool seek_sculptmaps)
+{
+	std::vector<affected_object> affected_vector;
+	
+	for( LLDynamicArrayPtr< LLPointer<LLViewerObject>, 256 >::iterator  iter = gObjectList.mObjects.begin();
+		 iter != gObjectList.mObjects.end(); iter++ )
+	{
+		LLViewerObject* obj = *iter;
+		affected_object shell;
+		shell.object = obj;
+		shell.local_sculptmap = false;
+		bool obj_relevant = false;
+
+		if ( obj && obj->mDrawable )
+		{
+			/* looking for textures */
+			if ( seek_textures || ( seek_by_type && this->bitmap_type == TYPE_TEXTURE ) )
+			{
+				std::vector<LLFace*> affected_faces = this->getFaceUsesThis( obj->mDrawable );
+				if ( !affected_faces.empty() )
+				{
+					shell.face_list = affected_faces;
+					obj_relevant = true;
+				}
+			}
+
+			/* looking for sculptmaps */
+			if ( ( seek_sculptmaps || ( seek_by_type && this->bitmap_type == TYPE_SCULPT ) )
+				   && obj->isSculpted() && obj->getVolume() 
+				   && this->id == obj->getVolume()->getParams().getSculptID() 
+			   )	
+			{ 
+				shell.local_sculptmap = true;
+				obj_relevant = true;
+			}
+		}
+
+		if (obj_relevant)
+		{ affected_vector.push_back(shell); }
+	}
+
+
+
+	return affected_vector;
+}
+
 void LocalBitmap::getDebugInfo()
 {
 	/* debug function: dumps everything human readable into llinfos */
-	llinfos << "===[local bitmap debug]==="               << llendl;
-	llinfos << "path: "          << this->filename        << llendl;
-	llinfos << "name: "          << this->shortname       << llendl;
-	llinfos << "extension: "     << this->extension       << llendl;
-	llinfos << "uuid: "          << this->id              << llendl;
-	llinfos << "last modified: " << this->last_modified   << llendl;
-	llinfos << "link status: "   << this->getLinkStatus() << llendl;
-	llinfos << "keep updated: "  << this->keep_updating   << llendl;
-	llinfos << "type: "          << this->bitmap_type     << llendl;
-	llinfos << "is valid: "      << this->valid           << llendl;
-	llinfos << "=========================="               << llendl;
+	llinfos << "===[local bitmap debug]==="               << "\n"
+			<< "path: "          << this->filename        << "\n"
+			<< "name: "          << this->shortname       << "\n"
+			<< "extension: "     << this->extension       << "\n"
+			<< "uuid: "          << this->id              << "\n"
+			<< "last modified: " << this->last_modified   << "\n"
+			<< "link status: "   << this->getLinkStatus() << "\n"
+			<< "keep updated: "  << this->keep_updating   << "\n"
+			<< "type: "          << this->bitmap_type     << "\n"
+			<< "is valid: "      << this->valid           << "\n"
+			<< "=========================="               << llendl;
 	
 }
 
@@ -359,36 +419,66 @@ LocalAssetBrowser::~LocalAssetBrowser()
 
 }
 
-bool LocalAssetBrowser::AddBitmap(std::string filename)
+void LocalAssetBrowser::AddBitmap()
 {
+	LLFilePicker& picker = LLFilePicker::instance();
+	if ( !picker.getMultipleOpenFiles(LLFilePicker::FFLOAD_IMAGE) ) 
+	   { return; }
 
-	LocalBitmap* unit = new LocalBitmap( filename );
-
-	if	( unit->getIfValidBool() )
+	bool change_happened = false;
+	std::string filename = picker.getFirstFile();	
+	while( !filename.empty() )
 	{
-		loaded_bitmaps.push_back( *unit );
-		onChangeHappened();
-		return true;
+		LocalBitmap* unit = new LocalBitmap( filename );
+
+		if	( unit->getIfValidBool() )
+		{ 
+			loaded_bitmaps.push_back( unit ); 
+			change_happened = true;
+		}
+	
+		filename = picker.getNextFile();
 	}
 
-	return false;
+	if ( change_happened )
+	{ onChangeHappened(); }
 }
 
-bool LocalAssetBrowser::DelBitmap(LLUUID id)
+void LocalAssetBrowser::DelBitmap( std::vector<LLScrollListItem*> delete_vector, S32 column )
 {
-	local_list_iter iter = loaded_bitmaps.begin();
-	for (; iter != loaded_bitmaps.end(); iter++)
+	bool change_happened = false;
+	for( std::vector<LLScrollListItem*>::iterator list_iter = delete_vector.begin();
+		 list_iter != delete_vector.end(); list_iter++ )
 	{
-		if ( iter->getID() == id )
+		LLScrollListItem* list_item = *list_iter; 
+		if ( list_item )
 		{
-			gImageList.deleteImage( gImageList.hasImage(id) );
-			loaded_bitmaps.erase(iter);
-			onChangeHappened();
-			return true;
+			LLUUID id = list_item->getColumn(column)->getValue().asUUID();
+			for (local_list_iter iter = loaded_bitmaps.begin();
+				 iter != loaded_bitmaps.end();)
+			{
+				LocalBitmap* unit = (*iter)->getThis();
+
+				if ( unit->getID() == id )
+				{	
+					LLViewerImage* image = gImageList.hasImage(id);
+					gImageList.deleteImage( image );
+					image->unref();
+
+					iter = loaded_bitmaps.erase(iter);
+					delete unit;
+					unit = NULL;
+
+					change_happened = true;
+				}
+				else
+				{ iter++; }
+			}
 		}
 	}
 
-	return false;
+	if ( change_happened )
+	{ onChangeHappened(); }
 }
 
 void LocalAssetBrowser::onUpdateBool(LLUUID id)
@@ -413,9 +503,9 @@ LocalBitmap* LocalAssetBrowser::GetBitmapUnit(LLUUID id)
 	local_list_iter iter = loaded_bitmaps.begin();
 	for (; iter != loaded_bitmaps.end(); iter++)
 	{ 
-		if ( iter->getID() == id ) 
+		if ( (*iter)->getID() == id ) 
 		{
-			return iter->getThis();
+			return (*iter)->getThis();
 		} 
 	}
 	
@@ -427,7 +517,7 @@ bool LocalAssetBrowser::IsDoingUpdates()
 	local_list_iter iter = loaded_bitmaps.begin();
 	for (; iter != loaded_bitmaps.end(); iter++)
 	{ 
-		if ( iter->getUpdateBool() ) 
+		if ( (*iter)->getUpdateBool() ) 
 		{ return true; } /* if at least one unit in the list needs updates - we need a timer. */
 	}
 
@@ -440,6 +530,8 @@ bool LocalAssetBrowser::IsDoingUpdates()
    it also processes timer start/stops as needed */
 void LocalAssetBrowser::onChangeHappened()
 {
+	/* own floater update */
+	FloaterLocalAssetBrowser::UpdateBitmapScrollList();
 
 	/* texturepicker related */
 	const LLView::child_list_t* child_list = gFloaterView->getChildList();
@@ -499,11 +591,11 @@ void LocalAssetBrowser::UpdateTextureCtrlList(LLScrollListCtrl* ctrl)
 				LLSD element;
 				element["columns"][0]["column"] = "unit_name";
 				element["columns"][0]["type"] = "text";
-				element["columns"][0]["value"] = iter->shortname;
+				element["columns"][0]["value"] = (*iter)->shortname;
 
 				element["columns"][1]["column"] = "unit_id_HIDDEN";
 				element["columns"][1]["type"] = "text";
-				element["columns"][1]["value"] = iter->id;
+				element["columns"][1]["value"] = (*iter)->id;
 
 				ctrl->addElement(element);
 			}
@@ -516,7 +608,7 @@ void LocalAssetBrowser::PerformTimedActions(void)
 	// perform checking if updates are needed && update if so.
 	local_list_iter iter;
 	for (iter = loaded_bitmaps.begin(); iter != loaded_bitmaps.end(); iter++)
-	{ iter->updateSelf(); }
+	{ (*iter)->updateSelf(); }
 
 	// one or more sculpts have been updated, refreshing them.
 	if ( mSculptUpdated )
@@ -524,10 +616,10 @@ void LocalAssetBrowser::PerformTimedActions(void)
 		LocalAssetBrowser::local_list_iter iter;
 		for(iter = loaded_bitmaps.begin(); iter != loaded_bitmaps.end(); iter++)
 		{
-			if ( iter->sculpt_dirty )
+			if ( (*iter)->sculpt_dirty )
 			{
-				PerformSculptUpdates( iter->getThis() );
-				iter->sculpt_dirty = false;
+				PerformSculptUpdates( (*iter)->getThis() );
+				(*iter)->sculpt_dirty = false;
 			}
 		}
 		mSculptUpdated = false;
@@ -546,32 +638,34 @@ void LocalAssetBrowser::PerformTimedActions(void)
 void LocalAssetBrowser::PerformSculptUpdates(LocalBitmap* unit)
 {
 
-	for( LLDynamicArrayPtr< LLPointer<LLViewerObject>, 256 >::iterator  iter = gObjectList.mObjects.begin();
-		 iter != gObjectList.mObjects.end(); iter++ )
+	/* looking for sculptmap using objects only */
+	std::vector<affected_object> object_list = unit->getUsingObjects(false, false, true);
+	if (object_list.empty()) { return; }
+
+	for( std::vector<affected_object>::iterator iter = object_list.begin();
+		 iter != object_list.end(); iter++ )
 	{
-		LLViewerObject* obj = *iter;
-		
-		if ( obj && obj->mDrawable && obj->isSculpted() && obj->getVolume() )
+		affected_object aobj = *iter;
+		if ( aobj.object )
 		{
-			if ( unit->getID() == obj->getVolume()->getParams().getSculptID() )
+			if ( !aobj.local_sculptmap ) { continue; } // should never get here. only in case of misuse.
+			
+			// update code [begin]
+			if ( unit->volume_dirty )
 			{
-				// update code [begin]
-				if ( unit->volume_dirty )
-				{
-					LLImageRaw* rawimage = gImageList.hasImage( unit->getID() )->getCachedRawImage();
+				LLImageRaw* rawimage = gImageList.hasImage( unit->getID() )->getCachedRawImage();
 
-					obj->getVolume()->sculpt(rawimage->getWidth(), rawimage->getHeight(), 
-					                         rawimage->getComponents(), rawimage->getData(), 0);	
-
-					unit->volume_dirty = false;
-				}
-
-					// tell affected drawable it's got updated
-					obj->mDrawable->getVOVolume()->setSculptChanged( true );
-					obj->mDrawable->getVOVolume()->markForUpdate( true );
-				// update code [end]
+				aobj.object->getVolume()->sculpt(rawimage->getWidth(), rawimage->getHeight(), 
+												  rawimage->getComponents(), rawimage->getData(), 0);	
+				unit->volume_dirty = false;
 			}
+
+				// tell affected drawable it's got updated
+				aobj.object->mDrawable->getVOVolume()->setSculptChanged( true );
+				aobj.object->mDrawable->getVOVolume()->markForUpdate( true );
+			// update code [end]
 		}
+			
 	}
 
 }
@@ -587,7 +681,7 @@ void LocalAssetBrowser::PerformSculptUpdates(LocalBitmap* unit)
 */
 
 // Floater Globals
-FloaterLocalAssetBrowser* FloaterLocalAssetBrowser::sInstance = NULL;
+FloaterLocalAssetBrowser* FloaterLocalAssetBrowser::sLFInstance = NULL;
 
 // widgets:
 	LLButton* mAddBtn;
@@ -674,45 +768,25 @@ FloaterLocalAssetBrowser::FloaterLocalAssetBrowser()
 
 void FloaterLocalAssetBrowser::show(void*)
 {
-    if (!sInstance)
-	sInstance = new FloaterLocalAssetBrowser();
-    sInstance->open();
-	sInstance->UpdateBitmapScrollList();
+    if (!sLFInstance)
+	sLFInstance = new FloaterLocalAssetBrowser();
+    sLFInstance->open();
+	sLFInstance->UpdateBitmapScrollList();
 }
 
 FloaterLocalAssetBrowser::~FloaterLocalAssetBrowser()
 {
-    sInstance=NULL;
+    sLFInstance=NULL;
 }
 
 void FloaterLocalAssetBrowser::onClickAdd(void* userdata)
-{
-	LLFilePicker& picker = LLFilePicker::instance();
-	if ( !picker.getOpenFile(LLFilePicker::FFLOAD_IMAGE) ) 
-	   { return; }
-
-	std::string filename = picker.getFirstFile();
-
-	if ( !filename.empty() )
-	{ 
-		if ( gLocalBrowser->AddBitmap(filename) )
-		{
-			sInstance->UpdateBitmapScrollList();
-		}
-	}
+{	
+	gLocalBrowser->AddBitmap();
 }
 
 void FloaterLocalAssetBrowser::onClickDel(void* userdata)
 {
-	std::string temp_id = sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID);
-
-	if ( !temp_id.empty() )
-	{
-		if ( gLocalBrowser->DelBitmap( (LLUUID)temp_id ) )
-		{
-			sInstance->UpdateBitmapScrollList();
-		}
-	}
+	gLocalBrowser->DelBitmap( sLFInstance->mBitmapList->getAllSelected() );
 }
 
 /* what stopped me from using a single button and simply changing it's label
@@ -730,7 +804,7 @@ void FloaterLocalAssetBrowser::onClickLess(void* userdata)
 void FloaterLocalAssetBrowser::onClickUpload(void* userdata)
 {
 	std::string filename = gLocalBrowser->GetBitmapUnit( 
-		(LLUUID)sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID) )->getFileName();
+		(LLUUID)sLFInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID) )->getFileName();
 
 	if ( !filename.empty() )
 	{
@@ -741,30 +815,30 @@ void FloaterLocalAssetBrowser::onClickUpload(void* userdata)
 
 void FloaterLocalAssetBrowser::onChooseBitmapList(LLUICtrl* ctrl, void *userdata)
 {
-	bool button_status = sInstance->mBitmapList->isEmpty();
-	sInstance->mDelBtn->setEnabled(!button_status);
-	sInstance->mUploadBtn->setEnabled(!button_status);
+	bool button_status = sLFInstance->mBitmapList->isEmpty();
+	sLFInstance->mDelBtn->setEnabled(!button_status);
+	sLFInstance->mUploadBtn->setEnabled(!button_status);
 
-	sInstance->UpdateRightSide();
+	sLFInstance->UpdateRightSide();
 }
 
 void FloaterLocalAssetBrowser::onClickUpdateChkbox(LLUICtrl *ctrl, void *userdata)
 {
-	std::string temp_str = sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID);
+	std::string temp_str = sLFInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID);
 	if ( !temp_str.empty() )
 	{
 		gLocalBrowser->onUpdateBool( (LLUUID)temp_str );
-		sInstance->UpdateRightSide();
+		sLFInstance->UpdateRightSide();
 	}
 }
 
 void FloaterLocalAssetBrowser::onCommitTypeCombo(LLUICtrl* ctrl, void *userdata)
 {
-	std::string temp_str = sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID);
+	std::string temp_str = sLFInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID);
 
 	if ( !temp_str.empty() )
 	{
-		S32 selection = sInstance->mTypeComboBox->getCurrentIndex();
+		S32 selection = sLFInstance->mTypeComboBox->getCurrentIndex();
 		gLocalBrowser->onSetType( (LLUUID)temp_str, selection ); 
 
 	}
@@ -772,42 +846,42 @@ void FloaterLocalAssetBrowser::onCommitTypeCombo(LLUICtrl* ctrl, void *userdata)
 
 void FloaterLocalAssetBrowser::FloaterResize(bool expand)
 {
-	sInstance->mMoreBtn->setVisible(!expand);
-	sInstance->mLessBtn->setVisible(expand);
-	sInstance->mTextureView->setVisible(expand);
-	sInstance->mUpdateChkBox->setVisible(expand);
-	sInstance->mCaptionPathTxt->setVisible(expand);
-	sInstance->mCaptionUUIDTxt->setVisible(expand);
-	sInstance->mCaptionLinkTxt->setVisible(expand);
-	sInstance->mCaptionNameTxt->setVisible(expand);
-	sInstance->mCaptionTimeTxt->setVisible(expand);
-	sInstance->mTypeComboBox->setVisible(expand);
+	sLFInstance->mMoreBtn->setVisible(!expand);
+	sLFInstance->mLessBtn->setVisible(expand);
+	sLFInstance->mTextureView->setVisible(expand);
+	sLFInstance->mUpdateChkBox->setVisible(expand);
+	sLFInstance->mCaptionPathTxt->setVisible(expand);
+	sLFInstance->mCaptionUUIDTxt->setVisible(expand);
+	sLFInstance->mCaptionLinkTxt->setVisible(expand);
+	sLFInstance->mCaptionNameTxt->setVisible(expand);
+	sLFInstance->mCaptionTimeTxt->setVisible(expand);
+	sLFInstance->mTypeComboBox->setVisible(expand);
 
-	sInstance->mTimeTxt->setVisible(expand);
-	sInstance->mPathTxt->setVisible(expand);
-	sInstance->mUUIDTxt->setVisible(expand);
-	sInstance->mLinkTxt->setVisible(expand);
-	sInstance->mNameTxt->setVisible(expand);
+	sLFInstance->mTimeTxt->setVisible(expand);
+	sLFInstance->mPathTxt->setVisible(expand);
+	sLFInstance->mUUIDTxt->setVisible(expand);
+	sLFInstance->mLinkTxt->setVisible(expand);
+	sLFInstance->mNameTxt->setVisible(expand);
 
 	if(expand)
 	{ 
-		sInstance->reshape(LLF_FLOATER_EXPAND_WIDTH, LLF_FLOATER_HEIGHT); 
-		sInstance->setResizeLimits(LLF_FLOATER_EXPAND_WIDTH, LLF_FLOATER_HEIGHT);
-		sInstance->UpdateRightSide();
+		sLFInstance->reshape(LF_FLOATER_EXPAND_WIDTH, LF_FLOATER_HEIGHT); 
+		sLFInstance->setResizeLimits(LF_FLOATER_EXPAND_WIDTH, LF_FLOATER_HEIGHT);
+		sLFInstance->UpdateRightSide();
 	}
 	else
 	{ 
-		sInstance->reshape(LLF_FLOATER_CONTRACT_WIDTH, LLF_FLOATER_HEIGHT);
-		sInstance->setResizeLimits(LLF_FLOATER_CONTRACT_WIDTH, LLF_FLOATER_HEIGHT);
+		sLFInstance->reshape(LF_FLOATER_CONTRACT_WIDTH, LF_FLOATER_HEIGHT);
+		sLFInstance->setResizeLimits(LF_FLOATER_CONTRACT_WIDTH, LF_FLOATER_HEIGHT);
 	}
 
 }
 
 void FloaterLocalAssetBrowser::UpdateBitmapScrollList()
 {
-	if ( !sInstance ) { return; }
+	if ( !sLFInstance ) { return; }
 
-	sInstance->mBitmapList->clearRows();
+	sLFInstance->mBitmapList->clearRows();
 	if (!gLocalBrowser->loaded_bitmaps.empty())
 	{
 		
@@ -817,17 +891,17 @@ void FloaterLocalAssetBrowser::UpdateBitmapScrollList()
 			LLSD element;
 			element["columns"][BITMAPLIST_COL_NAME]["column"] = "bitmap_name";
 			element["columns"][BITMAPLIST_COL_NAME]["type"]   = "text";
-			element["columns"][BITMAPLIST_COL_NAME]["value"]  = iter->getShortName();
+			element["columns"][BITMAPLIST_COL_NAME]["value"]  = (*iter)->getShortName();
 
 			element["columns"][BITMAPLIST_COL_ID]["column"] = "bitmap_uuid";
 			element["columns"][BITMAPLIST_COL_ID]["type"]   = "text";
-			element["columns"][BITMAPLIST_COL_ID]["value"]  = iter->getID();
+			element["columns"][BITMAPLIST_COL_ID]["value"]  = (*iter)->getID();
 
-			sInstance->mBitmapList->addElement(element);
+			sLFInstance->mBitmapList->addElement(element);
 		}
 
 	}
-	sInstance->UpdateRightSide();
+	sLFInstance->UpdateRightSide();
 }
 
 void FloaterLocalAssetBrowser::UpdateRightSide()
@@ -839,43 +913,43 @@ void FloaterLocalAssetBrowser::UpdateRightSide()
 	Also obviously before updating - checking if something IS actually selected :o
 	*/
 
-	if ( !sInstance->mTextureView->getVisible() ) { return; }
+	if ( !sLFInstance->mTextureView->getVisible() ) { return; }
 
-	if ( !sInstance->mBitmapList->getAllSelected().empty() )
+	if ( !sLFInstance->mBitmapList->getAllSelected().empty() )
 	{ 
-		LocalBitmap* unit = gLocalBrowser->GetBitmapUnit( LLUUID(sInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID)) );
+		LocalBitmap* unit = gLocalBrowser->GetBitmapUnit( LLUUID(sLFInstance->mBitmapList->getSelectedItemLabel(BITMAPLIST_COL_ID)) );
 		
 		if ( unit )
 		{
-			sInstance->mTextureView->setImageAssetID( unit->getID() );
-			sInstance->mUpdateChkBox->set( unit->getUpdateBool() );
-			sInstance->mPathTxt->setText( unit->getFileName() );
-			sInstance->mUUIDTxt->setText( unit->getID().asString() );
-			sInstance->mNameTxt->setText( unit->getShortName() );
-			sInstance->mTimeTxt->setText( unit->getLastModified().asString() );
-			sInstance->mLinkTxt->setText( unit->getLinkStatus() );
-			sInstance->mTypeComboBox->selectNthItem( unit->getType() );
+			sLFInstance->mTextureView->setImageAssetID( unit->getID() );
+			sLFInstance->mUpdateChkBox->set( unit->getUpdateBool() );
+			sLFInstance->mPathTxt->setText( unit->getFileName() );
+			sLFInstance->mUUIDTxt->setText( unit->getID().asString() );
+			sLFInstance->mNameTxt->setText( unit->getShortName() );
+			sLFInstance->mTimeTxt->setText( unit->getLastModified().asString() );
+			sLFInstance->mLinkTxt->setText( unit->getLinkStatus() );
+			sLFInstance->mTypeComboBox->selectNthItem( unit->getType() );
 
-			sInstance->mTextureView->setEnabled(true);
-			sInstance->mUpdateChkBox->setEnabled(true);
-			sInstance->mTypeComboBox->setEnabled(true);
+			sLFInstance->mTextureView->setEnabled(true);
+			sLFInstance->mUpdateChkBox->setEnabled(true);
+			sLFInstance->mTypeComboBox->setEnabled(true);
 		}
 	}
 	else
 	{
-		sInstance->mTextureView->setImageAssetID( NO_IMAGE );
-		sInstance->mTextureView->setEnabled( false );
-		sInstance->mUpdateChkBox->set( false );
-		sInstance->mUpdateChkBox->setEnabled( false );
+		sLFInstance->mTextureView->setImageAssetID( NO_IMAGE );
+		sLFInstance->mTextureView->setEnabled( false );
+		sLFInstance->mUpdateChkBox->set( false );
+		sLFInstance->mUpdateChkBox->setEnabled( false );
 
-		sInstance->mTypeComboBox->selectFirstItem();
-		sInstance->mTypeComboBox->setEnabled( false );
+		sLFInstance->mTypeComboBox->selectFirstItem();
+		sLFInstance->mTypeComboBox->setEnabled( false );
 		
-		sInstance->mPathTxt->setText( LLStringExplicit("None") );
-		sInstance->mUUIDTxt->setText( LLStringExplicit("None") );
-		sInstance->mNameTxt->setText( LLStringExplicit("None") );
-		sInstance->mLinkTxt->setText( LLStringExplicit("None") );
-		sInstance->mTimeTxt->setText( LLStringExplicit("None") );
+		sLFInstance->mPathTxt->setText( LLStringExplicit("None") );
+		sLFInstance->mUUIDTxt->setText( LLStringExplicit("None") );
+		sLFInstance->mNameTxt->setText( LLStringExplicit("None") );
+		sLFInstance->mLinkTxt->setText( LLStringExplicit("None") );
+		sLFInstance->mTimeTxt->setText( LLStringExplicit("None") );
 	}
 }
 
@@ -921,3 +995,4 @@ bool LocalAssetBrowserTimer::isRunning()
 {
 	return mEventTimer.getStarted();
 }
+
