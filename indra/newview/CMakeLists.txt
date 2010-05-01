@@ -9,6 +9,7 @@ include(DirectX)
 include(ELFIO)
 include(FMOD)
 include(OPENAL)
+include(HUNSPELL)
 include(FindOpenGL)
 include(JsonCpp)
 include(LLAddBuildTest)
@@ -49,6 +50,7 @@ endif (DARWIN OR LINUX)
 
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
+    ${HUNSPELL_INCLUDE_DIR}
     ${ELFIO_INCLUDE_DIR}
     ${JSONCPP_INCLUDE_DIRS}
     ${LLAUDIO_INCLUDE_DIRS}
@@ -80,6 +82,8 @@ if (WINDOWS)
 endif (WINDOWS)
 
 set(viewer_SOURCE_FILES
+	lgghunspell_wrapper.cpp
+	lggdicdownload.cpp
 	a_modularsystemslink.cpp
 	emerald.cpp
 	emeraldboobutils.cpp
@@ -512,9 +516,10 @@ endif (LINUX)
 set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
+	lggdicdownload.h
+	lgghunspell_wrapper.h
     a_modularsystemslink.h
     emerald.h
-	emeraldboobutils.h
 	chatbar_as_cmdline.h
 	floaterlocalassetbrowse.h
 	floateravatarlist.h
@@ -1379,6 +1384,9 @@ target_link_libraries(${VIEWER_BINARY_NAME}
 	${GCRYPT_LIBRARY}
 	${GPG-ERROR_LIBRARY}
 	${OTR_LIBRARY}
+
+#    ${HUNSPELL_LIBRAIES}
+    ${HUNSPELL_LIBRARY}
     )
 
 if (DARWIN)

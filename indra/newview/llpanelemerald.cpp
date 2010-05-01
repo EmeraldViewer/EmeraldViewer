@@ -67,7 +67,7 @@
 //#include "lggbeamcolormapfloater.h"
 #include "llsliderctrl.h"
 #include "mfdkeywordfloater.h"
-//#include "lgghunspell_wrapper.h"
+#include "lgghunspell_wrapper.h"
 
 ////////begin drop utility/////////////
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -368,9 +368,9 @@ BOOL LLPanelEmerald::postBuild()
 void LLPanelEmerald::refresh()
 {
 	
-	/*LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
+	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
 
-	if(comboBox != NULL) 
+	/*if(comboBox != NULL) 
 	{
 		comboBox->removeall();
 		comboBox->add("===OFF===");
@@ -380,9 +380,9 @@ void LLPanelEmerald::refresh()
 			comboBox->add(names[i]);
 		}
 		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamShape"));
-	}
+	}*/
 
-	comboBox = getChild<LLComboBox>("BeamColor_combo");
+	/*comboBox = getChild<LLComboBox>("BeamColor_combo");
 	if(comboBox != NULL) 
 	{
 		comboBox->removeall();
@@ -393,7 +393,7 @@ void LLPanelEmerald::refresh()
 			comboBox->add(names[i]);
 		}
 		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamColorFile"));
-	}
+	}*/
 	comboBox = getChild<LLComboBox>("EmeraldSpellBase");
 	if(comboBox != NULL) 
 	{
@@ -433,7 +433,7 @@ void LLPanelEmerald::refresh()
 	}
 
 	//epic hax (TODO: make this less hax)
-	onConditionalPreferencesChanged(getChild<LLCheckBoxCtrl>("telerequest_toggle"), NULL);*/
+	/*onConditionalPreferencesChanged(getChild<LLCheckBoxCtrl>("telerequest_toggle"), NULL);*/
 
 	//mSkin = gSavedSettings.getString("SkinCurrent");
 	//getChild<LLRadioGroup>("skin_selection")->setValue(mSkin);
@@ -458,7 +458,7 @@ void LLPanelEmerald::apply()
 	LLWStringUtil::replaceTabsWithSpaces(im_response, 4);
 	LLWStringUtil::replaceChar(im_response, '\n', '^');
 	LLWStringUtil::replaceChar(im_response, ' ', '%');
-	//glggHunSpell->setNewHighlightSetting(gSavedSettings.getBOOL("EmeraldSpellDisplay"));
+	glggHunSpell->setNewHighlightSetting(gSavedSettings.getBOOL("EmeraldSpellDisplay"));
 	gSavedPerAccountSettings.setString("EmeraldInstantMessageResponse", std::string(wstring_to_utf8str(im_response)));
 
 	//gSavedPerAccountSettings.setString(
@@ -550,36 +550,35 @@ void LLPanelEmerald::onCustomBeamColor(void* data)
 }
 void LLPanelEmerald::onSpellAdd(void* data)
 {
-	/*LLPanelEmerald* panel = (LLPanelEmerald*)data;
+	LLPanelEmerald* panel = (LLPanelEmerald*)data;
 	if(panel)
 	{
 		glggHunSpell->addButton(panel->childGetValue("EmSpell_Avail").asString());
 	}
-	panel->refresh();*/
+	panel->refresh();
 }
 void LLPanelEmerald::onSpellRemove(void* data)
 {
-	/*LLPanelEmerald* panel = (LLPanelEmerald*)data;
+	LLPanelEmerald* panel = (LLPanelEmerald*)data;
 	if(panel)
 	{
 		glggHunSpell->removeButton(panel->childGetValue("EmSpell_Installed").asString());
 	}
-	panel->refresh();*/
+	panel->refresh();
 }
 void LLPanelEmerald::onSpellGetMore(void* data)
 {
-	//glggHunSpell->getMoreButton(data);
+	glggHunSpell->getMoreButton(data);
 }
 void LLPanelEmerald::onSpellEditCustom(void* data)
 {
-	//glggHunSpell->editCustomButton();
+	glggHunSpell->editCustomButton();
 }
 void LLPanelEmerald::onStealth(void* data)
 {
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
 	LLNotifications::instance().add("EmeraldStealth", LLSD(),LLSD(), callbackEmeraldStealth);
 	
-
 }
 void LLPanelEmerald::callbackEmeraldStealth(const LLSD &notification, const LLSD &response)
 {
@@ -644,14 +643,14 @@ void LLPanelEmerald::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 void LLPanelEmerald::onSpellBaseComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 {
 
-	/*LLComboBox* box = (LLComboBox*)ctrl;
+	LLComboBox* box = (LLComboBox*)ctrl;
 	if(box)
 	{
 		glggHunSpell->newDictSelection(box->getValue().asString());
 		//LLPanelEmerald* panel = (LLPanelEmerald*)userdata;//box->getParent();
 		if(sInstance)sInstance->refresh();
 
-	}*/
+	}
 	//LLPanelEmerald* panel = (LLPanelEmerald*)userdata;
 	//if(panel)panel->refresh();
 }

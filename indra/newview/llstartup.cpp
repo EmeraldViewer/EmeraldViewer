@@ -191,6 +191,7 @@
 #include "llsocks5.h"
 #include "floateravatarlist.h"
 #include "scriptcounter.h"
+#include "lggHunSpell_wrapper.h"
 
 #include "wlfPanel_AdvSettings.h"
 
@@ -799,10 +800,13 @@ bool idle_startup()
 		gViewerWindow->showCursor();
 		gViewerWindow->getWindow()->setCursor(UI_CURSOR_WAIT);
 
+
 		/////////////////////////////////////////////////
 		//
 		// Initialize stuff that doesn't need data from simulators
 		//
+		
+		glggHunSpell->initSettings();
 
 		new JCLSLBridge();
 		new AOInvTimer();
