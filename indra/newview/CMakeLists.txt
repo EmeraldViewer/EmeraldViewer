@@ -520,6 +520,7 @@ set(viewer_HEADER_FILES
 	lgghunspell_wrapper.h
     a_modularsystemslink.h
     emerald.h
+	emeraldboobutils.h
 	chatbar_as_cmdline.h
 	floaterlocalassetbrowse.h
 	floateravatarlist.h
