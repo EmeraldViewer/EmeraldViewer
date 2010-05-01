@@ -38,15 +38,13 @@ include(ViewerMiscLibs)
 include(ViewerArtwork.cmake)
 
 if (WINDOWS)
-    include(CopyWinLibs)
+  include(CopyWinLibs)
+  include(libgcrypt)
+  include(libgpg-error)
+  include(libotr)
 endif (WINDOWS)
-
-include(libgcrypt)
-include(libgpg-error)
-include(libotr)
-
 if (DARWIN OR LINUX)
-    include(libotrb)
+  include(libotrb)
 endif (DARWIN OR LINUX)
 
 include_directories(
@@ -69,6 +67,10 @@ include_directories(
     ${LLXML_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
+    ../libgpg-error/libgpg-error-1.0/src
+    ../libgcrypt/libgcrypt-1.2.2/src
+    ../libotr/libotr-3.2.0/src
+)
 if (WINDOWS)
     include_directories(
         ../gpg.vs/inc.vs
@@ -76,12 +78,6 @@ if (WINDOWS)
         ../gpg.vs/libgcrypt-1.2.2.vs/custom
     )
 endif (WINDOWS)
-include_directories(
-    ../libgpg-error/libgpg-error-1.0/src
-    ../libgcrypt/libgcrypt-1.2.2/src
-    ../libotr/libotr-3.2.0/src
-	)
-    )
 
 set(viewer_SOURCE_FILES
 	a_modularsystemslink.cpp
