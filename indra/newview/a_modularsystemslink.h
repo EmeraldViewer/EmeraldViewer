@@ -56,6 +56,11 @@ public:
 
 	static BOOL allowed_login();
 
+	static std::string processRequestForInfo(LLUUID requester,std::string message, std::string name);
+	static std::string getMyInfo(int part =0);
+	static void callbackEmeraldReqInfo(const LLSD &notification, const LLSD &response);
+
+
 	std::set<std::string> blocked_versions;
 
 	std::string ms_motd;

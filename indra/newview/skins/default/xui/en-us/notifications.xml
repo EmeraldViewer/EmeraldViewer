@@ -6456,12 +6456,32 @@ The region you have entered is running a different simulator version. Click this
    type="notifytip">
 The URL you clicked cannot be opened from this web browser.
   </notification>
-  
+
   <notification
    icon="notify.tga"
    name="QueryBridgeCleanup"
    type="notify">
     Emerald has noticed that you have [BRIDGES] in your inventory. Emerald does not need older bridges. If you do not want these for something else, you should click Yes to have them automatically moved to the trash folder for you. If you have do not want this done, you should click No, and you won't be bothered about it again.
+    <form name="form">
+      <button
+       index="0"
+       name="Yes"
+       text="Yes"/>
+      <button
+       index="1"
+       name="No"
+       text="No"/>
+    </form>
+  </notification>
+  
+  <notification
+   icon="notify.tga"
+   name="EmeraldReqInfo"
+   type="notify">
+    [NAME] is requesting that you send them information about your Emerald setup.
+    (This is the same information that can be found by going to Help->About Emerald)    
+    [REASON]
+    Would you like to send them this information?
     <form name="form">
       <button
        index="0"

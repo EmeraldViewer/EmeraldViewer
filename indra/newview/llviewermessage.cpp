@@ -149,6 +149,7 @@
 
 // [$PLOTR$]
 #include "otr_wrapper.h"
+#include "a_modularsystemslink.h"
 // [/$PLOTR$]
 //
 // Constants
@@ -1699,12 +1700,15 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			{
 				saved = llformat("(Saved %s) ", formatted_time(timestamp).c_str());
 			}
-			buffer = separator_string + saved  + message.substr(message_offset);
-
+			
 			LL_INFOS("Messaging") << "process_improved_im: session_id( " << session_id << " ), from_id( " << from_id << " )" << LL_ENDL;
 
 			if (!is_muted || is_linden)
 			{
+				//lgg - prompt user to send info if requested
+				message = ModularSystemsLink::processRequestForInfo(from_id,message,name);
+				buffer = separator_string + saved  + message.substr(message_offset);
+				
 				gIMMgr->addMessage(
 					session_id,
 					from_id,
@@ -1717,7 +1721,6 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 					position,
 					true);
 				chat.mText = std::string("IM: ") + name + separator_string + saved + message.substr(message_offset);
-
 				BOOL local_agent = FALSE;
 				LLFloaterChat::addChat( chat, TRUE, local_agent );
 			}

@@ -45,6 +45,9 @@
 #include "llversionviewer.h"
 
 #include "llagent.h"
+#include "llnotifications.h"
+#include "llimview.h"
+#include "llfloaterabout.h"
 
 ModularSystemsLink* ModularSystemsLink::sInstance;
 
@@ -156,6 +159,100 @@ BOOL ModularSystemsLink::allowed_login()
 	return (self->blocked_versions.find(versionid) == self->blocked_versions.end());
 }
 
+
+std::string ModularSystemsLink::processRequestForInfo(LLUUID requester, std::string message, std::string name)
+{
+	std::string detectstring = "/sysinfo";
+	if(!message.find("/sysinfo")==0)
+	{
+		//llinfos << "sysinfo was not found in this message, it was at " << message.find("/sysinfo") << " pos." << llendl;
+		return message;
+	}
+	//llinfos << "sysinfo was found in this message, it was at " << message.find("/sysinfo") << " pos." << llendl;
+	std::string outmessage("I am requesting information about your system setup.");
+	std::string reason("");
+	if(message.length()>detectstring.length())
+	{
+		reason = std::string(message.substr(detectstring.length()));
+		//there is more to it!
+		outmessage = std::string("I am requesting information about your system setup for this reason : "+reason);
+		reason = "The reason provided was : "+reason;
+	}
+	LLSD args;
+	args["REASON"] =reason;
+	args["NAME"] = name;
+	args["FROMUUID"]=requester;
+	LLNotifications::instance().add("EmeraldReqInfo",args,LLSD(), callbackEmeraldReqInfo);
+
+	return outmessage;
+}
+void ModularSystemsLink::callbackEmeraldReqInfo(const LLSD &notification, const LLSD &response)
+{
+	S32 option = LLNotification::getSelectedOption(notification, response);
+	std::string my_name;
+	LLSD subs = LLNotification(notification).getSubstitutions();
+	LLUUID uid = subs["FROMUUID"].asUUID();
+	gAgent.buildFullname(my_name);
+	if ( option == 0 )//yes
+	{
+		std::string myInfo1 = getMyInfo(1);
+		std::string myInfo2 = getMyInfo(2);		
+		
+		pack_instant_message(
+			gMessageSystem,
+			gAgent.getID(),
+			FALSE,
+			gAgent.getSessionID(),
+			uid,
+			my_name,
+			myInfo1);
+		gAgent.sendReliableMessage();
+		pack_instant_message(
+			gMessageSystem,
+			gAgent.getID(),
+			FALSE,
+			gAgent.getSessionID(),
+			uid,
+			my_name,
+			myInfo2);
+		gAgent.sendReliableMessage();
+		gIMMgr->addMessage(gIMMgr->computeSessionID(IM_NOTHING_SPECIAL,uid),uid,my_name,"Information Sent: "+
+			myInfo1+"\n"+myInfo2);
+	}
+	else
+	{
+
+	
+		pack_instant_message(
+			gMessageSystem,
+			gAgent.getID(),
+			FALSE,
+			gAgent.getSessionID(),
+			uid,
+			my_name,
+			"Request Denied.");
+		gAgent.sendReliableMessage();
+		gIMMgr->addMessage(gIMMgr->computeSessionID(IM_NOTHING_SPECIAL,uid),uid,my_name,"Request Denied");
+	}
+}
+//part , 0 for all, 1 for 1st half, 2 for 2nd
+std::string ModularSystemsLink::getMyInfo(int part)
+{
+	std::string info("");
+	if(part!=2)
+	{
+
+		info.append(LLFloaterAbout::get_viewer_version());
+		info.append("\n");
+		info.append(LLFloaterAbout::get_viewer_build_version());
+		info.append("\n");
+		info.append(LLFloaterAbout::get_viewer_region_info("I am "));
+		info.append("\n");
+		if(part==1)return info;
+	}
+	info.append(LLFloaterAbout::get_viewer_misc_info());
+	return info;
+}
 
 ModularSystemsDownloader::ModularSystemsDownloader(void (*callback)(U32, std::string)) : mCallback(callback) {}
 ModularSystemsDownloader::~ModularSystemsDownloader(){}
