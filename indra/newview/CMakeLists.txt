@@ -42,11 +42,8 @@ if (WINDOWS)
   include(CopyWinLibs)
   include(libgcrypt)
   include(libgpg-error)
-  include(libotr)
 endif (WINDOWS)
-if (DARWIN OR LINUX)
-  include(libotrb)
-endif (DARWIN OR LINUX)
+include(libotr)
 
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}

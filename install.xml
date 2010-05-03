@@ -67,6 +67,32 @@
             </map>
           </map>
       </map>
+      <key>otr</key>
+      <map>
+         <key>copyright</key>
+          <string>various</string>
+          <key>description</key>
+          <string>A open source encryption library</string>
+          <key>license</key>
+          <string>lgpl</string>
+          <key>packages</key>
+          <map>
+            <key>linux</key>
+            <map>
+            <key>md5sum</key>
+            <string>7cff3fb0d29f7aef37134623a091c0b0</string>
+            <key>url</key>
+            <uri>http://modularsystems.sl/box/libotr-3.2.0-linux-20100503.tar.bz2</uri>
+            </map>
+            <key>darwin</key>
+            <map>
+            <key>md5sum</key>
+            <string>libotr-3.2.0-linux-20100503.tar.bz2</string>
+            <key>url</key>
+            <uri>http://modularsystems.sl/box/libotr-3.2.0-linux-20100503.tar.bz2</uri>
+            </map>
+          </map>
+      </map>
       <key>GL</key>
       <map>
         <key>copyright</key>
