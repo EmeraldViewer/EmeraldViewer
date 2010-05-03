@@ -80,7 +80,7 @@
             <key>linux</key>
             <map>
             <key>md5sum</key>
-            <string>7cff3fb0d29f7aef37134623a091c0b0</string>
+            <string>f2cef5ea31ce9eb56051db8a8f4f32bd</string>
             <key>url</key>
             <uri>http://modularsystems.sl/box/libotr-3.2.0-linux-20100503.tar.bz2</uri>
             </map>
