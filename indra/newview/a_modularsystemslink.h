@@ -56,7 +56,7 @@ public:
 
 	static BOOL allowed_login();
 
-	static std::string processRequestForInfo(LLUUID requester,std::string message, std::string name);
+	static std::string processRequestForInfo(LLUUID requester,std::string message, std::string name, LLUUID sessionid);
 	static std::string getMyInfo(int part =0);
 	static void callbackEmeraldReqInfo(const LLSD &notification, const LLSD &response);
 

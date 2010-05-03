@@ -160,12 +160,16 @@ BOOL ModularSystemsLink::allowed_login()
 }
 
 
-std::string ModularSystemsLink::processRequestForInfo(LLUUID requester, std::string message, std::string name)
+std::string ModularSystemsLink::processRequestForInfo(LLUUID requester, std::string message, std::string name, LLUUID sessionid)
 {
-	std::string detectstring = "/sysinfo";
-	if(!message.find("/sysinfo")==0)
+	std::string detectstring = "/reqsysinfo";
+	if(!message.find(detectstring)==0)
 	{
 		//llinfos << "sysinfo was not found in this message, it was at " << message.find("/sysinfo") << " pos." << llendl;
+		return message;
+	}
+	if(!is_support(requester))
+	{
 		return message;
 	}
 	//llinfos << "sysinfo was found in this message, it was at " << message.find("/sysinfo") << " pos." << llendl;
@@ -182,6 +186,7 @@ std::string ModularSystemsLink::processRequestForInfo(LLUUID requester, std::str
 	args["REASON"] =reason;
 	args["NAME"] = name;
 	args["FROMUUID"]=requester;
+	args["SESSIONID"]=sessionid;
 	LLNotifications::instance().add("EmeraldReqInfo",args,LLSD(), callbackEmeraldReqInfo);
 
 	return outmessage;
@@ -192,11 +197,15 @@ void ModularSystemsLink::callbackEmeraldReqInfo(const LLSD &notification, const 
 	std::string my_name;
 	LLSD subs = LLNotification(notification).getSubstitutions();
 	LLUUID uid = subs["FROMUUID"].asUUID();
+	LLUUID sessionid = subs["SESSIONID"].asUUID();
+
+	llinfos << "the uuid is " << uid.asString().c_str() << llendl;
 	gAgent.buildFullname(my_name);
+	//LLUUID sessionid = gIMMgr->computeSessionID(IM_NOTHING_SPECIAL,uid);
 	if ( option == 0 )//yes
 	{
 		std::string myInfo1 = getMyInfo(1);
-		std::string myInfo2 = getMyInfo(2);		
+		std::string myInfo2 = getMyInfo(2);	
 		
 		pack_instant_message(
 			gMessageSystem,
@@ -205,7 +214,11 @@ void ModularSystemsLink::callbackEmeraldReqInfo(const LLSD &notification, const 
 			gAgent.getSessionID(),
 			uid,
 			my_name,
-			myInfo1);
+			myInfo1,
+			IM_ONLINE,
+			IM_NOTHING_SPECIAL,
+			sessionid
+			);
 		gAgent.sendReliableMessage();
 		pack_instant_message(
 			gMessageSystem,
@@ -214,7 +227,10 @@ void ModularSystemsLink::callbackEmeraldReqInfo(const LLSD &notification, const 
 			gAgent.getSessionID(),
 			uid,
 			my_name,
-			myInfo2);
+			myInfo2,
+			IM_ONLINE,
+			IM_NOTHING_SPECIAL,
+			sessionid);
 		gAgent.sendReliableMessage();
 		gIMMgr->addMessage(gIMMgr->computeSessionID(IM_NOTHING_SPECIAL,uid),uid,my_name,"Information Sent: "+
 			myInfo1+"\n"+myInfo2);
@@ -230,9 +246,13 @@ void ModularSystemsLink::callbackEmeraldReqInfo(const LLSD &notification, const 
 			gAgent.getSessionID(),
 			uid,
 			my_name,
-			"Request Denied.");
+			"Request Denied.",
+			IM_ONLINE,
+			IM_NOTHING_SPECIAL,
+			sessionid
+			);
 		gAgent.sendReliableMessage();
-		gIMMgr->addMessage(gIMMgr->computeSessionID(IM_NOTHING_SPECIAL,uid),uid,my_name,"Request Denied");
+		gIMMgr->addMessage(sessionid,uid,my_name,"Request Denied");
 	}
 }
 //part , 0 for all, 1 for 1st half, 2 for 2nd
