@@ -56,9 +56,10 @@ class ViewerManifest(LLManifest):
 
             # include the entire shaders directory recursively
             self.path("shaders")
-            # include the entire beams directory
-            self.path("beams")
-            self.path("beamsColors")
+            
+	    # include the entire beams directory
+#            self.path("beams")
+#            self.path("beamsColors")
 	    self.path("bridge_assets")
 	    self.path("dictionaries")
 
