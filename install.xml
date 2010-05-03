@@ -52,6 +52,15 @@
             <uri>http://modularsystems.sl/box/windows_hunspell.tar.bz2</uri>
             </map>
           </map>
+          <map>
+            <key>linux</key>
+            <map>
+            <key>md5sum</key>
+            <string>406d74f98a40a4c63dcf2611acda5b96</string>
+            <key>url</key>
+            <uri>http://modularsystems.sl/box/hunspell-1.2-linux-20100503.tar.bz2</uri>
+            </map>
+          </map>
       </map>
       <key>GL</key>
       <map>
