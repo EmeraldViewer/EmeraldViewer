@@ -191,7 +191,7 @@
 #include "llsocks5.h"
 #include "floateravatarlist.h"
 #include "scriptcounter.h"
-#include "lggHunSpell_wrapper.h"
+#include "lgghunspell_wrapper.h"
 
 #include "wlfPanel_AdvSettings.h"
 

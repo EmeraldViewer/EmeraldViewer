@@ -511,6 +511,10 @@ if (LINUX)
       llviewerjointmesh_sse2.cpp
       PROPERTIES COMPILE_FLAGS "-msse2 -mfpmath=sse"
       )
+  set_source_files_properties(
+      llpreviewscript.cpp
+      COMPILE_FLAGS "-Wno-error=unused-result"
+      )
 endif (LINUX)
 
 set(viewer_HEADER_FILES

@@ -21,7 +21,7 @@
 #if LL_WINDOWS
 #include "hunspell/hunspelldll.h"
 #else
-#include "hunspell.hxx"
+#include "hunspell/hunspell.hxx"
 #endif
 
 class lggHunSpell_Wrapper

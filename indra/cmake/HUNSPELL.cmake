@@ -3,8 +3,8 @@
 if (STANDALONE)
 	include(FindHunSpell)
 else (STANDALONE)
-    include(Prebuilt)
-	use_prebuilt_binary(hunspell)
+    #include(Prebuilt)
+	#use_prebuilt_binary(hunspell)
 	
 	set(HUNSPELL_INCLUDE_DIR ${LIBS_PREBUILT_DIR}/include/hunspell)
 	
