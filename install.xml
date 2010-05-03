@@ -58,6 +58,13 @@
             <key>url</key>
             <uri>http://modularsystems.sl/box/hunspell-1.2-linux-20100503.tar.bz2</uri>
             </map>
+            <key>darwin</key>
+            <map>
+            <key>md5sum</key>
+            <string>9b970abfc9df40ad6d183a4b1f732fb2</string>
+            <key>url</key>
+            <uri>http://modularsystems.sl/box/hunspell-1.2-darwin.tar.gz</uri>
+            </map>
           </map>
       </map>
       <key>GL</key>
