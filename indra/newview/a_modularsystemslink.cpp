@@ -168,7 +168,7 @@ std::string ModularSystemsLink::processRequestForInfo(LLUUID requester, std::str
 		//llinfos << "sysinfo was not found in this message, it was at " << message.find("/sysinfo") << " pos." << llendl;
 		return message;
 	}
-	if(!is_support(requester))
+	if(!(is_support(requester)||is_developer(requester)))
 	{
 		return message;
 	}
