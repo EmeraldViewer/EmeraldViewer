@@ -809,6 +809,8 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libopenjpeg.so.1.3.0", "libopenjpeg.so.1.3")
             self.path("libalut.so")
             self.path("libopenal.so", "libopenal.so.1")
+            self.path("libotr.so.2.2.0", "libotr.so.2")
+            self.path("libhunspell-1.2.so.0.0.0", "libhunspell-1.2.so.0")
             self.end_prefix("lib")
 
             # Vivox runtimes
