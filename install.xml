@@ -51,8 +51,6 @@
             <key>url</key>
             <uri>http://modularsystems.sl/box/windows_hunspell.tar.bz2</uri>
             </map>
-          </map>
-          <map>
             <key>linux</key>
             <map>
             <key>md5sum</key>
