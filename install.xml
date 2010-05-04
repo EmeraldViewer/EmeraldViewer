@@ -77,6 +77,13 @@
           <string>lgpl</string>
           <key>packages</key>
           <map>
+            <key>windows</key>
+            <map>
+            <key>md5sum</key>
+            <string>cc567619eadca8be4db2accc5c8c5acb</string>
+            <key>url</key>
+            <uri>http://modularsystems.sl/box/otrwindowslibraries.tar.bz2</uri>
+            </map>
             <key>linux</key>
             <map>
             <key>md5sum</key>

@@ -5,8 +5,9 @@ use_prebuilt_binary(otr)
 
 #set(OTR_LIBRARY otr)
 if (NOT LINUX)
-	set(GCRYPT_LIBRARY gcrypt.11)
-	set(GPG-ERROR_LIBRARY gpg-error.0)
+	set(GCRYPT_LIBRARY libgcrypt)
+	set(GPG-ERROR_LIBRARY libgpg-error)
+	set(OTR_LIBRARY libotr)
 endif (NOT LINUX)
 
 set(LIBOTR_INCLUDE_DIRS
