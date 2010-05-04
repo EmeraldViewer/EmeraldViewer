@@ -33,7 +33,6 @@
 #include "llviewerprecompiledheaders.h"
 
 #include "llpanelemerald.h"
-//#include "lggbeammapfloater.h"
 // linden library includes
 #include "llradiogroup.h"
 #include "llbutton.h"
@@ -42,8 +41,6 @@
 #include "llcombobox.h"
 #include "llslider.h"
 #include "lltexturectrl.h"
-
-//#include "lggbeammaps.h"
 
 // project includes
 #include "llviewercontrol.h"
@@ -64,7 +61,10 @@
 
 
 #include "llweb.h" // [$PLOTR$/]
-//#include "lggbeamcolormapfloater.h"
+#include "lggbeamcolormapfloater.h"
+#include "lggbeammapfloater.h"
+#include "lggbeammaps.h"
+//#include "lggbeamscolors.h"
 #include "llsliderctrl.h"
 #include "mfdkeywordfloater.h"
 #include "lgghunspell_wrapper.h"
@@ -370,7 +370,7 @@ void LLPanelEmerald::refresh()
 	
 	LLComboBox* comboBox = getChild<LLComboBox>("EmeraldBeamShape_combo");
 
-	/*if(comboBox != NULL) 
+	if(comboBox != NULL) 
 	{
 		comboBox->removeall();
 		comboBox->add("===OFF===");
@@ -380,9 +380,9 @@ void LLPanelEmerald::refresh()
 			comboBox->add(names[i]);
 		}
 		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamShape"));
-	}*/
+	}
 
-	/*comboBox = getChild<LLComboBox>("BeamColor_combo");
+	comboBox = getChild<LLComboBox>("BeamColor_combo");
 	if(comboBox != NULL) 
 	{
 		comboBox->removeall();
@@ -393,7 +393,7 @@ void LLPanelEmerald::refresh()
 			comboBox->add(names[i]);
 		}
 		comboBox->setSimple(gSavedSettings.getString("EmeraldBeamColorFile"));
-	}*/
+	}
 	comboBox = getChild<LLComboBox>("EmeraldSpellBase");
 	if(comboBox != NULL) 
 	{
@@ -495,7 +495,7 @@ void LLPanelEmerald::apply()
 	}
 	gSavedSettings.setBOOL("EmeraldShadowsToggle", childGetValue("EmeraldShadowsON").asBoolean());
 	gSavedSettings.setU32("EmeraldUseOTR", (U32)childGetValue("EmeraldUseOTR").asReal());
-	//gLggBeamMaps.forceUpdate();
+	gLggBeamMaps.forceUpdate();
 }
 
 void LLPanelEmerald::cancel()
@@ -537,7 +537,7 @@ void LLPanelEmerald::onClickBoobReset(void* data)
 void LLPanelEmerald::onCustomBeam(void* data)
 {
 	//LLPanelEmerald* self =(LLPanelEmerald*)data;
-	//LggBeamMap::show(true, data);
+	LggBeamMap::show(true, data);
 
 }
 void LLPanelEmerald::onKeywordAllertButton(void * data)
@@ -546,7 +546,7 @@ void LLPanelEmerald::onKeywordAllertButton(void * data)
 }
 void LLPanelEmerald::onCustomBeamColor(void* data)
 {
-	//LggBeamColorMap::show(true,data);
+	LggBeamColorMap::show(true,data);
 }
 void LLPanelEmerald::onSpellAdd(void* data)
 {
@@ -629,7 +629,7 @@ void LLPanelEmerald::callbackEmeraldNoStealth(const LLSD &notification, const LL
 }
 void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
 {
-	//gLggBeamMaps.forceUpdate();
+	gLggBeamMaps.forceUpdate();
 }
 void LLPanelEmerald::onComboBoxCommit(LLUICtrl* ctrl, void* userdata)
 {
@@ -686,7 +686,7 @@ void LLPanelEmerald::onClickVoiceRevertDebug(void* data)
 }
 void LLPanelEmerald::onBeamDelete(void* data)
 {
-	/*LLPanelEmerald* self = (LLPanelEmerald*)data;
+	LLPanelEmerald* self = (LLPanelEmerald*)data;
 	
 	LLComboBox* comboBox = self->getChild<LLComboBox>("EmeraldBeamShape_combo");
 
@@ -707,11 +707,11 @@ void LLPanelEmerald::onBeamDelete(void* data)
 			gSavedSettings.setString("EmeraldBeamShape","===OFF===");
 		}
 	}
-	self->refresh();*/
+	self->refresh();
 }
 void LLPanelEmerald::onBeamColorDelete(void* data)
 {
-	/*LLPanelEmerald* self = (LLPanelEmerald*)data;
+	LLPanelEmerald* self = (LLPanelEmerald*)data;
 
 	LLComboBox* comboBox = self->getChild<LLComboBox>("BeamColor_combo");
 
@@ -732,7 +732,7 @@ void LLPanelEmerald::onBeamColorDelete(void* data)
 			gSavedSettings.setString("EmeraldBeamColorFile","===OFF===");
 		}
 	}
-	self->refresh();*/
+	self->refresh();
 }
 
 

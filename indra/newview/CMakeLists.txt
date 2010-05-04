@@ -81,6 +81,10 @@ endif (WINDOWS)
 set(viewer_SOURCE_FILES
 	lgghunspell_wrapper.cpp
 	lggdicdownload.cpp
+	lggbeamscolors.cpp
+	lggbeammaps.cpp
+	lggbeammapfloater.cpp
+	lggbeamcolormapfloater.cpp
 	a_modularsystemslink.cpp
 	emerald.cpp
 	emeraldboobutils.cpp
@@ -519,6 +523,10 @@ set(viewer_HEADER_FILES
     ViewerInstall.cmake
 	lggdicdownload.h
 	lgghunspell_wrapper.h
+	lggbeamscolors.h
+	lggbeammaps.h
+	lggbeammapfloater.h
+	lggbeamcolormapfloater.h
     a_modularsystemslink.h
     emerald.h
 	emeraldboobutils.h

@@ -116,7 +116,7 @@
 #include "llvoicevisualizer.h" // Ventrella
 #include "llsdserialize.h" // client resolver
 #include "floateravatarlist.h"
-
+#include "lggbeammaps.h"
 #include "floaterao.h"
 
 #if LL_MSVC
@@ -3566,16 +3566,19 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		}
 	}
 
+	LLColor4U rgb = gLggBeamMaps.getCurrentColor(LLColor4U(gAgent.getEffectColor()));
+
 	// This is only done for yourself (maybe it should be in the agent?)
 	if (!needsRenderBeam() || !mIsBuilt)
 	{
 		mBeam = NULL;
+		gLggBeamMaps.stopBeamChat();
 	}
 	else if (!mBeam || mBeam->isDead())
 	{
 		// VEFFECT: Tractor Beam
 		mBeam = (LLHUDEffectSpiral *)LLHUDManager::getInstance()->createViewerEffect(LLHUDObject::LL_HUD_EFFECT_BEAM);
-		mBeam->setColor(LLColor4U(gAgent.getEffectColor()));
+		mBeam->setColor(rgb);
 		mBeam->setSourceObject(this);
 		mBeamTimer.reset();
 	}
@@ -3588,6 +3591,7 @@ void LLVOAvatar::idleUpdateTractorBeam()
 		{
 			// get point from pointat effect
 			mBeam->setPositionGlobal(gAgent.mPointAt->getPointAtPosGlobal());
+			gLggBeamMaps.updateBeamChat(gAgent.mPointAt->getPointAtPosGlobal());
 			mBeam->triggerLocal();
 		}
 		else if (selection->getFirstRootObject() && 
@@ -3618,11 +3622,14 @@ void LLVOAvatar::idleUpdateTractorBeam()
 			}
 
 		}
-		if (mBeamTimer.getElapsedTimeF32() > 0.25f)
+		if (mBeamTimer.getElapsedTimeF32() > gLggBeamMaps.setUpAndGetDuration())
 		{
-			mBeam->setColor(LLColor4U(gAgent.getEffectColor()));
+
+			mBeam->setColor(rgb );
 			mBeam->setNeedsSendToSim(TRUE);
 			mBeamTimer.reset();
+
+			gLggBeamMaps.fireCurrentBeams(mBeam,rgb );
 		}
 	}
 }
