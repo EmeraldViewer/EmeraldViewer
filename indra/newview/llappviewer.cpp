@@ -1663,6 +1663,7 @@ bool LLAppViewer::initConfiguration()
 	gSettings[sPerAccountSettingsName] = &gSavedPerAccountSettings;
 	gSettings[sCrashSettingsName] = &gCrashSettings;
 
+	
 	//Load settings files list
 	std::string settings_file_list = gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "settings_files.xml");
 	LLControlGroup settings_control;
@@ -1672,6 +1673,7 @@ bool LLAppViewer::initConfiguration()
         llerrs << "Cannot load default configuration file " << settings_file_list << llendl;
 	}
 
+	
 	mSettingsLocationList = settings_control.getLLSD("Locations");
 		
 	// The settings and command line parsing have a fragile
@@ -1754,6 +1756,9 @@ bool LLAppViewer::initConfiguration()
 	//LLFirstUse::addConfigVariable(RLV_SETTING_FIRSTUSE_ENABLEWEAR);
 	//LLFirstUse::addConfigVariable(RLV_SETTING_FIRSTUSE_FARTOUCH);
 // [/RLVa:KB]
+
+
+
 
 	// - read command line settings.
 	LLControlGroupCLP clp;
@@ -1943,6 +1948,30 @@ bool LLAppViewer::initConfiguration()
             }
         }
     }
+	//import external settings
+	std::string externalName = gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS,"import_settings.xml");
+	llinfos << "Looking for import settings from " << externalName.c_str() << llendl;
+	if(gDirUtilp->fileExists(externalName))
+	{
+		llinfos << "File Found " << externalName.c_str() << llendl;
+		LLSD data;
+		llifstream importer(externalName);
+		LLSDSerialize::fromXMLDocument(data, importer);
+		for(int i = 0; i < data.size(); i++)
+		{
+			LLSD settingsData = data[i];
+			LLControlVariable* c = gSettings[sGlobalSettingsName]->getControl(settingsData["name"].asString());
+			if(c)
+			{
+				c->setValue(settingsData["value"], true);
+			}
+			//gSavedSettings.setValue(settingsData["name"].asString(),settingsData["value"]);
+			llinfos << "Setting " << settingsData["name"].asString().c_str() << " to "<<settingsData["value"].asString().c_str() << llendl;
+
+		}
+		importer.close();
+		LLFile::remove(externalName);
+	}
 
     const LLControlVariable* skinfolder = gSavedSettings.getControl("SkinCurrent");
     if(skinfolder && LLStringUtil::null != skinfolder->getValue().asString())
