@@ -94,9 +94,9 @@
             <key>darwin</key>
             <map>
             <key>md5sum</key>
-            <string>libotr-3.2.0-linux-20100503.tar.bz2</string>
+            <string>1a527e01f6bc852211ffcdc90988d4b9</string>
             <key>url</key>
-            <uri>http://modularsystems.sl/box/libotr-3.2.0-linux-20100503.tar.bz2</uri>
+	    <uri>http://modularsystems.sl/box/libotr-darwin.tar.bz2</uri>
             </map>
           </map>
       </map>
