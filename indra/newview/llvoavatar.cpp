@@ -119,6 +119,10 @@
 #include "lggbeammaps.h"
 #include "floaterao.h"
 
+// [RLVa:KB]
+#include "rlvhandler.h"
+// [/RLVa:KB]
+
 #if LL_MSVC
 // disable boost::lexical_cast warning
 #pragma warning (disable:4702)
@@ -2128,9 +2132,15 @@ void LLVOAvatar::buildCharacter()
 					if (attachment->getGroup() == i)
 					{
 						LLMenuItemCallGL* item;
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
+						// We need the userdata param to disable options in this pie menu later on (Left Hand / Right Hand option)
 						item = new LLMenuItemCallGL(attachment->getName(), 
 													NULL, 
-													object_selected_and_point_valid);
+													object_selected_and_point_valid, attachment);
+// [/RLVa:KB]
+//						item = new LLMenuItemCallGL(attachment->getName(), 
+//													NULL, 
+//													object_selected_and_point_valid);
 						item->addListener(gMenuHolder->getListenerByName("Object.AttachToAvatar"), "on_click", curiter->first);
 						
 						gAttachPieMenu->append(item);
@@ -2185,9 +2195,15 @@ void LLVOAvatar::buildCharacter()
 			if (attachment->getGroup() == 8)
 			{
 				LLMenuItemCallGL* item;
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
+				// We need the userdata param to disable options in this pie menu later on
 				item = new LLMenuItemCallGL(attachment->getName(), 
 											NULL, 
-											object_selected_and_point_valid);
+											object_selected_and_point_valid, attachment);
+// [/RLVa:KB]
+//				item = new LLMenuItemCallGL(attachment->getName(), 
+//											NULL, 
+//											object_selected_and_point_valid);
 				item->addListener(gMenuHolder->getListenerByName("Object.AttachToAvatar"), "on_click", curiter->first);
 				gAttachScreenPieMenu->append(item);
 				gDetachScreenPieMenu->append(new LLMenuItemCallGL(attachment->getName(), 
@@ -2206,6 +2222,7 @@ void LLVOAvatar::buildCharacter()
 				{
 					continue;
 				}
+				// RELEASE-RLVa: random comment because we want know if LL ever changes this to not include "attachment" as userdata
 				LLMenuItemCallGL* item = new LLMenuItemCallGL(attachment->getName(), 
 															  NULL, &object_selected_and_point_valid,
 															  &attach_label, attachment);
@@ -2265,8 +2282,13 @@ void LLVOAvatar::buildCharacter()
 				LLViewerJointAttachment* attachment = get_if_there(mAttachmentPoints, attach_index, (LLViewerJointAttachment*)NULL);
 				if (attachment)
 				{
+// [RLVa:KB] - Checked: 2009-07-06 (RLVa-1.0.0c)
+					// We need the userdata param to disable options in this pie menu later on
 					LLMenuItemCallGL* item = new LLMenuItemCallGL(attachment->getName(), 
-																  NULL, object_selected_and_point_valid);
+																  NULL, object_selected_and_point_valid, attachment);
+// [/RLVa:KB]
+//					LLMenuItemCallGL* item = new LLMenuItemCallGL(attachment->getName(), 
+//																  NULL, object_selected_and_point_valid);
 					gAttachBodyPartPieMenus[group]->append(item);
 					item->addListener(gMenuHolder->getListenerByName("Object.AttachToAvatar"), "on_click", attach_index);
 					gDetachBodyPartPieMenus[group]->append(new LLMenuItemCallGL(attachment->getName(), 
@@ -3225,12 +3247,18 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 	const F32 time_visible = mTimeVisible.getElapsedTimeF32();
 	const F32 NAME_SHOW_TIME = gSavedSettings.getF32("RenderNameShowTime");	// seconds
 	const F32 FADE_DURATION = gSavedSettings.getF32("RenderNameFadeDuration"); // seconds
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
+	bool fRlvShowNames = gRlvHandler.hasBehaviour(RLV_BHVR_SHOWNAMES);
+// [/RLVa:KB]
 	BOOL visible_avatar = isVisible() || mNeedsAnimUpdate;
 	BOOL visible_chat = gSavedSettings.getBOOL("UseChatBubbles") && (mChats.size() || mTyping);
 	BOOL render_name =	visible_chat ||
 						(visible_avatar &&
+// [RLVa:KB] - Checked: 2009-08-11 (RLVa-1.0.1h) | Added: RLVa-1.0.0h
+						( (!fRlvShowNames) || (RlvSettings::getShowNameTags()) ) &&
+// [/RLVa:KB]
 						((sRenderName == RENDER_NAME_ALWAYS) ||
-						(sRenderName == RENDER_NAME_FADE && time_visible < NAME_SHOW_TIME)));
+						 (sRenderName == RENDER_NAME_FADE && time_visible < NAME_SHOW_TIME)));
 	// If it's your own avatar, don't draw in mouselook, and don't
 	// draw if we're specifically hiding our own name.
 	if (mIsSelf)
@@ -3249,7 +3277,18 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 			new_name = TRUE;
 		}
 		
-		if (sRenderGroupTitles != mRenderGroupTitles)
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
+		if (fRlvShowNames)
+		{
+			if (mRenderGroupTitles)
+			{
+				mRenderGroupTitles = FALSE;
+				new_name = TRUE;
+			}
+		}
+		else if (sRenderGroupTitles != mRenderGroupTitles)
+// [/RLVa]
+//		if (sRenderGroupTitles != mRenderGroupTitles)
 		{
 			mRenderGroupTitles = sRenderGroupTitles;
 			new_name = TRUE;
@@ -3364,27 +3403,38 @@ void LLVOAvatar::idleUpdateNameTag(const LLVector3& root_pos_last)
 				|| is_appearance != mNameAppearance || client.length() != 0)
 			{
 				std::string line;
-				if (!sRenderGroupTitles)
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
+				if (!fRlvShowNames)
 				{
-					// If all group titles are turned off, stack first name
-					// on a line above last name
-					line += firstname->getString();
-					line += "\n";
-				}
-				else if (title && title->getString() && title->getString()[0] != '\0')
-				{
-					line += title->getString();
-					LLStringFn::replace_ascii_controlchars(line,LL_UNKNOWN_CHAR);
-					line += "\n";
-					line += firstname->getString();
+// [/RLVa:KB]
+					if (!sRenderGroupTitles)
+					{
+						// If all group titles are turned off, stack first name
+						// on a line above last name
+						line += firstname->getString();
+						line += "\n";
+					}
+					else if (title && title->getString() && title->getString()[0] != '\0')
+					{
+						line += title->getString();
+						LLStringFn::replace_ascii_controlchars(line,LL_UNKNOWN_CHAR);
+						line += "\n";
+						line += firstname->getString();
+					}
+					else
+					{
+						line += firstname->getString();
+					}
+
+					line += " ";
+					line += lastname->getString();
+// [RLVa:KB] - Version: 1.23.4 | Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.0b
 				}
 				else
 				{
-					line += firstname->getString();
+					line = RlvStrings::getAnonym(line.assign(firstname->getString()).append(" ").append(lastname->getString()));
 				}
-
-				line += " ";
-				line += lastname->getString();
+// [/RLVa:KB]
 				BOOL need_comma = FALSE;
 
 				if (is_away || is_muted || is_busy || client.length() != 0)
@@ -6325,6 +6375,13 @@ BOOL LLVOAvatar::attachObject(LLViewerObject *viewer_object)
 	{
 		updateAttachmentVisibility(gAgent.getCameraMode());
 		
+// [RLVa:KB] - Checked: 2009-10-10 (RLVa-1.0.5a) | Modified: RLVa-1.0.5a
+		if (rlv_handler_t::isEnabled())
+		{
+			gRlvHandler.onAttach(attachment);
+		}
+// [/RLVa:KB]
+
 		// Then make sure the inventory is in sync with the avatar.
 		gInventory.addChangedMask( LLInventoryObserver::LABEL, attachment->getItemID() );
 		gInventory.notifyObservers();
@@ -6386,6 +6443,14 @@ BOOL LLVOAvatar::detachObject(LLViewerObject *viewer_object)
 		// only one object per attachment point for now
 		if (attachment->getObject() == viewer_object)
 		{
+// [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
+			// URGENT-RLV: it looks like LLApp::isExiting() isn't always accurate so find something better (if it exists)
+			if ( (rlv_handler_t::isEnabled()) && (!LLApp::isExiting()) && (mIsSelf) )
+			{
+				gRlvHandler.onDetach(attachment);
+			}
+// [/RLVa:KB]
+
 			LLUUID item_id = attachment->getItemID();
 			attachment->removeObject(viewer_object);
 			if (mIsSelf)
@@ -6453,6 +6518,15 @@ void LLVOAvatar::sitOnObject(LLViewerObject *sit_object)
 
 	if (mIsSelf)
 	{
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.1d
+#ifdef RLV_EXTENSION_STARTLOCATION
+		if (rlv_handler_t::isEnabled())
+		{
+			RlvSettings::updateLoginLastLocation();
+		}
+#endif // RLV_EXTENSION_STARTLOCATION
+// [/RLVa:KB]
+
 		// Might be first sit
 		LLFirstUse::useSit();
 
@@ -6529,6 +6603,15 @@ void LLVOAvatar::getOffObject()
 
 	if (mIsSelf)
 	{
+// [RLVa:KB] - Checked: 2009-07-08 (RLVa-1.0.0e) | Added: RLVa-0.2.1d
+		#ifdef RLV_EXTENSION_STARTLOCATION
+		if (rlv_handler_t::isEnabled())
+		{
+			RlvSettings::updateLoginLastLocation();
+		}
+		#endif // RLV_EXTENSION_STARTLOCATION
+// [/RLVa:KB]
+
 		LLQuaternion av_rot = gAgent.getFrameAgent().getQuaternion();
 		LLQuaternion obj_rot = sit_object ? sit_object->getRenderRotation() : LLQuaternion::DEFAULT;
 		av_rot = av_rot * obj_rot;
@@ -6617,6 +6700,20 @@ LLViewerObject* LLVOAvatar::getWornAttachment( const LLUUID& inv_item_id )
 	}
 	return NULL;
 }
+
+// [RLVa:KB] - Checked: 2009-12-18 (RLVa-1.1.0i) | Added: RLVa-1.1.0i
+LLViewerJointAttachment* LLVOAvatar::getWornAttachmentPoint(const LLUUID& inv_item_id)
+{
+	for (attachment_map_t::const_iterator itAttach = mAttachmentPoints.begin(); 
+			itAttach != mAttachmentPoints.end(); ++itAttach)
+	{
+		LLViewerJointAttachment* pAttachPt = itAttach->second;
+		if (pAttachPt->getItemID() == inv_item_id)
+			return pAttachPt;
+	}
+	return NULL;
+}
+// [/RLVa:KB]
 
 const std::string LLVOAvatar::getAttachedPointName(const LLUUID& inv_item_id)
 {

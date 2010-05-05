@@ -493,6 +493,12 @@ set(viewer_SOURCE_FILES
     llxmlrpctransaction.cpp
     noise.cpp
     pipeline.cpp
+    rlvhandler.cpp
+    rlvhelper.cpp
+    rlvcommon.cpp
+    rlvmultistringsearch.cpp
+    rlvextensions.cpp
+    rlvfloaterbehaviour.cpp
     wlfPanel_AdvSettings.cpp
     )
 
@@ -943,6 +949,13 @@ set(viewer_HEADER_FILES
     noise.h
     pipeline.h
     randgauss.h
+    rlvdefines.h
+    rlvhandler.h
+    rlvhelper.h
+    rlvcommon.h
+    rlvmultistringsearch.h
+    rlvextensions.h
+    rlvfloaterbehaviour.h
     VertexCache.h
     VorbisFramework.h
     wlfPanel_AdvSettings.h
