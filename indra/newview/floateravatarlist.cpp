@@ -54,7 +54,7 @@ void cmdline_printchat(std::string message);
 
 FloaterAvatarList* FloaterAvatarList::sInstance = NULL;
 
-FloaterAvatarList::FloaterAvatarList() :  LLFloater(), LLEventTimer( 0.25f )
+FloaterAvatarList::FloaterAvatarList() :  LLFloater(), LLEventTimer( 0.12f )
 {
 	if(sInstance)delete sInstance;
 	sInstance = this;
@@ -63,6 +63,7 @@ FloaterAvatarList::FloaterAvatarList() :  LLFloater(), LLEventTimer( 0.25f )
 	mTracking = FALSE;
 	mTrackByLocation = FALSE;
 	last_av_req.start();
+	
 }
 
 FloaterAvatarList::~FloaterAvatarList()
