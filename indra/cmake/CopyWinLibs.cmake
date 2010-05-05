@@ -41,6 +41,7 @@ set(all_targets ${all_targets} ${out_targets})
 set(debug_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/debug")
 set(debug_files
     openjpegd.dll
+	libhunspell.dll
     )
 
 copy_if_different(
@@ -223,6 +224,7 @@ set(all_targets ${all_targets} ${out_targets})
 set(release_src_dir "${CMAKE_SOURCE_DIR}/../libraries/i686-win32/lib/release")
 set(release_files
     openjpeg.dll
+    libhunspell.dll
     )
     
 copy_if_different(
