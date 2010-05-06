@@ -852,6 +852,17 @@
 				<integer>100</integer>
 			</array>
 		</map>
+		<key>EmeraldUseYou</key>
+		<map>
+			<key>Comment</key>
+			<string>Use "You:" in place of your name in chat (old style!)</string>
+			<key>Persist</key>
+			<integer>1</integer>
+			<key>Type</key>
+			<string>Boolean</string>
+			<key>Value</key>
+			<integer>1</integer>
+		</map>
 		<key>UIImgDefaultAlphaUUID</key>
 		<map>
 			<key>Comment</key>

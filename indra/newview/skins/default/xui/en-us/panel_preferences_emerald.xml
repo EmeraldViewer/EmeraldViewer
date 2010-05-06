@@ -302,10 +302,13 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Disable ALL group chats" left_delta="0" mouse_opaque="true"
 					 name="EmeraldMuteAllGroups-toggle" radio_style="false" width="270" control_name="EmeraldMuteAllGroups"/>
-				<check_box bottom_delta="-25" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Right click translate also replaces selected text" left_delta="0" mouse_opaque="true"
 					 name="EmeraldTranslateReplace" radio_style="false" width="270" control_name="EmeraldTranslateReplace"/>
-        <button name="keyword_allert" label="Edit Key Word Alerts" halign="center" tool_tip="Edit what messages stand out" left_delta="0"
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 label="Use 'You' instead of your name in your own chat" left_delta="0" mouse_opaque="true"
+					 name="EmeraldUseYou" radio_style="false" width="270" control_name="EmeraldUseYou"/>
+        		<button name="keyword_allert" label="Edit Key Word Alerts" halign="center" tool_tip="Edit what messages stand out" left_delta="0"
 					 bottom_delta="-24" width="270" height="20" font="SansSerifSmall" follows="left|top"/>
 			</panel>
 			<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Misc"

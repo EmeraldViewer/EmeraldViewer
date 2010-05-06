@@ -2782,10 +2782,13 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		}
 		else
 		{
+			// Work out if it was us, and if so whether we intend to use "You", so we can get the right verb.
+			bool second_person = (from_id == gAgent.getID() && gSavedSettings.getBOOL("EmeraldUseYou"));
+			
 			switch(chat.mChatType)
 			{
 			case CHAT_TYPE_WHISPER:
-				verb = " " + LLTrans::getString("whisper") + " ";
+				verb = " " + LLTrans::getString(second_person ? "whisper_2p" : "whisper") + " ";
 				break;
 			case CHAT_TYPE_DEBUG_MSG:
 			case CHAT_TYPE_OWNER:
@@ -2880,7 +2883,7 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 				verb = ": ";
 				break;
 			case CHAT_TYPE_SHOUT:
-				verb = " " + LLTrans::getString("shout") + " ";
+				verb = " " + LLTrans::getString(second_person ? "shout_2p" : "shout") + " ";
 				break;
 			case CHAT_TYPE_START:
 			case CHAT_TYPE_STOP:
@@ -2891,8 +2894,10 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 				verb = " say, ";
 				break;
 			}
-
-			chat.mText = from_name + verb + mesg;
+			if(!second_person)
+				chat.mText = from_name + verb + mesg;
+			else
+				chat.mText = LLTrans::getString("You") + verb + mesg;
 		}
 		
 		if (chatter)

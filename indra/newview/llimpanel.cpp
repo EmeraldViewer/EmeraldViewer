@@ -73,6 +73,7 @@
 #include "llhttpclient.h"
 #include "llmutelist.h"
 #include "llstylemap.h"
+#include "lltrans.h"
 #include "mfdkeywordfloater.h" //Emerald KeywordAlert
 
 // [RLVa:KB]
@@ -3028,11 +3029,18 @@ void LLFloaterIMPanel::sendMsg()
 				   (mOtherParticipantUUID.notNull()))
 				{
 					std::string history_echo;
-					gAgent.buildFullname(history_echo);
 
 					// Look for IRC-style emotes here.
 					std::string prefix = utf8_text.substr(0, 4);
-					if (prefix == "/me " || prefix == "/me'")
+					bool is_emote = (prefix == "/me " || prefix == "/me'");
+					
+					// Use the right prefix ("You" / your name)
+					if(!is_emote && gSavedSettings.getBOOL("EmeraldUseYou"))
+						history_echo += LLTrans::getString("You");
+					else
+						gAgent.buildFullname(history_echo);
+					
+					if (is_emote)
 					{
 	                    if(isEncrypted())
 	                    {
