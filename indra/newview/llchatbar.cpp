@@ -183,11 +183,43 @@ BOOL LLChatBar::handleKeyHere( KEY key, MASK mask )
 			sendChat(CHAT_TYPE_SHOUT);
 			handled = TRUE;
 		}
+		else if (mask == MASK_SHIFT)
+		{
+			// whisper
+			sendChat( CHAT_TYPE_WHISPER );
+			handled = TRUE;
+		}
+		else if (mask == MASK_ALT)
+		{
+			// ooc chat
+			
+			sendChat( CHAT_TYPE_OOC );
+			handled = TRUE;
+		}
 		else if (mask == MASK_NONE)
 		{
 			// say
 			sendChat( CHAT_TYPE_NORMAL );
 			handled = TRUE;
+		}
+		else if (mask == (MASK_ALT | MASK_SHIFT | MASK_CONTROL))
+		{
+			//Insert new line symbol after the current cursor pos, then increment the curser by 1.
+			if (mInputEditor)
+			{
+				std::string msg = mInputEditor->getText();
+				if (mInputEditor->getCursor() > 0)
+				{
+					if (msg[mInputEditor->getCursor() - 1] != '\n')
+					{
+						//For some reason you have to use a newline character, the ¶ wont show up in chat.
+						msg = msg.insert(mInputEditor->getCursor(), "\n");
+						mInputEditor->setText(msg);
+						mInputEditor->setCursor(mInputEditor->getCursor() + 1);
+					}
+				}
+				handled = true;
+			}
 		}
 	}
 	// only do this in main chatbar
@@ -393,6 +425,13 @@ void LLChatBar::sendChat( EChatType type )
 		LLWString text = mInputEditor->getConvertedText();
 		if (!text.empty())
 		{
+			if(type == CHAT_TYPE_OOC)
+			{
+				std::string tempText = mInputEditor->getText();
+				tempText = gSavedSettings.getString("EmeraldOOCPrefix") + " " + tempText + " " + gSavedSettings.getString("EmeraldOOCPostfix");
+				mInputEditor->setText(tempText);
+				text = utf8str_to_wstring(tempText);
+			}
 			// store sent line in history, duplicates will get filtered
 			if (mInputEditor) mInputEditor->updateHistory();
 			// Check if this is destined for another channel
@@ -466,11 +505,15 @@ void LLChatBar::sendChat( EChatType type )
 			}
 
 			utf8_revised_text = utf8str_trim(utf8_revised_text);
-
-			if (!utf8_revised_text.empty() && cmd_line_chat(utf8_revised_text, CHAT_TYPE_NORMAL))
+			EChatType nType;
+			if(type == CHAT_TYPE_OOC)
+				nType = CHAT_TYPE_NORMAL;
+			else
+				nType = type;
+			if (!utf8_revised_text.empty() && cmd_line_chat(utf8_revised_text, nType))
 			{
 				// Chat with animation
-				sendChatFromViewer(utf8_revised_text, type, TRUE);
+				sendChatFromViewer(utf8_revised_text, nType, TRUE);
 			}
 		}
 	}
