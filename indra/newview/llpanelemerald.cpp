@@ -263,7 +263,6 @@ BOOL LLPanelEmerald::postBuild()
 	childSetCommitCallback("X Modifier", onCommitSendAppearance);
 	childSetCommitCallback("Y Modifier", onCommitSendAppearance);
 	childSetCommitCallback("Z Modifier", onCommitSendAppearance);
-	childSetValue("EmeraldDoubleClickTeleportMode", gSavedSettings.getBOOL("EmeraldDoubleClickTeleportMode"));
 	childSetValue("EmeraldUseOTR", LLSD((S32)gSavedSettings.getU32("EmeraldUseOTR"))); // [$PLOTR$]
 	getChild<LLButton>("otr_help_btn")->setClickedCallback(onClickOtrHelp, this);      // [/$PLOTR$]
 
@@ -472,8 +471,6 @@ void LLPanelEmerald::apply()
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageResponseItem", childGetValue("EmeraldInstantMessageResponseItem").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceIncoming", childGetValue("EmeraldInstantMessageAnnounceIncoming").asBoolean());
 	gSavedPerAccountSettings.setBOOL("EmeraldInstantMessageAnnounceStealFocus", childGetValue("EmeraldInstantMessageAnnounceStealFocus").asBoolean());
-	gSavedSettings.setBOOL("EmeraldDoubleClickTeleportMode",
-		childGetValue("EmeraldDoubleClickTeleportMode").asBoolean());
 	if(((gSavedSettings.getU32("RenderQualityPerformance")>=3) && gSavedSettings.getBOOL("WindLightUseAtmosShaders") && gSavedSettings.getBOOL("VertexShaderEnable")) && childGetValue("EmeraldShadowsON").asBoolean())
 	{
 		gSavedSettings.setBOOL("RenderUseFBO", childGetValue("EmeraldShadowsON").asBoolean());

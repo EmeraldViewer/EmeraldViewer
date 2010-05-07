@@ -841,7 +841,8 @@ void FloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 				const LLUUID *avid = &iter->first;
 				if(*avid != gAgent.getID())
 				{
-					if(first)
+					++num_ids;
+					if(first==1)
 					{
 						first = 0;
 						ids << avid->asString();
@@ -863,6 +864,7 @@ void FloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 						num_ids = 0;
 						ids.seekp(0);
 						ids.str("");
+						first=1;
 					}
 				}
 			}

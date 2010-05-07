@@ -780,7 +780,7 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 		{
 			LLVector3d pos = mPick.mPosGlobal;
 
-			handle_go_to();
+			//handle_go_to();
 			//LLViewerRegion* regionp = gAgent.getRegion();
 			//bool isLocal = regionp->getHandle() == to_region_handle_global((F32)pos.mdV[VX], (F32)pos.mdV[VY]);
 			bool calc = gSavedSettings.getBOOL("EmeraldDoubleClickTeleportAvCalc");
@@ -790,6 +790,9 @@ BOOL LLToolPie::handleDoubleClick(S32 x, S32 y, MASK mask)
 			LLVector3 offset = LLVector3(0.f,0.f,gSavedSettings.getF32("EmeraldDoubleClickZOffset"));
 			if(vel)offset += gAgent.getVelocity() * 0.25;
 			if(calc)offset += LLVector3(0.f,0.f,gAgent.getAvatarObject()->getPelvisToFoot());//LLVector3(0.f,0.f,gAgent.getAvatarObject()->getScale().mV[2] / 2);
+			pos.mdV[VX] += offset.mV[VX];
+			pos.mdV[VY] += offset.mV[VY];
+			pos.mdV[VZ] += offset.mV[VZ];
 			gAgent.teleportViaLocation(pos);
 			return TRUE;
 		}

@@ -5603,7 +5603,7 @@ void process_teleport_local(LLMessageSystem *msg,void**)
 	}
 
 	// Sim tells us whether the new position is off the ground
-	if (teleport_flags & TELEPORT_FLAGS_IS_FLYING)
+	if ((teleport_flags & TELEPORT_FLAGS_IS_FLYING) || gSavedSettings.getBOOL("EmeraldFlyAfterTeleport"))
 	{
 		gAgent.setFlying(TRUE);
 	}
@@ -5613,9 +5613,13 @@ void process_teleport_local(LLMessageSystem *msg,void**)
 	}
 
 	gAgent.setPositionAgent(pos);
+        LLVOAvatar* avatarp = gAgent.getAvatarObject();
+        avatarp->slamPosition();
 	gAgent.slamLookAt(look_at);
 
-	if ( !(gAgent.getTeleportKeepsLookAt() && LLViewerJoystick::getInstance()->getOverrideCamera()) )
+	if(!gSavedSettings.getBOOL("EmeraldRotateCamAfterLocalTP"))
+		gAgent.resetView(FALSE);
+	else if ( !(gAgent.getTeleportKeepsLookAt() && LLViewerJoystick::getInstance()->getOverrideCamera()) )
 	{
 		gAgent.resetView(TRUE, TRUE);
 	}

@@ -94,7 +94,7 @@ LLPointer<LLImageGL> gDisconnectedImagep = NULL;
 // used to toggle renderer back on after teleport
 const F32 TELEPORT_RENDER_DELAY = 20.f; // Max time a teleport is allowed to take before we raise the curtain
 const F32 TELEPORT_ARRIVAL_DELAY = 2.f; // Time to preload the world before raising the curtain after we've actually already arrived.
-const F32 TELEPORT_LOCAL_DELAY = 1.0f; // Delay to prevent teleports after starting an in-sim teleport.
+const F32 TELEPORT_LOCAL_DELAY = 0.0f; // Delay to prevent teleports after starting an in-sim teleport.
 BOOL		 gTeleportDisplay = FALSE;
 LLFrameTimer gTeleportDisplayTimer;
 LLFrameTimer gTeleportArrivalTimer;
