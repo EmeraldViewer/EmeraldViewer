@@ -832,6 +832,7 @@ void FloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
                 if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
                 {
 			int num_ids = 0;
+			int first=1;
 			std::ostringstream ids;
 			std::map<LLUUID, avatar_entry>::iterator iter;
 			FloaterAvatarList* self = FloaterAvatarList::getInstance();
@@ -840,8 +841,11 @@ void FloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 				const LLUUID *avid = &iter->first;
 				if(*avid != gAgent.getID())
 				{
-					if(!num_ids++)
+					if(first)
+					{
+						first = 0;
 						ids << avid->asString();
+					}
 					else
 						ids << "," << avid->asString();
 					if(ids.tellp() > 200)
