@@ -589,22 +589,6 @@ BOOL LLFloaterAO::init()
 					{
 						if(!item->getAssetUUID().isNull())
 						{
-							LLUUID* new_uuid = new LLUUID(configncitem);
-							LLHost source_sim = LLHost::invalid;
-							invfolderid = item->getParentUUID();
-							gAssetStorage->getInvItemAsset(source_sim,
-															gAgent.getID(),
-															gAgent.getSessionID(),
-															item->getPermissions().getOwner(),
-															LLUUID::null,
-															item->getUUID(),
-															item->getAssetUUID(),
-															item->getType(),
-															&onNotecardLoadComplete,
-															(void*)new_uuid,
-															TRUE);
-							success = TRUE;
-
 							///////////////////////////
 							mAOStands.clear();
 							mAOTokens.clear();
@@ -664,8 +648,21 @@ BOOL LLFloaterAO::init()
 							overrideloader.orig_id = ANIM_AGENT_FLY;					overrideloader.ao_id = LLUUID::null; overrideloader.state = STATE_AGENT_FLY;			mAOOverrides.push_back(overrideloader);
 							overrideloader.orig_id = ANIM_AGENT_FLYSLOW;				overrideloader.ao_id = LLUUID::null; overrideloader.state = STATE_AGENT_FLYSLOW;		mAOOverrides.push_back(overrideloader);
 							///////////////////////////
-
-
+							LLUUID* new_uuid = new LLUUID(configncitem);
+							LLHost source_sim = LLHost::invalid;
+							invfolderid = item->getParentUUID();
+							gAssetStorage->getInvItemAsset(source_sim,
+															gAgent.getID(),
+															gAgent.getSessionID(),
+															item->getPermissions().getOwner(),
+															LLUUID::null,
+															item->getUUID(),
+															item->getAssetUUID(),
+															item->getType(),
+															&onNotecardLoadComplete,
+															(void*)new_uuid,
+															TRUE);
+							success = TRUE;
 						}
 					}
 				}else
