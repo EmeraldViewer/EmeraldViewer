@@ -2112,7 +2112,10 @@ U32 LLAgent::getControlFlags()
 		}
 	}
 */
-	return mControlFlags;
+        if(LLAgent::ignorePrejump)
+                return mControlFlags | AGENT_CONTROL_FINISH_ANIM;
+        else
+                return mControlFlags;
 }
 
 //-----------------------------------------------------------------------------
@@ -4290,13 +4293,14 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 		return;
 	}
 
+	if(gSavedSettings.getBOOL("EmeraldAppearanceForceStand"))
 // [RLVa:KB] - Checked: 2009-07-10 (RLVa-1.0.0g)
 	if ( (gRlvHandler.hasBehaviour(RLV_BHVR_UNSIT)) && (mAvatarObject.notNull()) && (mAvatarObject->mIsSitting) )
 	{
 		return;
 	}
 // [/RLVa:KB]
-
+	if(gSavedSettings.getBOOL("EmeraldAppearanceForceStand"))
 	setControlFlags(AGENT_CONTROL_STAND_UP); // force stand up
 	gViewerWindow->getWindow()->resetBusyCount();
 
@@ -4340,7 +4344,7 @@ void LLAgent::changeCameraToCustomizeAvatar(BOOL avatar_animate, BOOL camera_ani
 
 	if (mAvatarObject.notNull())
 	{
-		if(avatar_animate)
+		if(avatar_animate  && gSavedSettings.getBOOL("EmeraldAppearanceAnimate"))
 		{
 				// Remove any pitch from the avatar
 			LLVector3 at = mFrameAgent.getAtAxis();
@@ -5008,8 +5012,11 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_STANDUP)
 	{
-		// send stand up command
-		setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+                // send stand up command
+                if(!gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation"))
+                {
+                        setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+                }
 
 		// now trigger dusting self off animation
 		if (mAvatarObject.notNull() && !mAvatarObject->mBelowWater && rand() % 3 == 0)
@@ -5017,7 +5024,10 @@ void LLAgent::onAnimStop(const LLUUID& id)
 	}
 	else if (id == ANIM_AGENT_PRE_JUMP || id == ANIM_AGENT_LAND || id == ANIM_AGENT_MEDIUM_LAND)
 	{
-		setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+                if(!gSavedSettings.getBOOL("EmeraldIgnoreFinishAnimation"))
+                {
+                        setControlFlags(AGENT_CONTROL_FINISH_ANIM);
+                }
 	}
 }
 
@@ -7488,7 +7498,10 @@ void LLAgent::sendAgentSetAppearance()
 	// NOTE -- when we start correcting all of the other Havok geometry 
 	// to compensate for the COLLISION_TOLERANCE ugliness we will have 
 	// to tweak this number again
-	const LLVector3 body_size = mAvatarObject->mBodySize;
+	LLVector3 body_size = mAvatarObject->mBodySize;
+        body_size.mV[VX] = body_size.mV[VX] + gSavedSettings.getF32("EmeraldAvatarXModifier");
+        body_size.mV[VY] = body_size.mV[VY] + gSavedSettings.getF32("EmeraldAvatarYModifier");
+        body_size.mV[VZ] = body_size.mV[VZ] + gSavedSettings.getF32("EmeraldAvatarZModifier");
 	msg->addVector3Fast(_PREHASH_Size, body_size);	
 
 	// To guard against out of order packets

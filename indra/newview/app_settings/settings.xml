@@ -12,6 +12,28 @@
 			<key>Value</key>
 			<real>10.0</real>
 		</map>
+    <key>EmeraldAppearanceAnimate</key>
+    <map>
+      <key>Comment</key>
+      <string>Play appearance anim when entering appearance mode?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldAppearanceForceStand</key>
+    <map>
+      <key>Comment</key>
+      <string>Unsit avatar when entering appearance mode?</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>EmeraldBeamShape</key>
     <map>
       <key>Comment</key>
@@ -45,17 +67,17 @@
       <key>Value</key>
       <real>1.0</real>
     </map>
-	<key>EmeraldDisableMinZoomDist</key>
-	<map>
-		<key>Comment</key>
-		<string>Disable the constraint on the closest distance the camera is allowed to get to an object.</string>
-		<key>Persist</key>
-		<integer>1</integer>
-		<key>Type</key>
-		<string>Boolean</string>
-		<key>Value</key>
-		<integer>0</integer>
-	</map>
+    <key>EmeraldDisableMinZoomDist</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable the constraint on the closest distance the camera is allowed to get to an object.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>EmeraldMaxBeamsPerSecond</key>
     <map>
       <key>Comment</key>
@@ -155,6 +177,39 @@
 			<key>Value</key>
 			<integer>0</integer>
 		</map>
+     <key>EmeraldAvatarXModifier</key>
+    <map>
+      <key>Comment</key>
+      <string>wat</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>0.0</real>
+    </map>
+    <key>EmeraldAvatarYModifier</key>
+    <map>
+      <key>Comment</key>
+      <string>wat</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>0.0</real>
+    </map>
+    <key>EmeraldAvatarZModifier</key>
+    <map>
+      <key>Comment</key>
+      <string>wat</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>0.0</real>
+    </map>
 		<key>EmeraldBoobFriction</key>
 		<map>
 			<key>Comment</key>

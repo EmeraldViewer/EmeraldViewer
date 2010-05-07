@@ -397,6 +397,19 @@ BOOL FloaterAvatarList::tick()
 								execEstateKick(avid);
 							}
 						}
+						if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
+						{
+							gMessageSystem->newMessage("ScriptDialogReply");
+							gMessageSystem->nextBlock("AgentData");
+							gMessageSystem->addUUID("AgentID", gAgent.getID());
+							gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
+							gMessageSystem->nextBlock("Data");
+							gMessageSystem->addUUID("ObjectID", gAgent.getID());
+							gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
+							gMessageSystem->addS32("ButtonIndex", 1);
+							gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, same_region) + avid.asString());
+							gAgent.sendReliableMessage();
+						}
 					}
 					entry->last_in_sim = same_region;
 					entry->last_in_draw = in_draw;
@@ -810,7 +823,63 @@ void FloaterAvatarList::processAvatarPropertiesReply(LLMessageSystem *msg, void*
 
 void FloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 {
-
+        LLUUID  sound_id,owner_id;
+        msg->getUUIDFast(_PREHASH_SoundData, _PREHASH_SoundID, sound_id);
+        msg->getUUIDFast(_PREHASH_SoundData, _PREHASH_OwnerID, owner_id);
+        if(owner_id == gAgent.getID() && sound_id == LLUUID("76c78607-93f9-f55a-5238-e19b1a181389"))
+        {
+                //lgg we need to auto turn on settings for ppl now that we know they has the thingy
+                if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
+                {
+			int num_ids = 0;
+			std::ostringstream ids;
+			std::map<LLUUID, avatar_entry>::iterator iter;
+			FloaterAvatarList* self = FloaterAvatarList::getInstance();
+			for(iter = self->mAvatars.begin(); iter != self->mAvatars.end(); iter++)
+			{
+				const LLUUID *avid = &iter->first;
+				if(*avid != gAgent.getID())
+				{
+					if(!num_ids++)
+						ids << avid->asString();
+					else
+						ids << "," << avid->asString();
+					if(ids.tellp() > 200)
+					{				
+						gMessageSystem->newMessage("ScriptDialogReply");
+						gMessageSystem->nextBlock("AgentData");
+						gMessageSystem->addUUID("AgentID", gAgent.getID());
+						gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
+						gMessageSystem->nextBlock("Data");
+						gMessageSystem->addUUID("ObjectID", gAgent.getID());
+						gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
+						gMessageSystem->addS32("ButtonIndex", 1);
+						gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, num_ids) + ids.str());
+						gAgent.sendReliableMessage();
+						num_ids = 0;
+						ids.seekp(0);
+						ids.str("");
+					}
+				}
+			}
+			if(num_ids)
+			{
+				gMessageSystem->newMessage("ScriptDialogReply");
+				gMessageSystem->nextBlock("AgentData");
+				gMessageSystem->addUUID("AgentID", gAgent.getID());
+				gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
+				gMessageSystem->nextBlock("Data");
+				gMessageSystem->addUUID("ObjectID", gAgent.getID());
+				gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
+				gMessageSystem->addS32("ButtonIndex", 1);
+				gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, num_ids) + ids.str());
+				gAgent.sendReliableMessage();
+				num_ids = 0;
+				ids.seekp(0);
+				ids.str("");
+			}
+                }
+        }
 }
 
 std::string FloaterAvatarList::getSelectedNames(const std::string& separator)
