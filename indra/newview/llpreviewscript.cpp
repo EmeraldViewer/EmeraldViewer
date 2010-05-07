@@ -331,7 +331,7 @@ LLScriptEdCore::LLScriptEdCore(
 	mEnableSave(FALSE),
 	mHasScriptData(FALSE),
 	mErrorListResizer(NULL),
-	LLEventTimer(1)
+	LLEventTimer(60)
 {
 	setFollowsAll();
 	setBorderVisible(FALSE);
