@@ -58,8 +58,8 @@ class ViewerManifest(LLManifest):
             self.path("shaders")
             
 	    # include the entire beams directory
-#            self.path("beams")
-#            self.path("beamsColors")
+            self.path("beams")
+            self.path("beamsColors")
 	    self.path("bridge_assets")
 	    self.path("dictionaries")
 
@@ -458,10 +458,10 @@ class DarwinManifest(ViewerManifest):
 
 	    # otr lib and deps
 	    self.path("../../libraries/universal-darwin/lib_release/libotr.dylib", "MacOS/libotr.dylib");
-	    self.path("../../libraries/universal-darwin/lib_release/libintl.8.dylib", "MacOS/libintl.8.dylib");
-	    self.path("../../libraries/universal-darwin/lib_release/libgcrypt.11.dylib", "MacOS/libgcrypt.11.dylib");
-	    self.path("../../libraries/universal-darwin/lib_release/libgpg-error.0.dylib", "MacOS/libgpg-error.0.dylib");
-	    self.path("../../libraries/universal-darwin/lib_release/libiconv.2.dylib", "MacOS/libiconv.2.dylib");
+#	    self.path("../../libraries/universal-darwin/lib_release/libintl.8.dylib", "MacOS/libintl.8.dylib");
+#	    self.path("../../libraries/universal-darwin/lib_release/libgcrypt.11.dylib", "MacOS/libgcrypt.11.dylib");
+#	    self.path("../../libraries/universal-darwin/lib_release/libgpg-error.0.dylib", "MacOS/libgpg-error.0.dylib");
+#	    self.path("../../libraries/universal-darwin/lib_release/libiconv.2.dylib", "MacOS/libiconv.2.dylib");
 
 	    # hunspell library
 	    self.path("../../libraries/universal-darwin/lib_release/libhunspell-1.2.dylib", "MacOS/libhunspell-1.2.dylib");
