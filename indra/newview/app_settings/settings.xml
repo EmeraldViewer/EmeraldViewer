@@ -45,6 +45,17 @@
       <key>Value</key>
       <real>1.0</real>
     </map>
+	<key>EmeraldDisableMinZoomDist</key>
+	<map>
+		<key>Comment</key>
+		<string>Disable the constraint on the closest distance the camera is allowed to get to an object.</string>
+		<key>Persist</key>
+		<integer>1</integer>
+		<key>Type</key>
+		<string>Boolean</string>
+		<key>Value</key>
+		<integer>0</integer>
+	</map>
     <key>EmeraldMaxBeamsPerSecond</key>
     <map>
       <key>Comment</key>
