@@ -1704,7 +1704,7 @@ bool LLAppViewer::initConfiguration()
 
 	// - set procedural settings 
 	gSavedSettings.setString("ClientSettingsFile", 
-        gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, getSettingsFilename("Default", "Global")));
+        gDirUtilp->getExpandedFilename(LL_PATH_USER_SETTINGS, getSettingsFilename("User", "Global")));
 
 	gSavedSettings.setString("VersionChannelName", LL_CHANNEL);
 
