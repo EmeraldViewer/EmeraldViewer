@@ -797,10 +797,9 @@ void LLPanelEmerald::onClickSetXed(void* user_data)
 	LLPanelEmerald* self = (LLPanelEmerald*)user_data;
 
 	std::string cur_name(gSavedSettings.getString("EmeraldLSLExternalEditor"));
-	std::string proposed_name(cur_name);
 	
 	LLFilePicker& picker = LLFilePicker::instance();
-	if (! picker.getOpenFile() )
+	if (! picker.getOpenFile(LLFilePicker::FFLOAD_APP) )
 	{
 		return; //Canceled!
 	}

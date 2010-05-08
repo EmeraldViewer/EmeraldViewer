@@ -831,7 +831,7 @@ void LLScriptEdCore::xedLaunch()
 	stat(mXfname.c_str(), &mXstbuf);
 	//launch
 	llinfos << std::string(gSavedSettings.getString("EmeraldLSLExternalEditor") + " " + mXfname).c_str() << llendl;		
-	#if LL_WINDOWS
+#if LL_WINDOWS
 	//just to get rid of the pesky black window
 	std::string exe = gSavedSettings.getString("EmeraldLSLExternalEditor");
 	int spaces=0;
@@ -845,10 +845,24 @@ void LLScriptEdCore::xedLaunch()
 	}
 
 	std::system(std::string("cmd.exe /c START " + exe + " " + mXfname + " & exit").c_str());
-
-	#else
+#elif LL_DARWIN
+	// Use Launch Services for this.
+	CFStringRef tempPath = CFStringCreateWithCString(kCFAllocatorDefault, mXfname.c_str(), kCFStringEncodingUTF8);
+	CFStringRef tempPathArray[1] = { tempPath };
+	CFArrayRef arguments = CFArrayCreate(kCFAllocatorDefault, (const void **)tempPathArray, 1, NULL);
+	LSApplicationParameters appParams;
+	memset(&appParams, 0, sizeof(appParams));
+	FSRef ref;
+	FSPathMakeRef((UInt8*)gSavedSettings.getString("EmeraldLSLExternalEditor").c_str(), &ref, NULL);
+	appParams.application = &ref;
+	appParams.argv = arguments;
+	appParams.flags = kLSLaunchAsync | kLSLaunchStartClassic;
+	LSOpenApplication(&appParams, NULL);
+	CFRelease(arguments);
+	CFRelease(tempPath);
+#else
 	std::system(std::string(gSavedSettings.getString("EmeraldLSLExternalEditor") + " " + mXfname).c_str());
-	#endif
+#endif
 }
 void LLScriptEdCore::XedUpd()
 {
