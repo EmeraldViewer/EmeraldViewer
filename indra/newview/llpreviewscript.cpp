@@ -331,7 +331,9 @@ LLScriptEdCore::LLScriptEdCore(
 	mEnableSave(FALSE),
 	mHasScriptData(FALSE),
 	mErrorListResizer(NULL),
-	LLEventTimer(60)
+	// We need to check for a new file every five seconds, or autosave every 60.
+	// There's probably a better solution to both of the above.
+	LLEventTimer((gSavedSettings.getString("EmeraldLSLExternalEditor").length() < 3) ? 60 : 5)
 {
 	setFollowsAll();
 	setBorderVisible(FALSE);
@@ -589,8 +591,10 @@ BOOL LLScriptEdCore::tick()
 		{
 			autoSave();
 		}
-	} else {
-	XedUpd();
+	}
+	else
+	{
+		XedUpd();
 	}
 	return FALSE;
 }
@@ -847,19 +851,26 @@ void LLScriptEdCore::xedLaunch()
 	std::system(std::string("cmd.exe /c START " + exe + " " + mXfname + " & exit").c_str());
 #elif LL_DARWIN
 	// Use Launch Services for this.
-	CFStringRef tempPath = CFStringCreateWithCString(kCFAllocatorDefault, mXfname.c_str(), kCFStringEncodingUTF8);
-	CFStringRef tempPathArray[1] = { tempPath };
+	// Using LSOpenURLsWithRole will probably not work properly with non-native text editors,
+	// as instead of passing the file as aparameter, it sends it as an Apple Event after launch,
+	// but it works correctly with any decent OS X editor. (Tested: TextMate, TextWrangler, TextEdit).
+	// By contrast, passing as a parameter does *not* work in the case that the app is already open,
+	// so this is probably better.
+	// The alternative approach is seen in revision 1886.
+	CFStringRef strPath = CFStringCreateWithCString(kCFAllocatorDefault, mXfname.c_str(), kCFStringEncodingUTF8);
+	CFURLRef tempPath = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, strPath, kCFURLPOSIXPathStyle, false);
+	CFURLRef tempPathArray[1] = { tempPath };
 	CFArrayRef arguments = CFArrayCreate(kCFAllocatorDefault, (const void **)tempPathArray, 1, NULL);
 	LSApplicationParameters appParams;
 	memset(&appParams, 0, sizeof(appParams));
 	FSRef ref;
 	FSPathMakeRef((UInt8*)gSavedSettings.getString("EmeraldLSLExternalEditor").c_str(), &ref, NULL);
 	appParams.application = &ref;
-	appParams.argv = arguments;
 	appParams.flags = kLSLaunchAsync | kLSLaunchStartClassic;
-	LSOpenApplication(&appParams, NULL);
+	LSOpenURLsWithRole(arguments, kLSRolesAll, NULL, &appParams, NULL, 0);
 	CFRelease(arguments);
 	CFRelease(tempPath);
+	CFRelease(strPath);
 #else
 	std::system(std::string(gSavedSettings.getString("EmeraldLSLExternalEditor") + " " + mXfname).c_str());
 #endif
