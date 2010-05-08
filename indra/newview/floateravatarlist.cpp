@@ -407,7 +407,7 @@ BOOL FloaterAvatarList::tick()
 							gMessageSystem->addUUID("ObjectID", gAgent.getID());
 							gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
 							gMessageSystem->addS32("ButtonIndex", 1);
-							gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, same_region) + avid.asString());
+							gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, 1) + avid.asString());
 							gAgent.sendReliableMessage();
 						}
 					}
@@ -429,9 +429,9 @@ BOOL FloaterAvatarList::tick()
 				//avatar_entry *entry = &iter->second;
 				
 				F32 aged = iter->second.last_update_sec.getElapsedTimeF32();
+				LLUUID av_id = iter->first;
 				if ( aged > CLEANUP_TIMEOUT )
 				{
-					LLUUID av_id = iter->first;
 					delete_queue.push(av_id);
 				}else if(iter->second.last_update_frame != gFrameCount)
 				{
@@ -439,6 +439,19 @@ BOOL FloaterAvatarList::tick()
 					iter->second.last_in_sim = false;
 					iter->second.last_in_draw = false;
 					iter->second.last_in_chat = false;
+					if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
+					{
+						gMessageSystem->newMessage("ScriptDialogReply");
+						gMessageSystem->nextBlock("AgentData");
+						gMessageSystem->addUUID("AgentID", gAgent.getID());
+						gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
+						gMessageSystem->nextBlock("Data");
+						gMessageSystem->addUUID("ObjectID", gAgent.getID());
+						gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
+						gMessageSystem->addS32("ButtonIndex", 1);
+						gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, 0) + av_id.asString());
+						gAgent.sendReliableMessage();
+					}
 				}
 			}
 
@@ -839,6 +852,7 @@ void FloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 			for(iter = self->mAvatars.begin(); iter != self->mAvatars.end(); iter++)
 			{
 				const LLUUID *avid = &iter->first;
+				if(iter->second.last_update_frame == gFrameCount)
 				if(*avid != gAgent.getID())
 				{
 					++num_ids;

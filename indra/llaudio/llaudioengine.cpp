@@ -819,15 +819,17 @@ void LLAudioEngine::triggerSound(const LLUUID &audio_uuid, const LLUUID& owner_i
 	// Create a new source (since this can't be associated with an existing source.
 	//llinfos << "Localized: " << audio_uuid << llendl;
 
-	if (mMuted)
+	if (mMuted || gain == 0.0)
 	{
 		return;
 	}
-
+	//fix collision sounds under OpenAL
+	F32 fixedGain=llclamp(gain,0.0f,1.0f);
+	if (fixedGain == 0.f) return;
 	LLUUID source_id;
 	source_id.generate();
 
-	LLAudioSource *asp = new LLAudioSource(source_id, owner_id, gain, type);
+	LLAudioSource *asp = new LLAudioSource(source_id, owner_id, fixedGain, type);
 	gAudiop->addAudioSource(asp);
 	if (pos_global.isExactlyZero())
 	{
