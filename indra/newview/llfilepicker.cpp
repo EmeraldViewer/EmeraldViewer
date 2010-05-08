@@ -593,9 +593,9 @@ Boolean LLFilePicker::navOpenFilterProc(AEDesc *theItem, void *info, void *callB
 		}
 		else if(filter == FFLOAD_APP)
 		{
-			// App bundles are of type APPL.
+			// App bundles are of type APPL; ???? is a folder, and 0 is something going wrong.
 			if((int)navInfo->fileAndFolder.folderInfo.folderType != FOUR_CHAR_CODE('APPL') &&
-			   (int)navInfo->fileAndFolder.folderInfo.folderType != FOUR_CHAR_CODE('????') &&
+			   (int)navInfo->fileAndFolder.folderInfo.folderType != FOUR_CHAR_CODE('\?\?\?\?') &&
 			   (int)navInfo->fileAndFolder.folderInfo.folderType != 0
 			   )
 			{
