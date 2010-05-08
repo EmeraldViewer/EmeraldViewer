@@ -369,9 +369,20 @@ BOOL FloaterAvatarList::tick()
 						avatar_entry new_entry;
 						new_entry.id = avid;
 						new_entry.is_linden = (strcmp(last.c_str(),"Linden") == 0 || strcmp(last.c_str(),"Tester") == 0) ? true : false;
-
 						mAvatars[avid] = new_entry;
-
+						if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
+						{
+							gMessageSystem->newMessage("ScriptDialogReply");
+							gMessageSystem->nextBlock("AgentData");
+							gMessageSystem->addUUID("AgentID", gAgent.getID());
+							gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
+							gMessageSystem->nextBlock("Data");
+							gMessageSystem->addUUID("ObjectID", gAgent.getID());
+							gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
+							gMessageSystem->addS32("ButtonIndex", 1);
+							gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, 1) + avid.asString());
+							gAgent.sendReliableMessage();
+						}
 					}
 					avatar_entry* entry = &(mAvatars[avid]);
 					entry->name = name;
@@ -397,19 +408,6 @@ BOOL FloaterAvatarList::tick()
 								execEstateKick(avid);
 							}
 						}
-						if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
-						{
-							gMessageSystem->newMessage("ScriptDialogReply");
-							gMessageSystem->nextBlock("AgentData");
-							gMessageSystem->addUUID("AgentID", gAgent.getID());
-							gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
-							gMessageSystem->nextBlock("Data");
-							gMessageSystem->addUUID("ObjectID", gAgent.getID());
-							gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
-							gMessageSystem->addS32("ButtonIndex", 1);
-							gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, 1) + avid.asString());
-							gAgent.sendReliableMessage();
-						}
 					}
 					entry->last_in_sim = same_region;
 					entry->last_in_draw = in_draw;
@@ -429,30 +427,34 @@ BOOL FloaterAvatarList::tick()
 				//avatar_entry *entry = &iter->second;
 				
 				F32 aged = iter->second.last_update_sec.getElapsedTimeF32();
-				LLUUID av_id = iter->first;
 				if ( aged > CLEANUP_TIMEOUT )
 				{
+					LLUUID av_id = iter->first;
 					delete_queue.push(av_id);
-				}else if(iter->second.last_update_frame != gFrameCount)
-				{
-					chat_alerts(&iter->second,false, false, false);
-					iter->second.last_in_sim = false;
-					iter->second.last_in_draw = false;
-					iter->second.last_in_chat = false;
-					if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
-					{
-						gMessageSystem->newMessage("ScriptDialogReply");
-						gMessageSystem->nextBlock("AgentData");
-						gMessageSystem->addUUID("AgentID", gAgent.getID());
-						gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
-						gMessageSystem->nextBlock("Data");
-						gMessageSystem->addUUID("ObjectID", gAgent.getID());
-						gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
-						gMessageSystem->addS32("ButtonIndex", 1);
-						gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, 0) + av_id.asString());
-						gAgent.sendReliableMessage();
-					}
 				}
+				else if(iter->second.last_update_frame != gFrameCount)
+					if(iter->second.last_update_frame != -1)
+					{
+						LLUUID av_id = iter->first;
+						chat_alerts(&iter->second,false, false, false);
+						iter->second.last_in_sim = false;
+						iter->second.last_in_draw = false;
+						iter->second.last_in_chat = false;
+						iter->second.last_update_frame = -1;
+						if(gSavedSettings.getBOOL("EmeraldRadarChatKeys"))
+						{
+							gMessageSystem->newMessage("ScriptDialogReply");
+							gMessageSystem->nextBlock("AgentData");
+							gMessageSystem->addUUID("AgentID", gAgent.getID());
+							gMessageSystem->addUUID("SessionID", gAgent.getSessionID());
+							gMessageSystem->nextBlock("Data");
+							gMessageSystem->addUUID("ObjectID", gAgent.getID());
+							gMessageSystem->addS32("ChatChannel", gSavedSettings.getS32("EmeraldRadarChatKeysChannel"));
+							gMessageSystem->addS32("ButtonIndex", 1);
+							gMessageSystem->addString("ButtonLabel",llformat("%d,%d,", gFrameCount, 0) + av_id.asString());
+							gAgent.sendReliableMessage();
+						}
+					}
 			}
 
 			while(!delete_queue.empty())
