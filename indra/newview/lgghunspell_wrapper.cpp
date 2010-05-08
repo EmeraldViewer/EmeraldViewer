@@ -802,7 +802,6 @@ void lggHunSpell_Wrapper::newDictSelection(std::string selection)
 }
 void lggHunSpell_Wrapper::getMoreButton(void * data)
 {
-	//LLWeb::loadURL("http://www.cypherpunks.ca/otr/");
 	std::vector<std::string> shortNames;
 	std::vector<std::string> longNames;
 	LLSD response = LLHTTPClient::blockingGet("http://www.modularsystems.sl/app/dics/dic_list.xml");
@@ -825,7 +824,7 @@ void lggHunSpell_Wrapper::getMoreButton(void * data)
 void lggHunSpell_Wrapper::editCustomButton()
 {
 	std::string dicdicpath(gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "dictionaries", std::string("emerald_custom.dic")).c_str());
-	//gViewerWindow->getWindow()->ShellEx(dicdicpath);
+	gViewerWindow->getWindow()->openFile(dicdicpath);
 }
 
 void lggHunSpell_Wrapper::setNewHighlightSetting( BOOL highlight )

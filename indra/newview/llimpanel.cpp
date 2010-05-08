@@ -1850,17 +1850,17 @@ void LLFloaterIMPanel::onClickTeleport( void* userdata )
 // static
 void LLFloaterIMPanel::onClickHistory( void* userdata )
 {
-	/*LLFloaterIMPanel* self = (LLFloaterIMPanel*) userdata;
+	LLFloaterIMPanel* self = (LLFloaterIMPanel*) userdata;
 	
 	if (self->mOtherParticipantUUID.notNull())
 	{
 		char command[256];
 		std::string fullname(gDirUtilp->getScrubbedFileName(self->getTitle()));
-		sprintf(command, "\"%s\\%s.txt\"", gDirUtilp->getPerAccountChatLogsDir().c_str(),fullname.c_str());
-		gViewerWindow->getWindow()->spawnWebBrowser(command);
+		sprintf(command, "%s%s%s.txt", gDirUtilp->getPerAccountChatLogsDir().c_str(), gDirUtilp->getDirDelimiter().c_str(), fullname.c_str());
+		gViewerWindow->getWindow()->openFile(command);
 
 		llinfos << command << llendl;
-	}*/
+	}
 }
 
 // static

@@ -3133,6 +3133,18 @@ S32 OSMessageBoxMacOSX(const std::string& text, const std::string& caption, U32 
 	return result;
 }
 
+void LLWindowMacOSX::openFile(const std::string& file_name)
+{
+	// Open with whatever the system feels like opening with.
+	llinfos << "Opening " << file_name << " in external editor." << llendl;
+	CFStringRef strPath = CFStringCreateWithCString(kCFAllocatorDefault, file_name.c_str(), kCFStringEncodingUTF8);
+	FSRef ref;
+	FSPathMakeRef((UInt8*)file_name.c_str(), &ref, NULL);
+	FSRef pathArray[1] = { ref };
+	LSOpenItemsWithRole(pathArray, 1, kLSRolesEditor, NULL, NULL, NULL, 0);
+	CFRelease(strPath);
+}
+
 // Open a URL with the user's default web browser.
 // Must begin with protocol identifier.
 void LLWindowMacOSX::spawnWebBrowser(const std::string& escaped_url)
