@@ -847,8 +847,11 @@ void LLScriptEdCore::xedLaunch()
 	{
 		exe = "\""+exe+"\"";
 	}
+	std::string theCMD("cmd.exe /c START \"External Editor\" " + exe + " " + mXfname + " & exit");
+	llinfos << "FINAL COMMAND IS :"<<
+		theCMD.c_str() << llendl;	
 
-	std::system(std::string("cmd.exe /c START " + exe + " " + mXfname + " & exit").c_str());
+	std::system(theCMD.c_str());
 #elif LL_DARWIN
 	// Use Launch Services for this.
 	// Using LSOpenURLsWithRole will probably not work properly with non-native text editors,

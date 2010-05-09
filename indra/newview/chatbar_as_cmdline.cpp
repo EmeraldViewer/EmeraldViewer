@@ -447,6 +447,11 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 				//Zwag: I wonder how many people will actually get this?
 				cmdline_printchat("Nothing happens.");
 				return false;
+			}else if (revised_text == "/pimps")
+			{
+				//Thanks to the pimp's horrible code for shutting down the site...
+				cmdline_printchat("Pimps can't code.");
+				return true;//dont block chat
 			}else if(command == *sEmeraldCmdLineClearChat)
 			{
 				LLFloaterChat* chat = LLFloaterChat::getInstance(LLSD());
