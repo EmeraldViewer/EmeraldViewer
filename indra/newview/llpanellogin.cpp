@@ -946,15 +946,15 @@ void LLPanelLogin::loadLoginPage()
 	oStr << "&channel=" << curl_channel;
 	oStr << "&version=" << curl_version;
 	oStr << "&t=" << curl_t;
+	if(LL_CHANNEL != EMERALD_RELEASE_CHANNEL)
+		oStr << "&unsupported=1";
 
 	curl_free(curl_channel);
 	curl_free(curl_version);
 	curl_free(curl_t);
 
-	// Grid
-	char* curl_grid = curl_escape(LLViewerLogin::getInstance()->getGridLabel().c_str(), 0);
-	oStr << "&grid=" << curl_grid;
-	curl_free(curl_grid);
+	// grid=blah code was here. Due to the implementation of the Emerald login manager, sending
+	// this information is a very bad idea. Don't do it.
 
 	gViewerWindow->setMenuBackgroundColor(false, !LLViewerLogin::getInstance()->isInProductionGrid());
 	gLoginMenuBarView->setBackgroundColor(gMenuBarView->getBackgroundColor());

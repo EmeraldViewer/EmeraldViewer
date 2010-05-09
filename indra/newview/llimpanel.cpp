@@ -74,7 +74,9 @@
 #include "llmutelist.h"
 #include "llstylemap.h"
 #include "lltrans.h"
+#include "llversionviewer.h"
 #include "mfdkeywordfloater.h" //Emerald KeywordAlert
+#include "a_modularsystemslink.h"
 
 // [RLVa:KB]
 #include "rlvhandler.h"
@@ -1224,6 +1226,16 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 		LLLogChat::loadHistory(mSessionLabel,
 				       &chatFromLogFile,
 				       (void *)this);
+	}
+
+	if (LL_CHANNEL != EMERALD_RELEASE_CHANNEL && mDialog == IM_NOTHING_SPECIAL)
+	{
+		if(ModularSystemsLink::is_support(mOtherParticipantUUID))
+		{
+			addHistoryLine(getString("emerald_no_support_available"), 
+						   gSavedSettings.getColor4("SystemChatColor"),
+						   false);
+		}
 	}
 
 	if ( !mSessionInitialized )

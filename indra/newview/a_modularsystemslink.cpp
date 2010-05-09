@@ -172,6 +172,26 @@ std::string ModularSystemsLink::processRequestForInfo(LLUUID requester, std::str
 	{
 		return message;
 	}
+	std::string my_name;
+	gAgent.buildFullname(my_name);
+	// If it's an unsupported build, say that.
+	if(LL_CHANNEL != EMERALD_RELEASE_CHANNEL)
+	{
+		pack_instant_message(
+			 gMessageSystem,
+			 gAgent.getID(),
+			 FALSE,
+			 gAgent.getSessionID(),
+			 requester,
+			 my_name,
+			 "(Unsupported release)",
+			 IM_ONLINE,
+			 IM_NOTHING_SPECIAL,
+			 sessionid
+		);
+		gAgent.sendReliableMessage();
+	}
+	
 	//llinfos << "sysinfo was found in this message, it was at " << message.find("/sysinfo") << " pos." << llendl;
 	std::string outmessage("I am requesting information about your system setup.");
 	std::string reason("");
