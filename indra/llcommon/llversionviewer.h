@@ -36,7 +36,7 @@
 const S32 LL_VERSION_MAJOR = 1;
 const S32 LL_VERSION_MINOR = 3;
 const S32 LL_VERSION_PATCH = 2;
-const S32 LL_VERSION_BUILD = 1890;
+const S32 LL_VERSION_BUILD = 1893;
 
 const char * const LL_CHANNEL = "Emerald Viewer Internal";
 
@@ -44,4 +44,6 @@ const char * const LL_CHANNEL = "Emerald Viewer Internal";
 const char * const LL_VERSION_BUNDLE_ID = "com.secondlife.emerald.viewer";
 #endif
 
+// Used for checking if this is a supported build. Don't change unless our releases change.
+const char * const EMERALD_RELEASE_CHANNEL = "Emerald Viewer Release";
 #endif
