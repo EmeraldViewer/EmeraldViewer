@@ -594,7 +594,6 @@ void LLPanelEmerald::callbackEmeraldStealth(const LLSD &notification, const LLSD
 		gSavedSettings.setBOOL("EmeraldUseBridgeOnline",false);
 		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",false);
 		gSavedSettings.setBOOL("EmeraldMoveLockDCT",false);
-		gSavedSettings.setBOOL("EmeraldSendTitleToWeb",false);
 	}
 }
 void LLPanelEmerald::onNoStealth(void* data)
@@ -622,7 +621,6 @@ void LLPanelEmerald::callbackEmeraldNoStealth(const LLSD &notification, const LL
 		gSavedSettings.setBOOL("EmeraldUseBridgeOnline",true);
 		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",true);		
 		gSavedSettings.setBOOL("EmeraldMoveLockDCT",true);
-		gSavedSettings.setBOOL("EmeraldSendTitleToWeb",true);
 
 	}
 }
