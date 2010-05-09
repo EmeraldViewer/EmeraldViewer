@@ -12,17 +12,28 @@
 			<key>Value</key>
 			<real>10.0</real>
 		</map>
-	<key>EmeraldAllowMUpose</key>
-	<map>
-		<key>Comment</key>
-		<string>Allow MU* pose style in chat and IM (with ':' as a synonymous to '/me ')</string>
-		<key>Persist</key>
-		<integer>1</integer>
-		<key>Type</key>
-		<string>Boolean</string>
-		<key>Value</key>
-		<integer>0</integer>
-	</map>
+    <key>EmeraldAllowMUpose</key>
+    <map>
+      <key>Comment</key>
+      <string>Allow MU* pose style in chat and IM (with ':' as a synonymous to '/me ')</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldSendTitleToWeb</key>
+    <map>
+      <key>Comment</key>
+      <string>Send the viewer title to web pages as the agent string</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>EmeraldAppearanceAnimate</key>
     <map>
       <key>Comment</key>

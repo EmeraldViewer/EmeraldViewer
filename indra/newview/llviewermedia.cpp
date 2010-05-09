@@ -261,6 +261,12 @@ std::string LLViewerMedia::getCurrentUserAgent()
 	codec << "SecondLife/";
 	codec << LLAppViewer::instance()->getWindowTitle();
 	llinfos << codec.str() << llendl;
+	if(!gSavedSettings.getBOOL("EmeraldSendTitleToWeb"))
+	{
+		std::ostringstream newcodec;
+		newcodec << "LLPluginMedia Web Browser";
+		return newcodec.str();
+	}
 	
 	return codec.str();
 }
