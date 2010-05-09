@@ -222,6 +222,7 @@
 #include "floateravatarlist.h"
 
 #include "floaterao.h"
+#include "scriptcounter.h"
 
 using namespace LLVOAvatarDefines;
 void init_client_menu(LLMenuGL* menu);
@@ -2320,7 +2321,58 @@ class LLObjectMute : public view_listener_t
 		return true;
 	}
 };
+class LLObjectVisibleScriptCount : public view_listener_t
+{
+        bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+        {
+                LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+                bool new_value = (object != NULL);
+                gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
 
+                return true;
+        }
+};
+class LLObjectEnableScriptDelete : public view_listener_t
+{
+        bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+        {
+                LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+                bool new_value = (object != NULL);
+                if(new_value)
+                for (LLObjectSelection::root_iterator iter = LLSelectMgr::getInstance()->getSelection()->root_begin();
+                        iter != LLSelectMgr::getInstance()->getSelection()->root_end(); iter++)
+                {
+                        LLSelectNode* selectNode = *iter;
+                        LLViewerObject* object = selectNode->getObject();
+                        if(object)
+                                if(!object->permModify())
+                                {
+                                        new_value=false;
+                                        break;
+                                }
+                }
+                gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+
+                return true;
+        }
+};
+class LLScriptCount : public view_listener_t
+{
+        bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+        {
+                ScriptCounter::serializeSelection(false);
+                return true;
+        }
+};
+
+class LLScriptDelete : public view_listener_t
+{
+        bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+        {
+                ScriptCounter::serializeSelection(true);
+                return true;
+        }
+};
 bool handle_go_to()
 {
 // [RLVa:KB] - Checked: 2009-10-10 (RLVa-1.0.5a) | Modified: RLVa-1.0.5a
@@ -8862,6 +8914,8 @@ void initialize_menus()
 	addMenu(new LLToolsEnableBuyOrTake(), "Tools.EnableBuyOrTake");
 	addMenu(new LLToolsEnableTakeCopy(), "Tools.EnableTakeCopy");
 	addMenu(new LLToolsEnableSaveToObjectInventory(), "Tools.SaveToObjectInventory");
+        addMenu(new LLScriptDelete(), "Tools.ScriptDelete");
+        addMenu(new LLObjectEnableScriptDelete(), "Tools.EnableScriptDelete");
 
 	/*addMenu(new LLToolsVisibleBuyObject(), "Tools.VisibleBuyObject");
 	addMenu(new LLToolsVisibleTakeObject(), "Tools.VisibleTakeObject");*/
@@ -8902,6 +8956,8 @@ void initialize_menus()
 	addMenu(new LLObjectAttachToAvatar(), "Object.AttachToAvatar");
 	addMenu(new LLObjectReturn(), "Object.Return");
 	addMenu(new LLObjectReportAbuse(), "Object.ReportAbuse");
+        addMenu(new LLScriptCount(), "Object.ScriptCount");
+        addMenu(new LLObjectVisibleScriptCount(), "Object.VisibleScriptCount");
 	addMenu(new LLObjectMute(), "Object.Mute");
 	addMenu(new LLObjectBuy(), "Object.Buy");
 	addMenu(new LLObjectEdit(), "Object.Edit");

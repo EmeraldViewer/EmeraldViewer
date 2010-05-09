@@ -854,7 +854,7 @@ void FloaterAvatarList::processSoundTrigger(LLMessageSystem* msg,void**)
 			for(iter = self->mAvatars.begin(); iter != self->mAvatars.end(); iter++)
 			{
 				const LLUUID *avid = &iter->first;
-				if(iter->second.last_update_frame == gFrameCount)
+				if(iter->second.last_update_frame != -1)
 				if(*avid != gAgent.getID())
 				{
 					++num_ids;
@@ -1300,7 +1300,13 @@ void FloaterAvatarList::onClickGTFOFromEstate(void *userdata)
 
 void execScriptCount(LLUUID& target)
 {
-
+        LLViewerObject *obj=gObjectList.findObject(target);
+        if(obj)
+        {
+                LLSelectMgr::getInstance()->selectObjectOnly(obj);
+                ScriptCounter::serializeSelection(false);
+                LLSelectMgr::getInstance()->deselectAll();
+        }
 }
 void FloaterAvatarList::onClickScriptCount(void *userdata)
 {

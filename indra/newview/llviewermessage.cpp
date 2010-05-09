@@ -2938,7 +2938,34 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 
 			is_owned_by_me = chatter->permYouOwner();
 		}
+// twisted
+    if(chat.mSourceType == CHAT_SOURCE_OBJECT
+    && chat.mChatType != CHAT_TYPE_DEBUG_MSG
+    && !owner_id.isNull()
+    && owner_id != gAgent.getID())
+    {
+                std::string tempname = from_name;
 
+                size_t found = tempname.find(" ");
+                while(found != std::string::npos)
+                {
+                        tempname.replace(found, 1, "");
+                        found = tempname.find(" ");
+                }
+
+                if (tempname.length() < 1)
+                {
+                        from_name = ">>";
+                        chat.mFromName = from_name;
+                }
+
+//        std::string ownername;
+//        if(gCacheName->getFullName(owner_id,ownername))
+//            from_name += (" (" + ownername + ")");
+        chat.mURL = llformat("secondlife:///app/agent/%s/about",owner_id.asString().c_str());
+    }
+
+// end twisted
 		// truth table:
 		// LINDEN	BUSY	MUTED	OWNED_BY_YOU	TASK		DISPLAY		STORE IN HISTORY
 		// F		F		F		F				*			Yes			Yes
