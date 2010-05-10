@@ -3,6 +3,7 @@
 project(llcommon)
 
 include(00-Common)
+include(Utils)
 include(LLCommon)
 
 include_directories(
@@ -168,8 +169,8 @@ set(llcommon_HEADER_FILES
     lluri.h
     lluuid.h
     lluuidhashmap.h
-    llversionserver.h
-    llversionviewer.h
+#    llversionserver.h
+#    llversionviewer.h
     llworkerthread.h
     metaclass.h
     metaclasst.h
@@ -191,6 +192,14 @@ set_source_files_properties(${llcommon_HEADER_FILES}
                             PROPERTIES HEADER_FILE_ONLY TRUE)
 
 list(APPEND llcommon_SOURCE_FILES ${llcommon_HEADER_FILES})
+
+configure_files(llcommon_GENERATED_HEADER_FILES
+    llversionserver.h
+    llversionviewer.h
+    )
+set_source_files_properties(${llcommon_GENERATED_HEADER_FILES}
+                            PROPERTIES HEADER_FILE_ONLY TRUE)
+list(APPEND llcommon_SOURCE_FILES ${llcommon_GENERATED_HEADER_FILES})
 
 add_library (llcommon ${llcommon_SOURCE_FILES})
 add_dependencies(llcommon prepare)

@@ -1,10 +1,10 @@
 /** 
- * @file llversionviewer.h
+ * @file llversionserver.h
  * @brief
  *
  * $LicenseInfo:firstyear=2002&license=viewergpl$
  * 
- * Copyright (c) 2002-2009, Linden Research, Inc.
+ * Copyright (c) 2002-2007, Linden Research, Inc.
  * 
  * Second Life Viewer Source Code
  * The source code in this file ("Source Code") is provided by Linden Lab
@@ -12,13 +12,12 @@
  * ("GPL"), unless you have obtained a separate licensing agreement
  * ("Other License"), formally executed by you and Linden Lab.  Terms of
  * the GPL can be found in doc/GPL-license.txt in this distribution, or
- * online at http://secondlifegrid.net/programs/open_source/licensing/gplv2
+ * online at http://secondlife.com/developers/opensource/gplv2
  * 
  * There are special exceptions to the terms and conditions of the GPL as
  * it is applied to this Source Code. View the full text of the exception
  * in the file doc/FLOSS-exception.txt in this software distribution, or
- * online at
- * http://secondlifegrid.net/programs/open_source/licensing/flossexception
+ * online at http://secondlife.com/developers/opensource/flossexception
  * 
  * By copying, modifying or distributing this software, you acknowledge
  * that you have read and understood your obligations described above,
@@ -30,20 +29,14 @@
  * $/LicenseInfo$
  */
 
-#ifndef LL_LLVERSIONVIEWER_H
-#define LL_LLVERSIONVIEWER_H
+#ifndef LL_LLVERSIONSERVER_H
+#define LL_LLVERSIONSERVER_H
 
-const S32 LL_VERSION_MAJOR = 1;
-const S32 LL_VERSION_MINOR = 3;
-const S32 LL_VERSION_PATCH = 2;
-const S32 LL_VERSION_BUILD = 1893;
+const S32 LL_VERSION_MAJOR = @VERSION_SERVER_MAJOR@;
+const S32 LL_VERSION_MINOR = @VERSION_SERVER_MINOR@;
+const S32 LL_VERSION_PATCH = @VERSION_SERVER_PATCH@;
+const S32 LL_VERSION_BUILD = @VERSION_BUILD@;
 
-const char * const LL_CHANNEL = "Emerald Viewer Internal";
+const char* const LL_DEFAULT_SERVER_CHANNEL = "Second Life Server";
 
-#if LL_DARWIN
-const char * const LL_VERSION_BUNDLE_ID = "com.secondlife.emerald.viewer";
-#endif
-
-// Used for checking if this is a supported build. Don't change unless our releases change.
-const char * const EMERALD_RELEASE_CHANNEL = "Emerald Viewer Release";
 #endif

@@ -4,6 +4,7 @@ project(viewer)
 
 include(00-Common)
 include(Boost)
+#include(BuildVersion)
 include(DBusGlib)
 include(DirectX)
 include(ELFIO)
@@ -1428,7 +1429,7 @@ if (LINUX)
       DEPENDS ${VIEWER_BINARY_NAME}
       )
 
-  set(product ${VIEWER_BRANDING_NAME_CAMELCASE}-${ARCH}-${viewer_VERSION})
+  set(product ${VIEWER_BRANDING_NAME_CAMELCASE}-${ARCH}-${VERSION_VIEWER})
 
   add_custom_command(
       OUTPUT ${product}.tar.bz2
