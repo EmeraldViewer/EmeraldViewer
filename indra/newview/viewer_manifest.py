@@ -674,6 +674,12 @@ class LinuxManifest(ViewerManifest):
         
         self.path("res/"+self.icon_name(),self.icon_name())
         if self.prefix("linux_tools", dst=""):
+            
+            # Random goodies for Linux: external editor files..
+            if self.prefix("misc"):
+                self.path("*")
+                self.end_prefix("misc")
+                
             self.path("client-readme.txt","README-linux.txt")
             self.path("client-readme-voice.txt","README-linux-voice.txt")
             self.path("client-readme-joystick.txt","README-linux-joystick.txt")
