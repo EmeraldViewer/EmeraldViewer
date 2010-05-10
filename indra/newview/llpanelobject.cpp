@@ -683,61 +683,60 @@ void LLPanelObject::getState( )
 		{
 			selected_item = MI_SPHERE;
 		}
-		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_CIRCLE )
-		{
-			// Spirals aren't supported.  Make it into a sphere.  JC
-			selected_item = MI_PATH_CIRCLE2_PROFILE_CIRCLE;
-		}
 		else if ( path == LL_PCODE_PATH_CIRCLE && profile == LL_PCODE_PROFILE_EQUALTRI )
 		{
 			selected_item = MI_RING;
-		}
+ 		}
 		else if ( path == LL_PCODE_PATH_CIRCLE && profile == LL_PCODE_PROFILE_SQUARE && scale_y <= 0.75f)
 		{
 			selected_item = MI_TUBE;
 		}
-                else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_CIRCLE )
-                {
-                        // Spirals aren't supported.  Make it into a sphere.  JC
-                        selected_item = MI_PATH_CIRCLE2_PROFILE_CIRCLE;
-                }
-                else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_EQUALTRI )
-                {
-                        selected_item = MI_PATH_CIRCLE2_PROFILE_TRI;
-                }
-                else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_SQUARE )
-                {
-                        selected_item = MI_PATH_CIRCLE2_PROFILE_SQUARE;
-                }
-                else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
-                {
-                        selected_item = MI_PATH_CIRCLE2_PROFILE_CIRCLE_HALF;
-                }
-                else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_SQUARE )
-                {
-                        selected_item = MI_PATH_TEST_PROFILE_SQUARE;
-                }
-                else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_EQUALTRI )
-                {
-                        selected_item = MI_PATH_TEST_PROFILE_TRI;
-                }
-                else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_CIRCLE )
-                {
-                        selected_item = MI_PATH_TEST_PROFILE_CIRCLE;
-                }
-                else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
-                {
-                        selected_item = MI_PATH_TEST_PROFILE_CIRCLE_HALF;
-                }
-                else if ( path == LL_PCODE_PATH_LINE && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
-                {
-                        selected_item = MI_PATH_LINE_PROFILE_CIRCLE_HALF;
-                }
-                //<-- Working33 by Gregory Maurer
-                else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_CIRCLE )
-                {
-                        selected_item = MI_PATH_33_PROFILE_CIRCLE;
-                }
+		//else if ( path == LL_PCODE_PATH_CIRCLE && profile == LL_PCODE_PROFILE_SQUARE )
+		//{
+		//	selected_item = MI_PATH_CIRCLE_PROFILE_SQUARE;
+		//}
+		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_CIRCLE )
+			{
+			// Spirals aren't supported.  Make it into a sphere.  JC
+			selected_item = MI_PATH_CIRCLE2_PROFILE_CIRCLE;
+		}
+		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_EQUALTRI )
+		{
+			selected_item = MI_PATH_CIRCLE2_PROFILE_TRI;
+		}
+		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_SQUARE)
+		{
+			selected_item = MI_PATH_CIRCLE2_PROFILE_SQUARE;
+		}
+		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
+		{
+			selected_item = MI_PATH_CIRCLE2_PROFILE_CIRCLE_HALF;
+		}
+		else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_SQUARE )
+		{
+			selected_item = MI_PATH_TEST_PROFILE_SQUARE;
+		}
+		else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_EQUALTRI )
+		{
+			selected_item = MI_PATH_TEST_PROFILE_TRI;
+		}
+		else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_CIRCLE )
+		{
+			selected_item = MI_PATH_TEST_PROFILE_CIRCLE;
+		}
+		else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
+		{
+			selected_item = MI_PATH_TEST_PROFILE_CIRCLE_HALF;
+		}
+		else if ( path == LL_PCODE_PATH_LINE && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
+		{
+			selected_item = MI_PATH_LINE_PROFILE_CIRCLE_HALF;
+		}
+		//<-- Working33 by Gregory Maurer
+		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_CIRCLE )
+		{
+			selected_item = MI_PATH_33_PROFILE_CIRCLE;
+ 		}
                 else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_SQUARE )
                 {
                         selected_item = MI_PATH_33_PROFILE_SQUARE;
@@ -1668,11 +1667,11 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 	// Scale X,Y
 	F32 scale_x = mSpinScaleX->get();
 	F32 scale_y = mSpinScaleY->get();
-	if ( was_selected_type == MI_BOX || was_selected_type == MI_CYLINDER || was_selected_type == MI_PRISM)
+	/*if ( was_selected_type == MI_BOX || was_selected_type == MI_CYLINDER || was_selected_type == MI_PRISM)
 	{
 		scale_x = 1.f - scale_x;
 		scale_y = 1.f - scale_y;
-	}
+	}*/
 	
 	// Skew
 	F32 skew = mSpinSkew->get();
@@ -1687,7 +1686,7 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 	// Revolutions
 	F32 revolutions	  = mSpinRevolutions->get();
 
-	if ( selected_type == MI_SPHERE )
+	/*if ( selected_type == MI_SPHERE )
 	{
 		// Snap values to valid sphere parameters.
 		scale_x			= 1.0f;
@@ -1756,7 +1755,7 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 				skew = min_skew_mag;
 			}
 		}
-	}
+	}*/
 
 	volume_params.setRatio( scale_x, scale_y );
 	volume_params.setSkew(skew);
