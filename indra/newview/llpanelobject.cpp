@@ -91,28 +91,6 @@ enum {
 	MI_TUBE,
 	MI_RING,
 	MI_SCULPT,
-        //MI_PATH_LINE_PROFILE_SQUARE,
-        //MI_PATH_LINE_PROFILE_TRI,
-        //MI_PATH_LINE_PROFILE_CIRCLE,
-        MI_PATH_LINE_PROFILE_CIRCLE_HALF,
-        //MI_PATH_CIRCLE_PROFILE_SQUARE,
-        //MI_PATH_CIRCLE_PROFILE_TRI,
-        //MI_PATH_CIRCLE_PROFILE_CIRCLE,
-        MI_PATH_CIRCLE_PROFILE_CIRCLE_HALF,
-        MI_PATH_CIRCLE2_PROFILE_SQUARE,
-        MI_PATH_CIRCLE2_PROFILE_TRI,
-        MI_PATH_CIRCLE2_PROFILE_CIRCLE,
-        MI_PATH_CIRCLE2_PROFILE_CIRCLE_HALF,
-        MI_PATH_TEST_PROFILE_SQUARE,
-        MI_PATH_TEST_PROFILE_TRI,
-        MI_PATH_TEST_PROFILE_CIRCLE,
-        MI_PATH_TEST_PROFILE_CIRCLE_HALF,
-        //<-- Working33 by Gregory Maurer
-        MI_PATH_33_PROFILE_CIRCLE,
-        MI_PATH_33_PROFILE_SQUARE,
-        MI_PATH_33_PROFILE_TRIANGLE,
-        MI_PATH_33_PROFILE_HALFCIRCLE,
-        //Working33 -->
 	MI_NONE,
 	MI_VOLUME_COUNT
 };
@@ -683,72 +661,19 @@ void LLPanelObject::getState( )
 		{
 			selected_item = MI_SPHERE;
 		}
+		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_CIRCLE )
+		{
+			// Spirals aren't supported.  Make it into a sphere.  JC
+			selected_item = MI_SPHERE;
+		}
 		else if ( path == LL_PCODE_PATH_CIRCLE && profile == LL_PCODE_PROFILE_EQUALTRI )
 		{
 			selected_item = MI_RING;
- 		}
+		}
 		else if ( path == LL_PCODE_PATH_CIRCLE && profile == LL_PCODE_PROFILE_SQUARE && scale_y <= 0.75f)
 		{
 			selected_item = MI_TUBE;
 		}
-		//else if ( path == LL_PCODE_PATH_CIRCLE && profile == LL_PCODE_PROFILE_SQUARE )
-		//{
-		//	selected_item = MI_PATH_CIRCLE_PROFILE_SQUARE;
-		//}
-		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_CIRCLE )
-			{
-			// Spirals aren't supported.  Make it into a sphere.  JC
-			selected_item = MI_PATH_CIRCLE2_PROFILE_CIRCLE;
-		}
-		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_EQUALTRI )
-		{
-			selected_item = MI_PATH_CIRCLE2_PROFILE_TRI;
-		}
-		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_SQUARE)
-		{
-			selected_item = MI_PATH_CIRCLE2_PROFILE_SQUARE;
-		}
-		else if ( path == LL_PCODE_PATH_CIRCLE2 && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
-		{
-			selected_item = MI_PATH_CIRCLE2_PROFILE_CIRCLE_HALF;
-		}
-		else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_SQUARE )
-		{
-			selected_item = MI_PATH_TEST_PROFILE_SQUARE;
-		}
-		else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_EQUALTRI )
-		{
-			selected_item = MI_PATH_TEST_PROFILE_TRI;
-		}
-		else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_CIRCLE )
-		{
-			selected_item = MI_PATH_TEST_PROFILE_CIRCLE;
-		}
-		else if ( path == LL_PCODE_PATH_TEST && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
-		{
-			selected_item = MI_PATH_TEST_PROFILE_CIRCLE_HALF;
-		}
-		else if ( path == LL_PCODE_PATH_LINE && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
-		{
-			selected_item = MI_PATH_LINE_PROFILE_CIRCLE_HALF;
-		}
-		//<-- Working33 by Gregory Maurer
-		else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_CIRCLE )
-		{
-			selected_item = MI_PATH_33_PROFILE_CIRCLE;
- 		}
-                else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_SQUARE )
-                {
-                        selected_item = MI_PATH_33_PROFILE_SQUARE;
-                }
-                else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_ISOTRI )
-                {
-                        selected_item = MI_PATH_33_PROFILE_TRIANGLE;
-                }
-                else if ( path == LL_PCODE_PATH_CIRCLE_33 && profile == LL_PCODE_PROFILE_CIRCLE_HALF )
-                {
-                        selected_item = MI_PATH_33_PROFILE_HALFCIRCLE;
-                }
 		else
 		{
 			llinfos << "Unknown path " << (S32) path << " profile " << (S32) profile << " in getState" << llendl;
@@ -927,11 +852,11 @@ void LLPanelObject::getState( )
 	BOOL top_shear_x_visible		= TRUE;
 	BOOL top_shear_y_visible		= TRUE;
 	BOOL twist_visible				= TRUE;
-	BOOL advanced_cut_visible		= TRUE;
-	BOOL taper_visible				= TRUE;
-	BOOL skew_visible				= TRUE;
-	BOOL radius_offset_visible		= TRUE;
-	BOOL revolutions_visible		= TRUE;
+	BOOL advanced_cut_visible		= FALSE;
+	BOOL taper_visible				= FALSE;
+	BOOL skew_visible				= FALSE;
+	BOOL radius_offset_visible		= FALSE;
+	BOOL revolutions_visible		= FALSE;
 	BOOL sculpt_texture_visible     = FALSE;
 	F32	 twist_min					= OBJECT_TWIST_LINEAR_MIN;
 	F32	 twist_max					= OBJECT_TWIST_LINEAR_MAX;
@@ -945,11 +870,11 @@ void LLPanelObject::getState( )
 	switch (selected_item)
 	{
 	case MI_SPHERE:
-		top_size_x_visible		= TRUE;
-		top_size_y_visible		= TRUE;
-		top_shear_x_visible		= TRUE;
-		top_shear_y_visible		= TRUE;
-		twist_visible			= TRUE;
+		top_size_x_visible		= FALSE;
+		top_size_y_visible		= FALSE;
+		top_shear_x_visible		= FALSE;
+		top_shear_y_visible		= FALSE;
+		//twist_visible			= FALSE;
 		advanced_cut_visible	= TRUE;
 		advanced_is_dimple		= TRUE;
 		twist_min				= OBJECT_TWIST_MIN;
@@ -1038,7 +963,7 @@ void LLPanelObject::getState( )
 	}
 
 	// Check if we need to limit the hollow based on the hole type.
-	/*if (  selected_hole == MI_HOLE_SQUARE && 
+	if (  selected_hole == MI_HOLE_SQUARE && 
 		  ( selected_item == MI_CYLINDER || selected_item == MI_TORUS ||
 		    selected_item == MI_PRISM    || selected_item == MI_RING  ||
 			selected_item == MI_SPHERE ) )
@@ -1047,10 +972,10 @@ void LLPanelObject::getState( )
 		mSpinHollow->setMaxValue(70.f);
 	}
 	else 
-	{*/
+	{
 		mSpinHollow->setMinValue(0.f);
-		mSpinHollow->setMaxValue(100.f);
-	//}
+		mSpinHollow->setMaxValue(95.f);
+	}
 
 	// Update field enablement
 	mLabelBaseType	->setEnabled( enabled );
@@ -1399,152 +1324,51 @@ void LLPanelObject::onCommitParametric( LLUICtrl* ctrl, void* userdata )
 void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 {
 	// Figure out what type of volume to make
-//	S32 was_selected_type = mSelectedType;
+	S32 was_selected_type = mSelectedType;
 	S32 selected_type = mComboBaseType->getCurrentIndex();
 	U8 profile;
 	U8 path;
 	switch ( selected_type )
 	{
-        //case MI_PATH_LINE_PROFILE_SQUARE:
-        //      profile = LL_PCODE_PROFILE_SQUARE;
-        //      path = LL_PCODE_PATH_LINE;
-        //      break;
+	case MI_CYLINDER:
+		profile = LL_PCODE_PROFILE_CIRCLE;
+		path = LL_PCODE_PATH_LINE;
+		break;
 
-        //case MI_PATH_LINE_PROFILE_TRI:
-        //      profile = LL_PCODE_PROFILE_EQUALTRI;
-        //      path = LL_PCODE_PATH_LINE;
-        //      break;
+	case MI_BOX:
+		profile = LL_PCODE_PROFILE_SQUARE;
+		path = LL_PCODE_PATH_LINE;
+		break;
 
-        //case MI_PATH_LINE_PROFILE_CIRCLE:
-        //      profile = LL_PCODE_PROFILE_CIRCLE;
-        //      path = LL_PCODE_PATH_LINE;
-        //      break;
+	case MI_PRISM:
+		profile = LL_PCODE_PROFILE_EQUALTRI;
+		path = LL_PCODE_PATH_LINE;
+		break;
 
-        case MI_PATH_LINE_PROFILE_CIRCLE_HALF:
-                profile = LL_PCODE_PROFILE_CIRCLE_HALF;
-                path = LL_PCODE_PATH_LINE;
-                break;
+	case MI_SPHERE:
+		profile = LL_PCODE_PROFILE_CIRCLE_HALF;
+		path = LL_PCODE_PATH_CIRCLE;
+		break;
 
-        //case MI_PATH_CIRCLE_PROFILE_SQUARE:
-        //      profile = LL_PCODE_PROFILE_SQUARE;
-        //      path = LL_PCODE_PATH_CIRCLE;
-        //      break;
+	case MI_TORUS:
+		profile = LL_PCODE_PROFILE_CIRCLE;
+		path = LL_PCODE_PATH_CIRCLE;
+		break;
 
-        //case MI_PATH_CIRCLE_PROFILE_TRI:
-        //      profile = LL_PCODE_PROFILE_EQUALTRI;
-        //      path = LL_PCODE_PATH_CIRCLE;
-        //      break;
+	case MI_TUBE:
+		profile = LL_PCODE_PROFILE_SQUARE;
+		path = LL_PCODE_PATH_CIRCLE;
+		break;
 
-        //case MI_PATH_CIRCLE_PROFILE_CIRCLE:
-        //      profile = LL_PCODE_PROFILE_CIRCLE;
-        //      path = LL_PCODE_PATH_CIRCLE;
-        //      break;
+	case MI_RING:
+		profile = LL_PCODE_PROFILE_EQUALTRI;
+		path = LL_PCODE_PATH_CIRCLE;
+		break;
 
-        case MI_PATH_CIRCLE_PROFILE_CIRCLE_HALF:
-                profile = LL_PCODE_PROFILE_CIRCLE_HALF;
-                path = LL_PCODE_PATH_CIRCLE;
-                break;
-
-        case MI_PATH_CIRCLE2_PROFILE_SQUARE:
-                profile = LL_PCODE_PROFILE_SQUARE;
-                path = LL_PCODE_PATH_CIRCLE2;
-                break;
-
-        case MI_PATH_CIRCLE2_PROFILE_TRI:
-                profile = LL_PCODE_PROFILE_EQUALTRI;
-                path = LL_PCODE_PATH_CIRCLE2;
-                break;
-
-        case MI_PATH_CIRCLE2_PROFILE_CIRCLE:
-                profile = LL_PCODE_PROFILE_CIRCLE;
-                path = LL_PCODE_PATH_CIRCLE2;
-                break;
-
-        case MI_PATH_CIRCLE2_PROFILE_CIRCLE_HALF:
-                profile = LL_PCODE_PROFILE_CIRCLE_HALF;
-                path = LL_PCODE_PATH_CIRCLE2;
-                break;
-
-        case MI_PATH_TEST_PROFILE_SQUARE:
-                profile = LL_PCODE_PROFILE_SQUARE;
-                path = LL_PCODE_PATH_TEST;
-                break;
-
-        case MI_PATH_TEST_PROFILE_TRI:
-                profile = LL_PCODE_PROFILE_EQUALTRI;
-                path = LL_PCODE_PATH_TEST;
-                break;
-        case MI_PATH_TEST_PROFILE_CIRCLE:
-                profile = LL_PCODE_PROFILE_CIRCLE;
-                path = LL_PCODE_PATH_TEST;
-                break;
-
-        case MI_PATH_TEST_PROFILE_CIRCLE_HALF:
-                profile = LL_PCODE_PROFILE_CIRCLE_HALF;
-                path = LL_PCODE_PATH_TEST;
-                break;
-
-        case MI_CYLINDER:
-                profile = LL_PCODE_PROFILE_CIRCLE;
-                path = LL_PCODE_PATH_LINE;
-                break;
-
-        case MI_BOX:
-                profile = LL_PCODE_PROFILE_SQUARE;
-                path = LL_PCODE_PATH_LINE;
-                break;
-
-        case MI_PRISM:
-                profile = LL_PCODE_PROFILE_EQUALTRI;
-                path = LL_PCODE_PATH_LINE;
-                break;
-
-        case MI_SPHERE:
-                profile = LL_PCODE_PROFILE_CIRCLE_HALF;
-                path = LL_PCODE_PATH_CIRCLE;
-                break;
-
-        case MI_TORUS:
-                profile = LL_PCODE_PROFILE_CIRCLE;
-                path = LL_PCODE_PATH_CIRCLE;
-                break;
-
-        case MI_TUBE:
-                profile = LL_PCODE_PROFILE_SQUARE;
-                path = LL_PCODE_PATH_CIRCLE;
-                break;
-
-        case MI_RING:
-                profile = LL_PCODE_PROFILE_EQUALTRI;
-                path = LL_PCODE_PATH_CIRCLE;
-                break;
-
-        case MI_SCULPT:
-                profile = LL_PCODE_PROFILE_CIRCLE;
-                path = LL_PCODE_PATH_CIRCLE;
-                break;
-
-//<-- Working33 by Gregory Maurer
-        case MI_PATH_33_PROFILE_CIRCLE:
-                profile = LL_PCODE_PROFILE_CIRCLE;
-                path = LL_PCODE_PATH_CIRCLE_33;
-                break;
-
-        case MI_PATH_33_PROFILE_SQUARE:
-                profile = LL_PCODE_PROFILE_SQUARE;
-                path = LL_PCODE_PATH_CIRCLE_33;
-                break;
-
-        case MI_PATH_33_PROFILE_TRIANGLE:
-                profile = LL_PCODE_PROFILE_ISOTRI;
-                path = LL_PCODE_PATH_CIRCLE_33;
-                break;
-
-        case MI_PATH_33_PROFILE_HALFCIRCLE:
-                profile = LL_PCODE_PROFILE_CIRCLE_HALF;
-                path = LL_PCODE_PATH_CIRCLE_33;
-                break;
-//Working33 -->
+	case MI_SCULPT:
+		profile = LL_PCODE_PROFILE_CIRCLE;
+		path = LL_PCODE_PATH_CIRCLE;
+		break;
 		
 	default:
 		llwarns << "Unknown base type " << selected_type 
@@ -1641,7 +1465,7 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 		  selected_type == MI_PRISM    || selected_type == MI_RING  ||
 		  selected_type == MI_SPHERE ) )
 	{
-		if (hollow > 1.0f) hollow = 1.0f;
+		if (hollow > 0.7f) hollow = 0.7f;
 	}
 
 	volume_params.setHollow( hollow );
@@ -1667,11 +1491,11 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 	// Scale X,Y
 	F32 scale_x = mSpinScaleX->get();
 	F32 scale_y = mSpinScaleY->get();
-	/*if ( was_selected_type == MI_BOX || was_selected_type == MI_CYLINDER || was_selected_type == MI_PRISM)
+	if ( was_selected_type == MI_BOX || was_selected_type == MI_CYLINDER || was_selected_type == MI_PRISM)
 	{
 		scale_x = 1.f - scale_x;
 		scale_y = 1.f - scale_y;
-	}*/
+	}
 	
 	// Skew
 	F32 skew = mSpinSkew->get();
@@ -1686,7 +1510,7 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 	// Revolutions
 	F32 revolutions	  = mSpinRevolutions->get();
 
-	/*if ( selected_type == MI_SPHERE )
+	if ( selected_type == MI_SPHERE )
 	{
 		// Snap values to valid sphere parameters.
 		scale_x			= 1.0f;
@@ -1755,7 +1579,7 @@ void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 				skew = min_skew_mag;
 			}
 		}
-	}*/
+	}
 
 	volume_params.setRatio( scale_x, scale_y );
 	volume_params.setSkew(skew);
@@ -1845,7 +1669,7 @@ void LLPanelObject::sendScale(BOOL btn_down)
 	LLVector3 newscale(mCtrlScaleX->get(), mCtrlScaleY->get(), mCtrlScaleZ->get());
 
 	LLVector3 delta = newscale - mObject->getScale();
-	if (delta.magVec() >= 0.0001f)
+	if (delta.magVec() >= 0.0005f)
 	{
 		// scale changed by more than 1/2 millimeter
 
@@ -1916,7 +1740,7 @@ void LLPanelObject::sendPosition(BOOL btn_down)
 		LLVector3d old_pos_global = mObject->getPositionGlobal();
 		LLVector3d delta = new_pos_global - old_pos_global;
 		// moved more than 1/2 millimeter
-		if (delta.magVec() >= 0.0001f)
+		if (delta.magVec() >= 0.0005f)
 		{			
 			if (mRootObject != mObject)
 			{
