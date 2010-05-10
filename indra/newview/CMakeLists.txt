@@ -500,7 +500,6 @@ set(viewer_SOURCE_FILES
     rlvmultistringsearch.cpp
     rlvextensions.cpp
     rlvfloaterbehaviour.cpp
-    scriptcounter.cpp
     wlfPanel_AdvSettings.cpp
     )
 
@@ -958,7 +957,6 @@ set(viewer_HEADER_FILES
     rlvmultistringsearch.h
     rlvextensions.h
     rlvfloaterbehaviour.h
-    scriptcounter.h
     VertexCache.h
     VorbisFramework.h
     wlfPanel_AdvSettings.h
