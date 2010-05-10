@@ -1399,7 +1399,7 @@ void LLPanelObject::onCommitParametric( LLUICtrl* ctrl, void* userdata )
 void LLPanelObject::getVolumeParams(LLVolumeParams& volume_params)
 {
 	// Figure out what type of volume to make
-	S32 was_selected_type = mSelectedType;
+//	S32 was_selected_type = mSelectedType;
 	S32 selected_type = mComboBaseType->getCurrentIndex();
 	U8 profile;
 	U8 path;
