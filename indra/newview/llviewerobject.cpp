@@ -1872,18 +1872,19 @@ U32 LLViewerObject::processUpdateMessage(LLMessageSystem *mesgsys,
 	{
 		mBestUpdatePrecision = this_update_precision;
 		
-		LLVector3 diff = new_pos_parent - test_pos_parent ;
+		//Let's let people tp to maxfloat, shall we? - Chal
+		/*LLVector3 diff = new_pos_parent - test_pos_parent ;
 		F32 mag_sqr = diff.magVecSquared() ;
 		if(llfinite(mag_sqr)) 
-		{
+		{*/
 			setPositionParent(new_pos_parent);
-		}
+		/*}
 		else
 		{
 			llwarns << "Can not move the object/avatar to an infinite location!" << llendl ;	
 
 			retval |= INVALID_UPDATE ;
-		}
+		}*/
 
 		if (mParent && ((LLViewerObject*)mParent)->isAvatar())
 		{
