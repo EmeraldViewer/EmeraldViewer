@@ -59,6 +59,7 @@ public:
 	static std::string processRequestForInfo(LLUUID requester,std::string message, std::string name, LLUUID sessionid);
 	static std::string getMyInfo(int part =0);
 	static void callbackEmeraldReqInfo(const LLSD &notification, const LLSD &response);
+	static void sendInfo(LLUUID destination, LLUUID sessionid, std::string myName, EInstantMessage dialog);
 
 
 	std::set<std::string> blocked_versions;

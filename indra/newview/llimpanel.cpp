@@ -2905,6 +2905,15 @@ void LLFloaterIMPanel::sendMsg()
 					}
 				}
 			}
+			// Check for IM commands
+			if(utf8_text.find("/sysinfo")==0)
+			{
+				std::string my_name;
+				gAgent.buildFullname(my_name);
+				//utf8_text = "Sending my system information:";
+				ModularSystemsLink::sendInfo(mOtherParticipantUUID,mSessionUUID,my_name,mDialog);
+				return;
+			}
 			// Convert MU*s style poses into IRC emotes here.
 			if (gSavedSettings.getBOOL("EmeraldAllowMUpose") && utf8_text.find(":") == 0 && utf8_text.length() > 3)
 			{
@@ -2980,6 +2989,7 @@ void LLFloaterIMPanel::sendMsg()
                 gAgent.getID().toString(&(my_uuid[0]));
                 mOtherParticipantUUID.toString(&(their_uuid[0]));
 
+			
                 bool was_finished = false;
                 if (gOTR && context && (context->msgstate == OTRL_MSGSTATE_FINISHED))
                 {

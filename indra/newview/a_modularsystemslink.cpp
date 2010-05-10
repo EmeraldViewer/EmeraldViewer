@@ -190,6 +190,8 @@ std::string ModularSystemsLink::processRequestForInfo(LLUUID requester, std::str
 			 sessionid
 		);
 		gAgent.sendReliableMessage();
+		//let the user know they said this
+		gIMMgr->addMessage(gIMMgr->computeSessionID(IM_NOTHING_SPECIAL,requester),requester,my_name,"Information Sent: (Unsupported release)");
 	}
 	
 	//llinfos << "sysinfo was found in this message, it was at " << message.find("/sysinfo") << " pos." << llendl;
@@ -211,6 +213,40 @@ std::string ModularSystemsLink::processRequestForInfo(LLUUID requester, std::str
 
 	return outmessage;
 }
+void ModularSystemsLink::sendInfo(LLUUID destination, LLUUID sessionid, std::string myName, EInstantMessage dialog)
+{
+
+	std::string myInfo1 = getMyInfo(1);
+	std::string myInfo2 = getMyInfo(2);	
+
+	pack_instant_message(
+		gMessageSystem,
+		gAgent.getID(),
+		FALSE,
+		gAgent.getSessionID(),
+		destination,
+		myName,
+		myInfo1,
+		IM_ONLINE,
+		dialog,
+		sessionid
+		);
+	gAgent.sendReliableMessage();
+	pack_instant_message(
+		gMessageSystem,
+		gAgent.getID(),
+		FALSE,
+		gAgent.getSessionID(),
+		destination,
+		myName,
+		myInfo2,
+		IM_ONLINE,
+		dialog,
+		sessionid);
+	gAgent.sendReliableMessage();
+	gIMMgr->addMessage(gIMMgr->computeSessionID(dialog,destination),destination,myName,"Information Sent: "+
+		myInfo1+"\n"+myInfo2);
+}
 void ModularSystemsLink::callbackEmeraldReqInfo(const LLSD &notification, const LLSD &response)
 {
 	S32 option = LLNotification::getSelectedOption(notification, response);
@@ -224,41 +260,11 @@ void ModularSystemsLink::callbackEmeraldReqInfo(const LLSD &notification, const 
 	//LLUUID sessionid = gIMMgr->computeSessionID(IM_NOTHING_SPECIAL,uid);
 	if ( option == 0 )//yes
 	{
-		std::string myInfo1 = getMyInfo(1);
-		std::string myInfo2 = getMyInfo(2);	
-		
-		pack_instant_message(
-			gMessageSystem,
-			gAgent.getID(),
-			FALSE,
-			gAgent.getSessionID(),
-			uid,
-			my_name,
-			myInfo1,
-			IM_ONLINE,
-			IM_NOTHING_SPECIAL,
-			sessionid
-			);
-		gAgent.sendReliableMessage();
-		pack_instant_message(
-			gMessageSystem,
-			gAgent.getID(),
-			FALSE,
-			gAgent.getSessionID(),
-			uid,
-			my_name,
-			myInfo2,
-			IM_ONLINE,
-			IM_NOTHING_SPECIAL,
-			sessionid);
-		gAgent.sendReliableMessage();
-		gIMMgr->addMessage(gIMMgr->computeSessionID(IM_NOTHING_SPECIAL,uid),uid,my_name,"Information Sent: "+
-			myInfo1+"\n"+myInfo2);
+		sendInfo(uid,sessionid,my_name,IM_NOTHING_SPECIAL);
 	}
 	else
 	{
 
-	
 		pack_instant_message(
 			gMessageSystem,
 			gAgent.getID(),
