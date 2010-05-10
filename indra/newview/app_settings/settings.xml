@@ -89,6 +89,18 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldDisableMaxZoomDist</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable the constraint on the farthest distance the camera is allowed to zoom out.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+
     <key>EmeraldEnableHDDInclude</key>
     <map>
       <key>Comment</key>
