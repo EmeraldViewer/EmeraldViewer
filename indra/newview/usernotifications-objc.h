@@ -30,5 +30,5 @@
 #include <string>
 
 void growlApplicationBridgeNotify(const std::string& withTitle, const std::string& description, const std::string& notificationName, 
-                                  void *iconData, uint iconDataSize, int priority, bool isSticky);
+                                  void *iconData, unsigned int iconDataSize, int priority, bool isSticky);
 void growlApplicationBridgeInit();

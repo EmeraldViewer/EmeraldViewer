@@ -32,7 +32,7 @@
 #import "Growl/Growl.h"
 
 void growlApplicationBridgeNotify(const std::string& withTitle, const std::string& description, const std::string& notificationName, 
-                                void *iconData, uint iconDataSize, int priority, bool isSticky)
+                                void *iconData, unsigned int iconDataSize, int priority, bool isSticky)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSString *ns_title = [NSString stringWithCString:withTitle.c_str() encoding:NSUTF8StringEncoding];
