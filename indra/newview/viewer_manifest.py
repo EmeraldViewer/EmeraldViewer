@@ -468,7 +468,9 @@ class DarwinManifest(ViewerManifest):
 
 	    # hunspell library
 	    self.path("../../libraries/universal-darwin/lib_release/libhunspell-1.2.dylib", "MacOS/libhunspell-1.2.dylib");
-
+	    
+	    # Growl library
+	    self.path("../../libraries/universal-darwin/lib_release/libgrowl.dylib", "Frameworks/Growl.framework/Versions/A/Growl");
 
             # most everything goes in the Resources directory
             if self.prefix(src="", dst="Resources"):
@@ -510,6 +512,9 @@ class DarwinManifest(ViewerManifest):
                 self.path("tr.lproj")
                 self.path("uk.lproj")
                 self.path("zh-Hans.lproj")
+                
+                # Growl ticket
+                self.path("Growl Registration Ticket.growlRegDict")
 
                 # SLVoice and vivox lols
                 self.path("vivox-runtime/universal-darwin/libalut.dylib", "libalut.dylib")

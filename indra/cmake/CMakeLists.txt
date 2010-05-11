@@ -40,6 +40,7 @@ set(cmake_SOURCE_FILES
     FreeType.cmake
     GStreamer010Plugin.cmake
     GooglePerfTools.cmake
+    Growl.cmake
     HUNSPELL.cmake
     JPEG.cmake
     LLAddBuildTest.cmake

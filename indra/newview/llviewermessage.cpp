@@ -140,6 +140,7 @@
 #include "lltranslate.h"
 
 #include "jc_lslviewerbridge.h"
+#include "usernotifications.h"
 
 #include <boost/tokenizer.hpp>
 
@@ -1827,6 +1828,10 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 				chat.mText = std::string("IM: ") + name + separator_string + saved + message.substr(message_offset);
 				BOOL local_agent = FALSE;
 				LLFloaterChat::addChat( chat, TRUE, local_agent );
+				
+				// Notifications!
+				if(offline != IM_OFFLINE)
+					UserNotifications::getInstance()->showNotification(name, message.substr(message_offset), "Instant Message received");
 			}
 			else
 			{

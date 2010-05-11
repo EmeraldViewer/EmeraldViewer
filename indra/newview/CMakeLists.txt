@@ -46,6 +46,10 @@ if (WINDOWS)
 endif (WINDOWS)
 include(libotr)
 
+if (DARWIN)
+  include(Growl)
+endif (DARWIN)
+
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
     ${HUNSPELL_INCLUDE_DIR}
@@ -79,6 +83,12 @@ if (WINDOWS)
     )
 endif (WINDOWS)
 
+if (DARWIN)
+  include_directories(
+    ${GROWL_INCLUDE_DIRS}
+  )
+endif (DARWIN)
+
 set(viewer_SOURCE_FILES
 	lgghunspell_wrapper.cpp
 	lggdicdownload.cpp
@@ -102,6 +112,7 @@ set(viewer_SOURCE_FILES
     otr_floater_smp_dialog.cpp
     otr_floater_smp_progress.cpp
 	scriptcounter.cpp
+	usernotifications.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -550,6 +561,7 @@ set(viewer_HEADER_FILES
     otr_floater_smp_dialog.h
     otr_floater_smp_progress.h
 	scriptcounter.h
+	usernotifications.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -966,6 +978,8 @@ source_group("CMake Rules" FILES ViewerInstall.cmake)
 
 if (DARWIN)
   LIST(APPEND viewer_SOURCE_FILES llappviewermacosx.cpp)
+  LIST(APPEND viewer_HEADER_FILES usernotifications-objc.h)
+  LIST(APPEND viewer_SOURCE_FILES usernotifications-objc.mm)
 
   find_library(AGL_LIBRARY AGL)
   find_library(APPKIT_LIBRARY AppKit)
@@ -1416,6 +1430,7 @@ target_link_libraries(${VIEWER_BINARY_NAME}
 if (DARWIN)
 	target_link_libraries(${VIEWER_BINARY_NAME}
 		${FMODWRAPPER_LIBRARY}
+		${GROWL_LIBRARY}
 	)
 endif (DARWIN)
 
