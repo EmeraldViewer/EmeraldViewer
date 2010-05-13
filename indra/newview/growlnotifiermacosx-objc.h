@@ -27,8 +27,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef GROWLNOTIFIERMACOSX_OBJC_H
+#define GROWLNOTIFIERMACOSX_OBJC_H
 #include <string>
 
 void growlApplicationBridgeNotify(const std::string& withTitle, const std::string& description, const std::string& notificationName, 
                                   void *iconData, unsigned int iconDataSize, int priority, bool isSticky);
 void growlApplicationBridgeInit();
+
+#endif // GROWLNOTIFIERMACOSX_OBJC_H

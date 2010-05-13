@@ -7,14 +7,12 @@
 	<key>AllNotifications</key>
 	<array>
 		<string>Instant Message received</string>
-		<string>Group IM received</string>
-		<string>Teleport offer received</string>
+		<string>Friend logged on/off</string>
 	</array>
 	<key>DefaultNotifications</key>
 	<array>
 		<integer>0</integer>
 		<integer>1</integer>
-		<integer>3</integer>
 	</array>
 </dict>
 </plist>

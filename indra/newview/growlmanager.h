@@ -40,6 +40,7 @@ public:
 	static void InitiateManager();
 private:
 	GrowlNotifier *mNotifier;
+	static bool onLLNotification(const LLSD& notice);
 };
 
 extern GrowlManager *gGrowlManager;

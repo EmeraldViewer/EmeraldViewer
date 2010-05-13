@@ -28,10 +28,12 @@
  */
 
 #include "llviewerprecompiledheaders.h"
+#include "llnotify.h"
+#include "llstartup.h"
 #include "growlmanager.h"
 #include "growlnotifier.h"
 
-// Platform-specific include
+// Platform-specific includes
 #ifdef LL_DARWIN
 #include "growlnotifiermacosx.h"
 #endif
@@ -40,18 +42,42 @@ GrowlManager *gGrowlManager = NULL;
 
 GrowlManager::GrowlManager()
 {
+	// Create a notifier appropriate to the platform.
 #ifdef LL_DARWIN
 	this->mNotifier = new GrowlNotifierMacOSX();
-	LL_INFOS("GrowlManager") << "Created GrowlNotifierMacOSX." << LL_ENDL;
+	LL_INFOS("GrowlManagerInit") << "Created GrowlNotifierMacOSX." << LL_ENDL;
 #else
 	this->mNotifier = new GrowlNotifier();
-	LL_WARNS("GrowlManager") << "Created generic GrowlNotifier." << LL_ENDL;
+	LL_WARNS("GrowlManagerInit") << "Created generic GrowlNotifier." << LL_ENDL;
 #endif
+	
+	// Hook into LLNotifications...
+	LLNotificationChannel::buildChannel("GrowlNotifyTips", "Visible", LLNotificationFilters::filterBy<std::string>(&LLNotification::getType, "notifytip"));
+	LLNotifications::instance().getChannel("GrowlNotifyTips")->connectChanged(&GrowlManager::onLLNotification);
+	LL_INFOS("GrowlManagerInit") << "Connected to notifytips." << llendl;
 }
 
 void GrowlManager::notify(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
 {
 	this->mNotifier->showNotification(notification_title, notification_message, notification_type);
+}
+
+bool GrowlManager::onLLNotification(const LLSD& notice)
+{
+	LL_INFOS("GrowlLLNotification") << "GrowlManager recieved a notification." << LL_ENDL;
+	LLNotificationPtr notification = LLNotifications::instance().find(notice["id"].asUUID());
+	std::string name = notification->getName();
+	if(LLStartUp::getStartupState() < STATE_STARTED)
+	{
+		LL_WARNS("GrowlLLNotification") << "GrowlManager discarded a notification (" << name << ") - too early." << LL_ENDL;
+		return false;
+	}
+	//TODO: Make this better - move everything into a file instead of hardcoding like this?
+	if(name == "FriendOnline" || name == "FriendOffline")
+	{
+		gGrowlManager->notify(notification->getMessage(), "", "Friend logged on/off");
+	}
+	return false;
 }
 
 void GrowlManager::InitiateManager()
