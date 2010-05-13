@@ -412,6 +412,10 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Allows the camera to move without constraints through prims (requires restart)" left_delta="0" mouse_opaque="true"
 					 name="EmIgnoreCamConstraints-toggle" radio_style="false" width="270" control_name="EmeraldIgnoreSimulatorCameraConstraints"/>
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 label="Enable Growl notifications (currently OS X only)" left_delta="0" mouse_opaque="true"
+					 name="EmeraldEnableGrowl" radio_style="false" width="270" control_name="EmeraldEnableGrowl"
+					 tool_tip="Enables all growl notifications. More fine-grained controls may be  found in Growl's System Preferences panel."/>
 				<check_box bottom_delta="-40" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 initial_value="false" label="Enable Restrained Love [RLVa] features" left_delta="0"
 					 mouse_opaque="true" name="rlv-toggle" radio_style="false" width="270" control_name="RestrainedLife"/>

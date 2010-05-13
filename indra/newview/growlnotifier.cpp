@@ -39,3 +39,8 @@ void GrowlNotifier::showNotification(const std::string& notification_title, cons
 {
 	//LL_WARNS("GrowlNotifierGeneric") << "Growl notification failed." << LL_ENDL;
 }
+
+bool GrowlNotifier::isUsable()
+{
+	return false; // Dummy implementation is not usable, obviously.
+}

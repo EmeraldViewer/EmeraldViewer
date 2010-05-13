@@ -39,6 +39,7 @@ public:
 	GrowlNotifierMacOSX();
 
 	void showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type);
+	bool isUsable();
 };
 
 #endif // GROWLNOTIFIERMACOSX_H

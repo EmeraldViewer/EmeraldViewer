@@ -41,6 +41,10 @@ GrowlNotifierMacOSX::GrowlNotifierMacOSX()
 void GrowlNotifierMacOSX::showNotification(const std::string& notification_title, const std::string& notification_message, 
 										 const std::string& notification_type)
 {
-	LL_INFOS("GrowlNotifierOSX") << "Growl notification (" << notification_type << ")" << LL_ENDL;
 	growlApplicationBridgeNotify(notification_title, notification_message, notification_type, NULL, 0, 0, false);
+}
+
+bool GrowlNotifierMacOSX::isUsable()
+{
+	return growlApplicationBridgeIsGrowlInstalled();
 }

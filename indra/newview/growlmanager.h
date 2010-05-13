@@ -50,7 +50,7 @@ public:
 	static void InitiateManager();
 private:
 	GrowlNotifier *mNotifier;
-	std::map<std::string, GrowlNotification> notifications;
+	std::map<std::string, GrowlNotification> mNotifications;
 	
 	void loadConfig();
 	static bool onLLNotification(const LLSD& notice);

@@ -59,3 +59,11 @@ void growlApplicationBridgeInit()
     [GrowlApplicationBridge setGrowlDelegate:@""];
     [pool release];
 }
+
+bool growlApplicationBridgeIsGrowlInstalled()
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    BOOL installed = [GrowlApplicationBridge isGrowlInstalled];
+    [pool release];
+    return installed;
+}

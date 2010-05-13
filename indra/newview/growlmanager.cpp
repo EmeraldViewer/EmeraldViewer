@@ -28,12 +28,15 @@
  */
 
 #include "llviewerprecompiledheaders.h"
+
 #include "lldir.h"
 #include "llfile.h"
+#include "llnotify.h"
 #include "llsd.h"
 #include "llsdserialize.h"
-#include "llnotify.h"
 #include "llstartup.h"
+#include "llviewercontrol.h"
+
 #include "growlmanager.h"
 #include "growlnotifier.h"
 
@@ -52,9 +55,16 @@ GrowlManager::GrowlManager()
 	LL_INFOS("GrowlManagerInit") << "Created GrowlNotifierMacOSX." << LL_ENDL;
 #else
 	this->mNotifier = new GrowlNotifier();
-	LL_WARNS("GrowlManagerInit") << "Created generic GrowlNotifier." << LL_ENDL;
+	LL_INFOS("GrowlManagerInit") << "Created generic GrowlNotifier." << LL_ENDL;
 #endif
 	
+	// Don't do anything more if Growl isn't usable.
+	if(!mNotifier->isUsable())
+	{
+		LL_WARNS("GrowlManagerInit") << "Growl is unusable; bailing out." << LL_ENDL;
+		return;
+	}
+
 	// Hook into LLNotifications...
 	LLNotificationChannel::buildChannel("GrowlNotifyTips", "Visible", LLNotificationFilters::filterBy<std::string>(&LLNotification::getType, "notifytip"));
 	LLNotificationChannel::buildChannel("GrowlNotify", "Visible", LLNotificationFilters::filterBy<std::string>(&LLNotification::getType, "notify"));
@@ -100,7 +110,7 @@ void GrowlManager::loadConfig()
 			{
 				ntype.useDefaultTextForBody = true;
 			}
-			this->notifications[itr->first] = ntype;
+			this->mNotifications[itr->first] = ntype;
 		}
 		configs.close();
 	}
@@ -113,7 +123,8 @@ void GrowlManager::loadConfig()
 
 void GrowlManager::notify(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
 {
-	this->mNotifier->showNotification(notification_title, notification_message, notification_type);
+	if(gSavedSettings.getBOOL("EmeraldEnableGrowl"))
+		this->mNotifier->showNotification(notification_title, notification_message, notification_type);
 }
 
 bool GrowlManager::onLLNotification(const LLSD& notice)
@@ -127,9 +138,9 @@ bool GrowlManager::onLLNotification(const LLSD& notice)
 		LL_WARNS("GrowlLLNotification") << "GrowlManager discarded a notification (" << name << ") - too early." << LL_ENDL;
 		return false;
 	}
-	if(gGrowlManager->notifications.find(name) != gGrowlManager->notifications.end())
+	if(gGrowlManager->mNotifications.find(name) != gGrowlManager->mNotifications.end())
 	{
-		GrowlNotification* growl_notification = &gGrowlManager->notifications[name];
+		GrowlNotification* growl_notification = &gGrowlManager->mNotifications[name];
 		std::string body = "";
 		std::string title = "";
 		if(growl_notification->useDefaultTextForTitle)
