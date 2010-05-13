@@ -49,7 +49,7 @@
 #include "llselectmgr.h"
 #include "llviewercontrol.h"
 #include "llviewerimagelist.h"
-#include "hippogridmanager.h"
+//#include "hippogridmanager.h"
 #include "llimagej2c.h"
 
 #include "llviewertexteditor.h"
@@ -253,7 +253,7 @@ LLSD JCExportTracker::subserialize(LLViewerObject* linkset)
 				{
 					requested_textures.insert(asset_id);
 					LLViewerImage* img = gImageList.getImage(asset_id, MIPMAP_TRUE, FALSE);
-					img->setBoostLevel(LLViewerImage::BOOST_MAX_LEVEL);
+					img->setBoostLevel(LLViewerImageBoostLevel::BOOST_MAX_LEVEL);
 					img->setLoadedCallback( JCExportTracker::onFileLoadedForSave, 
 									0, TRUE, FALSE, info );
 					llinfos << "Requesting texture " << asset_id.asString() << llendl;
@@ -448,9 +448,9 @@ void JCExportTracker::finalize(LLSD data)
 	header["Version"] = 2;
 	file["Header"] = header;
 	std::vector<std::string> uris;
-	std::string grid_uri = gHippoGridManager->getConnectedGrid()->getLoginUri();
-	//LLStringUtil::toLower(uris[0]);
-	file["Grid"] = grid_uri;
+	std::string grid_uri;//= gHippoGridManager->getConnectedGrid()->getLoginUri();
+	LLStringUtil::toLower(uris[0]);
+	file["Grid"] = uris[0];
 	file["Objects"] = data;
 
 	// Create a file stream and write to it
@@ -651,7 +651,7 @@ BOOL couldDL(LLAssetType::EType type)
 		return FALSE;
 		break;
 	}
-	return FALSE;
+//	return FALSE;
 }
 
 void JCExportTracker::inventoryChanged(LLViewerObject* obj,
@@ -770,7 +770,7 @@ void JCAssetExportCallback(LLVFS *vfs, const LLUUID& uuid, LLAssetType::EType ty
 			}//else //cmdline_printchat("Failed to decode notecard");
 		}
 		LLAPRFile infile;
-		infile.open(info->path.c_str(), LL_APR_WB);
+		infile.open(info->path.c_str(), LL_APR_WB,LLAPRFile::global);
 		apr_file_t *fp = infile.getFileHandle();
 		if(fp)infile.write(buffer, size);
 		infile.close();
