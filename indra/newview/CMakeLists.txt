@@ -99,6 +99,7 @@ set(viewer_SOURCE_FILES
 	a_modularsystemslink.cpp
 	emerald.cpp
 	emeraldboobutils.cpp
+	exporttracker.cpp
 	chatbar_as_cmdline.cpp
 	floaterlocalassetbrowse.cpp
 	floateravatarlist.cpp
@@ -540,16 +541,11 @@ endif (LINUX)
 set(viewer_HEADER_FILES
     CMakeLists.txt
     ViewerInstall.cmake
-	lggdicdownload.h
-	lgghunspell_wrapper.h
-	lggbeamscolors.h
-	lggbeammaps.h
-	lggbeammapfloater.h
-	lggbeamcolormapfloater.h
     a_modularsystemslink.h
+	chatbar_as_cmdline.h
     emerald.h
 	emeraldboobutils.h
-	chatbar_as_cmdline.h
+	exporttracker.h
 	floaterlocalassetbrowse.h
 	floateravatarlist.h
 	floaterao.h
@@ -557,6 +553,12 @@ set(viewer_HEADER_FILES
 	importtracker.h
 	jclslpreproc.h
 	jc_lslviewerbridge.h
+	lggbeamcolormapfloater.h
+	lggbeamscolors.h
+	lggbeammapfloater.h
+	lggbeammaps.h
+	lggdicdownload.h
+	lgghunspell_wrapper.h
 	mfdkeywordfloater.h
 	otr_wrapper.h
     otr_floater_smp_dialog.h

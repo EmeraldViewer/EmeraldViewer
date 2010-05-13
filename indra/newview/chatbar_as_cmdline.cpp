@@ -67,7 +67,7 @@
 
 #include "llfloaterchat.h"
 
-//#include "jclslpreproc.h"
+#include "jclslpreproc.h"
 
 void cmdline_printchat(std::string message);
 void cmdline_rezplat(bool use_saved_value = true, F32 visual_radius = 30.0);
@@ -504,11 +504,11 @@ bool cmd_line_chat(std::string revised_text, EChatType type)
 // even if they are out of draw distance.
 LLUUID cmdline_partial_name2key(std::string partial_name)
 {
-	//std::vector<LLUUID> avatars;
-	//std::string av_name;
-	//LLStringUtil::toLower(partial_name);
-	//LLWorld::getInstance()->getAvatars(&avatars);
-	/*typedef std::vector<LLUUID>::const_iterator av_iter;
+	std::vector<LLUUID> avatars;
+	std::string av_name;
+	LLStringUtil::toLower(partial_name);
+	LLWorld::getInstance()->getAvatars(&avatars);
+	typedef std::vector<LLUUID>::const_iterator av_iter;
 	bool has_avatarlist = (LLFloaterAvatarList::getInstance() ? true : false);
 	if(has_avatarlist)
 		LLFloaterAvatarList::getInstance()->updateAvatarList();
@@ -536,7 +536,7 @@ LLUUID cmdline_partial_name2key(std::string partial_name)
 		{
 			return *i;
 		}
-	}*/
+	}
 	return LLUUID::null;
 }
 					
@@ -550,7 +550,7 @@ void cmdline_tp2name(std::string target)
 		cmdline_printchat("Avatar not found.");
 		return;
 	}
-	/*LLFloaterAvatarList* avlist = LLFloaterAvatarList::getInstance();
+	LLFloaterAvatarList* avlist = LLFloaterAvatarList::getInstance();
 	LLViewerObject* obj = gObjectList.findObject(avkey);
 	if(obj)
 	{
@@ -567,7 +567,7 @@ void cmdline_tp2name(std::string target)
 			pos.mdV[VZ] += 2.0;
 			gAgent.teleportViaLocation(pos);
 		}
-	}*/
+	}
 }
 
 void cmdline_rezplat(bool use_saved_value, F32 visual_radius) //cmdline_rezplat() will still work... just will use the saved value

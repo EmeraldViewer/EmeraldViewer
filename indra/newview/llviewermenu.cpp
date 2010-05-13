@@ -220,7 +220,7 @@
 
 #include "floaterlocalassetbrowse.h" // tag: vaa emerald local_asset_browser
 #include "floateravatarlist.h"
-
+#include "exporttracker.h"
 #include "floaterao.h"
 #include "scriptcounter.h"
 
@@ -1038,7 +1038,7 @@ void init_client_menu(LLMenuGL* menu)
 										&menu_check_control,
 										(void*)"SaveMinidump"));
 
-	menu->append(new LLMenuItemCallGL("Debug Settings...", LLFloaterSettingsDebug::show, NULL, NULL));
+	menu->append(new LLMenuItemCallGL("Debug Settings...", LLFloaterSettingsDebug::show, NULL, NULL, 'S', MASK_ALT | MASK_CONTROL | MASK_SHIFT));
 	menu->append(new LLMenuItemCheckGL("View Admin Options", &handle_admin_override_toggle, NULL, &check_admin_override, NULL, 'V', MASK_CONTROL | MASK_ALT));
 
 	menu->append(new LLMenuItemCallGL("Request Admin Status", 
@@ -2057,6 +2057,47 @@ class LLObjectInspect : public view_listener_t
 	}
 };
 
+class LLObjectDerender : public view_listener_t
+{
+    bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+    {
+		LLViewerObject* slct = LLSelectMgr::getInstance()->getSelection()->getFirstObject();
+		if(!slct)return true;
+		LLUUID id = slct->getID();
+		LLObjectSelectionHandle selection = LLSelectMgr::getInstance()->getSelection();
+		LLUUID root_key;
+		LLSelectNode* node = selection->getFirstRootNode();
+		if(node)root_key = node->getObject()->getID();
+		if(root_key.notNull())
+		{
+			id = root_key;
+			//LLSelectMgr::getInstance()->removeObjectFromSelections(root_key);
+		}
+		LLSelectMgr::getInstance()->removeObjectFromSelections(id);
+
+		// ...don't kill the avatar
+		if (!(id == gAgentID))
+		{
+			LLViewerObject *objectp = gObjectList.findObject(id);
+			if (objectp)
+			{
+				gObjectList.killObject(objectp);
+			}
+		}
+		return true;
+	}
+};
+
+class LLObjectEnableDerender : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent>, const LLSD& userdata)
+	{
+		bool fEnable = true;
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(fEnable);
+		return true;
+	}
+};
+
 
 //---------------------------------------------------------------------------
 // Land pie menu
@@ -2321,6 +2362,62 @@ class LLObjectMute : public view_listener_t
 		return true;
 	}
 };
+
+class LLObjectVisibleExport : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		LLViewerObject* object = LLSelectMgr::getInstance()->getSelection()->getPrimaryObject();
+		bool new_value = (object != NULL);
+		
+		if (new_value)
+		{
+			new_value = !object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer();
+			// Disable for avatars, we can only export prims
+			//LLVOAvatar* avatar = find_avatar_from_object(object); 
+			//new_value = (avatar == NULL);
+		}
+		
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		
+		return true;
+	}
+};
+
+class LLObjectEnableExport : public view_listener_t
+{
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		bool new_value=1;
+		for (LLObjectSelection::valid_root_iterator iter = LLSelectMgr::getInstance()->getSelection()->valid_root_begin();
+			 iter != LLSelectMgr::getInstance()->getSelection()->valid_root_end(); iter++)
+		{
+			LLSelectNode* selectNode = *iter;
+			LLViewerObject* object = selectNode->getObject();
+			if (object)
+				if(!(!object->isAvatar() && object->permYouOwner() && object->permModify() && object->permCopy() && object->permTransfer()))
+				{
+					new_value=0;
+					break;
+				}
+		}
+
+		gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+		
+		return true;
+	}
+};
+
+class LLObjectExport : public view_listener_t
+{
+	//Chalice - Changed to support exporting linkset groups
+	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+	{
+		JCExportTracker::serializeSelection();
+		return true;
+	}
+};
+
 class LLObjectVisibleScriptCount : public view_listener_t
 {
         bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -8931,6 +9028,8 @@ void initialize_menus()
 	addMenu(new LLSelfEnableRemoveAllAttachments(), "Self.EnableRemoveAllAttachments");
 
 	 // Avatar pie menu
+	addMenu(new LLObjectVisibleExport(), "Object.VisibleExport");
+	addMenu(new LLObjectEnableExport(), "Object.EnableExport");
 	addMenu(new LLObjectMute(), "Avatar.Mute");
 	addMenu(new LLAvatarAddFriend(), "Avatar.AddFriend");
 	addMenu(new LLAvatarFreeze(), "Avatar.Freeze");
@@ -8956,13 +9055,15 @@ void initialize_menus()
 	addMenu(new LLObjectAttachToAvatar(), "Object.AttachToAvatar");
 	addMenu(new LLObjectReturn(), "Object.Return");
 	addMenu(new LLObjectReportAbuse(), "Object.ReportAbuse");
-        addMenu(new LLScriptCount(), "Object.ScriptCount");
-        addMenu(new LLObjectVisibleScriptCount(), "Object.VisibleScriptCount");
+	addMenu(new LLObjectExport(), "Object.Export");
+    addMenu(new LLScriptCount(), "Object.ScriptCount");
+    addMenu(new LLObjectVisibleScriptCount(), "Object.VisibleScriptCount");
 	addMenu(new LLObjectMute(), "Object.Mute");
 	addMenu(new LLObjectBuy(), "Object.Buy");
 	addMenu(new LLObjectEdit(), "Object.Edit");
 	addMenu(new LLObjectInspect(), "Object.Inspect");
-
+	addMenu(new LLObjectDerender(), "Object.DERENDER"); //Phox: Added visible mute here.
+	addMenu(new LLObjectEnableDerender(), "Object.EnableDerender");
 	addMenu(new LLObjectEnableOpen(), "Object.EnableOpen");
 	addMenu(new LLObjectEnableTouch(), "Object.EnableTouch");
 	addMenu(new LLObjectEnableSitOrStand(), "Object.EnableSitOrStand");
