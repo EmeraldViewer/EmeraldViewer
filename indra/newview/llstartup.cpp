@@ -209,6 +209,8 @@
 #include "floaterao.h"
 
 #include "a_modularsystemslink.h"
+
+#include "growlmanager.h"
 //
 // exported globals
 //
@@ -814,6 +816,8 @@ bool idle_startup()
 
 		new JCLSLBridge();
 		new AOInvTimer();
+		
+		GrowlManager::InitiateManager();
 
 		ModularSystemsLink::getInstance()->start_download();
 

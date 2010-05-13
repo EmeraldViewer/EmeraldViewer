@@ -14,7 +14,7 @@
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS ìAS ISî
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -28,30 +28,34 @@
  */
 
 #include "llviewerprecompiledheaders.h"
-#include "usernotifications.h"
+#include "growlmanager.h"
+#include "growlnotifier.h"
+
+// Platform-specific include
 #ifdef LL_DARWIN
-#include "usernotifications-objc.h"
+#include "growlnotifiermacosx.h"
 #endif
 
+GrowlManager *gGrowlManager = NULL;
+
+GrowlManager::GrowlManager()
+{
 #ifdef LL_DARWIN
-UserNotifications::UserNotifications()
-{
-	// Work around a Growl 1.1 bug whereby the app bridge *requires* a delegate.
-	growlApplicationBridgeInit();
-}
-UserNotifications::~UserNotifications() { }
-
-void UserNotifications::showNotification(const std::string& notification_title, const std::string& notification_message, 
-										 const std::string& notification_type)
-{
-	llinfos << "Showing notification (" << notification_type << ")" << llendl;
-	llinfos << notification_title << ": " << notification_message << llendl;
-	growlApplicationBridgeNotify(notification_title, notification_message, notification_type, NULL, 0, 0, false);
-}
-#else // LL_DARWIN
-UserNotifications::UserNotifications() { }
-UserNotifications::~UserNotifications() { }
-
-void UserNotifications::showNotification(const std::string& notification_title, const std::string& notification_message, 
-										 const std::string& notification_type) { }
+	this->mNotifier = new GrowlNotifierMacOSX();
+	LL_INFOS("GrowlManager") << "Created GrowlNotifierMacOSX." << LL_ENDL;
+#else
+	this->mNotifier = new GrowlNotifier();
+	LL_WARNS("GrowlManager") << "Created generic GrowlNotifier." << LL_ENDL;
 #endif
+}
+
+void GrowlManager::notify(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
+{
+	this->mNotifier->showNotification(notification_title, notification_message, notification_type);
+}
+
+void GrowlManager::InitiateManager()
+{
+	gGrowlManager = new GrowlManager();
+}
+

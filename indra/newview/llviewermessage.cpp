@@ -140,7 +140,7 @@
 #include "lltranslate.h"
 
 #include "jc_lslviewerbridge.h"
-#include "usernotifications.h"
+#include "growlmanager.h"
 
 #include <boost/tokenizer.hpp>
 
@@ -1831,7 +1831,7 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 				
 				// Notifications!
 				if(offline != IM_OFFLINE)
-					UserNotifications::getInstance()->showNotification(name, message.substr(message_offset), "Instant Message received");
+					gGrowlManager->notify(name, message.substr(message_offset), "Instant Message received");
 			}
 			else
 			{

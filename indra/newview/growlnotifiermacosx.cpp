@@ -14,7 +14,7 @@
  *      may be used to endorse or promote products derived from this
  *      software without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS "AS IS"
+ * THIS SOFTWARE IS PROVIDED BY MODULAR SYSTEMS AND CONTRIBUTORS ìAS ISî
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MODULAR SYSTEMS OR CONTRIBUTORS
@@ -27,18 +27,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef USERNOTIFICATIONS_H
-#define USERNOTIFICATIONS_H
+#include "llviewerprecompiledheaders.h"
+#include "growlnotifiermacosx.h"
+#include "growlnotifiermacosx-objc.h"
 
-#include "llmemory.h"
-#include <string>
+GrowlNotifierMacOSX::GrowlNotifierMacOSX()
+{
+	// Work around a Growl 1.1 bug whereby the app bridge *requires* a delegate.
+	growlApplicationBridgeInit();
+	LL_INFOS("GrowlNotifierOSX") << "OS X growl notifications initialised." << LL_ENDL;
+}
 
-class UserNotifications : public LLSingleton<UserNotifications> {
-public:	
-    UserNotifications();
-    ~UserNotifications();
-    
-    void showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type);
-};
-
-#endif
+void GrowlNotifierMacOSX::showNotification(const std::string& notification_title, const std::string& notification_message, 
+										 const std::string& notification_type)
+{
+	LL_INFOS("GrowlNotifierOSX") << "Growl notification (" << notification_type << ")" << LL_ENDL;
+	growlApplicationBridgeNotify(notification_title, notification_message, notification_type, NULL, 0, 0, false);
+}

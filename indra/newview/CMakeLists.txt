@@ -112,7 +112,8 @@ set(viewer_SOURCE_FILES
     otr_floater_smp_dialog.cpp
     otr_floater_smp_progress.cpp
 	scriptcounter.cpp
-	usernotifications.cpp
+	growlmanager.cpp
+	growlnotifier.cpp
     llagent.cpp
     llagentaccess.cpp
     llagentdata.cpp
@@ -561,7 +562,8 @@ set(viewer_HEADER_FILES
     otr_floater_smp_dialog.h
     otr_floater_smp_progress.h
 	scriptcounter.h
-	usernotifications.h
+	growlmanager.h
+	growlnotifier.h
     llagent.h
     llagentaccess.h
     llagentdata.h
@@ -978,8 +980,11 @@ source_group("CMake Rules" FILES ViewerInstall.cmake)
 
 if (DARWIN)
   LIST(APPEND viewer_SOURCE_FILES llappviewermacosx.cpp)
-  LIST(APPEND viewer_HEADER_FILES usernotifications-objc.h)
-  LIST(APPEND viewer_SOURCE_FILES usernotifications-objc.mm)
+  LIST(APPEND viewer_HEADER_FILES growlnotifiermacosx-objc.h)
+  LIST(APPEND viewer_SOURCE_FILES growlnotifiermacosx-objc.mm)
+  LIST(APPEND viewer_SOURCE_FILES growlnotifiermacosx.h)
+  LIST(APPEND viewer_SOURCE_FILES growlnotifiermacosx.cpp)
+
 
   find_library(AGL_LIBRARY AGL)
   find_library(APPKIT_LIBRARY AppKit)

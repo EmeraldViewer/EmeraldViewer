@@ -27,35 +27,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "usernotifications-objc.h"
-#import <Cocoa/Cocoa.h>
-#import "Growl/Growl.h"
+#include "llviewerprecompiledheaders.h"
+#include "growlnotifier.h"
 
-void growlApplicationBridgeNotify(const std::string& withTitle, const std::string& description, const std::string& notificationName, 
-                                void *iconData, unsigned int iconDataSize, int priority, bool isSticky)
+GrowlNotifier::GrowlNotifier()
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSString *ns_title = [NSString stringWithCString:withTitle.c_str() encoding:NSUTF8StringEncoding];
-    NSString *ns_description = [NSString stringWithCString:description.c_str() encoding:NSUTF8StringEncoding];
-    NSString *ns_name = [NSString stringWithCString:notificationName.c_str() encoding:NSUTF8StringEncoding];
-    NSData *ns_icon = nil;
-    if(iconData != NULL)
-        ns_icon = [NSData dataWithBytes:iconData length:iconDataSize];
-    
-    [GrowlApplicationBridge notifyWithTitle:ns_title
-                                description:ns_description
-                           notificationName:ns_name
-                                   iconData:ns_icon
-                                   priority:priority
-                                   isSticky:isSticky
-                               clickContext:nil
-     ];
-    [pool release];
+	// Nothing much?
 }
 
-void growlApplicationBridgeInit()
+void GrowlNotifier::showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [GrowlApplicationBridge setGrowlDelegate:@""];
-    [pool release];
+	LL_WARNS("GrowlNotifier") << "Growl notification failed." << LL_ENDL;
 }
