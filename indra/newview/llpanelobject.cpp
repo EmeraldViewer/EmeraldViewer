@@ -1020,6 +1020,13 @@ void LLPanelObject::getState( )
 	switch (selected_item)
 	{
 	case MI_SPHERE:
+		mSpinScaleX->set( scale_x );
+		mSpinScaleY->set( scale_y );
+		mSpinScaleX->setMinValue(0.0f);
+		mSpinScaleX->setMaxValue(1.0f);
+		mSpinScaleY->setMinValue(0.0f);
+		mSpinScaleY->setMaxValue(1.0f);
+		break;
 	case MI_TORUS:
 	case MI_TUBE:
 	case MI_RING:
@@ -1033,12 +1040,20 @@ void LLPanelObject::getState( )
 	default:
 		if (editable)
 		{
-			mSpinScaleX->set( 1.f - scale_x );
-			mSpinScaleY->set( 1.f - scale_y );
-			mSpinScaleX->setMinValue(-1.f);
-			mSpinScaleX->setMaxValue(1.f);
-			mSpinScaleY->setMinValue(-1.f);
-			mSpinScaleY->setMaxValue(1.f);
+			F32 tmp_scale_x = scale_x;
+			F32 tmp_scale_y = scale_y;
+			if ( selected_item == MI_BOX || selected_item == MI_CYLINDER || selected_item == MI_PRISM)
+			{
+				tmp_scale_x = 1.f - tmp_scale_x;
+				tmp_scale_y = 1.f - tmp_scale_y;
+			}
+			mSpinScaleX->set( tmp_scale_x );
+			mSpinScaleY->set( tmp_scale_y );
+			mSpinScaleX->setMinValue(-4000.f);
+			mSpinScaleX->setMaxValue(4000.f);
+			mSpinScaleY->setMinValue(-4000.f);
+			mSpinScaleY->setMaxValue(4000.f);
+
 		}
 		break;
 	}
@@ -1858,7 +1873,7 @@ void LLPanelObject::sendScale(BOOL btn_down)
 	LLVector3 newscale(mCtrlScaleX->get(), mCtrlScaleY->get(), mCtrlScaleZ->get());
 
 	LLVector3 delta = newscale - mObject->getScale();
-	if (delta.magVec() >= 0.0005f)
+	if (delta.magVec() >= 0.0001f)
 	{
 		// scale changed by more than 1/2 millimeter
 
@@ -1929,7 +1944,7 @@ void LLPanelObject::sendPosition(BOOL btn_down)
 		LLVector3d old_pos_global = mObject->getPositionGlobal();
 		LLVector3d delta = new_pos_global - old_pos_global;
 		// moved more than 1/2 millimeter
-		if (delta.magVec() >= 0.0005f)
+		if (delta.magVec() >= 0.0001f)
 		{			
 			if (mRootObject != mObject)
 			{
