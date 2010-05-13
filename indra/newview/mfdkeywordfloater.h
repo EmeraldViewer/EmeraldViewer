@@ -31,6 +31,7 @@
 
 class MfdKeywordFloaterStart
 {
+public:
 	enum MessageSource {
 		LocalChat=1,
 		PrivateMessage=2,
@@ -38,7 +39,6 @@ class MfdKeywordFloaterStart
 		IRCChat=4
 	};
 
-	public:
 	static void show( BOOL showw , void* data);
 	static BOOL hasKeyword(std::string msg,int source);
 };

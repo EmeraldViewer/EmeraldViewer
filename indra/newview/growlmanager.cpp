@@ -28,6 +28,10 @@
  */
 
 #include "llviewerprecompiledheaders.h"
+#include "lldir.h"
+#include "llfile.h"
+#include "llsd.h"
+#include "llsdserialize.h"
 #include "llnotify.h"
 #include "llstartup.h"
 #include "growlmanager.h"
@@ -53,8 +57,58 @@ GrowlManager::GrowlManager()
 	
 	// Hook into LLNotifications...
 	LLNotificationChannel::buildChannel("GrowlNotifyTips", "Visible", LLNotificationFilters::filterBy<std::string>(&LLNotification::getType, "notifytip"));
+	LLNotificationChannel::buildChannel("GrowlNotify", "Visible", LLNotificationFilters::filterBy<std::string>(&LLNotification::getType, "notify"));
+	
 	LLNotifications::instance().getChannel("GrowlNotifyTips")->connectChanged(&GrowlManager::onLLNotification);
-	LL_INFOS("GrowlManagerInit") << "Connected to notifytips." << llendl;
+	LLNotifications::instance().getChannel("GrowlNotify")->connectChanged(&GrowlManager::onLLNotification);
+	this->loadConfig();
+}
+
+void GrowlManager::loadConfig()
+{
+	std::string config_file = gDirUtilp->getExpandedFilename(LL_PATH_APP_SETTINGS, "growl_notifications.xml");
+	if(config_file == "")
+	{
+		LL_WARNS("GrowlConfig") << "Couldn't find growl_notifications.xml" << LL_ENDL;
+		return;
+	}
+	LL_INFOS("GrowlConfig") << "Loading growl notification config from " << config_file << LL_ENDL;
+	llifstream configs(config_file);
+	LLSD notificationLLSD;
+	if(configs.is_open())
+	{
+		LLSDSerialize::fromXML(notificationLLSD, configs);
+		for(LLSD::map_iterator itr = notificationLLSD.beginMap(); itr != notificationLLSD.endMap(); ++itr)
+		{
+			GrowlNotification ntype;
+			ntype.growlName = itr->second.get("GrowlName").asString();
+			
+			if(itr->second.has("GrowlTitle"))
+				ntype.growlTitle = itr->second.get("GrowlTitle").asString();
+			if(itr->second.has("GrowlBody"))
+				ntype.growlBody = itr->second.get("GrowlBody").asString();
+			if(itr->second.has("UseDefaultTextForTitle"))
+				ntype.useDefaultTextForTitle = itr->second.get("UseDefaultTextForTitle").asBoolean();
+			else
+				ntype.useDefaultTextForTitle = false;
+			if(itr->second.has("UseDefaultTextForBody"))
+				ntype.useDefaultTextForBody = itr->second.get("UseDefaultTextForBody").asBoolean();
+			else
+				ntype.useDefaultTextForBody = false;
+			if(ntype.useDefaultTextForBody == false && ntype.useDefaultTextForTitle == false && 
+			   ntype.growlBody == "" && ntype.growlTitle == "")
+			{
+				ntype.useDefaultTextForBody = true;
+			}
+			this->notifications[itr->first] = ntype;
+		}
+		configs.close();
+	}
+	else
+	{
+		LL_WARNS("GrowlConfig") << "Couldn't open growl config file." << LL_ENDL;
+	}
+
 }
 
 void GrowlManager::notify(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
@@ -64,18 +118,30 @@ void GrowlManager::notify(const std::string& notification_title, const std::stri
 
 bool GrowlManager::onLLNotification(const LLSD& notice)
 {
-	LL_INFOS("GrowlLLNotification") << "GrowlManager recieved a notification." << LL_ENDL;
+	if(notice["sigtype"].asString() != "add") return false;
 	LLNotificationPtr notification = LLNotifications::instance().find(notice["id"].asUUID());
 	std::string name = notification->getName();
+	LLSD substitutions = notification->getSubstitutions();
 	if(LLStartUp::getStartupState() < STATE_STARTED)
 	{
 		LL_WARNS("GrowlLLNotification") << "GrowlManager discarded a notification (" << name << ") - too early." << LL_ENDL;
 		return false;
 	}
-	//TODO: Make this better - move everything into a file instead of hardcoding like this?
-	if(name == "FriendOnline" || name == "FriendOffline")
+	if(gGrowlManager->notifications.find(name) != gGrowlManager->notifications.end())
 	{
-		gGrowlManager->notify(notification->getMessage(), "", "Friend logged on/off");
+		GrowlNotification* growl_notification = &gGrowlManager->notifications[name];
+		std::string body = "";
+		std::string title = "";
+		if(growl_notification->useDefaultTextForTitle)
+			title = notification->getMessage();
+		else if(growl_notification->growlTitle != "")
+			title = LLNotification::format(growl_notification->growlTitle, substitutions);
+		if(growl_notification->useDefaultTextForBody)
+			body = notification->getMessage();
+		else if(growl_notification->growlBody != "")
+			body = LLNotification::format(growl_notification->growlBody, substitutions);
+		LL_INFOS("GrowlLLNotification") << "Notice: " << title << ": " << body << LL_ENDL;
+		gGrowlManager->notify(title, body, growl_notification->growlName);
 	}
 	return false;
 }

@@ -30,6 +30,16 @@
 #ifndef GROWLMANAGER_H
 #define GROWLMANAGER_H
 #include "growlnotifier.h"
+#include <map>
+
+struct GrowlNotification
+{
+	std::string growlName;
+	std::string growlTitle;
+	std::string growlBody;
+	bool useDefaultTextForTitle;
+	bool useDefaultTextForBody;
+};
 
 class GrowlManager
 {
@@ -40,6 +50,9 @@ public:
 	static void InitiateManager();
 private:
 	GrowlNotifier *mNotifier;
+	std::map<std::string, GrowlNotification> notifications;
+	
+	void loadConfig();
 	static bool onLLNotification(const LLSD& notice);
 };
 

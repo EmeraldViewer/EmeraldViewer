@@ -37,5 +37,5 @@ GrowlNotifier::GrowlNotifier()
 
 void GrowlNotifier::showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
 {
-	LL_WARNS("GrowlNotifierGeneric") << "Growl notification failed." << LL_ENDL;
+	//LL_WARNS("GrowlNotifierGeneric") << "Growl notification failed." << LL_ENDL;
 }
