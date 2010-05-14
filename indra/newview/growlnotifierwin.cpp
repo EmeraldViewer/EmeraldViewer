@@ -39,7 +39,7 @@ GrowlNotifierWin::GrowlNotifierWin():applicationName("")
 	LL_INFOS("GrowlNotifierWin") << "Windows growl notifications initialised." << LL_ENDL;
 	
 }
-void GrowlNotifierWin::registerAplication(const std::string& application, std::set<std::string> notificationTypes)
+void GrowlNotifierWin::registerApplication(const std::string& application, const std::set<std::string>& notificationTypes)
 {
 	applicationName=application;
 	
@@ -50,8 +50,8 @@ void GrowlNotifierWin::registerAplication(const std::string& application, std::s
 		strcpy(string, it->c_str());
 		arr[i] = string;
 	}
-	growl = new Growl(GROWL_TCP,NULL,application.c_str(),(const char **const)arr,15);
-	growl->Notify("Instant Message received","Emerald Growl","We are ready to use growl notifications!");
+	growl = new Growl(GROWL_TCP,NULL,application.c_str(),(const char **const)arr,notificationTypes.size());
+
 	for(i = 0; i < (int)notificationTypes.size(); ++i) {
 		free(arr[i]);
 	}

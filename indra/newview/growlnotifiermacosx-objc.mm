@@ -32,20 +32,12 @@
 #import "Growl/Growl.h"
 
 void growlApplicationBridgeNotify(const std::string& withTitle, const std::string& description, const std::string& notificationName, 
-                                void *iconData, unsigned int iconDataSize, int priority, bool isSticky)
-{
+                                void *iconData, unsigned int iconDataSize, int priority, bool isSticky) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSString *ns_title = [NSString stringWithCString:withTitle.c_str() encoding:NSUTF8StringEncoding];
-    NSString *ns_description = [NSString stringWithCString:description.c_str() encoding:NSUTF8StringEncoding];
-    NSString *ns_name = [NSString stringWithCString:notificationName.c_str() encoding:NSUTF8StringEncoding];
-    NSData *ns_icon = nil;
-    if(iconData != NULL)
-        ns_icon = [NSData dataWithBytes:iconData length:iconDataSize];
-    
-    [GrowlApplicationBridge notifyWithTitle:ns_title
-                                description:ns_description
-                           notificationName:ns_name
-                                   iconData:ns_icon
+    [GrowlApplicationBridge notifyWithTitle:[NSString stringWithCString:withTitle.c_str() encoding:NSUTF8StringEncoding]
+                                description:[NSString stringWithCString:description.c_str() encoding:NSUTF8StringEncoding]
+                           notificationName:[NSString stringWithCString:notificationName.c_str() encoding:NSUTF8StringEncoding]
+                                   iconData:(iconData == NULL ? nil : [NSData dataWithBytes:iconData length:iconDataSize])
                                    priority:priority
                                    isSticky:isSticky
                                clickContext:nil
@@ -53,17 +45,30 @@ void growlApplicationBridgeNotify(const std::string& withTitle, const std::strin
     [pool release];
 }
 
-void growlApplicationBridgeInit()
-{
+void growlApplicationBridgeInit() {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [GrowlApplicationBridge setGrowlDelegate:@""];
     [pool release];
 }
 
-bool growlApplicationBridgeIsGrowlInstalled()
-{
+bool growlApplicationBridgeIsGrowlInstalled() {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     BOOL installed = [GrowlApplicationBridge isGrowlInstalled];
     [pool release];
     return installed;
+}
+
+void growlApplicationBridgeRegister(const std::string& appname, const std::set<std::string>& notifications)
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSMutableArray *notificationArray = [[[NSMutableArray alloc] init] autorelease];
+    for(std::set<std::string>::iterator itr = notifications.begin(); itr != notifications.end(); ++itr) {
+        [notificationArray addObject:[NSString stringWithCString:itr->c_str()]];
+    }
+    [GrowlApplicationBridge registerWithDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                    [NSString stringWithCString:appname.c_str()], GROWL_APP_NAME,
+                                                    notificationArray, GROWL_NOTIFICATIONS_ALL,
+                                                    notificationArray, GROWL_NOTIFICATIONS_DEFAULT,
+                                                    nil]];
+    [pool release];
 }

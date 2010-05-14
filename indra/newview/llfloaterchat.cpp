@@ -489,9 +489,6 @@ void LLFloaterChat::addChat(const LLChat& chat,
 		addChatHistory(chat,false);
 
 	triggerAlerts(chat.mText);
-	
-	if(MfdKeywordFloaterStart::hasKeyword(chat.mText, from_instant_message ? MfdKeywordFloaterStart::PrivateMessage : MfdKeywordFloaterStart::LocalChat))
-		gGrowlManager->notify("Keyword Alert", chat.mText, "Keyword Alert");
 
 	if(!from_instant_message)
 		addChatHistory(chat);

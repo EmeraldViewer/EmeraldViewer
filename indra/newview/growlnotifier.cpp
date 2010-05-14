@@ -48,7 +48,8 @@ bool GrowlNotifier::isUsable()
 {
 	return false; // Dummy implementation is not usable, obviously.
 }
-void GrowlNotifier::registerAplication(const std::string& application, std::set<std::string> notificationTypes)
+
+void GrowlNotifier::registerApplication(const std::string& application, const std::set<std::string>& notificationTypes)
 {
 	//nothing special
 }

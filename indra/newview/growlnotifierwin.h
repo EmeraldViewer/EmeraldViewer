@@ -43,7 +43,7 @@ public:
 	
 	void showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type);
 	bool isUsable();
-	void registerAplication(const std::string& application, std::set<std::string> notificationTypes);
+	void registerApplication(const std::string& application, const std::set<std::string>& notificationTypes);
 private:
 	std::string applicationName;
 	Growl *growl;

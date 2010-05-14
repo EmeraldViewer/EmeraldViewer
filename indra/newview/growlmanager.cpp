@@ -124,8 +124,7 @@ void GrowlManager::loadConfig()
 		}
 		configs.close();
 
-
-		this->mNotifier->registerAplication("Emerald Viewer",notificationTypes);
+		this->mNotifier->registerApplication("Emerald Viewer", notificationTypes);
 	}
 	else
 	{
@@ -142,7 +141,10 @@ void GrowlManager::notify(const std::string& notification_title, const std::stri
 
 bool GrowlManager::onLLNotification(const LLSD& notice)
 {
-	if(notice["sigtype"].asString() != "add") return false;
+	if(notice["sigtype"].asString() != "add")
+		return false;
+	if(!gSavedSettings.getBOOL("EmeraldEnableGrowl"))
+		return false;
 	LLNotificationPtr notification = LLNotifications::instance().find(notice["id"].asUUID());
 	std::string name = notification->getName();
 	LLSD substitutions = notification->getSubstitutions();

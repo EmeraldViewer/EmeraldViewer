@@ -1016,7 +1016,6 @@ if (DARWIN)
     German.lproj/language.txt
     Japanese.lproj/language.txt
     Korean.lproj/language.txt
-    "Growl Registration Ticket.growlRegDict"
     )
   set_source_files_properties(
     ${viewer_RESOURCE_FILES}

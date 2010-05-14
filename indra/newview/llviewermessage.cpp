@@ -140,6 +140,7 @@
 #include "lltranslate.h"
 
 #include "jc_lslviewerbridge.h"
+#include "mfdkeywordfloater.h"
 #include "growlmanager.h"
 
 #include <boost/tokenizer.hpp>
@@ -2182,6 +2183,10 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 
 		chat.mText = std::string("IM: ") + name + separator_string +  saved + message.substr(message_offset);
 		LLFloaterChat::addChat(chat, TRUE, is_this_agent);
+		
+		// Growl alert if a keyword is picked up.
+		if(from_id != gAgent.getID() && MfdKeywordFloaterStart::hasKeyword(message, MfdKeywordFloaterStart::PrivateMessage))
+			gGrowlManager->notify("Keyword Alert", chat.mText, "Keyword Alert");
 	}
 	break;
 
@@ -2231,6 +2236,9 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 			// IMs from objcts don't open IM sessions.
 			chat.mSourceType = CHAT_SOURCE_OBJECT;
 			LLFloaterChat::addChat(chat, FALSE, FALSE);
+
+			// This message is directly to us, so we should probably always growl?
+			gGrowlManager->notify(name, message.substr(message_offset), "Instant Message received");
 		}
 		break;
 	case IM_FROM_TASK_AS_ALERT:
@@ -2991,6 +2999,11 @@ void process_chat_from_simulator(LLMessageSystem *msg, void **user_data)
 		{
 			// show on screen and add to history
 			check_translate_chat(mesg, chat, FALSE);
+			
+			// Growl notifications, if this is a highlight...
+			if(from_id != gAgent.getID() && MfdKeywordFloaterStart::hasKeyword(mesg, MfdKeywordFloaterStart::LocalChat))
+				gGrowlManager->notify("Keyword Alert", chat.mText, "Keyword Alert");
+
 		}
 		else
 		{

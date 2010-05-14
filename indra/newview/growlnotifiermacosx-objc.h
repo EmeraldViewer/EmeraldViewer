@@ -30,10 +30,12 @@
 #ifndef GROWLNOTIFIERMACOSX_OBJC_H
 #define GROWLNOTIFIERMACOSX_OBJC_H
 #include <string>
+#include <set>
 
 void growlApplicationBridgeNotify(const std::string& withTitle, const std::string& description, const std::string& notificationName, 
                                   void *iconData, unsigned int iconDataSize, int priority, bool isSticky);
 void growlApplicationBridgeInit();
+void growlApplicationBridgeRegister(const std::string& appname, const std::set<std::string>& notifications);
 bool growlApplicationBridgeIsGrowlInstalled();
 
 #endif // GROWLNOTIFIERMACOSX_OBJC_H

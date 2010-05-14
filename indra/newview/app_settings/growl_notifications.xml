@@ -1,7 +1,5 @@
 <!-- 
-  Not all possible growl notifications are defined here; Emerald Keyword Alerts and incoming IMs are hardcoded
-  Whenever adding an entry here, you *must* add its GrowlName to "Growl Registration Ticket.growlRegDict".
-  This may be part of the build process in the future.
+  Not all possible growl notifications are defined here; Emerald Keyword Alerts and incoming IMs are hardcoded.
   
   The following options are available:
   GrowlName (string): The name used by Growl for this notification. Should be human-readable. REQUIRED.

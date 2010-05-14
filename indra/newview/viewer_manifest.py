@@ -513,9 +513,6 @@ class DarwinManifest(ViewerManifest):
                 self.path("uk.lproj")
                 self.path("zh-Hans.lproj")
                 
-                # Growl ticket
-                self.path("Growl Registration Ticket.growlRegDict")
-
                 # SLVoice and vivox lols
                 self.path("vivox-runtime/universal-darwin/libalut.dylib", "libalut.dylib")
                 self.path("vivox-runtime/universal-darwin/libopenal.dylib", "libopenal.dylib")
