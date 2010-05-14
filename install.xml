@@ -117,6 +117,13 @@
             <key>url</key>
             <uri>http://modularsystems.sl/box/growl-1.2.1-darwin.bz2</uri>
           </map>
+          <key>windows</key>
+          <map>
+            <key>md5sum</key>
+            <string>3925a859975cdf9bcb5b9eedb0c45728</string>
+            <key>url</key>
+            <uri>http://modularsystems.sl/box/emwingrowllibraries.tar.bz2</uri>
+          </map>
         </map>
       </map>
       <key>GL</key>

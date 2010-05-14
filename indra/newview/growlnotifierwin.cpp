@@ -39,44 +39,32 @@ GrowlNotifierWin::GrowlNotifierWin():applicationName("")
 	LL_INFOS("GrowlNotifierWin") << "Windows growl notifications initialised." << LL_ENDL;
 	
 }
-void GrowlNotifierWin::registerAplication(const std::string& application, const std::string& csvtypes)
+void GrowlNotifierWin::registerAplication(const std::string& application, std::set<std::string> notificationTypes)
 {
 	applicationName=application;
-	std::string theCMD(
-		"cmd.exe /c START \"External Editor\" \""
-		+ gSavedSettings.getString("EmeraldWindowsGrowlPath") + "\" " 
-		+ "/t:\""+application +"\" "
-		+ "/a:\""+application+"\" "
-		+ "/s:"+"false"+" "
-		+ "/r:"+csvtypes+" "//these need to be all the types (or names) in growl_notifications.xml
-		+ "\""+application +" is ready to use Growl.\"");
-	llinfos << "Issuing growl exe command of :"<<
-		theCMD.c_str() << llendl;
-
-	std::system(theCMD.c_str());
+	
+	char **arr = (char**)malloc(sizeof(*arr) * notificationTypes.size());
+	int i = 0;
+	for(std::set<std::string>::iterator it = notificationTypes.begin(); it != notificationTypes.end(); ++it, ++i) {
+		char *string = (char*)malloc(it->size() + 1);
+		strcpy(string, it->c_str());
+		arr[i] = string;
+	}
+	growl = new Growl(GROWL_TCP,NULL,application.c_str(),(const char **const)arr,15);
+	growl->Notify("Instant Message received","Emerald Growl","We are ready to use growl notifications!");
+	for(i = 0; i < (int)notificationTypes.size(); ++i) {
+		free(arr[i]);
+	}
+	free(arr);
 }
 void GrowlNotifierWin::showNotification(const std::string& notification_title, const std::string& notification_message, 
 										 const std::string& notification_type)
 {
-	std::string theCMD(
-		"cmd.exe /c START \"External Editor\" \"" 
-		+ gSavedSettings.getString("EmeraldWindowsGrowlPath") + "\" " 
-		+ "/t:\""+notification_title +"\" "
-		+ "/a:\""+applicationName+"\" "
-		+ "/s:"+"false"+" "//sticky?
-		+ "/id:\""+""+"\" "//i dont know what the id does
-		//+ "/icon:\""+iconPath+"\" "  if we want a icon o.o
-		+ "/n:\""+notification_type+"\" "
-		+ "\""+notification_message+"\"");
-
-	llinfos << "Issuing growl exe command of :"<<
-		theCMD.c_str() << llendl;
-
-	std::system(theCMD.c_str());
+	growl->Notify(notification_type.c_str(),notification_title.c_str(),notification_message.c_str());	
 }
 
 bool GrowlNotifierWin::isUsable()
 {
+	if(growl) return true;
 	return false;
-	//return gDirUtilp->fileExists(gSavedSettings.getString("EmeraldWindowsGrowlPath"));
 }

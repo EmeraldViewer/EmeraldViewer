@@ -33,6 +33,7 @@
 #define GROWLNOTIFIERWIN_H
 
 #include "growlnotifier.h"
+#include <growl++.hpp>
 
 class GrowlNotifierWin : public GrowlNotifier
 {
@@ -42,9 +43,10 @@ public:
 	
 	void showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type);
 	bool isUsable();
-	void registerAplication(const std::string& application, const std::string& csvtypes);
+	void registerAplication(const std::string& application, std::set<std::string> notificationTypes);
 private:
 	std::string applicationName;
+	Growl *growl;
 };
 
 #endif // GROWLNOTIFIERWIN_H

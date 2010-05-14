@@ -49,7 +49,7 @@ bool GrowlNotifierMacOSX::isUsable()
 	return growlApplicationBridgeIsGrowlInstalled();
 }
 
-void GrowlNotifierMacOSX::registerAplication(const std::string& application, const std::string& csvtypes)
+void GrowlNotifierMacOSX::registerAplication(const std::string& application, std::set<std::string> notificationTypes)
 {
 
 }

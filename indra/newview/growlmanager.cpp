@@ -91,7 +91,9 @@ void GrowlManager::loadConfig()
 	LL_INFOS("GrowlConfig") << "Loading growl notification config from " << config_file << LL_ENDL;
 	llifstream configs(config_file);
 	LLSD notificationLLSD;
-	std::string listOfTypesToRegister(",Instant Message received");
+	std::set<std::string> notificationTypes;
+	notificationTypes.insert("Keyword Alert");
+	notificationTypes.insert("Instant Message received");
 	if(configs.is_open())
 	{
 		LLSDSerialize::fromXML(notificationLLSD, configs);
@@ -99,8 +101,7 @@ void GrowlManager::loadConfig()
 		{
 			GrowlNotification ntype;
 			ntype.growlName = itr->second.get("GrowlName").asString();
-			if(listOfTypesToRegister.find(ntype.growlName)==std::string::npos)
-				listOfTypesToRegister.append(",\""+ntype.growlName+"\"");
+			notificationTypes.insert(ntype.growlName);
 			
 			if(itr->second.has("GrowlTitle"))
 				ntype.growlTitle = itr->second.get("GrowlTitle").asString();			
@@ -122,9 +123,9 @@ void GrowlManager::loadConfig()
 			this->mNotifications[itr->first] = ntype;
 		}
 		configs.close();
-		listOfTypesToRegister=listOfTypesToRegister.substr(1);
 
-		this->mNotifier->registerAplication("Emerald Viewer",listOfTypesToRegister);
+
+		this->mNotifier->registerAplication("Emerald Viewer",notificationTypes);
 	}
 	else
 	{

@@ -48,7 +48,7 @@ bool GrowlNotifier::isUsable()
 {
 	return false; // Dummy implementation is not usable, obviously.
 }
-void GrowlNotifier::registerAplication(const std::string& application, const std::string& csvtypes)
+void GrowlNotifier::registerAplication(const std::string& application, std::set<std::string> notificationTypes)
 {
 	//nothing special
 }

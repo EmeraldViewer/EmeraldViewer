@@ -39,7 +39,7 @@ public:
 	virtual ~GrowlNotifier();
 	virtual void showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type);
 	virtual bool isUsable();
-	virtual void registerAplication(const std::string& application, const std::string& csvtypes);
+	virtual void registerAplication(const std::string& application, std::set<std::string> notificationTypes);
 };
 
 #endif // GROWLNOTIFIER_H

@@ -42,7 +42,8 @@ include(ViewerArtwork.cmake)
 if (WINDOWS)
   include(CopyWinLibs)
   include(libgcrypt)
-  include(libgpg-error)
+  include(libgpg-error)  
+  include(Growl)
 endif (WINDOWS)
 include(libotr)
 
@@ -81,6 +82,9 @@ if (WINDOWS)
         ../gpg.vs/libgpg-error-1.1.vs/custom
         ../gpg.vs/libgcrypt-1.2.2.vs/custom
     )
+    include_directories(
+    ${GROWL_INCLUDE_DIRS}
+  )
 endif (WINDOWS)
 
 if (DARWIN)
@@ -1433,6 +1437,7 @@ target_link_libraries(${VIEWER_BINARY_NAME}
 #	${GPG-ERROR_LIBRARY}
 #	${OTR_LIBRARY}
 	${LIBOTR_LIBRARY}
+	${GROWL_LIBRARY}
 #   ${HUNSPELL_LIBRAIES}
     ${HUNSPELL_LIBRARY}
     )
