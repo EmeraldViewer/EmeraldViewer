@@ -34,6 +34,10 @@ GrowlNotifier::GrowlNotifier()
 {
 	// Nothing much?
 }
+GrowlNotifier::~GrowlNotifier()
+{
+	
+}
 
 void GrowlNotifier::showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
 {
@@ -43,4 +47,8 @@ void GrowlNotifier::showNotification(const std::string& notification_title, cons
 bool GrowlNotifier::isUsable()
 {
 	return false; // Dummy implementation is not usable, obviously.
+}
+void GrowlNotifier::registerAplication(const std::string& application, const std::string& csvtypes)
+{
+	//nothing special
 }

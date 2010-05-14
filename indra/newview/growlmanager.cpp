@@ -43,7 +43,10 @@
 // Platform-specific includes
 #ifdef LL_DARWIN
 #include "growlnotifiermacosx.h"
+#elif LL_WINDOWS
+#include "growlnotifierwin.h"
 #endif
+
 
 GrowlManager *gGrowlManager = NULL;
 
@@ -53,6 +56,9 @@ GrowlManager::GrowlManager()
 #ifdef LL_DARWIN
 	this->mNotifier = new GrowlNotifierMacOSX();
 	LL_INFOS("GrowlManagerInit") << "Created GrowlNotifierMacOSX." << LL_ENDL;
+#elif LL_WINDOWS
+	this->mNotifier = new GrowlNotifierWin();
+	LL_INFOS("GrowlManagerInit") << "Created GrowlNotifierWin." << LL_ENDL;
 #else
 	this->mNotifier = new GrowlNotifier();
 	LL_INFOS("GrowlManagerInit") << "Created generic GrowlNotifier." << LL_ENDL;
@@ -85,6 +91,7 @@ void GrowlManager::loadConfig()
 	LL_INFOS("GrowlConfig") << "Loading growl notification config from " << config_file << LL_ENDL;
 	llifstream configs(config_file);
 	LLSD notificationLLSD;
+	std::string listOfTypesToRegister(",Instant Message received");
 	if(configs.is_open())
 	{
 		LLSDSerialize::fromXML(notificationLLSD, configs);
@@ -92,9 +99,11 @@ void GrowlManager::loadConfig()
 		{
 			GrowlNotification ntype;
 			ntype.growlName = itr->second.get("GrowlName").asString();
+			if(listOfTypesToRegister.find(ntype.growlName)==std::string::npos)
+				listOfTypesToRegister.append(",\""+ntype.growlName+"\"");
 			
 			if(itr->second.has("GrowlTitle"))
-				ntype.growlTitle = itr->second.get("GrowlTitle").asString();
+				ntype.growlTitle = itr->second.get("GrowlTitle").asString();			
 			if(itr->second.has("GrowlBody"))
 				ntype.growlBody = itr->second.get("GrowlBody").asString();
 			if(itr->second.has("UseDefaultTextForTitle"))
@@ -113,6 +122,9 @@ void GrowlManager::loadConfig()
 			this->mNotifications[itr->first] = ntype;
 		}
 		configs.close();
+		listOfTypesToRegister=listOfTypesToRegister.substr(1);
+
+		this->mNotifier->registerAplication("Emerald Viewer",listOfTypesToRegister);
 	}
 	else
 	{

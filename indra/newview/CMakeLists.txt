@@ -1036,11 +1036,13 @@ endif (LINUX)
 
 if (WINDOWS)
     list(APPEND viewer_SOURCE_FILES
+         growlnotifierwin.cpp
          llappviewerwin32.cpp
          llwindebug.cpp
          )
 
     list(APPEND viewer_HEADER_FILES
+         growlnotifierwin.h
          llappviewerwin32.h
          llwindebug.h
          )

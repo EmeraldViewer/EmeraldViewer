@@ -36,8 +36,10 @@ class GrowlNotifier
 {
 public:
 	GrowlNotifier();
+	virtual ~GrowlNotifier();
 	virtual void showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type);
 	virtual bool isUsable();
+	virtual void registerAplication(const std::string& application, const std::string& csvtypes);
 };
 
 #endif // GROWLNOTIFIER_H
