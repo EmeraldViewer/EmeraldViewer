@@ -138,7 +138,7 @@ void GrowlManager::notify(const std::string& notification_title, const std::stri
 	if(!gSavedSettings.getBOOL("EmeraldEnableGrowl"))
 		return;
 	
-	time_t now = LLTimer::getTotalTime();
+	U64 now = LLTimer::getTotalTime();
 	if(mTitleTimers.find(notification_title) != mTitleTimers.end())
 	{
 		if(mTitleTimers[notification_title] > now - GROWL_THROTTLE_TIME)
