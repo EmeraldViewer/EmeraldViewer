@@ -45,7 +45,7 @@ void GrowlNotifierWin::registerApplication(const std::string& application, const
 	
 	char **arr = (char**)malloc(sizeof(*arr) * notificationTypes.size());
 	int i = 0;
-	for(std::set<std::string>::iterator it = notificationTypes.begin(); it != notificationTypes.end(); ++it, ++i) {
+	for(std::set<std::string>::const_iterator it = notificationTypes.begin(); it != notificationTypes.end(); ++it, ++i) {
 		char *string = (char*)malloc(it->size() + 1);
 		strcpy(string, it->c_str());
 		arr[i] = string;
