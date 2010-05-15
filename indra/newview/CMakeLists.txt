@@ -112,6 +112,8 @@ set(viewer_SOURCE_FILES
 	importtracker.cpp
 	jclslpreproc.cpp
 	jc_lslviewerbridge.cpp
+	jcfloater_animation_list.cpp
+	jcfloater_areasearch.cpp
 	mfdkeywordfloater.cpp
 	otr_wrapper.cpp
     otr_floater_smp_dialog.cpp
@@ -557,6 +559,8 @@ set(viewer_HEADER_FILES
 	importtracker.h
 	jclslpreproc.h
 	jc_lslviewerbridge.h
+	jcfloater_animation_list.h
+	jcfloater_areasearch.h
 	lggbeamcolormapfloater.h
 	lggbeamscolors.h
 	lggbeammapfloater.h

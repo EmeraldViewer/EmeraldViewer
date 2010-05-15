@@ -4592,6 +4592,17 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldRevokePerms</key>
+    <map>
+      <key>Comment</key>
+      <string>Setting this option to 1 will revoke perms when you sit on an object, 2 will revoke perms when you get off an object, 3 will revoke perms when you sit and stand.</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>U32</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>EmeraldRotateCamAfterLocalTP</key>
     <map>
       <key>Comment</key>

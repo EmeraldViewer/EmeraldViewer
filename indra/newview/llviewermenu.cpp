@@ -220,6 +220,8 @@
 
 #include "floaterlocalassetbrowse.h" // tag: vaa emerald local_asset_browser
 #include "floateravatarlist.h"
+#include "jcfloater_animation_list.h"
+#include "jcfloater_areasearch.h"
 #include "exporttracker.h"
 #include "floaterao.h"
 #include "scriptcounter.h"
@@ -5939,6 +5941,14 @@ class LLShowFloater : public view_listener_t
 		{
 			LLFloaterPerms::toggleInstance(LLSD());
 		}
+                else if (floater_name == "animation list")
+                {
+                        JCFloaterAnimList::toggleInstance(LLSD());
+                }
+                else if (floater_name == "areasearch")
+                {
+                        JCFloaterAreaSearch::toggle();
+                }
 		return true;
 	}
 };
@@ -5999,6 +6009,16 @@ class LLFloaterVisible : public view_listener_t
 			LLInventoryView* iv = LLInventoryView::getActiveInventory(); 
 			new_value = (NULL != iv && TRUE == iv->getVisible());
 		}
+                else if (floater_name == "animation list")
+                {
+                        new_value = JCFloaterAnimList::instanceVisible(LLSD());
+                }
+                else if (floater_name == "areasearch")
+                {
+                        JCFloaterAreaSearch* instn = JCFloaterAreaSearch::getInstance();
+                        if(!instn)new_value = false;
+                        else new_value = instn->getVisible();
+                }
 		gMenuHolder->findControl(control_name)->setValue(new_value);
 		return true;
 	}
