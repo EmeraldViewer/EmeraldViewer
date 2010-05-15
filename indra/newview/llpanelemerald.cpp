@@ -215,8 +215,6 @@ BOOL LLPanelEmerald::postBuild()
 		
 	//childSetCommitCallback("material",onComboBoxCommit);
 	//childSetCommitCallback("combobox shininess",onComboBoxCommit);
-	getChild<LLButton>("EmeraldPrefs_Stealth")->setClickedCallback(onStealth, this);
-	getChild<LLButton>("EmeraldPrefs_FullFeatures")->setClickedCallback(onNoStealth, this);
 
 
 	getChild<LLButton>("keyword_allert")->setClickedCallback(onKeywordAllertButton,this);
@@ -571,59 +569,7 @@ void LLPanelEmerald::onSpellEditCustom(void* data)
 {
 	glggHunSpell->editCustomButton();
 }
-void LLPanelEmerald::onStealth(void* data)
-{
-	//LLPanelEmerald* self =(LLPanelEmerald*)data;
-	LLNotifications::instance().add("EmeraldStealth", LLSD(),LLSD(), callbackEmeraldStealth);
-	
-}
-void LLPanelEmerald::callbackEmeraldStealth(const LLSD &notification, const LLSD &response)
-{
-	//gSavedSettings.setWarning("EmeraldOTR", FALSE);
-	S32 option = LLNotification::getSelectedOption(notification, response);
-	if ( option == 0 )
-	{
-		gSavedSettings.setU32("EmeraldUseOTR",(U32)0);
-		gSavedSettings.setBOOL("EmeraldRainbowBeam",false);
-		gSavedSettings.setString("EmeraldBeamShape","===OFF===");
-		gSavedSettings.setBOOL("EmeraldCryoDetection",false);
-		gSavedSettings.setBOOL("EmeraldGUSEnabled",false);
-		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",false);
-		gSavedSettings.setBOOL("EmeraldParticleChat",false);
-		gSavedSettings.setBOOL("EmeraldRadarChatKeys",false);
-		gSavedSettings.setBOOL("EmeraldUseBridgeOnline",false);
-		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",false);
-		gSavedSettings.setBOOL("EmeraldMoveLockDCT",false);
-	}
-}
-void LLPanelEmerald::onNoStealth(void* data)
-{
-	//LLPanelEmerald* self =(LLPanelEmerald*)data;
-	
-	LLNotifications::instance().add("EmeraldNoStealth", LLSD(),LLSD(), callbackEmeraldNoStealth);
-	
 
-}
-
-void LLPanelEmerald::callbackEmeraldNoStealth(const LLSD &notification, const LLSD &response)
-{
-	//gSavedSettings.setWarning("EmeraldOTR", FALSE);
-	S32 option = LLNotification::getSelectedOption(notification, response);
-	if ( option == 0 )
-	{
-		gSavedSettings.setU32("EmeraldUseOTR",(U32)2);
-		gSavedSettings.setBOOL("EmeraldRainbowBeam",true);
-		gSavedSettings.setString("EmeraldBeamShape","Emerald");
-		//gSavedSettings.setBOOL("EmeraldCryoDetect",true);
-		//gSavedSettings.setBOOL("EmeraldGUSEnabled",true);
-		gSavedSettings.setBOOL("EmeraldClothingLayerProtection",true);
-		gSavedSettings.setBOOL("EmeraldBuildBridge",true);
-		gSavedSettings.setBOOL("EmeraldUseBridgeOnline",true);
-		gSavedSettings.setBOOL("EmeraldUseBridgeRadar",true);		
-		gSavedSettings.setBOOL("EmeraldMoveLockDCT",true);
-
-	}
-}
 void LLPanelEmerald::beamUpdateCall(LLUICtrl* crtl, void* userdata)
 {
 	gLggBeamMaps.forceUpdate();
