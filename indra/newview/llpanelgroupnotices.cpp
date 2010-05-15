@@ -52,6 +52,7 @@
 #include "lltextbox.h"
 
 #include "roles_constants.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llviewermessage.h"
 #include "llnotifications.h"
@@ -486,17 +487,21 @@ void LLPanelGroupNotices::processNotices(LLMessageSystem* msg)
 
 		row["columns"][1]["column"] = "subject";
 		row["columns"][1]["value"] = subj;
+		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 
 		row["columns"][2]["column"] = "from";
 		row["columns"][2]["value"] = name;
+		row["columns"][2]["color"] = gColors.getColor("DefaultListText").getValue();
 
 		std::string buffer = build_notice_date(t);
 		row["columns"][3]["column"] = "date";
 		row["columns"][3]["value"] = buffer;
+		row["columns"][3]["color"] = gColors.getColor("DefaultListText").getValue();
 
 		buffer = llformat( "%u", timestamp);
 		row["columns"][4]["column"] = "sort";
 		row["columns"][4]["value"] = buffer;
+		row["columns"][4]["color"] = gColors.getColor("DefaultListText").getValue();
 
 		mNoticesList->addElement(row, ADD_BOTTOM);
 	}

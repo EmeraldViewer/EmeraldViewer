@@ -39,6 +39,7 @@
 
 #include "lluictrlfactory.h"
 #include "llviewermessage.h"
+#include "llviewercontrol.h"
 #include "llappviewer.h"		// gPacificDaylightTime
 
 ///----------------------------------------------------------------------------
@@ -89,6 +90,7 @@ void LLFloaterBump::show(void *contents)
 		LLSD row;
 		row["columns"][0]["value"] = none_detected;
 		row["columns"][0]["font"] = "SansSerifBold";
+		row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		list->addElement(row);
 	}
 	else
@@ -159,5 +161,6 @@ void LLFloaterBump::add(LLScrollListCtrl* list, LLMeanCollisionData* mcd)
 	row["id"] = mcd->mPerp;
 	row["columns"][0]["value"] = text;
 	row["columns"][0]["font"] = "SansSerifBold";
+	row["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 	list->addElement(row);
 }

@@ -316,6 +316,7 @@ void LLFloaterAvatarPicker::populateNearMe()
 		if(av == gAgent.getID()) continue;
 		LLSD element;
 		element["id"] = av; // value
+		element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 		std::string fullname;
 		if(!gCacheName->getFullName(av, fullname))
 		{

@@ -539,6 +539,7 @@ BOOL FloaterAvatarList::tick()
 						element["columns"][LIST_AVATAR_NAME]["column"] = "avatar_name";
 						element["columns"][LIST_AVATAR_NAME]["type"] = "text";
 						element["columns"][LIST_AVATAR_NAME]["value"] = entry->name;
+						element["columns"][LIST_AVATAR_NAME]["color"] = gColors.getColor("DefaultListText").getValue();
 
 						element["columns"][LIST_DISTANCE]["column"] = "distance";
 						element["columns"][LIST_DISTANCE]["type"] = "text";
@@ -651,7 +652,7 @@ BOOL FloaterAvatarList::tick()
 
 						element["columns"][LIST_TIME]["column"] = "time";
 						element["columns"][LIST_TIME]["type"] = "text";
-						//element["columns"][LIST_TIME]["color"] = sDefaultListText->getValue();
+						element["columns"][LIST_TIME]["color"] = gColors.getColor("DefaultListText").getValue();
 						element["columns"][LIST_TIME]["value"] = llformat("%d:%02d:%02d", hours,mins,secs);
 
 

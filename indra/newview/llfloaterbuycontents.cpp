@@ -49,6 +49,7 @@
 #include "llinventoryview.h"	// for get_item_icon
 #include "llselectmgr.h"
 #include "llscrolllistctrl.h"
+#include "llviewercontrol.h"
 #include "llviewerobject.h"
 #include "llviewerregion.h"
 #include "lluictrlfactory.h"
@@ -253,6 +254,7 @@ void LLFloaterBuyContents::inventoryChanged(LLViewerObject* obj,
 		row["columns"][1]["column"] = "text";
 		row["columns"][1]["value"] = text;
 		row["columns"][1]["font"] = "SANSSERIF";
+		row["columns"][1]["color"] = gColors.getColor("DefaultListText").getValue();
 
 		item_list->addElement(row);
 	}

@@ -515,7 +515,7 @@ void LLPanelActiveSpeakers::refreshSpeakers()
 			}
 			else
 			{
-				name_cell->setColor(LLColor4::black);
+				name_cell->setColor(gColors.getColor("DefaultListText"));
 			}
 
 			std::string speaker_name;

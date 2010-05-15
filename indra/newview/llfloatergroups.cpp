@@ -54,6 +54,7 @@
 #include "llscrolllistctrl.h"
 #include "lltextbox.h"
 #include "lluictrlfactory.h"
+#include "llviewercontrol.h"
 #include "llviewerwindow.h"
 #include "llimview.h"
 
@@ -455,6 +456,7 @@ void init_group_list(LLScrollListCtrl* ctrl, const LLUUID& highlight_id, U64 pow
 			element["columns"][0]["value"] = group_datap->mName;
 			element["columns"][0]["font"] = "SANSSERIF";
 			element["columns"][0]["font-style"] = style;
+			element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 
 			group_list->addElement(element, ADD_SORTED);
 		}
@@ -473,6 +475,7 @@ void init_group_list(LLScrollListCtrl* ctrl, const LLUUID& highlight_id, U64 pow
 		element["columns"][0]["value"] = "none"; // *TODO: Translate
 		element["columns"][0]["font"] = "SANSSERIF";
 		element["columns"][0]["font-style"] = style;
+		element["columns"][0]["color"] = gColors.getColor("DefaultListText").getValue();
 
 		group_list->addElement(element, ADD_TOP);
 	}
