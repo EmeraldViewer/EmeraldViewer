@@ -50,7 +50,7 @@
 
 GrowlManager *gGrowlManager = NULL;
 
-GrowlManager::GrowlManager()
+GrowlManager::GrowlManager() : LLEventTimer(GROWL_THROTTLE_CLEANUP_PERIOD)
 {
 	// Create a notifier appropriate to the platform.
 #ifdef LL_DARWIN
@@ -135,8 +135,27 @@ void GrowlManager::loadConfig()
 
 void GrowlManager::notify(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
 {
-	if(gSavedSettings.getBOOL("EmeraldEnableGrowl"))
-		this->mNotifier->showNotification(notification_title, notification_message, notification_type);
+	if(!gSavedSettings.getBOOL("EmeraldEnableGrowl"))
+		return;
+	
+	time_t now = LLTimer::getTotalTime();
+	if(mTitleTimers.find(notification_title) != mTitleTimers.end())
+	{
+		if(mTitleTimers[notification_title] > now - GROWL_THROTTLE_TIME)
+		{
+			LL_WARNS("GrowlNotify") << "Discarded notification with title '" << notification_title << "' - spam ._." << LL_ENDL;
+			mTitleTimers[notification_title] = now;
+			return;
+		}
+	}
+	mTitleTimers[notification_title] = now;
+	this->mNotifier->showNotification(notification_title, notification_message.substr(0, GROWL_MAX_BODY_LENGTH), notification_type);
+}
+
+BOOL GrowlManager::tick()
+{
+	mTitleTimers.clear();
+	return false;
 }
 
 bool GrowlManager::onLLNotification(const LLSD& notice)

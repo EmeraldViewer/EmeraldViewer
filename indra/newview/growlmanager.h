@@ -30,6 +30,7 @@
 #ifndef GROWLMANAGER_H
 #define GROWLMANAGER_H
 #include "growlnotifier.h"
+#include "lltimer.h"
 #include <map>
 
 struct GrowlNotification
@@ -41,16 +42,23 @@ struct GrowlNotification
 	bool useDefaultTextForBody;
 };
 
-class GrowlManager
+const U64 GROWL_THROTTLE_TIME = 1000000; // Maximum spam rate (in microseconds).
+const F32 GROWL_THROTTLE_CLEANUP_PERIOD = 60; // How often we clean up the list (in seconds).
+const int GROWL_MAX_BODY_LENGTH = 255; // Arbitrary.
+
+class GrowlManager : public LLEventTimer
 {
 public:
+	
 	GrowlManager();
 	void notify(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type);
+	BOOL tick();
 
 	static void InitiateManager();
 private:
 	GrowlNotifier *mNotifier;
 	std::map<std::string, GrowlNotification> mNotifications;
+	std::map<std::string, U64> mTitleTimers;
 	
 	void loadConfig();
 	static bool onLLNotification(const LLSD& notice);
