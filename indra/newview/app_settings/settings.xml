@@ -78,6 +78,28 @@
       <key>Value</key>
       <real>1.0</real>
     </map>
+    <key>EmeraldBlockMapTps</key>
+    <map>
+      <key>Comment</key>
+      <string>Whether or not to block all script map tps</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
+    <key>EmeraldBlockSpam</key>
+    <map>
+      <key>Comment</key>
+      <string>Drop/kill all dialogs?</string>
+      <key>Persist</key>
+      <integer>0</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>0</integer>
+    </map>
     <key>EmeraldDisableMinZoomDist</key>
     <map>
       <key>Comment</key>
@@ -122,6 +144,39 @@
       <key>Value</key>
       <integer>0</integer>
     </map>
+    <key>EmeraldGeneralSpamEnabled</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables General Spam Prevention</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldCardSpamEnabled</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables CallingCard Spam Prevention</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
+    <key>EmeraldDialogSpamEnabled</key>
+    <map>
+      <key>Comment</key>
+      <string>Enables Dialog Spam Prevention</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
+    </map>
     <key>EmeraldHDDIncludeLocation</key>
     <map>
       <key>Comment</key>
@@ -132,6 +187,17 @@
       <string>String</string>
       <key>Value</key>
       <string/>
+    </map>
+    <key>EmeraldLoadURL</key>
+    <map>
+      <key>Comment</key>
+      <string>Disable to prevent Load URL dialogs. (Enabled by default)</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>Boolean</string>
+      <key>Value</key>
+      <integer>1</integer>
     </map>
     <key>EmeraldMaxBeamsPerSecond</key>
     <map>
@@ -166,6 +232,28 @@
       <key>Value</key>
       <integer>1</integer>
 	</map>
+    <key>EmeraldSpamTime</key>
+    <map>
+      <key>Comment</key>
+          <string>ADVANCED SETTINGS: Time of Evalulating spam. RECOMMENDED NUMBER IS 1.000</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>1.0</real>
+    </map>
+        <key>EmeraldSpamCount</key>
+    <map>
+      <key>Comment</key>
+      <string>ADVANCED SETTINGS: Number of items spammed per time set in EmeraldSpamTime. RECOMMENDED IS 4.000</string>
+      <key>Persist</key>
+      <integer>1</integer>
+      <key>Type</key>
+      <string>F32</string>
+      <key>Value</key>
+      <real>4.0</real>
+    </map>
     <key>EmeraldSpellDisplay</key>
     <map>
       <key>Comment</key>

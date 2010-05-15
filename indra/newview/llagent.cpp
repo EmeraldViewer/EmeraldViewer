@@ -474,6 +474,7 @@ void LLAgent::init()
 	gSavedSettings.getControl("EmeraldIgnoreFinishAnimation")->getSignal()->connect(&updateIgnorePrejump);
 	EmeraldForceFly = gSavedSettings.getBOOL("EmeraldAlwaysFly");
 	gSavedSettings.getControl("EmeraldAlwaysFly")->getSignal()->connect(&updateEmeraldForceFly);
+	mBlockSpam=gSavedSettings.getBOOL("EmeraldBlockSpam");
 	mInitialized = TRUE;
 }
 

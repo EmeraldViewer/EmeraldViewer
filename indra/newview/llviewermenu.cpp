@@ -8657,6 +8657,39 @@ class LLEmeraldCheckSit : public view_listener_t
 		return true;
 	}
 };
+
+class EmeraldToggleBlockSpam : public view_listener_t
+{
+    bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+    {
+        BOOL new_value = !gSavedSettings.getBOOL("EmeraldBlockSpam");
+        gSavedSettings.setBOOL("EmeraldBlockSpam", new_value);
+
+        // Srsly kill some dialogs and stuf.
+                std::string msg;
+        if (new_value)
+                {
+                        msg="Anti-Spam enabled, all dialogs are blocked. Remember to turn this off again!!";
+            gNotifyBoxView->deleteAllChildren();
+                }
+                else
+                        msg="Anti-Spam disabled.";
+                LLChat chat(msg);
+                LLFloaterChat::addChat(chat);
+        return true;
+    }
+};
+
+class EmeraldCheckBlockSpam : public view_listener_t
+{
+    bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
+    {
+        BOOL new_value = gSavedSettings.getBOOL("EmeraldBlockSpam");
+        gMenuHolder->findControl(userdata["control"].asString())->setValue(new_value);
+        return true;
+    }
+};
+
 class LLToolsSelectTool : public view_listener_t
 {
 	bool handleEvent(LLPointer<LLEvent> event, const LLSD& userdata)
@@ -8966,6 +8999,8 @@ void initialize_menus()
 	addMenu(new LLEmeraldToggleDoubleClickTeleport(), "Emerald.ToggleDoubleClickTeleport");
 	addMenu(new LLEmeraldCheckDoubleClickTeleport(), "Emerald.CheckDoubleClickTeleport");
 	addMenu(new LLEmeraldToggleRadar(), "Emerald.ToggleAvatarList");
+        addMenu(new EmeraldToggleBlockSpam(), "Emerald.ToggleBlockSpam");
+        addMenu(new EmeraldCheckBlockSpam(), "Emerald.CheckBlockSpam");
 	//addMenu(new LLEmeraldCheckRadar(), "Emerald.CheckAvatarList");
 	//addMenu(new LLEmeraldDisable(), "Emerald.Disable");
 	//addMenu(new LLToggleDebugMenus(), "ToggleDebugMenus");

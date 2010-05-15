@@ -559,7 +559,71 @@ LLAppViewer::~LLAppViewer()
 	// If we got to this destructor somehow, the app didn't hang.
 	removeMarkerFile();
 }
-
+void LLAppViewer::gSpam(const LLSD &data)
+{
+        if(g_spam.getStarted())
+        {
+                g_spam.stop();
+        }
+        generalSpamOn = (bool)data.asBoolean();
+        if(!generalSpamOn)
+        {
+                if(!lastg_agents.empty())
+                {
+                        lastg_agents.erase(lastg_agents.begin(),lastg_agents.end());
+                }
+                if(!blacklisted_objects.empty())
+                {
+                        blacklisted_objects.erase(blacklisted_objects.begin(),blacklisted_objects.end());
+                }
+        }
+}
+void LLAppViewer::dSpam(const LLSD &data)
+{
+        if(d_spam.getStarted())
+        {
+                d_spam.stop();
+        }
+        dialogSpamOn = (bool)data.asBoolean();
+        if(!dialogSpamOn)
+        {
+                if(!lastd_names.empty())
+                {
+                        lastd_names.erase(lastd_names.begin(),lastd_names.end());
+                }
+                if(!blacklisted_names.empty())
+                {
+                        blacklisted_names.erase(blacklisted_names.begin(),blacklisted_names.end());
+                }
+        }
+}
+void LLAppViewer::cSpam(const LLSD &data)
+{
+        if(c_spam.getStarted())
+        {
+                c_spam.stop();
+        }
+        callingSpamOn = (bool)data.asBoolean();
+        if(!callingSpamOn)
+        {
+                if(!lastc_agents.empty())
+                {
+                        lastc_agents.erase(lastc_agents.begin(),lastc_agents.end());
+                }
+                if(!blacklisted_agents.empty())
+                {
+                        blacklisted_agents.erase(blacklisted_agents.begin(),blacklisted_agents.end());
+                }
+        }
+}
+void LLAppViewer::setSpamCount(const LLSD &data)
+{
+        spamCount=data.asReal();
+}
+void LLAppViewer::setSpamTime(const LLSD &data)
+{
+        spamTime=data.asReal();
+}
 bool LLAppViewer::init()
 {
 	//

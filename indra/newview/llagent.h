@@ -795,6 +795,8 @@ public:
 	LLFrameTimer mDoubleTapRunTimer;
 	EDoubleTapRunMode mDoubleTapRunMode;
 
+        BOOL mBlockSpam;
+
 private:
 	bool mbTeleportKeepsLookAt; // try to keep look-at after teleport is complete
 	static BOOL ignorePrejump;

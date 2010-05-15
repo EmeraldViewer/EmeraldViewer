@@ -160,6 +160,24 @@ extern LLMap< const LLUUID, LLFloaterAvatarInfo* > gAvatarInfoInstances; // Only
 #include "a_modularsystemslink.h"
 // [/$PLOTR$]
 //
+//silly spam define D:
+bool generalSpamOn;
+//static LLFrameTimer d_spam;
+std::map< std::string , S32 > lastg_agents;
+LLDynamicArray< std::string > blacklisted_objects;
+
+bool dialogSpamOn;
+//static LLFrameTimer d_spam;
+std::map< std::string , S32 > lastd_names;
+LLDynamicArray< std::string > blacklisted_names;
+
+bool callingSpamOn;
+//static LLFrameTimer c_spam;
+std::map< LLUUID , S32 > lastc_agents;
+LLDynamicArray<LLUUID> blacklisted_agents;
+
+F32 spamTime;
+F32 spamCount;
 // Constants
 //
 const F32 BIRD_AUDIBLE_RADIUS = 32.0f;
@@ -1550,7 +1568,48 @@ void process_improved_im(LLMessageSystem *msg, void **user_data)
 	{
 		is_owned_by_me = source->permYouOwner();
 	}
-
+        if(generalSpamOn && !is_owned_by_me)
+        {
+                if(!g_spam.getStarted())
+                {
+                        g_spam.start();
+                }
+                if(blacklisted_objects.find(from_id.asString()) != -1)
+                {
+                        return;
+                }
+                std::map< std::string , S32 >::iterator itr = lastg_agents.find(from_id.asString());
+                if(itr != lastg_agents.end())
+                {
+                        if(g_spam.getElapsedTimeF32() <= spamTime)
+                        {
+                                if((*itr).second > spamCount)
+                                {
+                                        blacklisted_objects.put(from_id.asString());
+                                        LL_INFOS("process_script_dialog") << "blocked and muted " << from_id.asString() << LL_ENDL;
+                                        LLSD args;
+                                        args["KEY"] = from_id;
+                                        LLNotifications::getInstance()->add("BlockedGeneral",args);
+                                        return;
+                                }
+                                else
+                                {
+                                        (*itr).second++;
+                                }
+                        }
+                        else
+                        {
+                                lastg_agents.erase(lastg_agents.begin(),lastg_agents.end());
+                                g_spam.reset();
+                        }
+                }
+                else
+                {
+                        //llinfos << "Added " << fullname << " to list" << llendl;
+                        lastg_agents[from_id.asString()] = 0;
+                        lastg_agents[from_id.asString()] = 0;
+                }
+        }
 // [$PLOTR$]
 //     if ((CHAT_SOURCE_SYSTEM == chat.mSourceType) &&
 //         ((std::string::npos != message.find("not online")) ||
@@ -2501,6 +2560,8 @@ static LLNotificationFunctorRegistration callingcard_offer_cb_reg("OfferCallingC
 
 void process_offer_callingcard(LLMessageSystem* msg, void**)
 {
+        if (!gAgent.mBlockSpam)
+        {
 	// someone has offered to form a friendship
 	LL_DEBUGS("Messaging") << "callingcard offer" << LL_ENDL;
 
@@ -2531,6 +2592,45 @@ void process_offer_callingcard(LLMessageSystem* msg, void**)
 
 	if(!source_name.empty())
 	{
+                if(callingSpamOn)
+                {
+                        if(!c_spam.getStarted())
+                        {
+                                c_spam.start();
+                        }
+                        if(blacklisted_agents.find(source_id) != -1)
+                        {
+                                return;
+                        }
+                        std::map< LLUUID , S32 >::iterator itr = lastc_agents.find(source_id);
+                        if(itr != lastc_agents.end())
+                        {
+                                if(c_spam.getElapsedTimeF32() < spamTime)
+                                {
+                                        if((*itr).second > spamCount)
+                                        {
+                                                blacklisted_agents.put(source_id);
+                                                LL_INFOS("process_offer_callingcard") << "blocked callingcards from " << source_name << LL_ENDL;
+                                                args["KEY"] = source_id;
+                                                LLNotifications::getInstance()->add("BlockedCards",args);
+                                                return;
+                                        }
+                                        else
+                                        {
+                                                (*itr).second++;
+                                        }
+                                }
+                                else
+                                {
+                                        c_spam.reset();
+                                }
+                        }
+                        else
+                        {
+                                //llinfos << "Added " << fullname << " to list" << llendl;
+                                lastc_agents[source_id] = 0;
+                        }
+                }
 		if (gAgent.getBusy() 
 			|| LLMuteList::getInstance()->isMuted(source_id, source_name, LLMute::flagTextChat))
 		{
@@ -2545,6 +2645,7 @@ void process_offer_callingcard(LLMessageSystem* msg, void**)
 	else
 	{
 		LL_WARNS("Messaging") << "Calling card offer from an unknown source." << LL_ENDL;
+	}
 	}
 }
 
@@ -5132,6 +5233,8 @@ void process_economy_data(LLMessageSystem *msg, void** /*user_data*/)
 
 void notify_cautioned_script_question(const LLSD& notification, const LLSD& response, S32 orig_questions, BOOL granted)
 {
+	if (!gAgent.mBlockSpam)
+	{
 	// only continue if at least some permissions were requested
 	if (orig_questions)
 	{
@@ -5215,6 +5318,7 @@ void notify_cautioned_script_question(const LLSD& notification, const LLSD& resp
 			LLFloaterChat::addChat(chat, FALSE, FALSE);
 		}
 	}
+	}
 }
 
 bool script_question_cb(const LLSD& notification, const LLSD& response)
@@ -5295,6 +5399,8 @@ static LLNotificationFunctorRegistration script_question_cb_reg_2("ScriptQuestio
 
 void process_script_question(LLMessageSystem *msg, void **user_data)
 {
+        if (!gAgent.mBlockSpam)
+        {
 	// *TODO:translate owner name -> [FIRST] [LAST]
 
 	LLHost sender = msg->getSender();
@@ -5415,6 +5521,7 @@ void process_script_question(LLMessageSystem *msg, void **user_data)
 			LLNotifications::instance().add("ScriptQuestion", args, payload);
 		}
 
+	}
 	}
 }
 
@@ -5790,9 +5897,12 @@ bool handle_lure_callback(const LLSD& notification, const LLSD& response)
 
 void handle_lure(const LLUUID& invitee)
 {
+        if (!gAgent.mBlockSpam)
+        {
 	LLDynamicArray<LLUUID> ids;
 	ids.push_back(invitee);
 	handle_lure(ids);
+	}
 }
 
 // Prompt for a message to the invited user.
@@ -5943,6 +6053,8 @@ static LLNotificationFunctorRegistration callback_script_dialog_reg_2("ScriptDia
 
 void process_script_dialog(LLMessageSystem* msg, void**)
 {
+        if (!gAgent.mBlockSpam)
+        {
 	S32 i;
 
 	LLSD payload;
@@ -5978,11 +6090,28 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 	}
 
 	LLNotificationForm form;
-	for (i = 0; i < button_count; i++)
-	{
-		std::string tdesc;
-		msg->getString("Buttons", "ButtonLabel", tdesc, i);
-		form.addElement("button", std::string(tdesc));
+        std::string firstbutton;
+        msg->getString("Buttons", "ButtonLabel", firstbutton, 0);
+        form.addElement("button", std::string(firstbutton));
+        BOOL isTextBox = FALSE;
+        std::string deftext;
+        if(firstbutton == "!!llTextBox!!")//hack 4 a hack o.o
+        {
+                isTextBox = TRUE;
+                for (i = 1; i < button_count; i++)
+                {
+                        std::string tdesc;
+                        msg->getString("Buttons", "ButtonLabel", tdesc, i);
+                        deftext += tdesc;
+                }
+        }else
+        {
+		for (i = 0; i < button_count; i++)
+		{
+			std::string tdesc;
+			msg->getString("Buttons", "ButtonLabel", tdesc, i);
+			form.addElement("button", std::string(tdesc));
+		}
 	}
 
 	LLSD args;
@@ -5993,14 +6122,82 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 	{
 		args["FIRST"] = first_name;
 		args["LAST"] = last_name;
-		notification = LLNotifications::instance().add(
-			LLNotification::Params("ScriptDialog").substitutions(args).payload(payload).form_elements(form.asLLSD()));
+
+		std::string fullname = first_name + " " + last_name;
+                bool is_us = false;
+                LLViewerObject* objectp = gObjectList.findObject(object_id);
+                if(objectp)
+                {
+                        is_us = objectp->permYouOwner();
+                }
+
+                // Dialog Spam Prevention by Cryogenic
+                if(dialogSpamOn && !is_us)
+                {
+                        if(!d_spam.getStarted())
+                        {
+                                d_spam.start();
+                        }
+                        if(blacklisted_names.find(fullname) != -1)
+                        {
+                                return;
+                        }
+                        std::map< std::string , S32 >::iterator itr = lastd_names.find(fullname);
+                        if(itr != lastd_names.end())
+                        {
+                                if(d_spam.getElapsedTimeF32() <= spamTime)
+                                {
+                                        if((*itr).second > spamCount)
+                                        {
+                                                /*LLSD lol = LLHTTPClient::blockingGet("http://www.lawlinter.net/secondlifeutility/name2key.php?name="+LLWeb::escapeURL(fullname)+"&llsd=true");
+                                                LLUUID key = lol["body"];*/
+                                                /*LLUUID key = LLUUID::null;
+                                                std::string myname;
+                                                gAgent.getName(myname)
+                                                if(myname != fullname)
+                                                {
+                                                        gCacheName->getKey(first_name,last_name,key);//H4CK* need to fix this s***
+                                                }*/
+                                                blacklisted_names.put(fullname);
+                                                LL_INFOS("process_script_dialog") << "blocked " << object_id.asString() << " and muted " << fullname << LL_ENDL;//" (" << key.asString() << ")" <<LL_ENDL;
+                                                args["KEY"] = object_id;
+                                                LLNotifications::getInstance()->add("BlockedDialogs",args);
+                                                return;
+                                        }
+                                        else
+                                        {
+                                                (*itr).second++;
+                                        }
+                                }
+                                else
+                                {
+                                        lastd_names.erase(lastd_names.begin(),lastd_names.end());
+                                        d_spam.reset();
+                                }
+                        }
+                        else
+                        {
+                                //llinfos << "Added " << fullname << " to list" << llendl;
+                                lastd_names[fullname] = 0;
+                        }
+                }
+                if(!isTextBox)
+                {
+			notification = LLNotifications::instance().add(
+				LLNotification::Params("ScriptDialog").substitutions(args).payload(payload).form_elements(form.asLLSD()));
+                }else
+                {
+                        args["DEFAULT"] = deftext;
+                        payload["textbox"] = "true";
+                        LLNotifications::instance().add("ScriptTextBoxDialog", args, payload, callback_script_dialog);
+                }
 	}
 	else
 	{
 		args["GROUPNAME"] = last_name;
 		notification = LLNotifications::instance().add(
 			LLNotification::Params("ScriptDialogGroup").substitutions(args).payload(payload).form_elements(form.asLLSD()));
+	}
 	}
 }
 
@@ -6067,6 +6264,8 @@ void callback_load_url_name(const LLUUID& id, const std::string& first, const st
 
 void process_load_url(LLMessageSystem* msg, void**)
 {
+        if (!gAgent.mBlockSpam)
+        {
 	LLUUID object_id;
 	LLUUID owner_id;
 	BOOL owner_is_group;
@@ -6093,7 +6292,8 @@ void process_load_url(LLMessageSystem* msg, void**)
 
 	// Check if object or owner is muted
 	if (LLMuteList::getInstance()->isMuted(object_id, object_name) ||
-	    LLMuteList::getInstance()->isMuted(owner_id))
+	    LLMuteList::getInstance()->isMuted(owner_id) ||
+	    (!gSavedSettings.getBOOL("EmeraldLoadURL") && (owner_id != gAgent.getID())))
 	{
 		LL_INFOS("Messaging")<<"Ignoring load_url from muted object/owner."<<LL_ENDL;
 		return;
@@ -6103,6 +6303,7 @@ void process_load_url(LLMessageSystem* msg, void**)
 	gLoadUrlList.push_back(payload);
 
 	gCacheName->get(owner_id, owner_is_group, callback_load_url_name);
+	}
 }
 
 
@@ -6148,6 +6349,9 @@ void process_initiate_download(LLMessageSystem* msg, void**)
 
 void process_script_teleport_request(LLMessageSystem* msg, void**)
 {
+        if (!gAgent.mBlockSpam)
+        {
+	if(gSavedSettings.getBOOL("EmeraldBlockMapTps"))return;
 	std::string object_name;
 	std::string sim_name;
 	LLVector3 pos;
@@ -6164,7 +6368,7 @@ void process_script_teleport_request(LLMessageSystem* msg, void**)
 	// remove above two lines and replace with below line
 	// to re-enable parcel browser for llMapDestination()
 	// LLURLDispatcher::dispatch(LLURLDispatcher::buildSLURL(sim_name, (S32)pos.mV[VX], (S32)pos.mV[VY], (S32)pos.mV[VZ]), FALSE);
-	
+	}
 }
 
 void process_covenant_reply(LLMessageSystem* msg, void**)

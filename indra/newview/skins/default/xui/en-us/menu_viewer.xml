@@ -635,6 +635,12 @@
 			<on_check control="UseDebugMenus" />
 		</menu_item_check>
 		<menu_item_separator bottom="-126" enabled="true" height="8" label="-----------" left="0" mouse_opaque="true" name="separator2" width="155" />
+                <menu_item_check bottom="-67" enabled="true" height="19" label="Block Spam" left="0"
+                     mouse_opaque="true" name="BlockSpam" shortcut="alt|shift|s" width="185">
+                        <on_click function="Emerald.ToggleBlockSpam" userdata="" />
+                        <on_check function="Emerald.CheckBlockSpam" userdata="" />
+                </menu_item_check>
+		<menu_item_separator bottom="-126" enabled="true" height="8" label="-----------" left="0" mouse_opaque="true" name="separator2" width="155" />
 		<menu_item_check bottom="-146" enabled="false" height="20" label="Animation List" left="0" mouse_opaque="true" name="Animation List" width="155">
 			<on_click function="ShowFloater" userdata="animation list" />
 			<on_check function="FloaterVisible" userdata="animation list" />
