@@ -534,7 +534,7 @@ void LLVOVolume::updateTextureVirtualSize()
 				(texture_discard < current_discard || //texture has more data than last rebuild
 				current_discard < 0)) //no previous rebuild
 			{
-				gPipeline.markRebuild(mDrawable, LLDrawable::REBUILD_VOLUME, FALSE);
+				markForUpdate(FALSE);
 				mSculptChanged = TRUE;
 			}
 
