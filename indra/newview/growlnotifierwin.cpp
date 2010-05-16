@@ -50,7 +50,7 @@ void GrowlNotifierWin::registerApplication(const std::string& application, const
 		strcpy(string, it->c_str());
 		arr[i] = string;
 	}
-	growl = new Growl(GROWL_TCP,NULL,application.c_str(),(const char **const)arr,notificationTypes.size());
+	growl = new Growl(GROWL_UDP,NULL,application.c_str(),(const char **const)arr,notificationTypes.size());
 
 	for(i = 0; i < (int)notificationTypes.size(); ++i) {
 		free(arr[i]);
