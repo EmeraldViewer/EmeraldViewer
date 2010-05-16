@@ -71,7 +71,6 @@
 #include "llurlhistory.h"
 #include "llfirstuse.h"
 #include "llrender.h"
-#include "greenlife_utility_stream.h"
 
 #include "llweb.h"
 #include "llsecondlifeurls.h"
@@ -3397,16 +3396,10 @@ void LLAppViewer::idle()
 	    gAgent.autoPilot(&yaw);
     
 		static LLFrameTimer agent_update_timer;
-		
-		static LLFrameTimer GUS_update_timer;
-		static LLFrameTimer GUS_FE_update_timer;
-	    static U32 				last_control_flags;
+		static U32 				last_control_flags;
     
 	    //	When appropriate, update agent location to the simulator.
 	    F32 agent_update_time = agent_update_timer.getElapsedTimeF32();
-
-		F32 GUS_update_time = GUS_update_timer.getElapsedTimeF32();
-		F32 GUS_FE_update_time = GUS_update_timer.getElapsedTimeF32();
 
 	    BOOL flags_changed = gAgent.controlFlagsDirty() || (last_control_flags != gAgent.getControlFlags());
 		static F32 *sEmeraldAgentUpdateFrequency = rebind_llcontrol<F32>("EmeraldAgentUpdatesPerSecond", &gSavedSettings, true);
@@ -3419,33 +3412,6 @@ void LLAppViewer::idle()
 				send_agent_update(TRUE);
 		    agent_update_timer.reset();
 	    }
-		if(GUS::Enabled)
-		{
-			BOOL canSend = gAgent.getTeleportState() == LLAgent::TELEPORT_NONE
-						&& !LLAppViewer::instance()->logoutRequestSent()
-						&& gAgent.getRegion() != NULL;
-			if(canSend)
-			{
-				GUS* GussyWussy = GUS::getInstance(); //This is for Laura =P
-				if(GussyWussy)
-				{
-					if(GUS::pinged())
-					{
-						if(GUS_update_time > (1.0f / llclamp(GUS::Refresh, 0.0001f, 10.f)))
-						{
-							if(GUS::streamData())
-								GUS_update_timer.reset();
-							GUS::FELimiter_dec();
-						}
-						if(GUS::FEEnabled && GUS_FE_update_time > (1.0f / llclamp(GUS::FERefresh, 0.0001f, 20.f)))
-						{
-							if(GUS::fastEvent())
-								GUS_FE_update_timer.reset();
-						}
-					}
-				}
-			}
-		}
 	}
 
 	//////////////////////////////////////

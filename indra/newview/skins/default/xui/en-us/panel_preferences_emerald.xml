@@ -807,67 +807,6 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 					 height="16" label="Auto Connect at login" mouse_opaque="true" control_name="EmeraldIRC_AutoConnect" tool_tip="Automaticly connect to any IRC networks that you have set to auto connect to upon startup."
 					 name="EmeraldIRC_AutoConnect"/>
 			</panel>
-			<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Utility Stream"
-				 left="1" mouse_opaque="true" name="Utility Stream" width="418">
-				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"
-					 name="EmeraldHelp_UtilityStream" tool_tip="Click here for help regarding the settings in this page."
-					 right="490" width="18"/>
-				<panel name="gus_panel" left="5" width="280" height="55" bottom="-60"
-					 border="true" mouse_opaque="true" bevel_style="in" background_visible="true" background_opaque="true"
-					 follows="top|left" bg_opaque_color="0,0,0,0.1" bg_alpha_color="blue" can_resize="false">
-					<check_box bottom="-25" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Enable GUS" left="5" mouse_opaque="true"
-					 tool_tip="Enable Greenlife Utility Stream (GUS)" name="GUS Enable" radio_style="false"
-					 width="128" control_name="EmeraldGUSEnabled"/>
-					<check_box bottom_delta="0" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-						 initial_value="false" label="Enable FastEvents" left_delta="138" mouse_opaque="true"
-						 tool_tip="Enable Greenlife Utility Stream FastEvents (GUS-FE)" name="GUS-FE Enable"
-						 radio_style="false" width="128" control_name="EmeraldGUSFastEventsEnabled"/>
-					<spinner bottom_delta="-20" decimal_digits="5" follows="left|top" height="16" increment="0.5"
-						 label="GUS Rate" label_width="65" left_delta="-138" max_val="1.00" min_val="0.50"
-						 mouse_opaque="true" name="Refresh Rate" width="128" control_name="EmeraldGUSRefresh"/>
-					<spinner bottom_delta="0" decimal_digits="5" follows="left|top" height="16" increment="0.5"
-						 label="GUS-FE Rate" label_width="65" left_delta="138" max_val="2.00" min_val="1.00"
-						 mouse_opaque="true" name="Fast Event Refresh Rate" width="128" control_name="EmeraldGUSFastEventsRefresh"/>
-				</panel>
-				<!-- 
-					GUS FEATURES:
-					THESE ARE AS COLUMNS; ADDITIONAL ROWS PER GUS / GUS-FE COLUMNS!
-			-->
-				<!-- GUS COLUMN -->
-				<panel name="gus_feature_column" left_delta="0" width="134" height="65" bottom_delta="-80"
-					 border="true" mouse_opaque="true" bevel_style="in" background_visible="true" background_opaque="true"
-					 follows="top|left" bg_opaque_color="0,0,0,0.1" bg_alpha_color="blue" can_resize="false">
-					<text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="5"
-						 name="rofltxt1" width="512">			GUS Variables:</text>
-					<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-						 initial_value="false" label="Eyeball Rotation" left_delta="5" mouse_opaque="true"
-						 tool_tip="Enable streaming of the avatar mesh eyeball rotation; useful for prim-eyes for certain avatars..."
-						 name="Eyeball Rotation" radio_style="false" width="128" control_name="EmeraldGUSEyeRot"/>
-					<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-						 initial_value="false" label="LookAt Position" left_delta="0" mouse_opaque="true"
-						 tool_tip="Enable streaming of LookAt."
-						 name="LookAt Position" radio_style="false" width="128" control_name="EmeraldGUSLookAt"/>
-				</panel>
-				<!-- GUS-FE COLUMN -->
-				<panel name="gus-fe_feature_column" left_delta="146" width="134" height="45" bottom_delta="20"
-					 border="true" mouse_opaque="true" bevel_style="in" background_visible="true" background_opaque="true"
-					 follows="top|left" bg_opaque_color="0,0,0,0.1" bg_alpha_color="blue" can_resize="false">
-					<text bottom_delta="-20" follows="left|top" font="SansSerifSmall" height="16" left_delta="5"
-						 name="rofltxt2" width="512">			GUS-FE Variables:</text>
-					<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-						 initial_value="false" label="Eyelid State" left_delta="5" mouse_opaque="true" tool_tip="Enable streaming of the avatar mesh eyelid state; useful for prim-eyes for certain avatars..."
-						 name="Eyelid State" radio_style="false" width="128" control_name="EmeraldGUSEyelidState"/>
-				</panel>
-				<text bottom_delta="-40" follows="left|top" font="SansSerifSmall" height="16" left_delta="-146"
-					 name="rofltxt3" width="512">        EXPERIMENTAL: The Greenlife Utility Stream is used for
-streaming information from the Emerald viewer into
-the simulator for scripts to access.</text>
-				<check_box bottom_delta="-60" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
-					 initial_value="false" label="Enable transmission of selection beam end position"
-					 left="15" mouse_opaque="true" name="lol-toggle!" radio_style="false" width="270"
-					 control_name="EmeraldParticleChat"/>
-			</panel>
 			<panel border="true" bottom="-580" follows="left|top|right|bottom" height="525" label="Inventory"
 				 left="1" mouse_opaque="true" name="Inventory" width="418">
 				<button bottom="-25" follows="left|top" font="SansSerifSmall" height="18" label="?"

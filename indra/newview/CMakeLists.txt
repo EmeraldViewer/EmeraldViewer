@@ -108,7 +108,6 @@ set(viewer_SOURCE_FILES
 	floaterlocalassetbrowse.cpp
 	floateravatarlist.cpp
 	floaterao.cpp
-	greenlife_utility_stream.cpp
 	importtracker.cpp
 	jclslpreproc.cpp
 	jc_lslviewerbridge.cpp
@@ -555,7 +554,6 @@ set(viewer_HEADER_FILES
 	floaterlocalassetbrowse.h
 	floateravatarlist.h
 	floaterao.h
-	greenlife_utility_stream.h
 	importtracker.h
 	jclslpreproc.h
 	jc_lslviewerbridge.h

@@ -66,8 +66,6 @@
 
 #include "llviewerwindow.h"
 
-//#include "greenlife_utility_stream.h"
-
 #include "floaterao.h"
 
 
@@ -273,23 +271,6 @@ bool JCLSLBridge::lsltobridge(std::string message, std::string from_name, LLUUID
 				send_chat_to_object(tmp,chan,gAgent.getID());
 				return true;
 			}
-			/*else if(cmd == GUS::ping_command)
-			{
-				GUS::ping();
-				return true;
-			}
-			else if(cmd == GUS::sync_command)
-			{
-				S32	channel = atoi(args[1].asString().c_str());
-				GUS::sync(channel);
-				return true;
-			}
-			else if(cmd == GUS::change_channel)
-			{
-				S32	channel = atoi(args[1].asString().c_str());
-				GUS::chan(channel);
-				return true;
-			}*/
 			/*else if(cmd == "gettext")
 			{
 				S32	channel = atoi(args[2].asString().c_str());
