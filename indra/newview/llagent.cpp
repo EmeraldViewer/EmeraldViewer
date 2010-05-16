@@ -736,9 +736,17 @@ void LLAgent::moveUp(S32 direction)
 	else if (direction < 0)
 	{
 		setControlFlags(AGENT_CONTROL_UP_NEG | AGENT_CONTROL_FAST_UP);
+
+		if(!gSavedSettings.getBOOL("EmeraldKeepCameraOnMovement"))
+		{
+			if(!gSavedSettings.getBOOL("EmeraldCrouchToggleStatus"))
+				resetView();
+			else if(!gSavedSettings.getBOOL("EmeraldCrouchToggle"))
+				resetView();
+		}
 	}
 
-	resetView();
+
 }
 
 //-----------------------------------------------------------------------------
@@ -757,9 +765,9 @@ void LLAgent::moveYaw(F32 mag, bool reset_view)
 		setControlFlags(AGENT_CONTROL_YAW_NEG);
 	}
 
-    if (reset_view)
+	if (reset_view)
 	{
-        resetView();
+		resetView();
 	}
 }
 

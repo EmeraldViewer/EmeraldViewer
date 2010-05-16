@@ -3734,7 +3734,7 @@ void send_agent_update(BOOL force_send, BOOL send_reliable)
 
 	// If a modifier key is held down, turn off
 	// LBUTTON and ML_LBUTTON so that using the camera (alt-key) doesn't
-	// trigger a control event.
+	// trigger a control event.s
 	U32 control_flags = gAgent.getControlFlags();
 	MASK	key_mask = gKeyboard->currentMask(TRUE);
 	if (key_mask & MASK_ALT || key_mask & MASK_CONTROL)
