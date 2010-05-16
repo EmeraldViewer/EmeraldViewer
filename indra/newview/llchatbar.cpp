@@ -156,7 +156,6 @@ BOOL LLChatBar::postBuild()
 		mInputEditor->setPassDelete(TRUE);
 		mInputEditor->setReplaceNewlinesWithSpaces(FALSE);
 
-		mInputEditor->setMaxTextLength(DB_CHAT_MSG_STR_LEN);
 		mInputEditor->setEnableLineHistory(TRUE);
 	}
 
@@ -687,17 +686,9 @@ void LLChatBar::sendChatFromViewer(const LLWString &wtext, EChatType type, BOOL 
 	S32 channel = 0;
 	LLWString out_text = stripChannelNumber(wtext, &channel);
 	std::string utf8_out_text = wstring_to_utf8str(out_text);
-	if (!utf8_out_text.empty())
-	{
-		utf8_out_text = utf8str_truncate(utf8_out_text, MAX_MSG_STR_LEN);
-	}
 
 	std::string utf8_text = wstring_to_utf8str(wtext);
 	utf8_text = utf8str_trim(utf8_text);
-	if (!utf8_text.empty())
-	{
-		utf8_text = utf8str_truncate(utf8_text, MAX_STRING - 1);
-	}
 
 // [RLVa:KB] - Checked: 2010-03-27 (RLVa-1.1.1a) | Modified: RLVa-1.2.0b
 	if ( (0 == channel) && (rlv_handler_t::isEnabled()) )
@@ -800,19 +791,47 @@ void send_chat_from_viewer(std::string utf8_out_text, EChatType type, S32 channe
 	}
 // [/RLVa:KB]
 
-	LLMessageSystem* msg = gMessageSystem;
-	msg->newMessageFast(_PREHASH_ChatFromViewer);
-	msg->nextBlockFast(_PREHASH_AgentData);
-	msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
-	msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
-	msg->nextBlockFast(_PREHASH_ChatData);
-	msg->addStringFast(_PREHASH_Message, utf8_out_text);
-	msg->addU8Fast(_PREHASH_Type, type);
-	msg->addS32("Channel", channel);
-
-	gAgent.sendReliableMessage();
-
-	LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+	// same code like in llimpanel.cpp
+	U32 split = MAX_MSG_BUF_SIZE - 1;
+	U32 pos = 0;
+	U32 total = utf8_out_text.length();
+	while(pos < total)
+	{
+		U32 next_split = split;
+		
+		if(pos + next_split > total) next_split = total - pos;
+		
+		// don't split utf-8 bytes
+		while(U8(utf8_out_text[pos + next_split]) >= 0x80 && U8(utf8_out_text[pos + next_split]) < 0xC0
+			  && next_split > 0)
+		{
+			--next_split;
+		}
+		
+		if(next_split == 0)
+		{
+			next_split = split;
+			LL_WARNS("Splitting") << "utf-8 couldn't be split correctly" << LL_ENDL;
+		}
+		
+		std::string send = utf8_out_text.substr(pos, pos + next_split);
+		pos += next_split;
+		
+		// *FIXME: Queue messages and wait for server
+		LLMessageSystem* msg = gMessageSystem;
+		msg->newMessageFast(_PREHASH_ChatFromViewer);
+		msg->nextBlockFast(_PREHASH_AgentData);
+		msg->addUUIDFast(_PREHASH_AgentID, gAgent.getID());
+		msg->addUUIDFast(_PREHASH_SessionID, gAgent.getSessionID());
+		msg->nextBlockFast(_PREHASH_ChatData);
+		msg->addStringFast(_PREHASH_Message, send);
+		msg->addU8Fast(_PREHASH_Type, type);
+		msg->addS32("Channel", channel);
+		
+		gAgent.sendReliableMessage();
+		
+		LLViewerStats::getInstance()->incStat(LLViewerStats::ST_CHAT_COUNT);
+	}
 }
 
 

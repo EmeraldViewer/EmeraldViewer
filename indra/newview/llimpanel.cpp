@@ -1217,7 +1217,6 @@ void LLFloaterIMPanel::init(const std::string& session_label)
 								FALSE);
 
 	setTitle(mSessionLabel);
-	mInputEditor->setMaxTextLength(DB_IM_MSG_STR_LEN);
 	// enable line history support for instant message bar
 	mInputEditor->setEnableLineHistory(TRUE);
 
@@ -2926,7 +2925,6 @@ void LLFloaterIMPanel::sendMsg()
 					utf8_text.replace(0, 1, "/me ");
 				}
 			}
-			utf8_text = utf8str_truncate(utf8_text, MAX_MSG_BUF_SIZE - 1);
 			
 // [RLVa:KB] - Alternate: Snowglobe-1.2.4 | Checked: 2009-07-10 (RLVa-1.0.0g) | Modified: RLVa-1.0.0g
 			if (gRlvHandler.hasBehaviour(RLV_BHVR_SENDIM))
@@ -3091,10 +3089,41 @@ void LLFloaterIMPanel::sendMsg()
                 else
                 {   // OTR didn't encrypt, or we didn't try cause it's not 1:1 IM
 // USE_OTR // [/$PLOTR$]
-					deliver_message(utf8_text,
-								mSessionUUID,
-								mOtherParticipantUUID,
-								mDialog);
+                    // same code like in llchatbar.cpp
+                    U32 split = MAX_MSG_BUF_SIZE - 1;
+					
+                    if ( isEncrypted() ) split = 799; // Length left for message if encrypted
+                    U32 pos = 0;
+                    U32 total = utf8_text.length();
+					
+                    while(pos < total)
+                    {
+                        U32 next_split = split;
+						
+                        if(pos + next_split > total) next_split = total - pos;
+						
+                        // don't split utf-8 bytes
+                        while(U8(utf8_text[pos + next_split]) >= 0x80 && U8(utf8_text[pos + next_split]) < 0xC0
+                              && next_split > 0)
+                        {
+                            --next_split;
+                        }
+						
+                        if(next_split == 0)
+                        {
+                            next_split = split;
+                            LL_WARNS("Splitting") << "utf-8 couldn't be split correctly" << LL_ENDL;
+                        }
+						
+                        std::string send = utf8_text.substr(pos, pos + next_split);
+                        pos += next_split;
+						
+							// *FIXME: Queue messages if IM is not IM_NOTHING_SPECIAL
+							deliver_message(send,
+											mSessionUUID,
+											mOtherParticipantUUID,
+											mDialog);
+						}
 // [$PLOTR$]
             		}
 				}
