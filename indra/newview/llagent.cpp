@@ -737,13 +737,10 @@ void LLAgent::moveUp(S32 direction)
 	{
 		setControlFlags(AGENT_CONTROL_UP_NEG | AGENT_CONTROL_FAST_UP);
 
-		if(!gSavedSettings.getBOOL("EmeraldKeepCameraOnMovement"))
-		{
-			if(!gSavedSettings.getBOOL("EmeraldCrouchToggleStatus"))
-				resetView();
-			else if(!gSavedSettings.getBOOL("EmeraldCrouchToggle"))
-				resetView();
-		}
+		if(!gSavedSettings.getBOOL("EmeraldCrouchToggleStatus"))
+			resetView();
+		else if(!gSavedSettings.getBOOL("EmeraldCrouchToggle"))
+			resetView();
 	}
 
 
