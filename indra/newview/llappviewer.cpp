@@ -1006,6 +1006,9 @@ bool LLAppViewer::mainLoop()
 					&& !gFocusMgr.focusLocked())
 				{
 					joystick->scanJoystick();
+					if(gSavedSettings.getBOOL("EmeraldCrouchToggle"))
+						if(gSavedSettings.getBOOL("EmeraldCrouchToggleStatus"))
+							gAgent.moveUp(-1);
 					gKeyboard->scanKeyboard();
 				}
 

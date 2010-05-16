@@ -81,7 +81,23 @@ void agent_jump( EKeystate s )
 
 void agent_push_down( EKeystate s )
 {
-	if( KEYSTATE_UP == s  ) return;
+	if( KEYSTATE_UP == s ) return;
+	else if(KEYSTATE_DOWN == s)
+	{
+		if(gSavedSettings.getBOOL("EmeraldCrouchToggle"))
+		{
+			if(gSavedSettings.getBOOL("EmeraldCrouchToggleStatus"))
+				gSavedSettings.setBOOL("EmeraldCrouchToggleStatus",false);
+			else
+			{
+				gSavedSettings.setBOOL("EmeraldCrouchToggleStatus",true);
+				gAgent.moveUp(-1);
+			}
+		}
+		else
+			gAgent.moveUp(-1);
+	}
+	else
 	gAgent.moveUp(-1);
 }
 
