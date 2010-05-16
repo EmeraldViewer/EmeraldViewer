@@ -396,9 +396,9 @@
         <map>
         <key>color</key>
             <array>
-                <real>0.40000000000000002</real>
-                <real>0.40000000000000002</real>
-                <real>0.40000000000000002</real>
+                <real>2</real>
+                <real>2</real>
+                <real>0</real>
                 <real>1</real>
             </array>
         <key>multiple</key>
