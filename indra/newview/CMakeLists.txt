@@ -39,17 +39,14 @@ include(LLKDU)
 include(ViewerMiscLibs)
 include(ViewerArtwork.cmake)
 
+include(Growl)
+include(libotr)
+
 if (WINDOWS)
   include(CopyWinLibs)
   include(libgcrypt)
   include(libgpg-error)  
-  include(Growl)
 endif (WINDOWS)
-include(libotr)
-
-if (DARWIN)
-  include(Growl)
-endif (DARWIN)
 
 include_directories(
     ${DBUSGLIB_INCLUDE_DIRS}
@@ -72,9 +69,11 @@ include_directories(
     ${LLXML_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}
     ${LSCRIPT_INCLUDE_DIRS}/lscript_compile
+    
     ../libgpg-error/libgpg-error-1.0/src
     ../libgcrypt/libgcrypt-1.2.2/src
     ../libotr/libotr-3.2.0/src
+    ${GROWL_INCLUDE_DIRS}
 )
 if (WINDOWS)
     include_directories(
@@ -82,16 +81,8 @@ if (WINDOWS)
         ../gpg.vs/libgpg-error-1.1.vs/custom
         ../gpg.vs/libgcrypt-1.2.2.vs/custom
     )
-    include_directories(
-    ${GROWL_INCLUDE_DIRS}
-  )
 endif (WINDOWS)
 
-if (DARWIN)
-  include_directories(
-    ${GROWL_INCLUDE_DIRS}
-  )
-endif (DARWIN)
 
 set(viewer_SOURCE_FILES
 	lgghunspell_wrapper.cpp
@@ -1032,6 +1023,8 @@ endif (DARWIN)
 if (LINUX)
     LIST(APPEND viewer_SOURCE_FILES llappviewerlinux.cpp)
     LIST(APPEND viewer_SOURCE_FILES llappviewerlinux_api_dbus.cpp)
+    LIST(APPEND viewer_HEADER_FILES desktopnotifierlinux.h)
+    LIST(APPEND viewer_SOURCE_FILES desktopnotifierlinux.cpp)
     SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
 
     set(viewer_LIBRARIES
@@ -1392,9 +1385,6 @@ if (WINDOWS)
 endif (WINDOWS)
 
 target_link_libraries(${VIEWER_BINARY_NAME}
-	${LIBGPG-ERROR_LIBRARIES}
-	${LIBGCRYPT_LIBRARIES}
-	#	${OTR_LIBRARY}
     ${LLAUDIO_LIBRARIES}
     ${LLCHARACTER_LIBRARIES}
     ${LLIMAGE_LIBRARIES}
@@ -1434,19 +1424,16 @@ target_link_libraries(${VIEWER_BINARY_NAME}
     ${WINDOWS_LIBRARIES}
     ${XMLRPCEPI_LIBRARIES}
     ${ELFIO_LIBRARIES}
-#	${GCRYPT_LIBRARY}
-#	${GPG-ERROR_LIBRARY}
-#	${OTR_LIBRARY}
+	${LIBGPG-ERROR_LIBRARIES}
+	${LIBGCRYPT_LIBRARIES}
 	${LIBOTR_LIBRARY}
-	${GROWL_LIBRARY}
-#   ${HUNSPELL_LIBRAIES}
     ${HUNSPELL_LIBRARY}
+	${GROWL_LIBRARY}
     )
 
 if (DARWIN)
 	target_link_libraries(${VIEWER_BINARY_NAME}
 		${FMODWRAPPER_LIBRARY}
-		${GROWL_LIBRARY}
 	)
 endif (DARWIN)
 

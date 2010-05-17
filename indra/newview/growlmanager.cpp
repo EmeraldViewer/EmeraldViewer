@@ -45,6 +45,8 @@
 #include "growlnotifiermacosx.h"
 #elif LL_WINDOWS
 #include "growlnotifierwin.h"
+#elif LL_LINUX
+#include "desktopnotifierlinux.h"
 #endif
 
 
@@ -59,6 +61,9 @@ GrowlManager::GrowlManager() : LLEventTimer(GROWL_THROTTLE_CLEANUP_PERIOD)
 #elif LL_WINDOWS
 	this->mNotifier = new GrowlNotifierWin();
 	LL_INFOS("GrowlManagerInit") << "Created GrowlNotifierWin." << LL_ENDL;
+#elif LL_LINUX
+    this->mNotifier = new DesktopNotifierLinux();
+	LL_INFOS("GrowlManagerInit") << "Created DesktopNotifierLinux." << LL_ENDL;
 #else
 	this->mNotifier = new GrowlNotifier();
 	LL_INFOS("GrowlManagerInit") << "Created generic GrowlNotifier." << LL_ENDL;

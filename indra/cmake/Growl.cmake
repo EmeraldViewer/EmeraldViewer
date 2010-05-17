@@ -2,12 +2,15 @@
 include(Prebuilt)
 
 use_prebuilt_binary(Growl)
-if(DARWIN OR WINDOWS)
-	set(GROWL_INCLUDE_DIRS ${LIBS_PREBUILT_DIR}/include/Growl)
-endif(DARWIN OR WINDOWS)
 
-if(WINDOWS)
-    set(GROWL_LIBRARY libgrowl-shared++)
-else(WINDOWS)
+if (DARWIN)
+    set(GROWL_INCLUDE_DIRS ${LIBS_PREBUILT_DIR}/include/Growl)
     set(GROWL_LIBRARY Growl)
-endif(WINDOWS)
+elseif (WINDOWS)
+    set(GROWL_INCLUDE_DIRS ${LIBS_PREBUILT_DIR}/include/Growl)
+    set(GROWL_LIBRARY libgrowl-shared++)
+elseif (LINUX)
+    # Everything glib-2.0 and GTK-specific is pulled in by UI.cmake.. Ugh.
+    set(GROWL_INCLUDE_DIRS ${LIBS_PREBUILT_DIR}/include/libnotify)
+    set(GROWL_LIBRARY notify)
+endif (DARWIN)

@@ -822,6 +822,7 @@ class Linux_i686Manifest(LinuxManifest):
             self.path("libopenal.so", "libopenal.so.1")
             self.path("libotr.so.2.2.0", "libotr.so.2")
             self.path("libhunspell-1.2.so.0.0.0", "libhunspell-1.2.so.0")
+            self.path("libnotify.so.1.1.3", "libnotify.so.1")
             self.end_prefix("lib")
 
             # Vivox runtimes

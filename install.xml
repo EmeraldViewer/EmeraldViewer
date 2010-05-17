@@ -124,6 +124,13 @@
             <key>url</key>
             <uri>http://modularsystems.sl/box/emwingrowllibraries.tar.bz2</uri>
           </map>
+          <key>linux</key>
+          <map>
+            <key>md5sum</key>
+            <string>548c45aabb3162710b4cf3dcb62323c8</string>
+            <key>url</key>
+            <uri>http://modularsystems.sl/box/libnotify-0.4.5-linux-20100517.tar.bz2</uri>
+          </map>
         </map>
       </map>
       <key>GL</key>
