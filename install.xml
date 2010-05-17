@@ -127,7 +127,7 @@
           <key>linux</key>
           <map>
             <key>md5sum</key>
-            <string>548c45aabb3162710b4cf3dcb62323c8</string>
+            <string>b1cc6309eb52207ee4e37dabeaa1958e</string>
             <key>url</key>
             <uri>http://modularsystems.sl/box/libnotify-0.4.5-linux-20100517.tar.bz2</uri>
           </map>
