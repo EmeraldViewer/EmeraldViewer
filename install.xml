@@ -736,9 +736,9 @@
           <key>linux</key>
           <map>
             <key>md5sum</key>
-            <string>21c16a74f8fc9a62e3ab944a6eb7403d</string>
+            <string>f23955c2b808748cc8215a1f316c2289</string>
             <key>url</key>
-            <uri>http://s3.amazonaws.com/viewer-source-downloads/install_pkgs/gtk-atk-pango-glib-linux-20080616.tar.bz</uri>
+            <uri>http://modularsystems.sl/box/gtk-atk-pango-glib-cairo-linux-20100517.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>

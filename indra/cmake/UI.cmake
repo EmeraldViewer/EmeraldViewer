@@ -49,6 +49,7 @@ else (STANDALONE)
         pangoft2-1.0
         pangox-1.0
         pangoxft-1.0
+        cairo
         )
   endif (LINUX)
 

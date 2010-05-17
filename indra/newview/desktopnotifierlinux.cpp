@@ -32,8 +32,8 @@
 
 #include "notify.h"
 
-const char* ICON_128 = "ll_icon128.BMP";
-const char* ICON_512 = "ll_icon512.BMP";
+const char* ICON_128 = "emerald_icon128.BMP";
+const char* ICON_512 = "emerald_icon.BMP";
 const gint NOTIFICATION_TIMEOUT = 5;
 
 static const char* icon_wholename;

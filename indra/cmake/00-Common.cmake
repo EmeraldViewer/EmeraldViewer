@@ -228,6 +228,7 @@ else (STANDALONE)
       gtk-2.0
       llfreetype2
       pango-1.0
+      cairo
       )
 endif (STANDALONE)
 
