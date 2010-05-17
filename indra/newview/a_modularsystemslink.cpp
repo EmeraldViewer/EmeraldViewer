@@ -71,7 +71,7 @@ ModularSystemsLink* ModularSystemsLink::getInstance()
 	}
 }
 
-static const std::string versionid = llformat(" %s %d.%d.%d (%d)", LL_CHANNEL, LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD);
+static const std::string versionid = llformat("%s %d.%d.%d (%d)", LL_CHANNEL, LL_VERSION_MAJOR, LL_VERSION_MINOR, LL_VERSION_PATCH, LL_VERSION_BUILD);
 
 //void cmdline_printchat(std::string message);
 
