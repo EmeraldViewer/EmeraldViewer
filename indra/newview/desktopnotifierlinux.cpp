@@ -86,15 +86,23 @@ void DesktopNotifierLinux::showNotification(const std::string& notification_titl
     LL_INFOS("DesktopNotifierLinux") << "New notification message: " << notification_message << LL_ENDL;
     LL_INFOS("DesktopNotifierLinux") << "New notification type: " << notification_type << LL_ENDL;
     
-    NotifyNotification* notification = notify_notification_new(
-        (gchar*)notification_title.c_str(),
-        (gchar*)notification_message.c_str(),
+    static NotifyNotification* notification = notify_notification_new(
+        "Emerald Viewer",//(gchar*)notification_title.c_str(),
+        NULL,//(gchar*)notification_message.c_str(),
         icon_wholename,
         NULL
     );
     
+    notify_notification_update(
+        notification,
+        (gchar*)notification_title.c_str(),
+        (gchar*)notification_message.c_str(),
+        icon_wholename
+    );
+    
+    notify_notification_set_urgency(notification, NOTIFY_URGENCY_LOW);
     notify_notification_set_category(notification, (gchar*)notification_type.c_str());
-    notify_notification_set_timeout(notification, NOTIFICATION_TIMEOUT); // NotifyOSD ignores this.
+    notify_notification_set_timeout(notification, NOTIFICATION_TIMEOUT); // NotifyOSD ignores this, sadly.
     
     GError* error = NULL;
     if (notify_notification_show(notification, &error)) {
