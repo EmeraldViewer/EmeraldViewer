@@ -32,16 +32,16 @@
 
 #include "notify.h"
 
-const char* ICON_128 = "emerald_icon128.BMP";
-const char* ICON_512 = "emerald_icon.BMP";
+const char* ICON_128 = "snowglobe_icon128.png";
+const char* ICON_512 = "snowglobe_icon.png";
 const gint NOTIFICATION_TIMEOUT = 5;
 
 static const char* icon_wholename;
 
-void Find_BMP_Resource(const char *basename)
+const char* Find_BMP_Resource(const char *basename)
 {
 	const int PATH_BUFFER_SIZE=1000;
-	char path_buffer[PATH_BUFFER_SIZE];	/* Flawfinder: ignore */
+	char* path_buffer = new char[PATH_BUFFER_SIZE];	/* Flawfinder: ignore */
 	
 	// Figure out where our BMP is living on the disk
 	snprintf(path_buffer, PATH_BUFFER_SIZE-1, "%s%sres-sdl%s%s",	
@@ -51,7 +51,7 @@ void Find_BMP_Resource(const char *basename)
 		 basename);
 	path_buffer[PATH_BUFFER_SIZE-1] = '\0';
 	
-	icon_wholename = path_buffer;
+	return path_buffer;
 }
 
 DesktopNotifierLinux::DesktopNotifierLinux()
@@ -60,14 +60,21 @@ DesktopNotifierLinux::DesktopNotifierLinux()
 	    LL_INFOS("DesktopNotifierLinux") << "Linux desktop notifications initialized." << LL_ENDL;
 	    // Find the name of our notification server. I kinda don't expect it to change after the start of the program.
 	    gchar* name = NULL;
-	    notify_get_server_info(&name, NULL, NULL, NULL);
-	    if (!strncmp("notification-daemon", name, 19)) {
-    	    // We're talking to notification-daemon, and I don't feel like scaling. Use a premade 128x128 icon.
-	        Find_BMP_Resource(ICON_128);
+	    gchar* vendor = NULL;
+	    gchar* version = NULL;
+	    gchar* spec = NULL;
+	    if (!notify_get_server_info(&name, &vendor, &version, &spec) || !g_strcmp0("notification-daemon", name)) {
+    	    // We're likely talking to notification-daemon, and I don't feel like scaling. Use a premade 128x128 icon.
+	        icon_wholename = Find_BMP_Resource(ICON_128);
 	    } else {
 	        // Talking to NotifyOSD or something else. Try the 512x512 icon and let it scale on its own.
-	        Find_BMP_Resource(ICON_512);
+	        icon_wholename = Find_BMP_Resource(ICON_512);
+	        LL_INFOS("DesktopNotifierLinux") << "Server name: " << name << LL_ENDL;
+	        LL_INFOS("DesktopNotifierLinux") << "Server vendor: " << vendor << LL_ENDL;
+	        LL_INFOS("DesktopNotifierLinux") << "Server version: " << version << LL_ENDL;
+	        LL_INFOS("DesktopNotifierLinux") << "Server spec: " << spec << LL_ENDL;
 	    }
+	    LL_INFOS("DesktopNotifierLinux") << "Linux desktop notification icon: " << icon_wholename << LL_ENDL;
 	} else {
 	    LL_WARNS("DesktopNotifierLinux") << "Linux desktop notifications FAILED to initialize." << LL_ENDL;
 	}
@@ -75,20 +82,25 @@ DesktopNotifierLinux::DesktopNotifierLinux()
 
 void DesktopNotifierLinux::showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type)
 {
+    LL_INFOS("DesktopNotifierLinux") << "New notification title: " << notification_title << LL_ENDL;
+    LL_INFOS("DesktopNotifierLinux") << "New notification message: " << notification_message << LL_ENDL;
+    LL_INFOS("DesktopNotifierLinux") << "New notification type: " << notification_type << LL_ENDL;
+    
     NotifyNotification* notification = notify_notification_new(
         (gchar*)notification_title.c_str(),
         (gchar*)notification_message.c_str(),
         icon_wholename,
         NULL
-    
     );
+    
     notify_notification_set_category(notification, (gchar*)notification_type.c_str());
     notify_notification_set_timeout(notification, NOTIFICATION_TIMEOUT); // NotifyOSD ignores this.
-
-    if (notify_notification_show(notification, NULL)) {
+    
+    GError* error = NULL;
+    if (notify_notification_show(notification, &error)) {
         LL_INFOS("DesktopNotifierLinux") << "Linux desktop notification type " << notification_type << "sent." << LL_ENDL;
     } else {
-        LL_WARNS("DesktopNotifierLinux") << "Linux desktop notification FAILED to send." << LL_ENDL;
+        LL_WARNS("DesktopNotifierLinux") << "Linux desktop notification FAILED to send. " << error->message << LL_ENDL;
     }
 }
 
@@ -97,7 +109,12 @@ bool DesktopNotifierLinux::isUsable()
 	return notify_is_initted();
 }
 
-void DesktopNotifierLinux::registerApplication(const std::string& application, const std::set<std::string>& notificationTypes)
+/*void DesktopNotifierLinux::registerApplication(const std::string& application, const std::set<std::string>& notificationTypes)
 {
 	// Do nothing for now.
+}*/
+
+bool DesktopNotifierLinux::needsThrottle()
+{
+	return false; // NotifyOSD seems to have no issues with handling spam.. How about notification-daemon?
 }

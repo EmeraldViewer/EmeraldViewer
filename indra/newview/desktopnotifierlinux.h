@@ -41,7 +41,8 @@ public:
 
 	void showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notificationTypes);
 	bool isUsable();
-	void registerApplication(const std::string& application, const std::set<std::string>& notificationTypes);
+	//void registerApplication(const std::string& application, const std::set<std::string>& notificationTypes);
+	bool needsThrottle();
 };
 
 #endif // DESKTOPNOTIFIERLINUX_H
