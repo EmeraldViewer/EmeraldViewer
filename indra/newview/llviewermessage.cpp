@@ -6036,6 +6036,8 @@ bool callback_script_dialog(const LLSD& notification, const LLSD& response)
 	// Didn't click "Ignore"
 	if (button_idx != -1)
 	{
+		if(notification["payload"].has("textbox"))
+			button = response["message"].asString();
 		LLMessageSystem* msg = gMessageSystem;
 		msg->newMessage("ScriptDialogReply");
 		msg->nextBlock("AgentData");
@@ -6093,23 +6095,24 @@ void process_script_dialog(LLMessageSystem* msg, void**)
 	}
 
 	LLNotificationForm form;
-        std::string firstbutton;
-        msg->getString("Buttons", "ButtonLabel", firstbutton, 0);
-        form.addElement("button", std::string(firstbutton));
-        BOOL isTextBox = FALSE;
-        std::string deftext;
-        if(firstbutton == "!!llTextBox!!")//hack 4 a hack o.o
-        {
-                isTextBox = TRUE;
-                for (i = 1; i < button_count; i++)
-                {
-                        std::string tdesc;
-                        msg->getString("Buttons", "ButtonLabel", tdesc, i);
-                        deftext += tdesc;
-                }
-        }else
-        {
-		for (i = 0; i < button_count; i++)
+	std::string firstbutton;
+	msg->getString("Buttons", "ButtonLabel", firstbutton, 0);
+	form.addElement("button", std::string(firstbutton));
+	BOOL isTextBox = FALSE;
+	std::string deftext;
+	if(firstbutton == "!!llTextBox!!")//hack 4 a hack o.o
+	{
+			isTextBox = TRUE;
+			for (i = 1; i < button_count; i++)
+			{
+					std::string tdesc;
+					msg->getString("Buttons", "ButtonLabel", tdesc, i);
+					deftext += tdesc;
+			}
+	}
+	else
+	{
+		for (i = 1; i < button_count; i++)
 		{
 			std::string tdesc;
 			msg->getString("Buttons", "ButtonLabel", tdesc, i);
