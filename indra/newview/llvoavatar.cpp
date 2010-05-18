@@ -3183,7 +3183,7 @@ void LLVOAvatar::resolveClient(LLColor4& avatar_name_color, std::string& client,
 {
 	LLColor4 colourBackup = avatar_name_color;
 	LLUUID idx = avatar->getTE(0)->getID();
-	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()) /*&& avatar->isReallyFullyLoaded()*/)
+	if(LLVOAvatar::sClientResolutionList.has("isComplete") && LLVOAvatar::sClientResolutionList.has(idx.asString()) && avatar->isReallyFullyLoaded())
 	{
 		LLSD cllsd = LLVOAvatar::sClientResolutionList[idx.asString()];
 		client = cllsd["name"].asString();
@@ -7177,6 +7177,11 @@ BOOL LLVOAvatar::updateIsFullyLoaded()
 	return changed;
 }
 
+
+BOOL LLVOAvatar::isReallyFullyLoaded()
+{
+	return mFullyLoaded;
+}
 
 BOOL LLVOAvatar::isFullyLoaded()
 {
