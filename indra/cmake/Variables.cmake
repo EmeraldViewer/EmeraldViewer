@@ -96,7 +96,7 @@ endif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 set(GRID agni CACHE STRING "Target Grid")
 
 set(VIEWER ON CACHE BOOL "Build Second Life viewer.")
-set(VIEWER_CHANNEL "Emerald Viewer Internal" CACHE STRING "Viewer Channel Name")
+set(VIEWER_CHANNEL "Emerald Viewer" CACHE STRING "Viewer Channel Name")
 set(VIEWER_LOGIN_CHANNEL ${VIEWER_CHANNEL} CACHE STRING "Fake login channel for A/B Testing")
 set(VIEWER_BRANDING_ID "snowglobe" CACHE STRING "Viewer branding id (currently secondlife|snowglobe)")
 
