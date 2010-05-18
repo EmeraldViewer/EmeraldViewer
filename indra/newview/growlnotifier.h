@@ -40,6 +40,7 @@ public:
 	virtual void showNotification(const std::string& notification_title, const std::string& notification_message, const std::string& notification_type);
 	virtual bool isUsable();
 	virtual void registerApplication(const std::string& application, const std::set<std::string>& notificationTypes);
+	virtual bool needsThrottle();
 };
 
 #endif // GROWLNOTIFIER_H

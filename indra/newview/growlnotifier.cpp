@@ -53,3 +53,8 @@ void GrowlNotifier::registerApplication(const std::string& application, const st
 {
 	//nothing special
 }
+
+bool GrowlNotifier::needsThrottle()
+{
+	return true; // Throttling is on by default.
+}

@@ -147,17 +147,20 @@ void GrowlManager::notify(const std::string& notification_title, const std::stri
 	if(!shouldNotify())
 		return;
 	
-	U64 now = LLTimer::getTotalTime();
-	if(mTitleTimers.find(notification_title) != mTitleTimers.end())
+	if(this->mNotifier->needsThrottle())
 	{
-		if(mTitleTimers[notification_title] > now - GROWL_THROTTLE_TIME)
+		U64 now = LLTimer::getTotalTime();
+		if(mTitleTimers.find(notification_title) != mTitleTimers.end())
 		{
-			LL_WARNS("GrowlNotify") << "Discarded notification with title '" << notification_title << "' - spam ._." << LL_ENDL;
-			mTitleTimers[notification_title] = now;
-			return;
+			if(mTitleTimers[notification_title] > now - GROWL_THROTTLE_TIME)
+			{
+				LL_WARNS("GrowlNotify") << "Discarded notification with title '" << notification_title << "' - spam ._." << LL_ENDL;
+				mTitleTimers[notification_title] = now;
+				return;
+			}
 		}
+		mTitleTimers[notification_title] = now;
 	}
-	mTitleTimers[notification_title] = now;
 	this->mNotifier->showNotification(notification_title, notification_message.substr(0, GROWL_MAX_BODY_LENGTH), notification_type);
 }
 
@@ -205,7 +208,7 @@ bool GrowlManager::onLLNotification(const LLSD& notice)
 bool GrowlManager::shouldNotify()
 {
 	// This magic stolen from llappviewer.cpp. LLViewerWindow::getActive lies.
-	return (!gViewerWindow->mWindow->getVisible() || !gFocusMgr.getAppHasFocus());
+	return (gSavedSettings.getBOOL("EmeraldGrowlWhenActive") || (!gViewerWindow->mWindow->getVisible() || !gFocusMgr.getAppHasFocus()));
 }
 
 void GrowlManager::InitiateManager()
