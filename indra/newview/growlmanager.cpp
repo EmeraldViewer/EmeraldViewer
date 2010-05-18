@@ -36,6 +36,7 @@
 #include "llsdserialize.h"
 #include "llstartup.h"
 #include "llviewercontrol.h"
+#include "llviewerwindow.h"
 
 #include "growlmanager.h"
 #include "growlnotifier.h"
@@ -143,6 +144,9 @@ void GrowlManager::notify(const std::string& notification_title, const std::stri
 	if(!gSavedSettings.getBOOL("EmeraldEnableGrowl"))
 		return;
 	
+	if(!shouldNotify())
+		return;
+	
 	U64 now = LLTimer::getTotalTime();
 	if(mTitleTimers.find(notification_title) != mTitleTimers.end())
 	{
@@ -169,6 +173,8 @@ bool GrowlManager::onLLNotification(const LLSD& notice)
 		return false;
 	if(!gSavedSettings.getBOOL("EmeraldEnableGrowl"))
 		return false;
+	if(!shouldNotify())
+		return false;
 	LLNotificationPtr notification = LLNotifications::instance().find(notice["id"].asUUID());
 	std::string name = notification->getName();
 	LLSD substitutions = notification->getSubstitutions();
@@ -194,6 +200,12 @@ bool GrowlManager::onLLNotification(const LLSD& notice)
 		gGrowlManager->notify(title, body, growl_notification->growlName);
 	}
 	return false;
+}
+
+bool GrowlManager::shouldNotify()
+{
+	// This magic stolen from llappviewer.cpp. LLViewerWindow::getActive lies.
+	return (!gViewerWindow->mWindow->getVisible() || !gFocusMgr.getAppHasFocus());
 }
 
 void GrowlManager::InitiateManager()

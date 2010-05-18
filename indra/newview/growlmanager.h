@@ -43,7 +43,7 @@ struct GrowlNotification
 };
 
 const U64 GROWL_THROTTLE_TIME = 1000000; // Maximum spam rate (in microseconds).
-const F32 GROWL_THROTTLE_CLEANUP_PERIOD = 60; // How often we clean up the list (in seconds).
+const F32 GROWL_THROTTLE_CLEANUP_PERIOD = 300; // How often we clean up the list (in seconds).
 const int GROWL_MAX_BODY_LENGTH = 255; // Arbitrary.
 
 class GrowlManager : public LLEventTimer
@@ -62,6 +62,7 @@ private:
 	
 	void loadConfig();
 	static bool onLLNotification(const LLSD& notice);
+	static inline bool shouldNotify();
 };
 
 extern GrowlManager *gGrowlManager;
