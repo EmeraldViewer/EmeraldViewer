@@ -45,10 +45,6 @@ class LLTabContainer;
 class LLFloaterChatterBox : public LLMultiFloater, public LLUISingleton<LLFloaterChatterBox, LLFloaterChatterBox>
 {
 public:
-	/* Preliminary code for dynamic layout switch. commented out waiting for the floater rebuild part. [WoLf]
-	static void onClickLayoutBtn(void* user_data);
-		virtual BOOL postBuild();
-	*/
 
 	LLFloaterChatterBox(const LLSD& seed);
 	virtual ~LLFloaterChatterBox();

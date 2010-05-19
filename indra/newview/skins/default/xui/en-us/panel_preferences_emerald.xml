@@ -541,12 +541,15 @@ Recommended Settings are:          Time: 1          Count: 4</text>
 				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Render Avatar Invisible" left_delta="0" mouse_opaque="true" name="RenderAvInvisible"
 					 radio_style="false" width="270" control_name="RenderAvatarInvisible"/>
-     		    <check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Show appearance tag and animation in appearance mode" left_delta="0" mouse_opaque="true" name="EmeraldAppearanceAnimate"
 					 radio_style="false" width="270" control_name="EmeraldAppearanceAnimate"/>
-        		<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
 					 label="Unsit avatar when entering appearance mode" left_delta="0" mouse_opaque="true" name="EmeraldAppearanceForceStand"
 					 radio_style="false" width="270" control_name="EmeraldAppearanceForceStand"/>
+				<check_box bottom_delta="-20" enabled="true" follows="left|top" font="SansSerifSmall" height="16"
+					 label="Use crouch key in toggle mode" left_delta="0" mouse_opaque="true" name="EmeraldCrouchToggle"
+					 radio_style="false" width="270" control_name="EmeraldCrouchToggle" tool_tip="If selected, a single press of the crouch key will toggle the state between crouching and normal, instead of hold to crouch."/>
 				<text font="SansSerifSmall" name="BeamPrefs" follows="left|top" left="150" bottom="-150">        Selection beam particle effects</text>
 				<view_border bevel_style="none" border_thickness="1" bottom_delta="-5" follows="top|left" height="0"
 					 left="5" name="EmDivisor" width="480"/>

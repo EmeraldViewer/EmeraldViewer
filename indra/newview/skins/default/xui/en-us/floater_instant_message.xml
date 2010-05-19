@@ -92,7 +92,7 @@
 		     image_unselected="icn_speaker_dark.tga" label="" left_delta="56"
 		     name="mute_btn" tool_tip="Mute voice" width="25" />
 	</panel>
-	<combo_box bottom="-40" follows="top|right" left="-230" height="20" width="120"
+	<combo_box bottom="-40" follows="top|right" left="-130" height="20" width="120"
 		   label="OTR: Not Private" name="otr_combo"/>
 	<text_editor type="string" length="1" bg_readonly_color="ChatHistoryBgColor" bg_writeable_color="ChatHistoryBgColor"
 	     bottom="30" embedded_items="false" enabled="false"

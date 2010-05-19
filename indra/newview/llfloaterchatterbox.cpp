@@ -90,14 +90,6 @@ void* LLFloaterMyFriends::createGroupsPanel(void* data)
 // LLFloaterChatterBox
 //
 
-/* Preliminary code for dynamic layout switch. commented out waiting for the floater rebuild part. [WoLf]
-BOOL LLFloaterChatterBox::postBuild()
-{
-	childSetAction("EmTabsLayout", onClickLayoutBtn, this);
-	return TRUE;
-}
-*/
-
 LLFloaterChatterBox::LLFloaterChatterBox(const LLSD& seed) :
 	mActiveVoiceFloater(NULL)
 {
@@ -336,9 +328,3 @@ LLFloater* LLFloaterChatterBox::getCurrentVoiceFloater()
 	}
 	return NULL;
 }
-/* Preliminary code for dynamic layout switch. commented out waiting for the floater rebuild part. [WoLf]
-void LLFloaterChatterBox::onClickLayoutBtn(void* user_data)
-{
-	gSavedSettings.setBOOL("EmeraldVerticalIMTabs",!gSavedSettings.getBOOL("EmeraldVerticalIMTabs"));
-}
-*/
