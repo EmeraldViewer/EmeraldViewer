@@ -736,9 +736,9 @@
           <key>linux</key>
           <map>
             <key>md5sum</key>
-            <string>f23955c2b808748cc8215a1f316c2289</string>
+            <string>4d67efd2e7e8289be5602f4c368abbf9</string>
             <key>url</key>
-            <uri>http://modularsystems.sl/box/gtk-atk-pango-glib-cairo-linux-20100517.tar.bz2</uri>
+            <uri>http://modularsystems.sl/box/gtk-atk-pango-glib-cairo-linux-20100519.tar.bz2</uri>
           </map>
           <key>windows</key>
           <map>
