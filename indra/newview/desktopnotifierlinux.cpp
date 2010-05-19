@@ -63,16 +63,19 @@ DesktopNotifierLinux::DesktopNotifierLinux()
 	    gchar* vendor = NULL;
 	    gchar* version = NULL;
 	    gchar* spec = NULL;
-	    if (!notify_get_server_info(&name, &vendor, &version, &spec) || !g_strcmp0("notification-daemon", name)) {
+	    bool info_success = notify_get_server_info(&name, &vendor, &version, &spec);
+	    if (info_success) {
+	        LL_INFOS("DesktopNotifierLinux") << "Server name: " << name << LL_ENDL;
+	        LL_INFOS("DesktopNotifierLinux") << "Server vendor: " << vendor << LL_ENDL;
+	        LL_INFOS("DesktopNotifierLinux") << "Server version: " << version << LL_ENDL;
+	        LL_INFOS("DesktopNotifierLinux") << "Server spec: " << spec << LL_ENDL;
+	    }
+	    if (!info_success || !g_strcmp0("notification-daemon", name)) {
     	    // We're likely talking to notification-daemon, and I don't feel like scaling. Use a premade 128x128 icon.
 	        icon_wholename = Find_BMP_Resource(ICON_128);
 	    } else {
 	        // Talking to NotifyOSD or something else. Try the 512x512 icon and let it scale on its own.
 	        icon_wholename = Find_BMP_Resource(ICON_512);
-	        LL_INFOS("DesktopNotifierLinux") << "Server name: " << name << LL_ENDL;
-	        LL_INFOS("DesktopNotifierLinux") << "Server vendor: " << vendor << LL_ENDL;
-	        LL_INFOS("DesktopNotifierLinux") << "Server version: " << version << LL_ENDL;
-	        LL_INFOS("DesktopNotifierLinux") << "Server spec: " << spec << LL_ENDL;
 	    }
 	    LL_INFOS("DesktopNotifierLinux") << "Linux desktop notification icon: " << icon_wholename << LL_ENDL;
 	} else {
