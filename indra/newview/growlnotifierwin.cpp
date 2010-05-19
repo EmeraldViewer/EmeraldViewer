@@ -50,7 +50,10 @@ void GrowlNotifierWin::registerApplication(const std::string& application, const
 		strcpy(string, it->c_str());
 		arr[i] = string;
 	}
-	growl = new Growl(GROWL_UDP,NULL,application.c_str(),(const char **const)arr,notificationTypes.size());
+	growl = new Growl(GROWL_TCP,NULL,application.c_str(),(const char **const)arr,notificationTypes.size(),
+		std::string(gDirUtilp->getDefaultSkinDir()+gDirUtilp->getDirDelimiter()+
+		"textures"+gDirUtilp->getDirDelimiter()+"emeraldicon.ico").c_str());
+	growl->setProtocol(GROWL_UDP);
 
 	for(i = 0; i < (int)notificationTypes.size(); ++i) {
 		free(arr[i]);
@@ -60,11 +63,16 @@ void GrowlNotifierWin::registerApplication(const std::string& application, const
 void GrowlNotifierWin::showNotification(const std::string& notification_title, const std::string& notification_message, 
 										 const std::string& notification_type)
 {
-	growl->Notify(notification_type.c_str(),notification_title.c_str(),notification_message.c_str());	
+	//LL_INFOS("GrowlNotifierWin") << std::string(gDirUtilp->getDefaultSkinDir()+gDirUtilp->getDirDelimiter()+"textures"+gDirUtilp->getDirDelimiter()+"emeraldicon.ico").c_str() << LL_ENDL;
+	growl->Notify(notification_type.c_str(),notification_title.c_str(),notification_message.c_str()
+		//,
+		//std::string("").c_str(),//url
+		//std::string("http://modularsystems.sl/box/emeraldicon.ico").c_str()
+		);	
 }
 
 bool GrowlNotifierWin::isUsable()
 {
-	if(growl) return true;
-	return false;
+	//if(growl) return true;
+	return true;
 }
