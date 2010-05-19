@@ -139,7 +139,7 @@
 #include "jc_lslviewerbridge.h"
 
 #include "floaterao.h"
-
+#include "llworldmapmessage.h"
 // [RLVa:KB]
 #include "rlvhandler.h"
 // [/RLVa:KB]
@@ -230,6 +230,16 @@ LLAgent gAgent;
 BOOL LLAgent::emeraldPhantom = 0;
 BOOL LLAgent::ignorePrejump = 0;
 BOOL LLAgent::EmeraldForceFly;
+
+BOOL LLAgent::lure_show = FALSE;
+std::string LLAgent::lure_name;
+LLVector3d LLAgent::lure_posglobal;
+U16 LLAgent::lure_global_x;
+U16 LLAgent::lure_global_y;
+int LLAgent::lure_x;
+int LLAgent::lure_y;
+int LLAgent::lure_z;
+std::string LLAgent::lure_maturity;
 
 const F32 LLAgent::TYPING_TIMEOUT_SECS = 5.f;
 
@@ -8215,5 +8225,62 @@ std::string LLAgent::getCapability(const std::string& name) const
 	}
 	return iter->second;
 }
+
+void LLAgent::showLureDestination(const std::string fromname, const int global_x, const int global_y, const int x, const int y, const int z, const std::string maturity)
+{
+	const LLVector3d posglobal = LLVector3d(F64(global_x), F64(global_y), F64(0));
+	LLSimInfo* siminfo;
+	siminfo = LLWorldMap::getInstance()->simInfoFromPosGlobal(posglobal);
+	std::string sim_name;
+	LLWorldMap::getInstance()->simNameFromPosGlobal( posglobal, sim_name );
+	
+	if(siminfo)
+	{
+		
+		llinfos << fromname << "'s teleport lure is to " << sim_name.c_str() << " (" << maturity << ")" << llendl;
+		std::string url = LLURLDispatcher::buildSLURL(sim_name.c_str(), S32(x), S32(y), S32(z));
+		std::string msg;
+		msg = llformat("%s's teleport lure is to %s", fromname.c_str(), url.c_str());
+		if(maturity != "")
+			msg.append(llformat(" (%s)", maturity.c_str()));
+		LLChat chat(msg);
+		LLFloaterChat::addChat(chat);
+	}
+	else
+	{
+		LLAgent::lure_show = TRUE;
+		LLAgent::lure_name = fromname;
+		LLAgent::lure_posglobal = posglobal;
+		LLAgent::lure_global_x = U16(global_x / 256);
+		LLAgent::lure_global_y = U16(global_y / 256);
+		LLAgent::lure_x = x;
+		LLAgent::lure_y = y;
+		LLAgent::lure_z = z;
+		LLAgent::lure_maturity = maturity;
+		LLWorldMapMessage::getInstance()->sendMapBlockRequest(lure_global_x, lure_global_y, lure_global_x, lure_global_y, true);
+	}
+}
+
+void LLAgent::onFoundLureDestination()
+{
+	LLAgent::lure_show = FALSE;
+	LLSimInfo* siminfo;
+	siminfo = LLWorldMap::getInstance()->simInfoFromPosGlobal(LLAgent::lure_posglobal);
+	std::string sim_name;
+	LLWorldMap::getInstance()->simNameFromPosGlobal( LLAgent::lure_posglobal, sim_name );
+
+	if(siminfo)
+	{
+		llinfos << LLAgent::lure_name << " is offering a TP to " << sim_name.c_str() << " (" << LLAgent::lure_maturity << ")" << llendl;
+		std::string url = LLURLDispatcher::buildSLURL(sim_name.c_str(), S32(LLAgent::lure_x), S32(LLAgent::lure_y), S32(LLAgent::lure_z));
+		std::string msg;
+		msg = llformat("%s is offering a TP to %s", LLAgent::lure_name.c_str(), url.c_str());
+		if(LLAgent::lure_maturity != "")
+			msg.append(llformat(" (%s)", LLAgent::lure_maturity.c_str()));
+		LLChat chat(msg);
+		LLFloaterChat::addChat(chat);
+	}
+}
+
 // EOF
 

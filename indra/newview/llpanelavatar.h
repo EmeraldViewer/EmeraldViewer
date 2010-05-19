@@ -99,6 +99,8 @@ public:
 	LLPanelAvatarFirstLife(const std::string& name, const LLRect &rect, LLPanelAvatar* panel_avatar);
 
 	/*virtual*/ BOOL postBuild(void);
+	static void onClickImage(			void *userdata);
+	
 
 	void enableControls(BOOL own_avatar);
 };
